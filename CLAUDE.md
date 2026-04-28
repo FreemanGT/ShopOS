@@ -81,10 +81,12 @@ The guidelines above apply universally. The rules below are specific to this rep
 
 ## Current infrastructure state
 
-- **PHPUnit**: not yet configured. Wave 0.0 sets it up before feature work.
+*Last verified: 2026-04-28.*
+
+- **PHPUnit**: configured for freeman-core (root `phpunit.xml.dist`, `tests/bootstrap.php`, 48 tests, all green). Runs in CI on PHP 7.4–8.3 lanes. Locally: `composer install` once, then `PATH="/opt/homebrew/opt/php@8.3/bin:$PATH" composer test` (system `php` is 8.5, outside PHPUnit 10's supported range). freeman-digital has its own separate test config; freeman-theme has none.
 - **Snapshot harness**: not yet built. Wave 0.5 adds `/tests/snapshots/` helpers.
 - **Staging**: not yet provisioned. Manual local testing on a separate WP install for now.
-- **WP-CLI**: available locally.
+- **WP-CLI**: not currently installed locally. Wave 0.4 needs it installed (or a substitute) before regression baselines can be captured.
 - **Commit format**: Conventional Commits, scope = package. Example: `feat(freeman-core): add logger hooks`.
 
 If any of the above changes, update this section before starting work.

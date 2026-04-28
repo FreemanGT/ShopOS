@@ -6,15 +6,16 @@
          failOnWarning="true"
          failOnRisky="true"
          beStrictAboutOutputDuringTests="true"
-         beStrictAboutTestsThatDoNotTestAnything="false">
+         beStrictAboutTestsThatDoNotTestAnything="false"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd">
     <testsuites>
         <testsuite name="freeman-core">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-    <coverage>
+    <source>
         <include>
             <directory suffix=".php">freeman-core/src</directory>
         </include>
-    </coverage>
+    </source>
 </phpunit>

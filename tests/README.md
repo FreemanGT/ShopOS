@@ -4,12 +4,20 @@ PHPUnit test suite for Freeman Core. Added in 1.5.0 alongside a GitHub Actions C
 
 ## Running locally
 
+Requires PHP 7.4–8.3 (PHPUnit 10.5 doesn't officially support 8.5+).
+
 ```bash
 composer install   # installs phpunit + phpcs + wpcs
 composer test      # runs the full suite
 composer test:smoke        # the module-instantiation smoke script
 composer test:activation   # the activation simulation
 composer lint              # PHPCS against WP coding standards
+```
+
+On macOS with a newer default `php`, install `php@8.3` via Homebrew and prefix `composer` calls:
+
+```bash
+PATH="/opt/homebrew/opt/php@8.3/bin:$PATH" composer test
 ```
 
 ## What's covered
