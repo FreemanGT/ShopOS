@@ -100,7 +100,11 @@
         iosPollMs: 1500,
         endMessage: CFG.endMessage || 'You have reached the end.',
         errorMessage: CFG.errorMessage || 'Could not load more.',
-        loadMoreLabel: CFG.loadMoreLabel || 'Load more'
+        loadMoreLabel: CFG.loadMoreLabel || 'Load more',
+        triggerModesEnabled: !!CFG.triggerModesEnabled,
+        triggerMode: CFG.triggerMode || 'auto',
+        historyMode: CFG.historyMode || 'pushState',
+        hybridThreshold: (CFG.hybridThreshold | 0) || 2
     };
 
     var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -264,7 +268,32 @@
         container.parentNode.insertBefore(state.sentinel, container.nextSibling);
     }
 
+    // Wave 3.1a JS-side dispatcher per master plan §4-D8.
+    //
+    // Single entry point that consolidates the two trigger-mode gates:
+    //   'skip-auto-attach' — 'button' mode; attachObserver uses this to
+    //                       suppress IO + scroll fallback + iOS poll so
+    //                       they don't do wasted work / skeleton-flash.
+    //                       The user-visible 'Load more' button ships
+    //                       in 3.1b; in 3.1a 'button' mode just halts
+    //                       auto-loading until 3.1b lands.
+    //   'stop'             — 'hybrid' mode once state.pagesLoaded crosses
+    //                       OPTS.hybridThreshold; loadNext uses this to
+    //                       halt further fetches. The user-facing button
+    //                       takes over in 3.1b.
+    //   null               — caller proceeds with auto-trigger behavior.
+    //
+    // Flag-OFF returns null unconditionally — callers route to the legacy
+    // triple-stack path verbatim. Flag-ON-with-mode='auto' is null too.
+    function applyTriggerMode(mode) {
+        if (!OPTS.triggerModesEnabled) return null;
+        if (mode === 'button') return 'skip-auto-attach';
+        if (mode === 'hybrid' && state.pagesLoaded >= OPTS.hybridThreshold) return 'stop';
+        return null;
+    }
+
     function attachObserver() {
+        if (applyTriggerMode(OPTS.triggerMode || 'auto') === 'skip-auto-attach') return;
         attachScrollFallback();
         if (IS_IOS) attachIosPoll();
         if (!('IntersectionObserver' in window)) return;
@@ -408,10 +437,7 @@
                 }
                 if (unique.length === 0) { stop('all duplicates'); showEndMessage(); return; }
 
-                try {
-                    var u = new URL(urlBeingFetched);
-                    window.history.pushState({ freemanPage: u.pathname }, '', u.pathname + u.search);
-                } catch (e) { /* noop */ }
+                applyHistoryMode(urlBeingFetched);
 
                 for (var k = 0; k < unique.length; k++) {
                     unique[k].classList.add('bookomers-new-product');
@@ -425,6 +451,10 @@
                 announceLoaded(unique.length);
 
                 state.pagesLoaded++;
+
+                if (applyTriggerMode(OPTS.triggerMode || 'auto') === 'stop') {
+                    stop('hybrid threshold reached');
+                }
 
                 var nextMatch = firstMatchIn(docScope, NEXT_LINK_SELECTORS);
                 if (!nextMatch) { stop('no next link'); showEndMessage(); return; }
@@ -442,6 +472,32 @@
                 showErrorMessage();
             })
             .then(function () { state.isLoading = false; });
+    }
+
+    function applyHistoryMode(url) {
+        // Wave 3.1a: wrapper around the History API call site that used to
+        // be inline. Flag-OFF preserves today's pushState behavior verbatim;
+        // flag-ON branches on historyMode setting (pushState | replaceState
+        // | disabled). Default is pushState — flag-ON-with-defaults is
+        // byte-identical to flag-OFF.
+        if (!OPTS.triggerModesEnabled) {
+            try {
+                var u0 = new URL(url);
+                window.history.pushState({ freemanPage: u0.pathname }, '', u0.pathname + u0.search);
+            } catch (e) { /* noop */ }
+            return;
+        }
+        var mode = OPTS.historyMode || 'pushState';
+        if (mode === 'disabled') return;
+        try {
+            var u = new URL(url);
+            var pathSearch = u.pathname + u.search;
+            if (mode === 'replaceState') {
+                window.history.replaceState({ freemanPage: u.pathname }, '', pathSearch);
+            } else {
+                window.history.pushState({ freemanPage: u.pathname }, '', pathSearch);
+            }
+        } catch (e) { /* noop */ }
     }
 
     function abortInFlight() {
