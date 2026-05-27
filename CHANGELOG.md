@@ -2,6 +2,149 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.12.23] — 2026-05-20
+
+- Shop Filters 6.5c on-sale/in-stock facets: On sale (and In stock when the store shows out-of-stock items) checkboxes in the panel, read from wc_product_meta_lookup, filtering the grid via onsale/in_stock URL params. Reuses the storefront flag.
+
+## [1.12.22] — 2026-05-20
+
+- Shop Filters 6.5a SEO policy: filtered shop/category/search URLs get noindex,follow plus a canonical to the clean archive, routed through RankMath/SEOPress/Yoast or core. New flag freeman_core_shop_filters_seo_policy_enabled (default off).
+
+## [1.12.21] — 2026-05-20
+
+- Shop Filters 6.4 admin facet config: per-attribute matrix (show/order/hide-on-categories) on Freeman to Shop Filters, gated by the new freeman_core_shop_filters_admin_config_enabled flag (default off; off reverts to auto-derived defaults).
+
+## [1.12.20] — 2026-05-20
+
+- Shop Filters: run the search-results filter enforcement last (priority 99999) so it wins against Advanced Woo Search re-asserting its own result list after us
+
+## [1.12.19] — 2026-05-20
+
+- Shop Filters fix: the mobile Filter toggle button no longer appears on desktop (the theme .fm-btn display was overriding the hide rule)
+
+## [1.12.18] — 2026-05-20
+
+- Shop Filters: enforce the active filters on search-results grids supplied by a search plugin (Advanced Woo Search) via a the_posts safety net, so a product whose only in-stock size is outside the selection no longer slips through on search
+
+## [1.12.17] — 2026-05-20
+
+- Shop Filters now scope to search results: on a product-search page the panel facets, counts, category tree and price bands reflect the products matching the query (was showing whole-catalogue facets); resolves the 6.3a.1 search-facet deferral
+
+## [1.12.16] — 2026-05-20
+
+- Shop Filters buttons now match the theme: the panel toggle, Apply, Clear and sort controls carry the themes own .fm-btn / .fm-select primitives so they render identically to the sites buttons (the 1.12.15 core styles were being overridden by the theme/Elementor); core styles remain as the no-theme fallback
+
+## [1.12.15] — 2026-05-20
+
+- Shop Filters UI polish: filter panel buttons (mobile toggle, chips, clear, apply, sort) are now more minimal and rounded, pulling the themes --fm-* radius/weight/tracking design tokens with fallbacks
+
+## [1.12.14] — 2026-05-20
+
+- Shop Filters bug-fix: filtering an attribute (e.g. a size) now returns only products that have that value IN STOCK, matching the index per-variation truth; previously the grid matched WooCommerces parent-assigned terms and showed products whose selected size was sold out
+
+## [1.12.13] — 2026-05-20
+
+- freeman-core: Shop Filters 6.5b — price-band facet + sort (built ahead of 6.4/6.5a, so it takes the next sequential version). OR-checkbox price bands on top of the panel (from a price_bands setting, or auto-derived from the catalogue), counts + grid filtering via wc_product_meta_lookup overlap; a Sort by dropdown (sets ?orderby) and a default_sort setting applied via woocommerce_default_catalog_orderby. Reuses frontend_enabled.
+
+## [1.12.12] — 2026-05-20
+
+- Shop Filters 6.3c: storefront string labels are now editable from the Shop Filters settings page (blank = English default), so the panel wording can be set to Hebrew without code
+
+## [1.12.11] — 2026-05-20
+
+- freeman-core: Shop Filters 6.3b Facet UI — the deferred storefront UI. Category-tree facet on top (pruned parent-to-child hierarchy; each node navigates to its category archive), colour/image swatch facets (term meta read directly, decoupled from VariationSwatches), a stylesheet that removes the default list bullets and adds a focus-trapped mobile bottom-sheet drawer (defer-until-Apply on mobile, prefers-reduced-motion), and render hooks before_render / after_render (actions) + panel_html (filter). Reuses the frontend_enabled flag.
+
+## [1.12.10] — 2026-05-20
+
+- Shop Filters 6.3a.4 hyphen + pagination fix: filtering by a hyphenated attribute (pa_shoe-size, pa_clothing-size) returned no products. Url_State sanitize_taxonomy stripped hyphens, mangling the taxonomy (pa_shoe-size to pa_shoesize) so the tax_query matched nothing — every size filter came back blank. Hyphens are now allowed in attribute taxonomies. Also: applying a filter from a /page/N/ URL kept the pretty-pagination path and could 404 when the filtered result set had fewer pages; the front-end controller now resets the /page/N/ path segment to page 1, alongside the existing paged query-param reset.
+
+## [1.12.9] — 2026-05-20
+
+- Shop Filters 6.3a.3 index diagnostic: a read-only table on the Freeman Shop Filters admin page (gated by the existing indexer flag, alongside the reindex tool) listing, per attribute term, the slug, name and indexed product / in-stock counts straight from the index. Built to debug storefront-data problems where a facet value shows a count but the filtered URL returns nothing, or picking one size returns another — surfacing scrambled term name/slug pairs, terms present in the index that no longer resolve to a live term, and values whose only products are out of stock. Filters match by slug, so the slug column is highlighted as the source of truth. Read-only, no writes, no storefront effect.
+
+## [1.12.8] — 2026-05-20
+
+- Shop Filters 6.3a.2 stock-visibility parity: facet counts now mirror the storefront grid. When the store hides out-of-stock items (woocommerce_hide_out_of_stock_items), the facet base universe and counts exclude out-of-stock products, so a value backed only by a hidden out-of-stock product no longer shows a phantom count while the filtered grid is empty. Attribute values are counted by product-level presence within the in-stock base, matching how WooCommerce matches a product to a term.
+
+## [1.12.7] — 2026-05-20
+
+- Shop Filters 6.3a.1 read-path fix: storefront filters now actually filter the grid. New Query bridge applies the URL filter selection (filter_pa_*) to the main WooCommerce product query via woocommerce_product_query_tax_query (shop / category / attribute archives, preserving product_visibility) plus a scoped pre_get_posts for product search. The front-end controller now navigates (full reload) instead of swapping via AJAX, so the selection persists in the URL, sort keeps the filters, and product-search pages work; Infinite Scroll runs normally on the reloaded page. Active-filter chips are server-rendered. The public AJAX endpoint is retained but no longer called by the bundled JS. Checkbox facets only; reuses the freeman_core_shop_filters_frontend_enabled flag.
+
+## [1.12.6] — 2026-05-20
+
+- Shop Filters 6.3a: storefront read path. Query_Builder glues the index to the facet engine and shapes the AJAX response; the freeman_shop_filters shortcode server-renders the initial facet tree and enqueues the front-end controller; a public admin-AJAX endpoint (freeman_core_shop_filters_query, nonce + rate-limited) recomputes facets and counts. JS swaps the product grid by fetching the filtered front-end URL so Elementor card markup and Infinite Scroll coexistence are preserved. Checkbox facets only; gated by the new default-off freeman_core_shop_filters_frontend_enabled flag.
+
+## [1.12.5] — 2026-05-20
+
+- Shop Filters QA polish: status line shows actual last-refresh time (not the internal watermark); full reindex parks the watermark so the sweep does not re-churn; catch-up chain via Action Scheduler; DISABLE_WP_CRON note on the page.
+
+## [1.12.4] — 2026-05-20
+
+- Shop Filters bug-fix found in QA: the recurring reconcile sweep now schedules correctly. ensure_scheduled was running on plugins_loaded before Action Scheduler is ready (silent no-op); deferred to init. Event-driven on-save indexing was unaffected.
+
+## [1.12.3] — 2026-05-20
+
+- Shop Filters admin control surface (by request): Freeman -> Shop Filters page now has the background-indexing toggle, live index status (products/rows/last sweep/scheduled) and the reindex tool, all manageable from wp-admin without WP-CLI. Toggle writes the same option the feature flag reads.
+
+## [1.12.2] — 2026-05-20
+
+- Shop Filters 6.1 indexer bug-fix: non-variation global attributes on variable products now follow overall stock (were wrongly variation-gated, hiding them under in-stock-only filtering). Extracted Term_Helpers::resolve_in_stock + unit test; hardened ensure_scheduled Action Scheduler check.
+
+## [1.12.1] — 2026-05-20
+
+- Shop Filters facet engine - Wave 6 Phase 6.2: pure Facet_Engine, Category_Tree, Url_State, Facet_Config (AND/OR with self-exclusion, hide-zero, category hierarchy, URL state). No flag, no storefront output yet.
+
+## [1.12.0] — 2026-05-20
+
+- Shop Filters new module - Wave 6 Phase 6.1 foundation: index table, background indexer, admin reindex tool. Behind freeman_core_shop_filters_indexer_enabled flag default off; module disabled by default. Storefront UI ships in later phases.
+
+## [1.11.51] — 2026-05-13
+
+- VariationSwatches: respect wp_terms.term_order column for swatch ordering (honors Custom Taxonomy Order plugin et al). Falls back to wc_get_product_terms when the column is absent.
+
+## [1.11.50] — 2026-05-13
+
+- VariationSwatches: reorder swatch options to match taxonomy term order (matches WC native dropdown). PDP buy-box + shop archive picker.
+
+## [freeman-core 1.11.49] — 2026-05-11
+
+- VariationSwatches: the buy box, the shop / archive picker, the PDP price line and the toast notifications now read the kit body font from Elementor's `--e-global-typography-sk_type_12-font-family` variable (with `inherit` as fallback) instead of bare `font-family: inherit`. Bare `inherit` picked up the *wrapping element's* font when the buy box / picker is AJAX-injected into a foreign-styled container — e.g. WooSQ (Woo Smart Quick View)'s `.woosq-sidebar { font-family: "Open Sans", … }` — so the quick-view buy box wasn't matching the site's Style Kits typeface. A CSS custom property cascades through such wrappers untouched, so the kit font reaches it regardless. No regression: without Style Kits the `inherit` fallback applies as before. CSS-only.
+
+## [freeman-core 1.11.48] — 2026-05-11
+
+- VariationSwatches: the shop / archive variation-picker now inherits the site/theme font instead of forcing a built-in "Ploni"-first stack — matches the 1.11.47 buy-box change so the picker reads in the page typeface (i.e. whatever Style Kits / Elementor global typography sets). CSS-only.
+
+## [freeman-theme 1.11.23] — 2026-05-11
+
+- Typography: `--fm-font-body` / `--fm-font-display` now follow Elementor's global typography (`--e-global-typography-sk_type_12/2-font-family`, written by the Style Kits for Elementor addon) with the previous hardcoded stacks as fallback — the theme no longer overrides Style Kits' fonts. `--fm-font-mono` (code/preformatted) unchanged. Also bumped `FREEMAN_THEME_VERSION` 1.0.3 → 1.11.23 so it matches `style.css` and the theme's CSS asset URLs actually cache-bust on this change (the constant, not `style.css`'s `Version:`, is what `wp_enqueue_style` uses).
+
+## [1.11.47] — 2026-05-11
+
+- VariationSwatches: the simple-product buy box now renders its own `.etucart-pdp-price` line (same markup as the variable buy box). Fixes the missing price in simple-product quick-view modals — the WooSQ duplicate-price suppression was hiding WooCommerce's separately-rendered `<p class="price">`, which the simple buy box previously had nothing to replace. `maybe_suppress_pdp_price()` now also unhooks `woocommerce_template_single_price` for simple products so a plain simple PDP isn't doubled; on Elementor-built simple PDPs the 1.11.46 `:has()` rule consequently hides the Elementor "Product Price" widget there too. On a default-template simple PDP the price moves to just above the add-to-cart button (where the buy box renders), matching the variable buy box.
+- VariationSwatches: the buy box (and toast) now inherit the site/theme font instead of forcing a built-in "Ploni"-first stack — the buy box reads in the same typeface as the rest of the page.
+- VariationSwatches: the shop / archive variation-picker swatch row is now centred within the card; the single-product buy box's swatch row is back to its original right-anchored layout (the 1.11.46 centring there was reverted).
+
+## [1.11.46] — 2026-05-11
+
+- VariationSwatches: hide the Elementor "Product Price" widget on variable product pages when the buy box's own (live, variation-aware) price line is present — fixes the duplicated price on Elementor-built PDPs. Simple products keep the Elementor widget's price untouched. CSS-only; falls back to current behaviour where :has() is unsupported.
+- VariationSwatches: centre the variation swatch row (size pills / colour circles / image chips) instead of right-anchoring it; RTL order is unchanged. The attribute heading above stays right-aligned.
+
+## [1.11.45] — 2026-05-11
+
+- Wave 2.2/4g: VariationSwatches settings moved to Freeman -> Variation Swatches page (sole editing surface); settings_hub flag retired; legacy WooCommerce Products section soft-deprecated to a moved-notice; re-sync migration for flag-off sites
+
+## [1.11.44] — 2026-05-11
+
+- Add Freeman -> Feature Flags admin page (checkbox per flag, grouped by module, with descriptions); Feature_Flags::registry/option_name/is_forced_by_filter helpers
+
+## [1.11.43] — 2026-05-11
+
+- Persist onboarding-notice dismissal so the nudge stays gone after a page reload
+
+## [1.11.42] — 2026-05-11
+
+- ProductSlider — popularity / rating / price orderby now actually sorts and includes products without total_sales / _wc_average_rating / _price meta (bypasses WC's INNER JOIN on the sort meta key). Other orderby values (date, title, menu_order, rand) and the manual / current_query / related sources unchanged. Defensive 5000-ID cap on the in-PHP sort.
+
 ## [1.11.41] — 2026-05-11
 
 - Bug-fix bundle (shop archive picker): variation pill gap 6px to 8px and internal padding 12px to 16px; refreshOverflow sweeps rawChips past +N boundary (not just in-stock); render_loop_price_or_skip now skips for simple products too (was variable only, leaving duplicated WC + picker prices on archive); honeypot inputs in shop-simple-pick and shop-variation-pick swapped from left:-9999px hack to WCAG clip:rect pattern so absolute-positioned cards do not inflate slider scrollWidth past last product.

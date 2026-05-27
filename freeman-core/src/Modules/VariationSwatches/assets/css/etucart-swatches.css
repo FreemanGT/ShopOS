@@ -47,7 +47,13 @@
 	box-sizing: border-box !important;
 	font-size: 1.5rem !important;
 	line-height: 1.2 !important;
-	font-family: inherit !important;
+	/* Read the kit's body font from Elementor's global-typography variable
+	   (Style Kits writes it) rather than `inherit` — this line is rendered
+	   outside `.etucart-buy-box`, including inside quick-view modals whose
+	   wrapper sets its own `font-family` (e.g. WooSQ's `.woosq-sidebar` →
+	   "Open Sans"). The variable cascades through such wrappers untouched;
+	   `inherit` falls back to the surrounding font when no Style Kits. */
+	font-family: var(--e-global-typography-sk_type_12-font-family, inherit) !important;
 }
 
 .etucart-pdp-price[data-pdp-price] .etucart-pdp-price__prefix,
@@ -108,6 +114,21 @@
 	display: none !important;
 }
 
+/* Elementor "Product Price" widget — on Elementor-built product pages this
+   widget renders its own static `<p class="price">` directly inside its
+   render(), bypassing the `woocommerce_single_product_summary` hook our PHP
+   price-suppression uses (Etucart_VS_Frontend::maybe_suppress_pdp_price), so
+   that suppression never reaches it. When our buy box is on the page it
+   already emits `.etucart-pdp-price` (which updates live on `found_variation`),
+   so the Elementor widget's copy is a redundant second price. Hide it ONLY
+   when our line is present: variable products get it hidden (one live price);
+   simple products (the simple buy box emits no `.etucart-pdp-price`) keep the
+   Elementor widget's price untouched. If `:has()` is unsupported the whole
+   rule is dropped → both prices show, i.e. current behaviour — degrades safely. */
+body:has(.etucart-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-product-price {
+	display: none !important;
+}
+
 /* ---------- Theme reset (scoped) ----------
    Zap any inherited button / input styling the theme might push down onto our
    controls. We do this WITHOUT touching typography so the site font carries
@@ -162,15 +183,6 @@
 
 /* ---------- Host ---------- */
 .etucart-buy-box {
-	/* Hebrew-first font stack. Ploni is the primary request; we fall back
-	   through other common Hebrew-friendly webfonts before landing on
-	   sensible system defaults so the module reads correctly even if Ploni
-	   hasn't loaded yet (FOUT guard) or on environments where it's not
-	   installed at all. */
-	--etucart-font: "Ploni", "Ploni ML v2 AAA", "Ploni ML", "Assistant",
-		"Rubik", "Heebo", "Noto Sans Hebrew", -apple-system,
-		BlinkMacSystemFont, "Segoe UI", system-ui, Arial, sans-serif;
-
 	--etucart-text: #111111;
 	--etucart-muted: #6b6b6b;
 	--etucart-border: #d9d9d9;
@@ -193,7 +205,13 @@
 
 	direction: rtl !important;
 	text-align: right !important;
-	font-family: var(--etucart-font) !important;
+	/* Kit body font via Elementor's global-typography variable (Style Kits),
+	   falling back to `inherit`. Not bare `inherit`: the buy box is also
+	   AJAX-injected into quick-view modals whose wrapper sets its own font
+	   (e.g. WooSQ's `.woosq-sidebar`), and the variable cascades through that
+	   while `inherit` would pick up the modal's font. Descendants below just
+	   `inherit` from here. */
+	font-family: var(--e-global-typography-sk_type_12-font-family, inherit) !important;
 	color: var(--etucart-text) !important;
 	max-width: 640px;
 	width: 100% !important;
@@ -215,11 +233,13 @@
 	   bar to the buy box instead of the viewport. */
 }
 
-/* Inherit the Hebrew-first stack into every descendant so theme CSS that
-   sets fonts on buttons/inputs doesn't override it. */
-.etucart-buy-box,
+/* Force the buy-box font onto every descendant so theme CSS that sets a
+   different font on buttons/inputs doesn't override it. They `inherit` from
+   `.etucart-buy-box` (which reads the kit body-font variable above) — the
+   container is intentionally NOT in this selector so its `var(...)` rule
+   isn't re-overridden back to bare `inherit`. */
 .etucart-buy-box * {
-	font-family: var(--etucart-font) !important;
+	font-family: inherit !important;
 }
 
 /* Kill the mobile tap-highlight overlay (the "bright blue flash" on press).
@@ -1096,7 +1116,7 @@
 	background: #111111;
 	color: #ffffff;
 	border-radius: 14px;
-	font-family: var(--etucart-font, inherit);
+	font-family: var(--e-global-typography-sk_type_12-font-family, inherit);
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1.3;

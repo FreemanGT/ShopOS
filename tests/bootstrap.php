@@ -92,6 +92,27 @@ if ( ! function_exists( 'do_action' ) ) {
 		}
 	}
 }
+if ( ! function_exists( 'has_filter' ) ) {
+	function has_filter( $tag, $callback = false ) {
+		if ( empty( $GLOBALS['fr_hooks'][ $tag ] ) ) {
+			return false;
+		}
+		if ( false === $callback ) {
+			return true;
+		}
+		foreach ( $GLOBALS['fr_hooks'][ $tag ] as $h ) {
+			if ( $h['cb'] === $callback ) {
+				return (int) $h['priority'];
+			}
+		}
+		return false;
+	}
+}
+if ( ! function_exists( 'has_action' ) ) {
+	function has_action( $tag, $callback = false ) {
+		return has_filter( $tag, $callback );
+	}
+}
 if ( ! function_exists( 'sanitize_text_field' ) ) {
 	function sanitize_text_field( $v ) { return is_scalar( $v ) ? (string) $v : ''; }
 }
@@ -445,6 +466,26 @@ if ( ! class_exists( '\\Elementor\\Controls_Manager' ) ) {
 }
 if ( ! class_exists( '\\Elementor\\Group_Control_Typography' ) ) {
 	eval( 'namespace Elementor; class Group_Control_Typography { public static function get_type() { return "typography"; } }' );
+}
+
+// Singular wc_get_product — looks up a per-ID registry first
+// ($GLOBALS['fr_wc_products'][ (int) $id ], used by ProductSlider popularity-
+// orderby tests where each ID needs to resolve to a distinct mock object),
+// then falls back to the legacy single-product return ($GLOBALS['fr_wc_get_product_return'],
+// used by RestockNotify / ProductFeed tests). Returns false when neither is
+// set, matching WC's behavior for missing products. Each call appends the
+// requested ID to $GLOBALS['fr_wc_get_product_calls'] so tests can assert
+// the sequence of lookups (essential for popularity-orderby tests, where the
+// returned objects are interchangeable but the LOOKUP ORDER carries the
+// sort result). Wave 4.6 (1.11.42).
+if ( ! function_exists( 'wc_get_product' ) ) {
+	function wc_get_product( $id ) {
+		$GLOBALS['fr_wc_get_product_calls'][] = (int) $id;
+		if ( isset( $GLOBALS['fr_wc_products'][ (int) $id ] ) ) {
+			return $GLOBALS['fr_wc_products'][ (int) $id ];
+		}
+		return $GLOBALS['fr_wc_get_product_return'] ?? false;
+	}
 }
 
 // Page-type predicates — read from $GLOBALS['fr_page_type'] so tests can
