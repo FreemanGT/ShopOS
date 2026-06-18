@@ -354,13 +354,14 @@
 		}
 
 		// Swap the ATC button label + hide Buy Now when the picked variation
-		// is OOS / unpurchasable. Stashes the default "הוספה לעגלה" label on
-		// first use so we can restore it when the user picks a buyable one.
-		// The Hebrew strings are hardcoded to mirror the PHP templates —
-		// there's no i18n glossary registered on the client, and duplicating
-		// one literal here beats wiring a new localized global.
-		var OOS_LABEL     = 'אזל מהמלאי';
-		var DEFAULT_LABEL = 'הוספה לעגלה';
+		// is OOS / unpurchasable. Stashes the default label on first use so we
+		// can restore it when the user picks a buyable one. Labels come from
+		// the locale-aware EtucartVS.i18n payload (Hebrew on a Hebrew site,
+		// English elsewhere — Labels resolver); the English literals are a
+		// defensive fallback if the localized global is missing.
+		var I18N          = (window.EtucartVS && window.EtucartVS.i18n) || {};
+		var OOS_LABEL     = I18N.oos || 'Out of stock';
+		var DEFAULT_LABEL = I18N.addToCart || 'Add to cart';
 		function setOutOfStockState($form, isOOS) {
 			var $atcButtons = $form.find('.etucart-add-to-cart, .etucart-sticky-bar__buy--atc');
 			$atcButtons.each(function () {
@@ -1026,6 +1027,7 @@
 		// safe (idempotent). Harmless if the event never fires.
 		$doc.on(
 			[
+				'freeman_core_quick_view_loaded', // Freeman Quick View module
 				'woosq_loaded',               // WPC Smart Quick View (WooSQ)
 				'wpcqv_loaded',               // WPC QuickView (older handle)
 				'wpcqv-content-loaded',       // WPC QuickView (content swap)

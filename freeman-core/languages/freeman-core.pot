@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Freeman Core 1.12.23\n"
+"Project-Id-Version: Freeman Core 1.16.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/freeman-core\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-27T22:54:41+00:00\n"
+"POT-Creation-Date: 2026-06-18T21:03:43+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: freeman-core\n"
@@ -139,7 +139,7 @@ msgid "Enabled"
 msgstr ""
 
 #: src/Admin/views/feature-flags.php:57
-#: src/Core/Module_Base.php:147
+#: src/Core/Module_Base.php:155
 msgid "Disabled"
 msgstr ""
 
@@ -240,7 +240,7 @@ msgid "Timestamp (UTC)"
 msgstr ""
 
 #: src/Admin/views/settings-tools-section.php:103
-#: src/Modules/ProductSlider/Widget.php:163
+#: src/Modules/ProductSlider/Widget.php:164
 msgid "Source"
 msgstr ""
 
@@ -412,50 +412,26 @@ msgid "Adds an \"Export Subscribers\" submenu under the Restock Notify menu that
 msgstr ""
 
 #: src/Core/Feature_Flags.php:171
-msgid "Variation Swatches — WPC Bundles / FBT compatibility"
+msgid "Quick View — storefront"
 msgstr ""
 
 #: src/Core/Feature_Flags.php:172
-msgid "Forwards all buy-box form fields to WooCommerce's add-to-cart endpoint so WPC Product Bundles and WPC Frequently-Bought-Together hidden inputs reach the cart; exposes a JS flag for the runtime."
+msgid "Adds the quick-view icon to product cards and the slide-in drawer (image, price, short description, add-to-cart, product-page link) backed by a public AJAX endpoint. Off: no storefront output and no endpoint."
 msgstr ""
 
 #: src/Core/Feature_Flags.php:179
-msgid "Shop Filters — background indexer"
+msgid "Variation Swatches — WPC Bundles / FBT compatibility"
 msgstr ""
 
 #: src/Core/Feature_Flags.php:180
-msgid "Builds and keeps fresh the product attribute / category index that powers Shop Filters (event-driven dirty queue + a 5-minute reconcile sweep) and enables the admin \"Reindex now\" tool. Off: no index is written and no scheduling occurs. The storefront filter UI is gated separately in a later phase."
+msgid "Forwards all buy-box form fields to WooCommerce's add-to-cart endpoint so WPC Product Bundles and WPC Frequently-Bought-Together hidden inputs reach the cart; exposes a JS flag for the runtime."
 msgstr ""
 
-#: src/Core/Feature_Flags.php:187
-msgid "Shop Filters — storefront filters"
-msgstr ""
-
-#: src/Core/Feature_Flags.php:188
-msgid "Activates the [freeman_shop_filters] shortcode and its public AJAX query endpoint — the faceted, context-aware filter panel on shop / category pages. Off: the shortcode renders nothing and no public endpoint is registered. Requires the module and the background indexer to be on."
-msgstr ""
-
-#: src/Core/Feature_Flags.php:195
-msgid "Shop Filters — facet configuration"
-msgstr ""
-
-#: src/Core/Feature_Flags.php:196
-msgid "Enables the per-attribute facet matrix on Freeman → Shop Filters (turn a filter on/off, reorder, hide on chosen categories) and makes the storefront honour the saved configuration. Off: the matrix is hidden and filters fall back to the automatic defaults (every attribute as a checkbox, categories as a tree), so turning this off fully reverts any saved configuration."
-msgstr ""
-
-#: src/Core/Feature_Flags.php:203
-msgid "Shop Filters — filtered-URL SEO policy"
-msgstr ""
-
-#: src/Core/Feature_Flags.php:204
-msgid "Adds noindex,follow and a canonical to the clean archive on filtered shop / category / search URLs, so search engines do not index thin filter permutations (the clean archive stays indexable). Routes through the active SEO plugin (RankMath / SEOPress / Yoast) or WordPress core. Off: filtered URLs are left to the SEO plugin / core defaults."
-msgstr ""
-
-#: src/Core/Module_Base.php:150
+#: src/Core/Module_Base.php:158
 msgid "Missing dependency"
 msgstr ""
 
-#: src/Core/Module_Base.php:152
+#: src/Core/Module_Base.php:160
 msgid "Active"
 msgstr ""
 
@@ -515,7 +491,7 @@ msgstr ""
 #: src/Modules/CategorySlider/Widget.php:66
 #: src/Modules/CategorySlider/Widget.php:442
 #: src/Modules/ProductSlider/Widget.php:82
-#: src/Modules/ProductSlider/Widget.php:401
+#: src/Modules/ProductSlider/Widget.php:402
 msgid "Eyebrow"
 msgstr ""
 
@@ -526,7 +502,7 @@ msgstr ""
 #: src/Modules/CategorySlider/Widget.php:75
 #: src/Modules/CategorySlider/Widget.php:451
 #: src/Modules/ProductSlider/Widget.php:91
-#: src/Modules/ProductSlider/Widget.php:410
+#: src/Modules/ProductSlider/Widget.php:411
 msgid "Headline"
 msgstr ""
 
@@ -548,12 +524,11 @@ msgid "Max categories"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:104
-#: src/Modules/ProductSlider/Widget.php:131
+#: src/Modules/ProductSlider/Widget.php:132
 msgid "Order by"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:108
-#: src/Modules/ShopFilters/Diagnostics.php:125
 msgid "Name"
 msgstr ""
 
@@ -566,23 +541,23 @@ msgid "Slug"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:111
-#: src/Modules/ProductSlider/Widget.php:139
+#: src/Modules/ProductSlider/Widget.php:140
 msgid "Menu order"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:119
-#: src/Modules/ProductSlider/Widget.php:149
+#: src/Modules/ProductSlider/Widget.php:150
 #: src/Modules/ShopFilters/templates/admin-facet-config.php:36
 msgid "Order"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:124
-#: src/Modules/ProductSlider/Widget.php:154
+#: src/Modules/ProductSlider/Widget.php:155
 msgid "Ascending"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:125
-#: src/Modules/ProductSlider/Widget.php:155
+#: src/Modules/ProductSlider/Widget.php:156
 msgid "Descending"
 msgstr ""
 
@@ -623,27 +598,27 @@ msgid "Exclude these"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:196
-#: src/Modules/ProductSlider/Widget.php:255
+#: src/Modules/ProductSlider/Widget.php:256
 msgid "Layout"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:204
-#: src/Modules/ProductSlider/Widget.php:263
+#: src/Modules/ProductSlider/Widget.php:264
 msgid "Cards per view"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:215
-#: src/Modules/ProductSlider/Widget.php:274
+#: src/Modules/ProductSlider/Widget.php:275
 msgid "Cards per view (tablet)"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:226
-#: src/Modules/ProductSlider/Widget.php:285
+#: src/Modules/ProductSlider/Widget.php:286
 msgid "Cards per view (mobile)"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:237
-#: src/Modules/ProductSlider/Widget.php:297
+#: src/Modules/ProductSlider/Widget.php:298
 msgid "Gap"
 msgstr ""
 
@@ -652,7 +627,7 @@ msgid "Card height"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:262
-#: src/Modules/ProductSlider/Widget.php:323
+#: src/Modules/ProductSlider/Widget.php:324
 msgid "Card style"
 msgstr ""
 
@@ -665,12 +640,12 @@ msgid "Circle"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:276
-#: src/Modules/ProductSlider/Widget.php:336
+#: src/Modules/ProductSlider/Widget.php:337
 msgid "Soft"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:277
-#: src/Modules/ProductSlider/Widget.php:337
+#: src/Modules/ProductSlider/Widget.php:338
 msgid "Rect"
 msgstr ""
 
@@ -692,22 +667,22 @@ msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:293
 #: src/Modules/CategorySlider/Widget.php:556
-#: src/Modules/ProductSlider/Widget.php:548
+#: src/Modules/ProductSlider/Widget.php:549
 msgid "Hidden"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:301
-#: src/Modules/ProductSlider/Widget.php:366
+#: src/Modules/ProductSlider/Widget.php:367
 msgid "Accent color"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:313
-#: src/Modules/ProductSlider/Widget.php:378
+#: src/Modules/ProductSlider/Widget.php:379
 msgid "Hover ring color"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:316
-#: src/Modules/ProductSlider/Widget.php:381
+#: src/Modules/ProductSlider/Widget.php:382
 msgid "Outline drawn around a card on hover."
 msgstr ""
 
@@ -740,7 +715,7 @@ msgid "Arrow hover transition duration"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:432
-#: src/Modules/ProductSlider/Widget.php:391
+#: src/Modules/ProductSlider/Widget.php:392
 msgid "Typography"
 msgstr ""
 
@@ -753,57 +728,57 @@ msgid "Card name color"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:482
-#: src/Modules/ProductSlider/Widget.php:452
+#: src/Modules/ProductSlider/Widget.php:453
 msgid "Behavior"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:490
-#: src/Modules/ProductSlider/Widget.php:475
+#: src/Modules/ProductSlider/Widget.php:476
 msgid "Direction"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:495
-#: src/Modules/ProductSlider/Widget.php:480
+#: src/Modules/ProductSlider/Widget.php:481
 msgid "Auto (follow site)"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:496
-#: src/Modules/ProductSlider/Widget.php:481
+#: src/Modules/ProductSlider/Widget.php:482
 msgid "Force LTR"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:497
-#: src/Modules/ProductSlider/Widget.php:482
+#: src/Modules/ProductSlider/Widget.php:483
 msgid "Force RTL"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:499
-#: src/Modules/ProductSlider/Widget.php:484
+#: src/Modules/ProductSlider/Widget.php:485
 msgid "RTL flips arrows, drag direction, and progress bar."
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:506
-#: src/Modules/ProductSlider/Widget.php:492
+#: src/Modules/ProductSlider/Widget.php:493
 msgid "Scroll snap"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:511
-#: src/Modules/ProductSlider/Widget.php:497
+#: src/Modules/ProductSlider/Widget.php:498
 msgid "Free-scroll"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:512
-#: src/Modules/ProductSlider/Widget.php:498
+#: src/Modules/ProductSlider/Widget.php:499
 msgid "Per card"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:513
-#: src/Modules/ProductSlider/Widget.php:499
+#: src/Modules/ProductSlider/Widget.php:500
 msgid "Per page"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:521
-#: src/Modules/ProductSlider/Widget.php:508
+#: src/Modules/ProductSlider/Widget.php:509
 msgid "Enable mouse drag"
 msgstr ""
 
@@ -812,52 +787,52 @@ msgid "Drag cards left or right to scroll the row. Clicks still navigate normall
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:532
-#: src/Modules/ProductSlider/Widget.php:520
+#: src/Modules/ProductSlider/Widget.php:521
 msgid "Show arrow buttons"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:549
-#: src/Modules/ProductSlider/Widget.php:541
+#: src/Modules/ProductSlider/Widget.php:542
 msgid "Indicator"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:554
-#: src/Modules/ProductSlider/Widget.php:546
+#: src/Modules/ProductSlider/Widget.php:547
 msgid "Progress bar"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:555
-#: src/Modules/ProductSlider/Widget.php:547
+#: src/Modules/ProductSlider/Widget.php:548
 msgid "Pagination dots"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:558
-#: src/Modules/ProductSlider/Widget.php:550
+#: src/Modules/ProductSlider/Widget.php:551
 msgid "Replaces the legacy \"Show progress bar\" toggle. When unset on pre-existing widgets, the legacy value is honored."
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:566
-#: src/Modules/ProductSlider/Widget.php:559
+#: src/Modules/ProductSlider/Widget.php:560
 msgid "Show progress bar"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:577
-#: src/Modules/ProductSlider/Widget.php:571
+#: src/Modules/ProductSlider/Widget.php:572
 msgid "Autoplay"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:588
-#: src/Modules/ProductSlider/Widget.php:583
+#: src/Modules/ProductSlider/Widget.php:584
 msgid "Autoplay delay (ms)"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:600
-#: src/Modules/ProductSlider/Widget.php:598
+#: src/Modules/ProductSlider/Widget.php:599
 msgid "Loop"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:604
-#: src/Modules/ProductSlider/Widget.php:602
+#: src/Modules/ProductSlider/Widget.php:603
 msgid "When the autoplay reaches the end, smoothly wrap back to the start. Drag-past-end-wraps is intentionally out of scope."
 msgstr ""
 
@@ -870,12 +845,12 @@ msgid "Scroll categories"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:900
-#: src/Modules/ProductSlider/Widget.php:1130
+#: src/Modules/ProductSlider/Widget.php:1203
 msgid "Previous"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:903
-#: src/Modules/ProductSlider/Widget.php:1133
+#: src/Modules/ProductSlider/Widget.php:1206
 msgid "Next"
 msgstr ""
 
@@ -896,13 +871,13 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: src/Modules/CategorySlider/Widget.php:995
-#: src/Modules/ProductSlider/Widget.php:1176
+#: src/Modules/ProductSlider/Widget.php:1279
 msgid "Slide navigation"
 msgstr ""
 
 #. translators: %d page index, 1-based
 #: src/Modules/CategorySlider/Widget.php:997
-#: src/Modules/ProductSlider/Widget.php:1178
+#: src/Modules/ProductSlider/Widget.php:1281
 #, php-format
 msgid "Page %d"
 msgstr ""
@@ -957,6 +932,54 @@ msgstr ""
 
 #: src/Modules/CheapestDefaultVariation/Module.php:89
 msgid "Which variation gets pre-selected. \"Cheapest\" scans display_price; \"First in-stock\" returns the first variation WooCommerce returns that is in stock and purchasable. Only takes effect when the strategy selector feature flag is on."
+msgstr ""
+
+#: src/Modules/HoverSwap/Gallery_Slider.php:161
+msgid "Previous image"
+msgstr ""
+
+#: src/Modules/HoverSwap/Gallery_Slider.php:162
+msgid "Next image"
+msgstr ""
+
+#: src/Modules/HoverSwap/Module.php:52
+msgid "Card Image Effects"
+msgstr ""
+
+#: src/Modules/HoverSwap/Module.php:59
+msgid "Enhances the product image on shop / archive cards: hover cross-fade to the second image, or a small swipeable slider of all images. Pick the behaviour with the Card image mode setting."
+msgstr ""
+
+#: src/Modules/HoverSwap/Module.php:78
+msgid "Card image mode"
+msgstr ""
+
+#: src/Modules/HoverSwap/Module.php:81
+msgid "None — leave the card image alone"
+msgstr ""
+
+#: src/Modules/HoverSwap/Module.php:82
+msgid "Hover swap — fade to the second image on hover"
+msgstr ""
+
+#: src/Modules/HoverSwap/Module.php:83
+msgid "Gallery slider — swipeable slider of all images"
+msgstr ""
+
+#: src/Modules/HoverSwap/Module.php:86
+msgid "What happens to the product image on shop / archive cards."
+msgstr ""
+
+#: src/Modules/HoverSwap/Module.php:89
+msgid "Slider arrows"
+msgstr ""
+
+#: src/Modules/HoverSwap/Module.php:91
+msgid "Show prev / next arrows (fade in on hover)"
+msgstr ""
+
+#: src/Modules/HoverSwap/Module.php:92
+msgid "Gallery slider mode only. Turn off for a cleaner, swipe-only look."
 msgstr ""
 
 #: src/Modules/InfiniteScroll/Importer.php:32
@@ -1226,168 +1249,249 @@ msgstr ""
 msgid "Max products"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:135
-msgid "Date"
+#: src/Modules/ProductSlider/Widget.php:125
+msgid "Ignored when Source is \"Current query (archive)\" in Grid mode — there the widget shows the full archive page and paginates."
 msgstr ""
 
 #: src/Modules/ProductSlider/Widget.php:136
+msgid "Date"
+msgstr ""
+
+#: src/Modules/ProductSlider/Widget.php:137
 #: src/Modules/ShopFilters/Labels.php:60
 msgid "Price"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:137
-#: src/Modules/ShopFilters/Module.php:124
+#: src/Modules/ProductSlider/Widget.php:138
+#: src/Modules/ShopFilters/Module.php:111
 msgid "Popularity"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:138
+#: src/Modules/ProductSlider/Widget.php:139
 msgid "Rating"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:140
+#: src/Modules/ProductSlider/Widget.php:141
 msgid "Title"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:141
+#: src/Modules/ProductSlider/Widget.php:142
 msgid "Random"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:167
+#: src/Modules/ProductSlider/Widget.php:168
 msgid "All published products"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:168
+#: src/Modules/ProductSlider/Widget.php:169
 msgid "Featured only"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:169
+#: src/Modules/ProductSlider/Widget.php:170
 msgid "On-sale only"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:170
+#: src/Modules/ProductSlider/Widget.php:171
 msgid "By category"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:171
+#: src/Modules/ProductSlider/Widget.php:172
 msgid "By tag"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:172
+#: src/Modules/ProductSlider/Widget.php:173
 msgid "Manual selection"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:173
+#: src/Modules/ProductSlider/Widget.php:174
 msgid "Current query (archive)"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:174
+#: src/Modules/ProductSlider/Widget.php:175
 msgid "Related products (single)"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:183
-#: src/Modules/ShopFilters/Admin_Config_Page.php:128
+#: src/Modules/ProductSlider/Widget.php:184
+#: src/Modules/ShopFilters/Admin_Config_Page.php:127
 #: src/Modules/ShopFilters/Labels.php:56
 msgid "Categories"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:197
+#: src/Modules/ProductSlider/Widget.php:198
 msgid "Tags"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:210
+#: src/Modules/ProductSlider/Widget.php:211
 msgid "Product IDs"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:213
+#: src/Modules/ProductSlider/Widget.php:214
 msgid "Comma-separated product IDs. Order is preserved."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:221
+#: src/Modules/ProductSlider/Widget.php:222
 msgid "Exclude product IDs"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:224
+#: src/Modules/ProductSlider/Widget.php:225
 msgid "Comma-separated product IDs to exclude."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:231
+#: src/Modules/ProductSlider/Widget.php:232
 msgid "Hide free products"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:241
+#: src/Modules/ProductSlider/Widget.php:242
 msgid "Hide out-of-stock"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:245
+#: src/Modules/ProductSlider/Widget.php:246
 msgid "When off, the WooCommerce global \"Hide out of stock items from the catalog\" setting still applies."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:290
+#: src/Modules/ProductSlider/Widget.php:291
 msgid "Fractional values let the next card peek (e.g. 1.4 = one full card with ~30% of the next showing)."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:308
+#: src/Modules/ProductSlider/Widget.php:309
 msgid "Image height"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:313
+#: src/Modules/ProductSlider/Widget.php:314
 msgid "Height of the image area. Meta and cart button stack below at natural height."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:331
+#: src/Modules/ProductSlider/Widget.php:332
 msgid "Image shape"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:345
+#: src/Modules/ProductSlider/Widget.php:346
 msgid "Show add-to-cart button"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:355
+#: src/Modules/ProductSlider/Widget.php:356
 msgid "Show sale badge"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:359
+#: src/Modules/ProductSlider/Widget.php:360
 msgid "Toggles WooCommerce's standard sale flash on each card. Plugins that replace the sale flash respect this toggle automatically."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:419
+#: src/Modules/ProductSlider/Widget.php:420
 msgid "Product name"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:427
+#: src/Modules/ProductSlider/Widget.php:428
 msgid "Product name color"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:438
+#: src/Modules/ProductSlider/Widget.php:439
 msgid "Price color"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:460
+#: src/Modules/ProductSlider/Widget.php:461
 msgid "Display as"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:465
+#: src/Modules/ProductSlider/Widget.php:466
 msgid "Slider"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:466
+#: src/Modules/ProductSlider/Widget.php:467
 msgid "Grid"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:468
+#: src/Modules/ProductSlider/Widget.php:469
 msgid "Slider = draggable horizontal row with progress bar. Grid = static layout (no drag, no arrows)."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:512
+#: src/Modules/ProductSlider/Widget.php:513
 msgid "Drag cards left or right to scroll the row. Clicks still navigate normally — drag only engages after a deliberate horizontal motion."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:995
+#: src/Modules/ProductSlider/Widget.php:1059
 msgid "No products match the current Query settings."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:1129
+#: src/Modules/ProductSlider/Widget.php:1202
 msgid "Scroll products"
+msgstr ""
+
+#: src/Modules/QuickView/Ajax.php:58
+#: src/Modules/ShopFilters/Ajax.php:46
+msgid "Too many requests. Please slow down."
+msgstr ""
+
+#: src/Modules/QuickView/Ajax.php:65
+#: src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:45
+msgid "Product not found."
+msgstr ""
+
+#: src/Modules/QuickView/Labels.php:39
+msgid "Trigger button accessible name"
+msgstr ""
+
+#: src/Modules/QuickView/Labels.php:40
+#: src/Modules/QuickView/Labels.php:44
+msgid "Quick view"
+msgstr ""
+
+#: src/Modules/QuickView/Labels.php:43
+#: src/Modules/ShopFilters/Labels.php:43
+msgid "Drawer title"
+msgstr ""
+
+#: src/Modules/QuickView/Labels.php:47
+#: src/Modules/ShopFilters/Labels.php:51
+msgid "Close button label"
+msgstr ""
+
+#: src/Modules/QuickView/Labels.php:48
+#: src/Modules/ShopFilters/Labels.php:52
+msgid "Close"
+msgstr ""
+
+#: src/Modules/QuickView/Labels.php:51
+msgid "Full-details link"
+msgstr ""
+
+#: src/Modules/QuickView/Labels.php:52
+msgid "View full details"
+msgstr ""
+
+#: src/Modules/QuickView/Labels.php:55
+msgid "Loading message"
+msgstr ""
+
+#: src/Modules/QuickView/Labels.php:56
+msgid "Loading…"
+msgstr ""
+
+#: src/Modules/QuickView/Labels.php:59
+msgid "Error message"
+msgstr ""
+
+#: src/Modules/QuickView/Labels.php:60
+msgid "Could not load this product. Please try again."
+msgstr ""
+
+#: src/Modules/QuickView/Module.php:47
+msgid "Quick View"
+msgstr ""
+
+#: src/Modules/QuickView/Module.php:54
+msgid "Quick-view icon on product cards opening a slide-in drawer with image, price, short description, add-to-cart and a product-page link."
+msgstr ""
+
+#. translators: %s: the English default wording for this field.
+#: src/Modules/QuickView/Module.php:76
+#: src/Modules/ShopFilters/Module.php:67
+#, php-format
+msgid "Default: %s"
+msgstr ""
+
+#: src/Modules/QuickView/Module.php:78
+msgid "Quick-view wording — leave a field blank to use its English default."
 msgstr ""
 
 #: src/Modules/RestockNotify/Admin_Tools.php:43
@@ -1833,10 +1937,6 @@ msgstr ""
 msgid "Please enter a valid email address."
 msgstr ""
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:45
-msgid "Product not found."
-msgstr ""
-
 #: src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:50
 msgid "Please confirm the consent checkbox to continue."
 msgstr ""
@@ -1908,118 +2008,72 @@ msgstr ""
 msgid "Restock Notify subscriptions"
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Config_Page.php:91
+#: src/Modules/ShopFilters/Admin_Config_Page.php:90
 msgid "Filter configuration"
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Config_Page.php:94
+#: src/Modules/ShopFilters/Admin_Config_Page.php:93
 msgid "No indexed attributes yet. Build the index (above) first — the filters you can configure are the ones the index holds."
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:92
-msgid "Background indexing is off."
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:101
-#: src/Modules/ShopFilters/Admin_Page.php:122
-msgid "Search index"
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:102
-msgid "Background indexing is off. Tick \"Background indexing\" above and save to build and keep the product index that powers the filters."
-msgstr ""
-
 #. translators: 1: indexed product count, 2: row count, 3: last refresh time, 4: scheduled state
-#: src/Modules/ShopFilters/Admin_Page.php:113
+#: src/Modules/ShopFilters/Admin_Page.php:94
 #, php-format
 msgid "Indexed: %1$d products, %2$d rows. Last refresh: %3$s. Auto-reindex: %4$s."
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:116
+#: src/Modules/ShopFilters/Admin_Page.php:97
 msgid "never"
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:117
+#: src/Modules/ShopFilters/Admin_Page.php:98
 msgid "scheduled"
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:117
+#: src/Modules/ShopFilters/Admin_Page.php:98
 msgid "not scheduled"
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:125
+#: src/Modules/ShopFilters/Admin_Page.php:103
+msgid "Search index"
+msgstr ""
+
+#: src/Modules/ShopFilters/Admin_Page.php:106
 msgid "WP-Cron is disabled on this site (DISABLE_WP_CRON), so the automatic refresh depends on a real server cron triggering Action Scheduler. Make sure that is configured, or rebuild on demand with the button below."
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:127
+#: src/Modules/ShopFilters/Admin_Page.php:108
 msgid "The index refreshes automatically as products change. Use this to rebuild from scratch (e.g. after a bulk import that bypassed the normal save hooks)."
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:129
+#: src/Modules/ShopFilters/Admin_Page.php:110
 msgid "Reindex all products"
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:130
+#: src/Modules/ShopFilters/Admin_Page.php:111
 #: src/Modules/VariableStockFix/Module.php:510
 msgid "Stop"
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:147
+#: src/Modules/ShopFilters/Admin_Page.php:128
 msgid "Counting products…"
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:148
+#: src/Modules/ShopFilters/Admin_Page.php:129
 msgid "Indexing from"
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:149
+#: src/Modules/ShopFilters/Admin_Page.php:130
 msgid "Reindex complete."
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:150
+#: src/Modules/ShopFilters/Admin_Page.php:131
 #: src/Modules/VariableStockFix/Module.php:533
 msgid "Stopped."
 msgstr ""
 
-#: src/Modules/ShopFilters/Admin_Page.php:151
+#: src/Modules/ShopFilters/Admin_Page.php:132
 msgid "indexed"
-msgstr ""
-
-#: src/Modules/ShopFilters/Ajax.php:46
-msgid "Too many requests. Please slow down."
-msgstr ""
-
-#: src/Modules/ShopFilters/Diagnostics.php:117
-msgid "Index diagnostic"
-msgstr ""
-
-#: src/Modules/ShopFilters/Diagnostics.php:119
-msgid "What the index actually holds, per term. Filters match by SLUG — if a value labelled one size returns another, or a URL returns no products, look for a name that disagrees with its slug, an \"in stock\" of 0, or an \"unresolved\" term below."
-msgstr ""
-
-#: src/Modules/ShopFilters/Diagnostics.php:124
-msgid "Taxonomy"
-msgstr ""
-
-#: src/Modules/ShopFilters/Diagnostics.php:126
-msgid "Slug (used by filters)"
-msgstr ""
-
-#: src/Modules/ShopFilters/Diagnostics.php:127
-msgid "Term ID"
-msgstr ""
-
-#: src/Modules/ShopFilters/Diagnostics.php:128
-msgid "Products"
-msgstr ""
-
-#: src/Modules/ShopFilters/Diagnostics.php:129
-#: src/Modules/ShopFilters/Labels.php:76
-msgid "In stock"
-msgstr ""
-
-#: src/Modules/ShopFilters/Diagnostics.php:140
-msgid "unresolved — not a live term"
 msgstr ""
 
 #: src/Modules/ShopFilters/Labels.php:39
@@ -2028,10 +2082,6 @@ msgstr ""
 
 #: src/Modules/ShopFilters/Labels.php:40
 msgid "Filter sizes & prices"
-msgstr ""
-
-#: src/Modules/ShopFilters/Labels.php:43
-msgid "Drawer title"
 msgstr ""
 
 #: src/Modules/ShopFilters/Labels.php:44
@@ -2045,14 +2095,6 @@ msgstr ""
 
 #: src/Modules/ShopFilters/Labels.php:48
 msgid "Filter products"
-msgstr ""
-
-#: src/Modules/ShopFilters/Labels.php:51
-msgid "Close button label"
-msgstr ""
-
-#: src/Modules/ShopFilters/Labels.php:52
-msgid "Close"
 msgstr ""
 
 #: src/Modules/ShopFilters/Labels.php:55
@@ -2089,6 +2131,10 @@ msgstr ""
 
 #: src/Modules/ShopFilters/Labels.php:75
 msgid "In-stock filter label"
+msgstr ""
+
+#: src/Modules/ShopFilters/Labels.php:76
+msgid "In stock"
 msgstr ""
 
 #: src/Modules/ShopFilters/Labels.php:79
@@ -2143,77 +2189,59 @@ msgstr ""
 msgid "%d products"
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:42
+#: src/Modules/ShopFilters/Module.php:40
 msgid "Shop Filters"
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:51
-msgid "Faceted, context-aware product filters for shop and category pages, backed by a lightweight background index. Foundation only in this version (index + indexer); the storefront UI ships in later phases."
-msgstr ""
-
-#: src/Modules/ShopFilters/Module.php:66
-msgid "Background indexing"
-msgstr ""
-
-#: src/Modules/ShopFilters/Module.php:68
-msgid "Build and keep a fresh product index (required for the filters). Indexes incrementally as products change, plus a sweep every few minutes."
+#: src/Modules/ShopFilters/Module.php:49
+msgid "Faceted, context-aware product filters for shop and category pages, backed by a lightweight background index."
 msgstr ""
 
 #: src/Modules/ShopFilters/Module.php:69
-msgid "Same switch as the \"Shop Filters — background indexer\" entry under Freeman → Feature Flags. Requires the module to be enabled."
-msgstr ""
-
-#. translators: %s: the English default wording for this field.
-#: src/Modules/ShopFilters/Module.php:80
-#, php-format
-msgid "Default: %s"
-msgstr ""
-
-#: src/Modules/ShopFilters/Module.php:82
 msgid "Filter panel wording — leave a field blank to use its English default."
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:94
+#: src/Modules/ShopFilters/Module.php:81
 msgid "Price bands"
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:97
+#: src/Modules/ShopFilters/Module.php:84
 msgid "Comma-separated upper price points for the price filter, e.g. 50, 100, 200, 500 (gives 0–50, 50–100, 100–200, 200–500, 500+). Leave blank to auto-derive bands from your catalogue prices."
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:100
+#: src/Modules/ShopFilters/Module.php:87
 msgid "— WooCommerce default —"
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:105
+#: src/Modules/ShopFilters/Module.php:92
 msgid "Default sort"
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:109
+#: src/Modules/ShopFilters/Module.php:96
 msgid "Default product ordering for shop and category pages (until the shopper picks a sort). Blank keeps the WooCommerce default."
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:123
+#: src/Modules/ShopFilters/Module.php:110
 msgid "Default sorting"
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:125
+#: src/Modules/ShopFilters/Module.php:112
 msgid "Average rating"
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:126
+#: src/Modules/ShopFilters/Module.php:113
 msgid "Latest"
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:127
+#: src/Modules/ShopFilters/Module.php:114
 msgid "Price: low to high"
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:128
+#: src/Modules/ShopFilters/Module.php:115
 msgid "Price: high to low"
 msgstr ""
 
-#: src/Modules/ShopFilters/Module.php:192
+#: src/Modules/ShopFilters/Module.php:166
 msgid "Every 5 minutes (Freeman Shop Filters)"
 msgstr ""
 

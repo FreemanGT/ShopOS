@@ -117,11 +117,12 @@ final class Widget extends Widget_Base {
 		$this->add_control(
 			'limit',
 			array(
-				'label'      => __( 'Max products', 'freeman-core' ),
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( '' ),
-				'range'      => array( '' => array( 'min' => 1, 'max' => 24, 'step' => 1 ) ),
-				'default'    => array( 'unit' => '', 'size' => 12 ),
+				'label'       => __( 'Max products', 'freeman-core' ),
+				'type'        => Controls_Manager::SLIDER,
+				'size_units'  => array( '' ),
+				'range'       => array( '' => array( 'min' => 1, 'max' => 48, 'step' => 1 ) ),
+				'default'     => array( 'unit' => '', 'size' => 12 ),
+				'description' => __( 'Ignored when Source is "Current query (archive)" in Grid mode — there the widget shows the full archive page and paginates.', 'freeman-core' ),
 			)
 		);
 
@@ -418,6 +419,15 @@ final class Widget extends Widget_Base {
 				'name'     => 'name_typography',
 				'label'    => __( 'Product name', 'freeman-core' ),
 				'selector' => '{{WRAPPER}} .cs.cs-products .woocommerce-loop-product__title',
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			array(
+				'name'     => 'price_typography',
+				'label'    => __( 'Price', 'freeman-core' ),
+				'selector' => '{{WRAPPER}} .cs.cs-products .cs-card.product .price',
 			)
 		);
 
@@ -743,23 +753,22 @@ final class Widget extends Widget_Base {
 		$limit  = max( 1, $this->slider_int( $s['limit'] ?? null, 12 ) );
 		$source = $s['source'] ?? 'all';
 
-		// Current archive query — read $wp_query when on a product archive.
+		// Current archive query — read the *canonical* main query when on a
+		// product archive. In grid mode the widget stands in for the archive
+		// "Products" grid, so it renders the whole current page (already
+		// bounded by WooCommerce's products-per-page) and lets render() emit
+		// pagination for the rest of the catalog. In slider mode the row stays
+		// bounded by the widget's "Max products" cap — paginating a draggable
+		// row is meaningless. We read $wp_the_query (via main_query()), not the
+		// global $wp_query, because an Elementor Theme Builder archive template
+		// swaps $wp_query for its own loop while the widget renders — which
+		// nulls out the is_shop()/is_tax() tags and the posts/max_num_pages we
+		// need. $wp_the_query survives that swap.
 		if ( 'current_query' === $source ) {
-			if ( is_post_type_archive( 'product' ) || is_tax( array( 'product_cat', 'product_tag' ) ) ) {
-				global $wp_query;
-				$out = array();
-				if ( $wp_query && ! empty( $wp_query->posts ) ) {
-					foreach ( $wp_query->posts as $p ) {
-						$prod = wc_get_product( $p );
-						if ( $prod instanceof \WC_Product && $prod->is_visible() ) {
-							$out[] = $prod;
-						}
-						if ( count( $out ) >= $limit ) {
-							break;
-						}
-					}
-				}
-				return $out;
+			$is_grid = ( ( $s['display_mode'] ?? 'slider' ) === 'grid' );
+			$main    = $this->main_query();
+			if ( $this->is_product_archive( $main ) ) {
+				return $this->collect_archive_products( $main, $is_grid, $limit );
 			}
 			$source = 'all';
 		}
@@ -907,6 +916,70 @@ final class Widget extends Widget_Base {
 	}
 
 	/**
+	 * The canonical main query. WordPress keeps $wp_the_query pointing at the
+	 * page's real main query even when a secondary loop (e.g. an Elementor
+	 * archive template, or any `query_posts()` caller) reassigns the global
+	 * $wp_query. Reading it lets `current_query` grid mode survive that swap;
+	 * falls back to $wp_query when $wp_the_query is unavailable.
+	 *
+	 * @return \WP_Query|null
+	 */
+	private function main_query() {
+		if ( isset( $GLOBALS['wp_the_query'] ) && $GLOBALS['wp_the_query'] instanceof \WP_Query ) {
+			return $GLOBALS['wp_the_query'];
+		}
+		return ( isset( $GLOBALS['wp_query'] ) && $GLOBALS['wp_query'] instanceof \WP_Query ) ? $GLOBALS['wp_query'] : null;
+	}
+
+	/**
+	 * Whether the given query is a WooCommerce product archive (shop, product
+	 * post-type archive, or a product taxonomy). The conditional tags are
+	 * tried first for the common case; the query object's own predicates are
+	 * the fallback — they hold even when the global $wp_query has been swapped
+	 * out from under the tags (the Elementor archive case).
+	 *
+	 * @param \WP_Query|null $query Query to inspect.
+	 * @return bool
+	 */
+	private function is_product_archive( $query ) {
+		if ( is_post_type_archive( 'product' )
+			|| ( function_exists( 'is_shop' ) && is_shop() )
+			|| is_tax( array( 'product_cat', 'product_tag' ) ) ) {
+			return true;
+		}
+		return $query instanceof \WP_Query
+			&& ( $query->is_post_type_archive( 'product' )
+				|| $query->is_tax( array( 'product_cat', 'product_tag' ) ) );
+	}
+
+	/**
+	 * Collect visible WC_Product objects from a query's posts. Grid mode
+	 * returns the full page (render() paginates the rest); slider mode bounds
+	 * the row at $limit, since paginating a draggable row is meaningless.
+	 *
+	 * @param \WP_Query|null $query   Query whose posts to read.
+	 * @param bool           $is_grid Whether the widget renders as a grid.
+	 * @param int            $limit   Slider-mode product cap.
+	 * @return \WC_Product[]
+	 */
+	private function collect_archive_products( $query, $is_grid, $limit ) {
+		$out = array();
+		if ( ! $query instanceof \WP_Query || empty( $query->posts ) ) {
+			return $out;
+		}
+		foreach ( $query->posts as $p ) {
+			$prod = wc_get_product( $p );
+			if ( $prod instanceof \WC_Product && $prod->is_visible() ) {
+				$out[] = $prod;
+			}
+			if ( ! $is_grid && count( $out ) >= $limit ) {
+				break;
+			}
+		}
+		return $out;
+	}
+
+	/**
 	 * Two-pass query for popularity / rating / price orderby — works around
 	 * WC's INNER JOIN on the sort meta key, which silently excludes products
 	 * with no `total_sales` / `_wc_average_rating` / `_price` row.
@@ -1002,6 +1075,14 @@ final class Widget extends Widget_Base {
 		$per_view        = max( 2, $this->slider_int( $s['per_view'] ?? null, 4 ) );
 		$per_view_tablet = max( 2, $this->slider_int( $s['per_view_tablet'] ?? null, 3 ) );
 		$per_view_mobile = max( 1.0, $this->slider_float( $s['per_view_mobile'] ?? null, 1.4 ) );
+		// Grid mode: `--cs-per-mobile` feeds `repeat()`, which requires an
+		// integer track count — a fractional "peek" value (a slider-only
+		// concept) is invalid CSS there and collapses the mobile grid to a
+		// single column. Round to the nearest whole column; slider mode
+		// keeps the float for the peek effect.
+		if ( 'grid' === $display_mode ) {
+			$per_view_mobile = max( 1.0, round( $per_view_mobile ) );
+		}
 		$gap             = max( 0, $this->slider_int( $s['gap'] ?? null, 20 ) );
 		$card_height     = max( 100, $this->slider_int( $s['card_height'] ?? null, 320 ) );
 		$shape           = in_array( $s['shape'] ?? 'soft', array( 'soft', 'rect' ), true ) ? $s['shape'] : 'soft';
@@ -1113,6 +1194,7 @@ final class Widget extends Widget_Base {
 			<?php endif; ?>
 			style="<?php echo esc_attr( $style_vars ); ?>"
 		>
+			<?php if ( ! empty( $s['eyebrow'] ) || ! empty( $s['headline'] ) || ! empty( $s['headline_mute'] ) || $show_arrows ) : ?>
 			<div class="cs-head">
 				<?php if ( ! empty( $s['eyebrow'] ) ) : ?>
 					<div class="cs-eyebrow"><?php echo esc_html( $s['eyebrow'] ); ?></div>
@@ -1136,6 +1218,7 @@ final class Widget extends Widget_Base {
 					</div>
 				<?php endif; ?>
 			</div>
+			<?php endif; ?>
 
 			<ul class="<?php echo esc_attr( $track_classes ); ?>"<?php echo $is_slider ? ' data-cs-track' : ''; ?>>
 				<?php
@@ -1159,6 +1242,35 @@ final class Widget extends Widget_Base {
 				wp_reset_postdata();
 				?>
 			</ul>
+
+			<?php
+			// Archive pagination — only in grid mode bound to the current
+			// query, where the widget stands in for the archive products
+			// grid. Built straight from the canonical main query's
+			// max_num_pages via paginate_links() so it works even on an
+			// Elementor archive template that swaps $wp_query and never ran
+			// wc_setup_loop() (which woocommerce_pagination() depends on).
+			// main_query() reads $wp_the_query to survive that swap.
+			if ( ! $is_slider && 'current_query' === ( $s['source'] ?? '' ) && function_exists( 'paginate_links' ) ) {
+				$main      = $this->main_query();
+				$max_pages = ( $main instanceof \WP_Query && ! empty( $main->max_num_pages ) ) ? (int) $main->max_num_pages : 1;
+				if ( $max_pages > 1 ) {
+					$paged = max( 1, (int) get_query_var( 'paged' ), (int) get_query_var( 'page' ) );
+					$links = paginate_links(
+						array(
+							'total'     => $max_pages,
+							'current'   => $paged,
+							'type'      => 'list',
+							'prev_text' => '&larr;',
+							'next_text' => '&rarr;',
+						)
+					);
+					if ( $links ) {
+						echo '<nav class="woocommerce-pagination cs-pagination">' . $links . '</nav>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- paginate_links() returns safe core markup.
+					}
+				}
+			}
+			?>
 
 			<?php if ( 'progress' === $indicator ) : ?>
 				<div class="cs-foot">

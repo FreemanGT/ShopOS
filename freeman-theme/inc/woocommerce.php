@@ -28,6 +28,11 @@ add_action(
 // because the rule only ships when the admin has opted in; `display: grid`
 // is forced because some loops render as flex/block which would make
 // grid-template-columns a no-op.
+// The `:not(.cs-track):not(.cs-grid)` guards exclude Freeman slider/grid
+// widget containers — their wrapper also carries `.woocommerce`, and the
+// forced grid would break the slider's flex track and override the
+// widget's per-instance mobile column control (grid parity audit G2,
+// /docs in freeman-core repo root: grid-parity-audit-2026-06-11.md).
 add_action(
 	'wp_head',
 	static function () {
@@ -44,7 +49,7 @@ add_action(
 			return;
 		}
 		printf(
-			'<style id="freeman-shop-cols-mobile">@media (max-width:767px){.woocommerce ul.products,.woocommerce ul.products.elementor-grid{display:grid !important;grid-template-columns:repeat(%d,minmax(0,1fr)) !important;}}</style>' . "\n",
+			'<style id="freeman-shop-cols-mobile">@media (max-width:767px){.woocommerce ul.products:not(.cs-track):not(.cs-grid),.woocommerce ul.products.elementor-grid{display:grid !important;grid-template-columns:repeat(%d,minmax(0,1fr)) !important;}}</style>' . "\n",
 			(int) $cols
 		);
 	}

@@ -1,5 +1,9 @@
 # Freeman Theme — Changelog
 
+## [1.11.26] — 2026-06-11
+
+- Exclude Freeman slider/grid widget containers (.cs-track/.cs-grid) from the mobile-columns Customizer override — the forced grid broke the slider track and overrode the widget's mobile column control on product archives (grid parity audit G2)
+
 ## [1.11.25] — 2026-05-13
 
 - Customizer → WooCommerce → Product Catalog: new "Mobile columns" select (1/2/3/4, defaults to "Don't override"). When set, prints an inline `@media (max-width:767px)` rule on product archive pages (shop, product category/tag, product search) that pins `.woocommerce ul.products` `grid-template-columns` to the chosen count with `!important` and forces `display: grid` so the rule lands regardless of whether the underlying loop renders as grid/flex/block. Opt-in: with the sentinel "default" value (the shipped default), nothing is emitted and existing behaviour is preserved.

@@ -271,9 +271,11 @@ class Etucart_VS_Frontend {
 		wp_localize_script( 'freeman-core', 'EtucartVS', [
 			'checkoutUrl' => esc_url_raw( $checkout_url ),
 			'i18n' => [
-				'choose'       => __( 'Choose an option', 'freeman-core' ),
-				'notAvailable' => __( 'This combination is not available', 'freeman-core' ),
-				'addedToCart'  => __( 'נוסף לעגלה', 'freeman-core' ),
+				'choose'       => \Freeman\Core\Modules\VariationSwatches\Labels::get( 'choose_option' ),
+				'notAvailable' => \Freeman\Core\Modules\VariationSwatches\Labels::get( 'not_available' ),
+				'addedToCart'  => \Freeman\Core\Modules\VariationSwatches\Labels::get( 'added_to_cart' ),
+				'addToCart'    => \Freeman\Core\Modules\VariationSwatches\Labels::get( 'add_to_cart' ),
+				'oos'          => \Freeman\Core\Modules\VariationSwatches\Labels::get( 'out_of_stock' ),
 			],
 		] );
 

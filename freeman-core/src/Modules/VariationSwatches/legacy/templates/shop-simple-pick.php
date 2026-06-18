@@ -66,7 +66,7 @@ $max_qty        = (int) ( $prepared['max_qty'] ?? -1 ); // -1 = no limit
 					   <?php if ( $max_qty > 0 ) : ?>max="<?php echo esc_attr( $max_qty ); ?>"<?php endif; ?>
 					   step="1"
 					   inputmode="numeric"
-					   aria-label="<?php esc_attr_e( 'כמות', 'freeman-core' ); ?>" />
+					   aria-label="<?php echo esc_attr( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'quantity' ) ); ?>" />
 				<button type="button"
 						class="etucart-shop-pick__qty-btn etucart-shop-pick__qty-btn--minus"
 						aria-label="−"
@@ -76,7 +76,7 @@ $max_qty        = (int) ( $prepared['max_qty'] ?? -1 ); // -1 = no limit
 			<button type="button"
 					class="etucart-shop-pick__add"
 					aria-disabled="false">
-				<?php esc_html_e( 'הוספה לעגלה', 'freeman-core' ); ?>
+				<?php echo esc_html( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'add_to_cart' ) ); ?>
 			</button>
 		</div>
 	<?php else : ?>
@@ -84,7 +84,7 @@ $max_qty        = (int) ( $prepared['max_qty'] ?? -1 ); // -1 = no limit
 				class="etucart-shop-pick__add is-oos"
 				disabled
 				aria-disabled="true">
-			<?php esc_html_e( 'אזל מהמלאי', 'freeman-core' ); ?>
+			<?php echo esc_html( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'out_of_stock' ) ); ?>
 		</button>
 	<?php endif; ?>
 </div>

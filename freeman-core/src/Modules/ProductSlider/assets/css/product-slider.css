@@ -138,7 +138,9 @@
 	content: "";
 	position: absolute;
 	inset: -8px;
-	border: 1px solid transparent;
+	/* Very subtle hairline at rest to separate cards; the hover rule below
+	   ramps it to the full ring via the border-color transition. */
+	border: 1px solid rgba(0, 0, 0, 0.07);
 	border-radius: 14px;
 	pointer-events: none;
 	transition: inset .25s cubic-bezier(.2,.7,.2,1), border-color .25s;
@@ -182,7 +184,7 @@
 }
 .cs.cs-products.cs-shape-soft .cs-card.product img.attachment-woocommerce_thumbnail,
 .cs.cs-products.cs-shape-soft .cs-card.product img.wp-post-image {
-	border-radius: 18px;
+	border-radius: 1rem;
 }
 .cs.cs-products.cs-shape-rect .cs-card.product img.attachment-woocommerce_thumbnail,
 .cs.cs-products.cs-shape-rect .cs-card.product img.wp-post-image {
@@ -380,6 +382,46 @@
 .cs.cs-products.cs-grid-mode .cs-grid.products > li.product {
 	flex: 0 1 auto;
 	margin: 0;
+}
+
+/* WooCommerce's default stylesheet adds clearfix pseudo-elements to
+   `ul.products` (`::before` / `::after { content:" "; display:table }`). In a
+   CSS grid those generated boxes become grid items — the `::before` eats the
+   first cell, so the first row renders one product short. Drop them in grid
+   mode (the grid never needs a float clearfix). */
+.cs.cs-products.cs-grid-mode .cs-grid.products::before,
+.cs.cs-products.cs-grid-mode .cs-grid.products::after {
+	display: none;
+}
+
+/* InfiniteScroll injects skeleton cards (`.bookomers-skeleton`) into this grid
+   while the next page loads. Match them to our cards: a real card is the image
+   (`--cs-card-h`) plus the title / price / cart stack below (~140px), but the
+   skeleton only has the image + a few thin lines, so it came up short. Pin the
+   placeholder image to the card image height (its own CSS uses aspect-ratio
+   3/4, which renders tiny against our taller cards) and the whole skeleton to
+   the full card height so the loading boxes line up with real cards. */
+.cs.cs-products.cs-grid-mode .bookomers-skeleton {
+	min-height: calc(var(--cs-card-h) + 140px);
+}
+.cs.cs-products.cs-grid-mode .bookomers-skel-image {
+	aspect-ratio: auto;
+	height: var(--cs-card-h);
+}
+
+/* Archive pagination (grid mode + current-query source) — sits below the
+   grid when the widget stands in for the archive products grid. */
+.cs.cs-products .cs-pagination {
+	margin-top: 28px;
+}
+.cs.cs-products .cs-pagination ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	justify-content: center;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
 /* ── Responsive ────────────────────────────────────── */

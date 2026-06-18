@@ -44,7 +44,7 @@ $pdp_price_html = $product->get_price_html(); ?>
    data-has-range="0"
    data-from-html="<?php echo esc_attr( $pdp_price_html ); ?>"
    aria-live="polite">
-	<span class="etucart-pdp-price__prefix" hidden><?php esc_html_e( 'החל מ:', 'freeman-core' ); ?></span>
+	<span class="etucart-pdp-price__prefix" hidden><?php echo esc_html( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'from_price' ) ); ?></span>
 	<span class="etucart-pdp-price__value"><?php echo wp_kses_post( $pdp_price_html ); ?></span>
 </p>
 
@@ -66,9 +66,9 @@ $pdp_price_html = $product->get_price_html(); ?>
 					name="add-to-cart"
 					value="<?php echo absint( $product_id ); ?>"
 					<?php echo $buyable ? '' : 'disabled aria-disabled="true"'; ?>>
-				<?php echo $buyable
-					? esc_html__( 'הוספה לעגלה', 'freeman-core' )
-					: esc_html__( 'אזל מהמלאי', 'freeman-core' ); ?>
+				<?php echo esc_html( $buyable
+					? \Freeman\Core\Modules\VariationSwatches\Labels::get( 'add_to_cart' )
+					: \Freeman\Core\Modules\VariationSwatches\Labels::get( 'out_of_stock' ) ); ?>
 			</button>
 
 			<?php
@@ -95,7 +95,7 @@ $pdp_price_html = $product->get_price_html(); ?>
 					name="add-to-cart"
 					value="<?php echo absint( $product_id ); ?>"
 					data-etucart-buy-now="1">
-				<?php esc_html_e( 'קנה עכשיו', 'freeman-core' ); ?>
+				<?php echo esc_html( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'buy_now' ) ); ?>
 			</button>
 		<?php endif; ?>
 	</div>
@@ -119,7 +119,7 @@ $pdp_price_html = $product->get_price_html(); ?>
 						class="etucart-sticky-bar__buy etucart-sticky-bar__buy--atc single_add_to_cart_button"
 						name="add-to-cart"
 						value="<?php echo absint( $product_id ); ?>">
-					<?php esc_html_e( 'הוספה לעגלה', 'freeman-core' ); ?>
+					<?php echo esc_html( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'add_to_cart' ) ); ?>
 				</button>
 			</div>
 		</div>

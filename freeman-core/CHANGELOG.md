@@ -1,5 +1,65 @@
 # Freeman Core — Changelog
 
+## [1.17.3] — 2026-06-19
+
+- Card slider (product cards + Quick View drawer): the loop wrap is now smooth. The first/last slides are cloned onto the opposite ends, so stepping past an edge animates one slide like any other transition and then silently snaps to the real twin once scrolling settles (covers arrows and native swipe). RTL-correct and page-safe (never scrolls an off-screen card into view on load).
+
+## [1.17.2] — 2026-06-19
+
+- QuickView drawer gallery now reuses the HoverSwap card-slider component verbatim (identical arrows, CSS, and scroll-snap + drag + loop logic) instead of a parallel implementation, so the in-drawer arrows look and behave exactly like the ones on product cards. Card-slider navigation loops again: a normal step animates smoothly and the wrap-around step (last to first / first to last) jumps instantly, so it no longer scrolls the whole strip back.
+
+## [1.17.1] — 2026-06-19
+
+- QuickView gallery arrows restyled to match the ProductSlider card-slider arrows (small white circles, hover-reveal, RTL-correct chevron). Both galleries now clamp at the ends instead of wrapping, removing the jarring scroll-back-to-start. Card-slider product images now get a 1rem border-radius (applied to the .fc-card-slider container).
+
+## [1.17.0] — 2026-06-19
+
+- ProductSlider: price typography control, 1rem card image radius, subtle resting card border. QuickView: wider drawer, smaller locale-aware price, fade/scale open-close animation, gallery prev/next arrows. VariationSwatches: buy-box strings (add to cart, buy now, out of stock, etc.) now follow the site locale (Hebrew/English) via a new Labels resolver.
+
+## [1.16.2] — 2026-06-19
+
+- Gallery slider: remove the buggy autoplay and remove position dots entirely. The card slider now keeps swipe/drag plus optional hover arrows only; the slider_autoplay and slider_dots settings are gone.
+
+## [1.16.1] — 2026-06-18
+
+- Fix the Card image mode dropdown rendering empty (Settings_Hub renders select options from the choices key, not options) and simplify activation: delete the two hover_swap feature flags, route the module entirely on the Card image mode setting (default none). Activation is now just enable the module plus pick the mode.
+
+## [1.16.0] — 2026-06-18
+
+- Add gallery-slider mode to the Card Image Effects module (formerly Hover Image Swap): a new Card image mode setting picks None, Hover swap, or Gallery slider. Gallery slider replaces the card image with a small swipeable scroll-snap slider of all product images, with independently toggleable arrows, dots and autoplay. Gated by the default-off freeman_core_hover_swap_gallery_slider_enabled flag.
+
+## [1.15.0] — 2026-06-18
+
+- Add Hover Image Swap module: on shop/archive cards, hovering a product cross-fades the main image to its second gallery image (pure CSS, no-op without a gallery image, mobile shows primary only). Default-off feature flag freeman_core_hover_swap_frontend_enabled.
+
+## [1.14.4] — 2026-06-18
+
+- ProductSlider grid - pin InfiniteScroll skeleton cards to the full card height (image plus the title/price/cart stack) so loading placeholders match real cards instead of coming up short
+
+## [1.14.3] — 2026-06-18
+
+- ProductSlider grid fixes - remove WooCommerce ul.products clearfix pseudo-elements that became grid items (first row showed one product short), omit the empty header so its border line no longer shows without a heading, and match InfiniteScroll skeleton-card height to the card so loading placeholders are not tiny
+
+## [1.14.2] — 2026-06-18
+
+- ProductSlider - fix grid mode capping at 24 with no pagination on Elementor archive templates; read the canonical main query (wp_the_query) instead of the swapped global wp_query so archive detection, posts and pagination survive Elementor swapping the query
+
+## [1.14.1] — 2026-06-18
+
+- Quick View - fix half-width drawer, restyle trigger as a magnifying glass and the close button, and raise CSS specificity to override Elementor and WooCommerce styles on archive cards
+
+## [1.14.0] — 2026-06-18
+
+- ProductSlider grid mode acts as archive products grid (current-query source renders full page + pagination, cap raised to 48); Quick View drawer summary now full-width; Quick View icon restyled (black glyph on white circle, right corner, hover pop only)
+
+## [1.13.0] — 2026-06-11
+
+- New QuickView module (Wave 7.2): per-card quick-view icon opening an inline-end slide-in drawer (image, price, short description, add-to-cart with VariationSwatches buy-box, meta, product-page link) behind freeman_core_quick_view_frontend_enabled (default off); additive quick-view re-init listener in VariationSwatches JS
+
+## [1.12.31] — 2026-06-11
+
+- ProductSlider grid mode: round fractional mobile cards-per-view to a whole column count — repeat() rejects fractions, collapsing the mobile grid to one column (grid parity audit G1)
+
 ## [1.12.30] — 2026-06-09
 
 - Shop Filters + VariationSwatches frontend fixes (consolidated onto the 1.12.26 graduation): mobile Apply closes the drawer instantly (no frozen-panel jank); app-feel motion — drawer-content cascade, checkbox-tick feedback, amplified press and chip entrance, all reduced-motion aware; and WPC Product Image Swap compatibility so tapping a swatch on the shop grid no longer makes the card image jump. Replaces local 1.12.27-1.12.29 QA builds.

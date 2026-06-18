@@ -67,7 +67,7 @@ $cart_url  = esc_url(  $prepared['cart_url'] ?? '' );
 		<div class="etucart-shop-pick__price<?php echo $has_range ? ' has-range' : ''; ?>"
 			 data-has-range="<?php echo $has_range ? '1' : '0'; ?>"
 			 aria-live="polite">
-			<span class="etucart-shop-pick__price-prefix"<?php if ( ! $has_range ) : ?> hidden<?php endif; ?>><?php esc_html_e( 'החל מ:', 'freeman-core' ); ?></span>
+			<span class="etucart-shop-pick__price-prefix"<?php if ( ! $has_range ) : ?> hidden<?php endif; ?>><?php echo esc_html( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'from_price' ) ); ?></span>
 			<span class="etucart-shop-pick__price-value">
 				<?php echo wp_kses_post( $prepared['from_price'] ?? '' ); ?>
 			</span>
@@ -89,7 +89,7 @@ $cart_url  = esc_url(  $prepared['cart_url'] ?? '' );
 				 data-max-visible="<?php echo esc_attr( $hide_after ); ?>">
 				<div class="etucart-shop-pick__attr-head">
 					<span class="etucart-shop-pick__attr-label"><?php echo esc_html( $label ); ?>:</span>
-					<span class="etucart-shop-pick__attr-selected" data-default-text="<?php esc_attr_e( 'בחר/י אפשרות', 'freeman-core' ); ?>">
+					<span class="etucart-shop-pick__attr-selected" data-default-text="<?php echo esc_attr( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'choose_option' ) ); ?>">
 						<?php
 						if ( '' !== $selected ) {
 							foreach ( $options as $opt ) {
@@ -189,7 +189,7 @@ $cart_url  = esc_url(  $prepared['cart_url'] ?? '' );
 			class="etucart-shop-pick__add"
 			disabled
 			aria-disabled="true">
-		<?php esc_html_e( 'הוספה לעגלה', 'freeman-core' ); ?>
+		<?php echo esc_html( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'add_to_cart' ) ); ?>
 	</button>
 	<?php
 	// NOTE (1.6.4): the per-card ".etucart-shop-pick__message" element was

@@ -166,6 +166,14 @@ final class Feature_Flags {
 				'shared'      => false,
 			),
 			array(
+				'module'      => 'quick_view',
+				'feature'     => 'frontend',
+				'label'       => __( 'Quick View — storefront', 'freeman-core' ),
+				'description' => __( 'Adds the quick-view icon to product cards and the slide-in drawer (image, price, short description, add-to-cart, product-page link) backed by a public AJAX endpoint. Off: no storefront output and no endpoint.', 'freeman-core' ),
+				'since'       => '1.13.0',
+				'shared'      => false,
+			),
+			array(
 				'module'      => 'variation_swatches',
 				'feature'     => 'bundle_compat',
 				'label'       => __( 'Variation Swatches — WPC Bundles / FBT compatibility', 'freeman-core' ),

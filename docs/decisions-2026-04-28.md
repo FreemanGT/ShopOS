@@ -157,3 +157,19 @@ This is a **deliberate owner-approved override** of:
 - **Hard Rule #4** (one item per PR) and the **>12-file ceiling** — graduation + diagnostic removal shipped together in one oversized PR.
 
 **Consequence — no option-based rollback.** There is no `wp option update … 0` kill-switch; rolling the module back means disabling it via the modules registry, or reverting the release. The module-registry enable/disable remains the only coarse switch.
+
+---
+
+## §6 Quick-View module — A2 re-opened (added 2026-06-11)
+
+Roadmap #14 / audit item A2 (Quick View) was dropped per §4.1. The first revisit trigger has fired — the suite owner has requested the feature — so A2 is **re-opened** as Wave 7. Decisions taken at planning time:
+
+- **§6.1 Two-stage scope.** Before the module ships, the Freeman ProductSlider **grid mode** gets a parity audit against Elementor Pro's Products widget (markup / layout / behavior / function); approved gaps are fixed as 7.1x patch releases. The QuickView module lands after, as its trigger icon must behave identically on both grids.
+- **§6.2 Trigger surface = WC loop hook.** The quick-view button is injected via `woocommerce_before_shop_loop_item_title`, which both the Elementor Pro archive grid and the Freeman ProductSlider (slider + grid modes) render through `content-product.php` — one injection point covers every product card site-wide. No per-widget wiring.
+- **§6.3 Transport = admin-AJAX.** Per §4.4: `wp_ajax_*` / `wp_ajax_nopriv_*` endpoint returning rendered drawer HTML. No REST.
+- **§6.4 Drawer placement.** Slide-in panel anchored to the **inline-end** edge (`inset-inline-end`) — the left edge on this RTL store, the right edge on an LTR site. Focus-trapped, ESC/overlay close, `prefers-reduced-motion`, mirroring the ShopFilters mobile-drawer pattern.
+- **§6.5 Flag.** `freeman_core_quick_view_frontend_enabled` (default `false`) gates button injection, asset enqueue, and the public AJAX endpoint (Hard Rule #1; ShopFilters 6.3a precedent). The module is additionally absent from `freeman_core_modules` on existing installs, so it is double-off until explicitly enabled.
+- **§6.6 Strings.** Drawer labels are editable settings with blank-falls-back-to-English defaults (the ShopFilters `Labels` precedent, per §4.2) so the Hebrew storefront is configurable without code.
+- **§6.7 VariationSwatches coupling.** The drawer renders the standard single-product summary so VariationSwatches' existing hooks light up unaided, and fires a `freeman_core_quick_view_loaded` DOM event after injecting content. The only cross-module edit is **additive**: the Freeman event name joins the third-party quick-view event list (`woosq_loaded`, `yith_quick_view_loaded`, …) that `etucart-swatches.js` already listens to. No PHP cross-module calls (§4.6 / §5.7 stance unchanged).
+
+Scoped to Wave 7; changes nothing about prior decisions. §4.1's "internal-only" stance stands — this ships because the owner asked, not for competitor parity.

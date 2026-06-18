@@ -6,13 +6,11 @@
 #   bash tools/build.sh            # builds both zips into dist/
 #   bash tools/build.sh theme      # only the theme
 #   bash tools/build.sh core       # only the core plugin
-#   bash tools/build.sh bundle     # combined theme+core bundle
-#   bash tools/build.sh all        # theme + core + bundle
+#   bash tools/build.sh all        # theme + core
 #
 # Output:
 #   dist/freeman-theme-<version>.zip
 #   dist/freeman-core-<version>.zip
-#   dist/freeman-bundle-theme<t>-core<c>.zip
 #
 # Requires: zip, rsync. Optionally uses msgfmt to (re)compile .po → .mo.
 
@@ -165,45 +163,6 @@ build_core() {
     rm -rf "${stage}"
 }
 
-build_bundle() {
-    local theme_version core_version out stage
-    theme_version="$( get_version "${ROOT}/freeman-theme/style.css" )"
-    core_version="$( get_version "${ROOT}/freeman-core/freeman-core.php" )"
-    out="${DIST}/freeman-bundle-theme${theme_version}-core${core_version}.zip"
-    log "Building combined bundle zip → ${out}"
-
-    stage="$( mktemp -d )"
-    stage_dir "${ROOT}/freeman-theme" "${stage}/freeman-theme"
-    stage_dir "${ROOT}/freeman-core"  "${stage}/freeman-core"
-    rm -rf "${stage}/freeman-core/tools"
-    rm -f  "${stage}/freeman-core/composer.json"
-    minify_assets "${stage}/freeman-theme"
-    minify_assets "${stage}/freeman-core"
-
-    cat > "${stage}/INSTALL.txt" <<'EOF'
-Freeman Bundle
-
-1. In WP Admin → Plugins → Add New → Upload Plugin, upload the
-   freeman-core.zip that ships inside this archive (or just
-   freeman-core/ if you unzipped this archive).
-2. Activate Freeman Core.
-3. In WP Admin → Appearance → Themes → Add New → Upload Theme,
-   upload freeman-theme.zip (or just freeman-theme/).
-4. Activate Freeman Theme. The Freeman onboarding wizard will start
-   automatically on your next dashboard page load.
-
-Requires WordPress 6.3+, WooCommerce 8.0+, and the Hello Elementor
-parent theme (free on wordpress.org).
-EOF
-
-    (
-        cd "${stage}"
-        rm -f "${out}"
-        zip -qr "${out}" .
-    )
-    rm -rf "${stage}"
-}
-
 # ---------------------------------------------------------------------------
 # Preflight: lint every PHP file + run offline activation simulation.
 # Any error here aborts the build so we never ship a broken zip.
@@ -241,9 +200,8 @@ preflight
 case "${TARGET}" in
     theme)  build_theme ;;
     core)   build_core ;;
-    bundle) build_bundle ;;
-    all)    build_theme; build_core; build_bundle ;;
-    *)      fail "Unknown target: ${TARGET}. Try: theme | core | bundle | all" ;;
+    all)    build_theme; build_core ;;
+    *)      fail "Unknown target: ${TARGET}. Try: theme | core | all" ;;
 esac
 
 log "Done. Artifacts in ${DIST}/"

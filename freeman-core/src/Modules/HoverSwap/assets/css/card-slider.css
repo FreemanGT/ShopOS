@@ -1,0 +1,97 @@
+/**
+ * Card Image Effects — gallery-slider mode.
+ *
+ * A small swipeable slider in the product-card image slot. Swipe is native CSS
+ * scroll-snap (touch + trackpad, and RTL-correct without JS scroll math);
+ * optional hover arrows are a progressive enhancement toggled in settings.
+ *
+ * Markup-independent + doubled classes so it out-specifies Elementor's kit and
+ * WooCommerce's own image rules on the live store (`li.product` and
+ * `.cs-card.product` both render through content-product.php).
+ */
+
+.fc-card-slider.fc-card-slider {
+	position: relative;
+	overflow: hidden;
+	line-height: 0;
+	border-radius: 1rem;
+}
+
+.fc-card-slider__viewport.fc-card-slider__viewport {
+	display: flex;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	-webkit-overflow-scrolling: touch;
+	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none; /* old Edge */
+}
+
+.fc-card-slider__viewport.fc-card-slider__viewport::-webkit-scrollbar {
+	display: none;
+}
+
+.fc-card-slider__slide.fc-card-slider__slide {
+	flex: 0 0 100%;
+	max-inline-size: 100%;
+	scroll-snap-align: start;
+	scroll-snap-stop: always;
+}
+
+.fc-card-slider__img.fc-card-slider__img {
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+	margin: 0;
+}
+
+/* Arrows — hidden until hover, placed on the inline edges (RTL-correct). */
+.fc-card-slider__arrow.fc-card-slider__arrow {
+	position: absolute;
+	inset-block-start: 50%;
+	transform: translateY(-50%);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 26px;
+	block-size: 26px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.9);
+	color: #111;
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+	z-index: 2;
+}
+
+.fc-card-slider__arrow--prev.fc-card-slider__arrow--prev {
+	inset-inline-start: 6px;
+}
+
+.fc-card-slider__arrow--next.fc-card-slider__arrow--next {
+	inset-inline-end: 6px;
+}
+
+/* The next-arrow chevron points along the inline-end direction; flip it in RTL
+   so both arrows read correctly. */
+[dir="rtl"] .fc-card-slider__arrow.fc-card-slider__arrow svg {
+	transform: scaleX(-1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.fc-card-slider.fc-card-slider:hover .fc-card-slider__arrow.fc-card-slider__arrow {
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.fc-card-slider__viewport.fc-card-slider__viewport {
+		scroll-behavior: auto;
+	}
+
+	.fc-card-slider__arrow.fc-card-slider__arrow {
+		transition: none;
+	}
+}

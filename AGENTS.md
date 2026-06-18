@@ -15,7 +15,7 @@ Every change that touches **code, assets, translations, templates, or templates 
    - `freeman-theme/CHANGELOG.md` for theme changes
    - Root `CHANGELOG.md` always gets the aggregated entry
    - Use `Added / Changed / Fixed / Removed / Security` headings (Keep-a-Changelog style)
-3. **Rebuild the zips.** `dist/freeman-core-<new-version>.zip` (and bundle) must carry the new version in the filename. Delete the old matching zip so `dist/` never contains a stale release for the same semver slot.
+3. **Rebuild the zips.** `dist/freeman-core-<new-version>.zip` (and `dist/freeman-theme-<new-version>.zip`) must carry the new version in the filename. We ship individual plugin/theme zips only — no combined bundle. Delete the old matching zip so `dist/` never contains a stale release for the same semver slot.
 4. **Run the preflight.** `tools/build.sh` automatically runs `php -l` on every PHP file and `tools/activation-sim.php` before zipping; never ship a zip whose preflight failed.
 
 ### How to do all four in one command
@@ -70,5 +70,5 @@ If any of the above fails, **do not proceed to ship**. Fix, bump (see release po
 ## Git hygiene (when the project becomes a git repo)
 
 - Every bump should be one commit: `release: <scope> <version> — <one-line note>`.
-- Tag: `git tag <scope>-<version>` (e.g. `core-1.0.1`, `theme-1.1.0`, `bundle-1.0.1`).
+- Tag: `git tag <scope>-<version>` (e.g. `core-1.0.1`, `theme-1.1.0`).
 - Never force-push to main. Never squash a release commit away; the changelog references the bump by version.

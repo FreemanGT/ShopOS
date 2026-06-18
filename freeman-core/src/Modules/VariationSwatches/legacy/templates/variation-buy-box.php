@@ -128,7 +128,7 @@ $pdp_min_html   = wc_price( $pdp_min );
    data-has-range="<?php echo $pdp_has_range ? '1' : '0'; ?>"
    data-from-html="<?php echo esc_attr( $pdp_min_html ); ?>"
    aria-live="polite">
-	<span class="etucart-pdp-price__prefix"<?php if ( ! $pdp_has_range ) : ?> hidden<?php endif; ?>><?php esc_html_e( 'החל מ:', 'freeman-core' ); ?></span>
+	<span class="etucart-pdp-price__prefix"<?php if ( ! $pdp_has_range ) : ?> hidden<?php endif; ?>><?php echo esc_html( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'from_price' ) ); ?></span>
 	<span class="etucart-pdp-price__value"><?php echo wp_kses_post( $pdp_min_html ); ?></span>
 </p>
 
@@ -156,7 +156,7 @@ $pdp_min_html   = wc_price( $pdp_min );
 					 data-attribute_name="<?php echo esc_attr( $p['input_name'] ); ?>">
 					<div class="etucart-variation__head">
 						<span class="etucart-variation__label"><?php echo esc_html( $p['label'] ); ?>:</span>
-						<span class="etucart-variation__selected" data-default-text="<?php esc_attr_e( 'Choose an option', 'freeman-core' ); ?>">
+						<span class="etucart-variation__selected" data-default-text="<?php echo esc_attr( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'choose_option' ) ); ?>">
 							<?php
 							$selected_label = '';
 							foreach ( $p['option_items'] as $opt ) {
@@ -289,7 +289,7 @@ $pdp_min_html   = wc_price( $pdp_min );
 							name="add-to-cart"
 							value="<?php echo absint( $product_id ); ?>"
 							aria-disabled="true">
-						<?php esc_html_e( 'הוספה לעגלה', 'freeman-core' ); ?>
+						<?php echo esc_html( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'add_to_cart' ) ); ?>
 					</button>
 
 					<?php
@@ -310,7 +310,7 @@ $pdp_min_html   = wc_price( $pdp_min );
 						value="<?php echo absint( $product_id ); ?>"
 						data-etucart-buy-now="1"
 						aria-disabled="true">
-					<?php esc_html_e( 'קנה עכשיו', 'freeman-core' ); ?>
+					<?php echo esc_html( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'buy_now' ) ); ?>
 				</button>
 			</div>
 
@@ -337,7 +337,7 @@ $pdp_min_html   = wc_price( $pdp_min );
 						name="add-to-cart"
 						value="<?php echo absint( $product_id ); ?>"
 						aria-disabled="true">
-					<?php esc_html_e( 'הוספה לעגלה', 'freeman-core' ); ?>
+					<?php echo esc_html( \Freeman\Core\Modules\VariationSwatches\Labels::get( 'add_to_cart' ) ); ?>
 				</button>
 			</div>
 		</div>
