@@ -128,8 +128,97 @@
         container: null, itemSelector: null, stopped: false,
         mainObserver: null, abortController: null,
         seenIds: Object.create(null), fetchedUrls: Object.create(null),
-        pagesLoaded: 0
+        pagesLoaded: 0, restored: false
     };
+
+    /* --------------------------------------------------------------- *
+     * Scroll + grid restoration across back/forward navigation.
+     *
+     * As the user scrolls, IS appends pages and pushState()s the URL to
+     * /page/N/. A normal Back reload then renders only that one page at
+     * the top — the earlier-loaded products and the scroll offset are
+     * gone, and native scroll restoration can't anchor to a DOM that no
+     * longer matches. We snapshot the grid HTML + scrollY on pagehide
+     * and replay it when the user returns to the same archive via
+     * back/forward. The IS state (seen ids, next url, pagination) is
+     * re-derived from the restored DOM by init()'s normal seeding, so
+     * the snapshot only needs the markup and the offset.
+     * --------------------------------------------------------------- */
+    var RESTORE_KEY = 'freemanISRestore';
+    var RESTORE_TTL_MS = 30 * 60 * 1000;
+
+    // Canonical archive key — independent of the pushState'd /page/N/ and
+    // the paged param, so a Back-to-/page/M/ matches the save.
+    function pageKey() {
+        var u = new URL(location.href);
+        u.pathname = u.pathname.replace(/\/page\/\d+\/?$/, '/');
+        u.searchParams.delete('paged');
+        if (u.searchParams.sort) u.searchParams.sort();
+        return u.pathname + '?' + u.searchParams.toString();
+    }
+
+    function isBackForward() {
+        try {
+            var entries = performance.getEntriesByType && performance.getEntriesByType('navigation');
+            if (entries && entries[0] && entries[0].type) return entries[0].type === 'back_forward';
+            return !!(performance.navigation && performance.navigation.type === 2);
+        } catch (e) { return false; }
+    }
+
+    function readSnapshot() {
+        try {
+            var raw = sessionStorage.getItem(RESTORE_KEY);
+            if (!raw) return null;
+            var snap = JSON.parse(raw);
+            if (!snap || snap.key !== pageKey()) return null;
+            if (!snap.t || (Date.now() - snap.t) > RESTORE_TTL_MS) return null;
+            return snap;
+        } catch (e) { return null; }
+    }
+
+    function saveSnapshot() {
+        if (!state.container) return;
+        try {
+            sessionStorage.setItem(RESTORE_KEY, JSON.stringify({
+                key: pageKey(),
+                scrollY: window.pageYOffset || document.documentElement.scrollTop || 0,
+                html: state.pagesLoaded > 0 ? state.container.innerHTML : '',
+                t: Date.now()
+            }));
+        } catch (e) { /* quota / unavailable — degrade silently */ }
+    }
+
+    // Decide synchronously (before layout) whether we'll restore, and if so
+    // take manual control of scroll so the browser doesn't fight us.
+    var RESTORE = isBackForward() ? readSnapshot() : null;
+    if (RESTORE && 'scrollRestoration' in history) {
+        try { history.scrollRestoration = 'manual'; } catch (e) {}
+    }
+    window.addEventListener('pagehide', saveSnapshot);
+
+    // Replay the saved grid before init() seeds, so all restored products
+    // are seen and pagination resumes from the right page.
+    function restoreGridIfPending() {
+        if (state.restored || !RESTORE || !state.container || !RESTORE.html) return;
+        state.container.innerHTML = RESTORE.html;
+        var itemSel = resolveItemSelector(state.container);
+        if (itemSel) state.itemSelector = itemSel;
+    }
+
+    // Restore the scroll offset once the grid is wired. Re-asserted across a
+    // frame, a short delay and load to cover late image layout.
+    function finishRestore() {
+        if (state.restored || !RESTORE) return;
+        state.restored = true;
+        var y = RESTORE.scrollY || 0;
+        RESTORE = null;
+        try { sessionStorage.removeItem(RESTORE_KEY); } catch (e) {}
+        var apply = function () { window.scrollTo(0, y); };
+        apply();
+        (window.requestAnimationFrame || function (f) { return setTimeout(f, 16); })(apply);
+        setTimeout(apply, 250);
+        window.addEventListener('load', apply);
+    }
 
     function log() {
         if (!DEBUG) return;
@@ -249,6 +338,8 @@
         }
         state.itemSelector = itemSel;
 
+        restoreGridIfPending();
+
         seedSeenIds();
         state.fetchedUrls = Object.create(null);
         state.fetchedUrls[normalizeUrl(location.href)] = true;
@@ -261,6 +352,7 @@
         insertSentinelAfter(state.container);
         attachObserver();
         watchMain();
+        finishRestore();
     }
 
     function hidePagination(scope) {
@@ -627,4 +719,61 @@
 
     window.addEventListener('popstate', function () { setTimeout(resync, 50); });
     window.addEventListener('pageshow', function (e) { if (e.persisted) setTimeout(boot, 100); });
+})();
+
+/**
+ * Touch tap-to-navigate — storefront product cards.
+ *
+ * On touch devices, the first tap on a product card is often "eaten": a
+ * `:hover` style somewhere on the card (commonly the page builder's archive
+ * widget — outside our CSS, which is already hover-gated) makes the browser
+ * treat the first tap as a hover and only navigate on the second. There is
+ * no CSS cure for an arbitrary external hover rule, so we navigate on a clean
+ * tap ourselves. preventDefault on touchend suppresses the ghost click, so a
+ * single tap opens the product — exactly what the click would have done.
+ *
+ * Self-contained and independent of the infinite-scroll grid above; it rides
+ * this already-storefront-loaded script. Interactive controls (swatches,
+ * quick-view, add-to-cart, card sliders) are excluded so their own handlers
+ * run untouched.
+ */
+(function () {
+    'use strict';
+
+    if (!('ontouchstart' in window)) { return; }
+
+    var MOVE_TOLERANCE = 10;   // px — beyond this the gesture was a scroll
+    var MAX_TAP_MS = 700;      // longer presses are not taps
+    var CARD = 'li.product, .cs-card.product, .type-product, li.wc-block-grid__product';
+    var EXCLUDE = 'button, .button, input, select, textarea, label,' +
+        '.fc-qv-trigger, [data-fc-qv], [data-fc-qv-close],' +
+        '.etucart-shop-pick, [data-fc-card-slider], .fc-card-slider, .add_to_cart_button';
+
+    var sx = 0, sy = 0, st = 0, armed = false;
+
+    document.addEventListener('touchstart', function (e) {
+        if (e.touches.length !== 1) { armed = false; return; }
+        var t = e.touches[0];
+        sx = t.clientX; sy = t.clientY; st = Date.now(); armed = true;
+    }, { passive: true });
+
+    document.addEventListener('touchend', function (e) {
+        if (!armed) { return; }
+        armed = false;
+        if (e.changedTouches.length !== 1) { return; }
+        var t = e.changedTouches[0];
+        if (Math.abs(t.clientX - sx) > MOVE_TOLERANCE || Math.abs(t.clientY - sy) > MOVE_TOLERANCE) { return; }
+        if (Date.now() - st > MAX_TAP_MS) { return; }
+
+        var target = e.target;
+        if (!target || !target.closest) { return; }
+        if (target.closest(EXCLUDE)) { return; }
+
+        var link = target.closest('a[href]');
+        if (!link || !link.closest(CARD)) { return; }
+        if (link.classList.contains('add_to_cart_button') || /[?&]add-to-cart=/.test(link.href)) { return; }
+
+        e.preventDefault();
+        window.location.href = link.href;
+    }, false);
 })();
