@@ -31,6 +31,7 @@
 	var applyBtn = panel.querySelector('[data-freeman-sf-apply]');
 	var clearMobileBtn = panel.querySelector('[data-freeman-sf-clear-mobile]');
 	var mq = window.matchMedia ? window.matchMedia(MOBILE_QUERY) : { matches: false };
+	var REDUCED = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
 
 	function isMobile() { return !!mq.matches; }
 
@@ -97,6 +98,28 @@
 		location.assign(buildUrl(readSelection()));
 	}
 
+	/* Mobile Apply/Clear: let the drawer's slide-down actually finish before
+	 * the reload, so the close motion isn't cut off mid-frame (the brief
+	 * "buggy" half-state). Deferring also means the --loading dim only lands
+	 * once the drawer is gone. Desktop + reduced-motion navigate immediately
+	 * (reduced-motion has no transition, so transitionend never fires). */
+	function closeThenNavigate() {
+		if (!isMobile() || REDUCED || !drawer) { navigate(); return; }
+		closeDrawer();
+		var done = false;
+		function go() {
+			if (done) { return; }
+			done = true;
+			drawer.removeEventListener('transitionend', onEnd);
+			navigate();
+		}
+		function onEnd(e) {
+			if (e.target === drawer && e.propertyName === 'transform') { go(); }
+		}
+		drawer.addEventListener('transitionend', onEnd);
+		setTimeout(go, 350);
+	}
+
 	var debouncedNavigate = debounce(navigate, DEBOUNCE_MS);
 
 	/* ---- mobile drawer: open / close + focus trap ---- */
@@ -145,17 +168,13 @@
 	if (overlay) { overlay.addEventListener('click', closeDrawer); }
 	if (applyBtn) {
 		applyBtn.addEventListener('click', function () {
-			// Close the drawer first so it slides down immediately — the reload
-			// round-trip is then masked by the close motion, not a frozen panel.
-			if (isMobile()) { closeDrawer(); }
-			navigate();
+			closeThenNavigate();
 		});
 	}
 	if (clearMobileBtn) {
 		clearMobileBtn.addEventListener('click', function () {
 			panel.querySelectorAll('.freeman-sf__checkbox:checked').forEach(function (b) { b.checked = false; });
-			if (isMobile()) { closeDrawer(); }
-			navigate();
+			closeThenNavigate();
 		});
 	}
 
