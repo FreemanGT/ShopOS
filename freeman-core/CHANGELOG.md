@@ -1,5 +1,11 @@
 # Freeman Core — Changelog
 
+## [1.17.4] — 2026-06-19
+
+- Mobile: tapping a product card now opens it on the first tap. A touch handler navigates on a clean tap of a card link, bypassing the iOS "first tap = hover" delay that an external (page-builder) hover style was causing. Swatches, quick-view, and add-to-cart taps are unaffected.
+- Back button: returning to a shop/category/archive now lands at the exact spot you left, with all infinite-scroll-loaded products restored. The grid and scroll position are snapshotted on leave and replayed on back/forward navigation (degrades silently if storage is unavailable).
+- Mobile filters: the filter drawer now finishes sliding closed before the filtered page loads, removing the brief "buggy" half-state on Apply/Clear. Desktop and Reduce-Motion behaviour is unchanged.
+
 ## [1.17.3] — 2026-06-19
 
 - Card slider (product cards + Quick View drawer): the loop wrap is now smooth. The first/last slides are cloned onto the opposite ends, so stepping past an edge animates one slide like any other transition and then silently snaps to the real twin once scrolling settles (covers arrows and native swipe). RTL-correct and page-safe (never scrolls an off-screen card into view on load).
