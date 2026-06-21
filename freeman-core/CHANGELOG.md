@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.17.5] — 2026-06-21
+
+- Mobile: variation swatches now select on the first tap. The buy-box and shop-grid swatches revealed a tooltip / scaled on `:hover`, which made iOS treat the first tap as a hover (selection needed a second tap). Those hover-reveal rules are now gated behind `@media (hover: hover)`, matching the HoverSwap / ProductSlider pattern. Mouse users are unchanged; the swatch name stays available to assistive tech via `aria-label` / screen-reader text.
+
 ## [1.17.4] — 2026-06-19
 
 - Mobile: tapping a product card now opens it on the first tap. A touch handler navigates on a clean tap of a card link, bypassing the iOS "first tap = hover" delay that an external (page-builder) hover style was causing. Swatches, quick-view, and add-to-cart taps are unaffected.

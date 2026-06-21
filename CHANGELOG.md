@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.17.5] — 2026-06-21
+
+- Hover-gate variation swatch tooltips and scale so touch devices select a variation on the first tap
+
 ## [1.17.4] — 2026-06-19
 
 - freeman-core: Mobile — tapping a product card now opens it on the first tap (bypasses the iOS "first tap = hover" delay caused by an external hover style).
