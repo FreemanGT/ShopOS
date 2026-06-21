@@ -362,8 +362,13 @@ body:has(.etucart-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produ
 	border-color: #b5b5b5 !important;
 }
 
-.etucart-buy-box .etucart-swatch--color:hover .etucart-swatch__dot {
-	transform: scale(1.04);
+/* Hover-gated: on touch, a :hover that changes the swatch makes iOS treat the
+   first tap as a hover (so selection needs a second tap). Only apply on real
+   hover devices — same pattern as HoverSwap / ProductSlider. */
+@media (hover: hover) {
+	.etucart-buy-box .etucart-swatch--color:hover .etucart-swatch__dot {
+		transform: scale(1.04);
+	}
 }
 
 /*
@@ -399,8 +404,10 @@ body:has(.etucart-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produ
 	transition: transform var(--etucart-transition) !important;
 }
 
-.etucart-buy-box .etucart-swatch--image:hover .etucart-swatch__img {
-	transform: scale(1.04);
+@media (hover: hover) {
+	.etucart-buy-box .etucart-swatch--image:hover .etucart-swatch__img {
+		transform: scale(1.04);
+	}
 }
 
 .etucart-buy-box .etucart-swatch--image.is-selected {
@@ -418,21 +425,23 @@ body:has(.etucart-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produ
 	position: relative;
 }
 
-.etucart-buy-box .etucart-swatch[data-tooltip]:hover::after {
-	content: attr(data-tooltip);
-	position: absolute;
-	bottom: calc(100% + 6px);
-	left: 50%;
-	transform: translateX(-50%);
-	background: rgba(20, 20, 20, 0.92);
-	color: #fff;
-	font-size: 12px;
-	line-height: 1.2;
-	padding: 4px 8px;
-	border-radius: 4px;
-	white-space: nowrap;
-	pointer-events: none;
-	z-index: 10;
+@media (hover: hover) {
+	.etucart-buy-box .etucart-swatch[data-tooltip]:hover::after {
+		content: attr(data-tooltip);
+		position: absolute;
+		bottom: calc(100% + 6px);
+		left: 50%;
+		transform: translateX(-50%);
+		background: rgba(20, 20, 20, 0.92);
+		color: #fff;
+		font-size: 12px;
+		line-height: 1.2;
+		padding: 4px 8px;
+		border-radius: 4px;
+		white-space: nowrap;
+		pointer-events: none;
+		z-index: 10;
+	}
 }
 
 /* Selected color swatch: strong black ring around the colored dot. */
