@@ -1,0 +1,82 @@
+/**
+ * Freeman Search — live dropdown.
+ * Body-appended, fixed-positioned by JS under the search input.
+ */
+.fc-search-panel {
+	z-index: 99999;
+	max-height: 70vh;
+	overflow-y: auto;
+	background: #fff;
+	border: 1px solid #e3e3e3;
+	border-radius: 0 0 0.5rem 0.5rem;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+	font-size: 0.9rem;
+}
+
+.fc-search-item {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.6rem 0.85rem;
+	color: inherit;
+	text-decoration: none;
+	border-bottom: 1px solid #f1f1f1;
+}
+
+.fc-search-item:hover,
+.fc-search-item[aria-selected="true"] {
+	background: #f6f7f8;
+}
+
+.fc-search-item__img {
+	width: 44px;
+	height: 44px;
+	object-fit: cover;
+	border-radius: 0.35rem;
+	flex: 0 0 auto;
+}
+
+.fc-search-item__body {
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+	min-width: 0;
+}
+
+.fc-search-item__title {
+	font-weight: 600;
+	line-height: 1.25;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.fc-search-item__price {
+	opacity: 0.8;
+	font-size: 0.85em;
+}
+
+.fc-search-item__price del {
+	opacity: 0.6;
+	margin-inline-end: 0.35em;
+}
+
+.fc-search-empty {
+	padding: 0.85rem;
+	text-align: center;
+	opacity: 0.7;
+}
+
+.fc-search-more {
+	display: block;
+	padding: 0.65rem 0.85rem;
+	text-align: center;
+	font-weight: 600;
+	color: inherit;
+	text-decoration: none;
+	background: #fafafa;
+}
+
+.fc-search-more:hover {
+	background: #f0f0f0;
+}

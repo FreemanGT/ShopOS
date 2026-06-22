@@ -47,4 +47,44 @@ final class SearchQueryEngineTest extends TestCase {
 		$this->assertSame( '', Query_Engine::build_search_text( '', '', array(), array(), '', '' ) );
 		$this->assertSame( 'Just A Title', Query_Engine::build_search_text( '  Just A Title  ', '', array(), array(), '', '' ) );
 	}
+
+	public function test_search_sql_has_score_match_and_like_fallback(): void {
+		$sql = Query_Engine::search_sql( 'wp_freeman_search_index' );
+
+		$this->assertStringContainsString( 'MATCH(search_text) AGAINST (%s IN NATURAL LANGUAGE MODE)', $sql );
+		$this->assertStringContainsString( '4 * MATCH(title) AGAINST (%s IN NATURAL LANGUAGE MODE)', $sql );
+		$this->assertStringContainsString( 'WHEN sku = %s THEN 1000', $sql );
+		$this->assertStringContainsString( 'WHEN sku LIKE %s THEN 50', $sql );
+		// The LIKE substring fallback that rescues short / non-Latin tokens.
+		$this->assertStringContainsString( 'OR search_text LIKE %s', $sql );
+		$this->assertStringContainsString( 'FROM wp_freeman_search_index', $sql );
+		$this->assertStringContainsString( 'ORDER BY score DESC', $sql );
+		$this->assertStringContainsString( 'LIMIT %d', $sql );
+	}
+
+	public function test_search_sql_in_stock_clause_is_optional(): void {
+		$this->assertStringNotContainsString( 'in_stock = 1', Query_Engine::search_sql( 'wp_x', false ) );
+		$this->assertStringContainsString( 'AND in_stock = 1', Query_Engine::search_sql( 'wp_x', true ) );
+	}
+
+	public function test_search_args_order_and_escaping(): void {
+		// Marker esc so escaping is visible in the output.
+		$esc  = static function ( $v ) { return '[' . $v . ']'; };
+		$args = Query_Engine::search_args( 'hoodie', 8, $esc );
+
+		$this->assertCount( 9, $args );
+		// Bare term in the three MATCH slots + the two exact-SKU slots.
+		$this->assertSame( 'hoodie', $args[0] );
+		$this->assertSame( 'hoodie', $args[1] );
+		$this->assertSame( 'hoodie', $args[2] );
+		$this->assertSame( 'hoodie', $args[4] );
+		$this->assertSame( 'hoodie', $args[5] );
+		// SKU prefix slots: escaped + trailing %.
+		$this->assertSame( '[hoodie]%', $args[3] );
+		$this->assertSame( '[hoodie]%', $args[6] );
+		// search_text substring: leading + trailing %.
+		$this->assertSame( '%[hoodie]%', $args[7] );
+		// LIMIT is an int.
+		$this->assertSame( 8, $args[8] );
+	}
 }

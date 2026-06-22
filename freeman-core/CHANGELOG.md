@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.19.0] — 2026-06-22
+
+- Search Wave 8.2: live AJAX search dropdown — ranked MATCH...AGAINST read query (FULLTEXT + title boost + exact/prefix-SKU + LIKE fallback for short/non-Latin tokens), public freeman_core_search_query endpoint, debounced combobox dropdown (image/title/price/link) with combobox a11y + progressive enhancement, behind freeman_core_search_dropdown_enabled (default off).
+
 ## [1.18.0] — 2026-06-22
 
 - Search Wave 8.1 foundation: in-house full-text product search index (freeman_search_index FULLTEXT table) + dirty-queue indexer + Reindex all admin tool, behind freeman_core_search_indexer_enabled (default off). Staged to replace Advanced Woo Search.

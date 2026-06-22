@@ -50,5 +50,27 @@ final class SearchModuleTest extends TestCase {
 		$this->assertNotFalse( has_action( 'init' ) );
 		// The cron-schedule recurrence filter is registered.
 		$this->assertNotFalse( has_filter( 'cron_schedules' ) );
+		// Indexer flag alone wires no public dropdown endpoint.
+		$this->assertArrayNotHasKey( 'wp_ajax_freeman_core_search_query', $GLOBALS['fr_hooks'] );
+	}
+
+	public function test_boot_wires_dropdown_when_flag_is_on(): void {
+		$GLOBALS['fr_opts']['freeman_core_search_dropdown_enabled'] = '1';
+
+		( new Module() )->boot();
+
+		$this->assertArrayHasKey( 'wp_enqueue_scripts', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'wp_ajax_freeman_core_search_query', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'wp_ajax_nopriv_freeman_core_search_query', $GLOBALS['fr_hooks'] );
+		// Dropdown flag alone wires no indexer lifecycle hooks.
+		$this->assertArrayNotHasKey( 'woocommerce_update_product', $GLOBALS['fr_hooks'] );
+	}
+
+	public function test_settings_schema_has_dropdown_fields(): void {
+		$schema = ( new Module() )->settings_schema();
+
+		$this->assertSame( 'input[type="search"], input[name="s"]', $schema['field_selector']['default'] );
+		$this->assertSame( 2, $schema['min_chars']['default'] );
+		$this->assertSame( 200, $schema['debounce_ms']['default'] );
 	}
 }

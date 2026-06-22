@@ -2,11 +2,11 @@
 /**
  * Search query engine — pure, $wpdb-free seams.
  *
- * Wave 1 only needs the write side: assembling a product's denormalised
- * searchable-text blob. The read side (the MATCH ... AGAINST score / where
- * builders that power the dropdown and results page) lands in Wave 2, alongside
- * the Search_Repository::search() method that actually calls them — building
- * them now would be dead code for a wave.
+ * Write side (Wave 1): assembling a product's denormalised searchable-text
+ * blob. Read side (Wave 2): the MATCH ... AGAINST score / where SQL builders the
+ * dropdown calls via Search_Repository::search(). Both are pure ($wpdb-free) so
+ * the SQL shape and the placeholder-arg ordering are unit-testable; the live
+ * prepare/run is integration / live QA.
  *
  * @package FreemanCore
  */
@@ -49,5 +49,70 @@ final class Query_Engine {
 		$text = preg_replace( '/\s+/u', ' ', $text );
 
 		return trim( (string) $text );
+	}
+
+	/* -----------------------------------------------------------------
+	 * Read path (Wave 2 — the ranked search query)
+	 * ----------------------------------------------------------------- */
+
+	/**
+	 * The ranked search SQL, with $wpdb->prepare placeholders. Relevance score =
+	 * the broad FULLTEXT match + a 4× title-match boost + a large constant for an
+	 * exact SKU (always top) + a smaller one for a SKU prefix. The WHERE OR-group
+	 * pairs FULLTEXT with a SKU exact/prefix and a `search_text LIKE` substring —
+	 * the fallback that rescues short / non-Latin tokens FULLTEXT's min-token-size
+	 * drops. NATURAL LANGUAGE MODE: no operator syntax reaches the placeholder.
+	 *
+	 * Placeholder order (must match search_args()): term, term, term, sku-prefix,
+	 * term, term, sku-prefix, text-substring, limit.
+	 *
+	 * @param string $table         Table name.
+	 * @param bool   $in_stock_only Restrict to in-stock rows.
+	 * @return string
+	 */
+	public static function search_sql( $table, $in_stock_only = false ) {
+		$stock = $in_stock_only ? ' AND in_stock = 1' : '';
+		return "SELECT product_id, (
+				MATCH(search_text) AGAINST (%s IN NATURAL LANGUAGE MODE)
+				+ 4 * MATCH(title) AGAINST (%s IN NATURAL LANGUAGE MODE)
+				+ CASE WHEN sku = %s THEN 1000 ELSE 0 END
+				+ CASE WHEN sku LIKE %s THEN 50 ELSE 0 END
+			) AS score
+			FROM {$table}
+			WHERE (
+				MATCH(search_text) AGAINST (%s IN NATURAL LANGUAGE MODE)
+				OR sku = %s
+				OR sku LIKE %s
+				OR search_text LIKE %s
+			){$stock}
+			ORDER BY score DESC
+			LIMIT %d";
+	}
+
+	/**
+	 * The ordered args for search_sql()'s placeholders. esc_like is injected (the
+	 * repository passes array($wpdb,'esc_like')) so this stays pure / testable.
+	 *
+	 * @param string   $term    Raw search term.
+	 * @param int      $limit   Max rows.
+	 * @param callable $esc_like LIKE-escaper, e.g. array($wpdb, 'esc_like').
+	 * @return array
+	 */
+	public static function search_args( $term, $limit, callable $esc_like ) {
+		$term   = (string) $term;
+		$prefix = call_user_func( $esc_like, $term ) . '%';
+		$like   = '%' . call_user_func( $esc_like, $term ) . '%';
+
+		return array(
+			$term,        // search_text MATCH (score).
+			$term,        // title MATCH (score).
+			$term,        // sku exact (score).
+			$prefix,      // sku prefix (score).
+			$term,        // search_text MATCH (where).
+			$term,        // sku exact (where).
+			$prefix,      // sku prefix (where).
+			$like,        // search_text substring (where).
+			(int) $limit, // LIMIT.
+		);
 	}
 }

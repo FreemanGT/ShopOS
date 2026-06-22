@@ -52,25 +52,58 @@ final class Module extends Module_Base {
 	}
 
 	/**
-	 * Boot. Behind the indexer feature flag: registers the background indexer
-	 * (lifecycle hooks + reconcile sweep) and, in wp-admin, the "Reindex all"
-	 * tool. Flag off → registers nothing.
+	 * Settings schema. The live-dropdown knobs (Freeman → Search), used only when
+	 * the dropdown feature flag is on.
+	 *
+	 * @return array
+	 */
+	public function settings_schema() {
+		return array(
+			'field_selector' => array(
+				'label'       => __( 'Search field selector', 'freeman-core' ),
+				'type'        => 'text',
+				'default'     => 'input[type="search"], input[name="s"]',
+				'description' => __( 'CSS selector for the theme search input(s) the live dropdown attaches to. The default covers most themes; override if your search box uses a custom field.', 'freeman-core' ),
+			),
+			'min_chars'      => array(
+				'label'       => __( 'Minimum characters', 'freeman-core' ),
+				'type'        => 'number',
+				'default'     => 2,
+				'description' => __( 'How many characters before the dropdown starts searching.', 'freeman-core' ),
+			),
+			'debounce_ms'    => array(
+				'label'       => __( 'Debounce (ms)', 'freeman-core' ),
+				'type'        => 'number',
+				'default'     => 200,
+				'description' => __( 'Idle delay after the last keystroke before a request fires.', 'freeman-core' ),
+			),
+		);
+	}
+
+	/**
+	 * Boot. The background indexer (lifecycle hooks + reconcile sweep + admin
+	 * "Reindex all" tool) is gated by the `indexer` flag; the storefront live
+	 * dropdown (assets + public endpoint) by the independent `dropdown` flag.
+	 * Both flags off → registers nothing.
 	 */
 	public function boot() {
-		if ( ! Feature_Flags::is_enabled( 'search', 'indexer' ) ) {
-			return;
+		if ( Feature_Flags::is_enabled( 'search', 'indexer' ) ) {
+			add_filter( 'cron_schedules', array( $this, 'register_cron_schedule' ) );
+
+			$indexer = new Indexer();
+			$indexer->register_hooks();
+			// Defer scheduling to `init`: Action Scheduler's store isn't ready at
+			// plugins_loaded, so as_schedule_recurring_action() there silently no-ops.
+			add_action( 'init', array( $indexer, 'ensure_scheduled' ) );
+
+			if ( is_admin() ) {
+				( new Admin_Page( $indexer ) )->boot();
+			}
 		}
 
-		add_filter( 'cron_schedules', array( $this, 'register_cron_schedule' ) );
-
-		$indexer = new Indexer();
-		$indexer->register_hooks();
-		// Defer scheduling to `init`: Action Scheduler's store isn't ready at
-		// plugins_loaded, so as_schedule_recurring_action() there silently no-ops.
-		add_action( 'init', array( $indexer, 'ensure_scheduled' ) );
-
-		if ( is_admin() ) {
-			( new Admin_Page( $indexer ) )->boot();
+		if ( Feature_Flags::is_enabled( 'search', 'dropdown' ) ) {
+			( new Frontend( $this ) )->register();
+			( new Ajax() )->register();
 		}
 	}
 

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-22T16:49:16+00:00\n"
+"POT-Creation-Date: 2026-06-22T17:58:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: freeman-core\n"
@@ -428,10 +428,18 @@ msgid "Builds and maintains the in-house full-text product search index (backgro
 msgstr ""
 
 #: src/Core/Feature_Flags.php:187
-msgid "Variation Swatches — WPC Bundles / FBT compatibility"
+msgid "Search — live dropdown"
 msgstr ""
 
 #: src/Core/Feature_Flags.php:188
+msgid "Adds the storefront live search dropdown (debounced product results — image / title / price / link) backed by a public AJAX endpoint reading the search index. Needs the index populated (Search — product index). Off: no storefront output and no endpoint."
+msgstr ""
+
+#: src/Core/Feature_Flags.php:195
+msgid "Variation Swatches — WPC Bundles / FBT compatibility"
+msgstr ""
+
+#: src/Core/Feature_Flags.php:196
 msgid "Forwards all buy-box form fields to WooCommerce's add-to-cart endpoint so WPC Product Bundles and WPC Frequently-Bought-Together hidden inputs reach the cart; exposes a JS flag for the runtime."
 msgstr ""
 
@@ -1429,6 +1437,7 @@ msgid "Scroll products"
 msgstr ""
 
 #: src/Modules/QuickView/Ajax.php:58
+#: src/Modules/Search/Ajax.php:46
 #: src/Modules/ShopFilters/Ajax.php:46
 msgid "Too many requests. Please slow down."
 msgstr ""
@@ -2089,6 +2098,18 @@ msgstr ""
 msgid "indexed"
 msgstr ""
 
+#: src/Modules/Search/Frontend.php:87
+msgid "No products found"
+msgstr ""
+
+#: src/Modules/Search/Frontend.php:88
+msgid "See all results"
+msgstr ""
+
+#: src/Modules/Search/Frontend.php:89
+msgid "Searching…"
+msgstr ""
+
 #: src/Modules/Search/Module.php:42
 msgid "Search"
 msgstr ""
@@ -2097,7 +2118,31 @@ msgstr ""
 msgid "In-house full-text product search. Wave 1 builds and maintains the search index; the storefront search surface arrives in later waves."
 msgstr ""
 
-#: src/Modules/Search/Module.php:92
+#: src/Modules/Search/Module.php:63
+msgid "Search field selector"
+msgstr ""
+
+#: src/Modules/Search/Module.php:66
+msgid "CSS selector for the theme search input(s) the live dropdown attaches to. The default covers most themes; override if your search box uses a custom field."
+msgstr ""
+
+#: src/Modules/Search/Module.php:69
+msgid "Minimum characters"
+msgstr ""
+
+#: src/Modules/Search/Module.php:72
+msgid "How many characters before the dropdown starts searching."
+msgstr ""
+
+#: src/Modules/Search/Module.php:75
+msgid "Debounce (ms)"
+msgstr ""
+
+#: src/Modules/Search/Module.php:78
+msgid "Idle delay after the last keystroke before a request fires."
+msgstr ""
+
+#: src/Modules/Search/Module.php:125
 msgid "Every 5 minutes (Freeman Search)"
 msgstr ""
 

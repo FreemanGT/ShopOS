@@ -182,6 +182,14 @@ final class Feature_Flags {
 				'shared'      => false,
 			),
 			array(
+				'module'      => 'search',
+				'feature'     => 'dropdown',
+				'label'       => __( 'Search — live dropdown', 'freeman-core' ),
+				'description' => __( 'Adds the storefront live search dropdown (debounced product results — image / title / price / link) backed by a public AJAX endpoint reading the search index. Needs the index populated (Search — product index). Off: no storefront output and no endpoint.', 'freeman-core' ),
+				'since'       => '1.19.0',
+				'shared'      => false,
+			),
+			array(
 				'module'      => 'variation_swatches',
 				'feature'     => 'bundle_compat',
 				'label'       => __( 'Variation Swatches — WPC Bundles / FBT compatibility', 'freeman-core' ),
