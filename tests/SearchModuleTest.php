@@ -82,8 +82,10 @@ final class SearchModuleTest extends TestCase {
 	public function test_settings_schema_has_dropdown_fields(): void {
 		$schema = ( new Module() )->settings_schema();
 
-		$this->assertSame( 'input[type="search"], input[name="s"]', $schema['field_selector']['default'] );
 		$this->assertSame( 2, $schema['min_chars']['default'] );
 		$this->assertSame( 200, $schema['debounce_ms']['default'] );
+		// The field selector is no longer a setting (the shortcode field is matched
+		// by the hardcoded default).
+		$this->assertArrayNotHasKey( 'field_selector', $schema );
 	}
 }

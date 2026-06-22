@@ -112,6 +112,10 @@ final class Search_Repository {
 			return array();
 		}
 
+		// MySQL has no LIMIT -1; map "unlimited" (the results-page call) to an
+		// effectively-infinite cap so the prepared LIMIT clause stays valid.
+		$limit = ( (int) $limit > 0 ) ? (int) $limit : 4294967295;
+
 		$sql  = Query_Engine::search_sql( Database::table_name(), $in_stock_only );
 		$args = Query_Engine::search_args( $term, $limit, array( $wpdb, 'esc_like' ) );
 		$ids  = $wpdb->get_col( $wpdb->prepare( $sql, $args ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared

@@ -32,14 +32,14 @@ final class SearchFrontendTest extends TestCase {
 		$this->assertSame( 200, $payload['debounce'] );
 	}
 
-	public function test_payload_honours_setting_overrides(): void {
-		$GLOBALS['fr_opts']['freeman_core_search_field_selector'] = '#my-search';
-		$GLOBALS['fr_opts']['freeman_core_search_min_chars']      = 3;
+	public function test_payload_honours_numeric_setting_overrides(): void {
+		$GLOBALS['fr_opts']['freeman_core_search_min_chars']   = 3;
+		$GLOBALS['fr_opts']['freeman_core_search_debounce_ms'] = 350;
 
 		$payload = ( new Frontend( new Module() ) )->localized_payload();
 
-		$this->assertSame( '#my-search', $payload['selector'] );
 		$this->assertSame( 3, $payload['minChars'] );
+		$this->assertSame( 350, $payload['debounce'] );
 	}
 
 	public function test_shortcode_form_is_enhanceable_and_native(): void {

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Freeman Core 1.19.1\n"
+"Project-Id-Version: Freeman Core 1.20.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/freeman-core\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-22T18:26:36+00:00\n"
+"POT-Creation-Date: 2026-06-22T19:02:15+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: freeman-core\n"
@@ -2106,24 +2106,24 @@ msgstr ""
 msgid "indexed"
 msgstr ""
 
-#: src/Modules/Search/Frontend.php:66
+#: src/Modules/Search/Frontend.php:65
 msgid "Search products…"
 msgstr ""
 
-#: src/Modules/Search/Frontend.php:67
+#: src/Modules/Search/Frontend.php:66
 #: src/Modules/Search/Module.php:42
 msgid "Search"
 msgstr ""
 
-#: src/Modules/Search/Frontend.php:122
+#: src/Modules/Search/Frontend.php:123
 msgid "No products found"
 msgstr ""
 
-#: src/Modules/Search/Frontend.php:123
+#: src/Modules/Search/Frontend.php:124
 msgid "See all results"
 msgstr ""
 
-#: src/Modules/Search/Frontend.php:124
+#: src/Modules/Search/Frontend.php:125
 msgid "Searching…"
 msgstr ""
 
@@ -2132,30 +2132,22 @@ msgid "In-house full-text product search. Wave 1 builds and maintains the search
 msgstr ""
 
 #: src/Modules/Search/Module.php:63
-msgid "Search field selector"
-msgstr ""
-
-#: src/Modules/Search/Module.php:66
-msgid "CSS selector for the theme search input(s) the live dropdown attaches to. The default covers most themes; override if your search box uses a custom field."
-msgstr ""
-
-#: src/Modules/Search/Module.php:69
 msgid "Minimum characters"
 msgstr ""
 
-#: src/Modules/Search/Module.php:72
+#: src/Modules/Search/Module.php:66
 msgid "How many characters before the dropdown starts searching."
 msgstr ""
 
-#: src/Modules/Search/Module.php:75
+#: src/Modules/Search/Module.php:69
 msgid "Debounce (ms)"
 msgstr ""
 
-#: src/Modules/Search/Module.php:78
+#: src/Modules/Search/Module.php:72
 msgid "Idle delay after the last keystroke before a request fires."
 msgstr ""
 
-#: src/Modules/Search/Module.php:129
+#: src/Modules/Search/Module.php:123
 msgid "Every 5 minutes (Freeman Search)"
 msgstr ""
 

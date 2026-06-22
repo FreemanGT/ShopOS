@@ -59,12 +59,6 @@ final class Module extends Module_Base {
 	 */
 	public function settings_schema() {
 		return array(
-			'field_selector' => array(
-				'label'       => __( 'Search field selector', 'freeman-core' ),
-				'type'        => 'text',
-				'default'     => 'input[type="search"], input[name="s"]',
-				'description' => __( 'CSS selector for the theme search input(s) the live dropdown attaches to. The default covers most themes; override if your search box uses a custom field.', 'freeman-core' ),
-			),
 			'min_chars'      => array(
 				'label'       => __( 'Minimum characters', 'freeman-core' ),
 				'type'        => 'number',

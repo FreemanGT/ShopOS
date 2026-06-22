@@ -2,11 +2,10 @@
 /**
  * Search — storefront wiring for the live dropdown.
  *
- * Enqueues the dropdown JS/CSS and localizes the config the script needs to
- * attach itself to the theme's search input. The store's search box isn't ours
- * (it comes from the theme builder / AWS), so the input is targeted by a
- * configurable selector rather than markup we render — progressive enhancement,
- * the native form still submits with JS off.
+ * Enqueues the dropdown JS/CSS and localizes the config the script needs. The
+ * dropdown attaches to `input[type="search"], input[name="s"]` — which the
+ * `[freeman_search]` shortcode field (and most native theme search boxes) match
+ * — progressive enhancement, the native form still submits with JS off.
  *
  * Also provides a `[freeman_search]` shortcode that prints a standalone product
  * search box. It renders `input[name="s"]`, which the default selector already
@@ -115,7 +114,9 @@ final class Frontend {
 			'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
 			'action'   => Ajax::ACTION,
 			'nonce'    => wp_create_nonce( Ajax::NONCE ),
-			'selector' => (string) $this->module->get_option( 'field_selector', 'input[type="search"], input[name="s"]' ),
+			// The `[freeman_search]` box renders input[type=search][name=s]; the
+			// dropdown attaches to that (and any native theme search field).
+			'selector' => 'input[type="search"], input[name="s"]',
 			'minChars' => (int) $this->module->get_option( 'min_chars', 2 ),
 			'debounce' => (int) $this->module->get_option( 'debounce_ms', 200 ),
 			'labels'   => array(

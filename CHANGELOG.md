@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.20.1] — 2026-06-22
+
+- Search 8.3a live-QA fixes: clamp search(term, -1) so the results page + facet feed no longer build invalid LIMIT -1 (was a blank grid + empty facets once AWS was deactivated); remove the field_selector setting (shortcode-only) in favour of a hardcoded selector the [freeman_search] field matches.
+
 ## [1.20.0] — 2026-06-22
 
 - Search Wave 8.3: engine-driven product search results page. Results_Query takes over the native search grid (pre_get_posts: relevance-ordered post__in + posts_search neutralisation), falls back to native WP search when the index is empty, and coexists with Shop Filters facets (intersect-and-preserve-order) via the additive freeman_core/shop_filters/search_product_ids filter. Behind freeman_core_search_results_enabled (default off).
