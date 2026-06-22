@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Freeman Core 1.20.0\n"
+"Project-Id-Version: Freeman Core 1.20.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/freeman-core\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-22T19:02:15+00:00\n"
+"POT-Creation-Date: 2026-06-22T19:09:49+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: freeman-core\n"
@@ -420,34 +420,10 @@ msgid "Adds the quick-view icon to product cards and the slide-in drawer (image,
 msgstr ""
 
 #: src/Core/Feature_Flags.php:179
-msgid "Search — product index"
-msgstr ""
-
-#: src/Core/Feature_Flags.php:180
-msgid "Builds and maintains the in-house full-text product search index (background reindex queue + 5-minute reconcile sweep + the \"Reindex all\" tool under Freeman → Search). Off: no index maintenance. This only populates the index — there is no storefront search surface yet."
-msgstr ""
-
-#: src/Core/Feature_Flags.php:187
-msgid "Search — live dropdown"
-msgstr ""
-
-#: src/Core/Feature_Flags.php:188
-msgid "Adds the storefront live search dropdown (debounced product results — image / title / price / link) backed by a public AJAX endpoint reading the search index. Needs the index populated (Search — product index). Off: no storefront output and no endpoint."
-msgstr ""
-
-#: src/Core/Feature_Flags.php:195
-msgid "Search — results page"
-msgstr ""
-
-#: src/Core/Feature_Flags.php:196
-msgid "Makes the engine drive the native product search-results grid (relevance-ordered post__in via pre_get_posts) and feeds Shop Filters facet counts the same id set. Falls back to native WP search when the index is empty. Off: WordPress / the search plugin owns the results page. The pre-cutover staging switch before Advanced Woo Search is disabled."
-msgstr ""
-
-#: src/Core/Feature_Flags.php:203
 msgid "Variation Swatches — WPC Bundles / FBT compatibility"
 msgstr ""
 
-#: src/Core/Feature_Flags.php:204
+#: src/Core/Feature_Flags.php:180
 msgid "Forwards all buy-box form fields to WooCommerce's add-to-cart endpoint so WPC Product Bundles and WPC Frequently-Bought-Together hidden inputs reach the cart; exposes a JS flag for the runtime."
 msgstr ""
 
@@ -2111,7 +2087,7 @@ msgid "Search products…"
 msgstr ""
 
 #: src/Modules/Search/Frontend.php:66
-#: src/Modules/Search/Module.php:42
+#: src/Modules/Search/Module.php:41
 msgid "Search"
 msgstr ""
 
@@ -2127,27 +2103,27 @@ msgstr ""
 msgid "Searching…"
 msgstr ""
 
-#: src/Modules/Search/Module.php:51
+#: src/Modules/Search/Module.php:50
 msgid "In-house full-text product search. Wave 1 builds and maintains the search index; the storefront search surface arrives in later waves."
 msgstr ""
 
-#: src/Modules/Search/Module.php:63
+#: src/Modules/Search/Module.php:62
 msgid "Minimum characters"
 msgstr ""
 
-#: src/Modules/Search/Module.php:66
+#: src/Modules/Search/Module.php:65
 msgid "How many characters before the dropdown starts searching."
 msgstr ""
 
-#: src/Modules/Search/Module.php:69
+#: src/Modules/Search/Module.php:68
 msgid "Debounce (ms)"
 msgstr ""
 
-#: src/Modules/Search/Module.php:72
+#: src/Modules/Search/Module.php:71
 msgid "Idle delay after the last keystroke before a request fires."
 msgstr ""
 
-#: src/Modules/Search/Module.php:123
+#: src/Modules/Search/Module.php:118
 msgid "Every 5 minutes (Freeman Search)"
 msgstr ""
 

@@ -14,7 +14,6 @@
 
 namespace Freeman\Core\Modules\Search;
 
-use Freeman\Core\Core\Feature_Flags;
 use Freeman\Core\Core\Module_Base;
 
 defined( 'ABSPATH' ) || exit;
@@ -75,33 +74,29 @@ final class Module extends Module_Base {
 	}
 
 	/**
-	 * Boot. The background indexer (lifecycle hooks + reconcile sweep + admin
-	 * "Reindex all" tool) is gated by the `indexer` flag; the storefront live
-	 * dropdown (assets + public endpoint) by the independent `dropdown` flag.
-	 * Both flags off → registers nothing.
+	 * Boot. The module graduated to always-on in 1.21.0 (previously each surface
+	 * sat behind its own `search`/* flag): the background indexer (lifecycle hooks
+	 * + reconcile sweep + admin "Reindex all" tool), the storefront live dropdown
+	 * + `[freeman_search]` shortcode + public endpoint, and the engine-driven
+	 * results page all wire whenever the module is enabled. The module-enable
+	 * toggle is the single kill-switch; a not-yet-built index degrades safely
+	 * (dropdown empty, results fall back to native WP search via has_data()).
 	 */
 	public function boot() {
-		if ( Feature_Flags::is_enabled( 'search', 'indexer' ) ) {
-			add_filter( 'cron_schedules', array( $this, 'register_cron_schedule' ) );
+		add_filter( 'cron_schedules', array( $this, 'register_cron_schedule' ) );
 
-			$indexer = new Indexer();
-			$indexer->register_hooks();
-			// Defer scheduling to `init`: Action Scheduler's store isn't ready at
-			// plugins_loaded, so as_schedule_recurring_action() there silently no-ops.
-			add_action( 'init', array( $indexer, 'ensure_scheduled' ) );
+		$indexer = new Indexer();
+		$indexer->register_hooks();
+		// Defer scheduling to `init`: Action Scheduler's store isn't ready at
+		// plugins_loaded, so as_schedule_recurring_action() there silently no-ops.
+		add_action( 'init', array( $indexer, 'ensure_scheduled' ) );
 
-			if ( is_admin() ) {
-				( new Admin_Page( $indexer ) )->boot();
-			}
-		}
+		( new Frontend( $this ) )->register();
+		( new Ajax() )->register();
+		( new Results_Query() )->register();
 
-		if ( Feature_Flags::is_enabled( 'search', 'dropdown' ) ) {
-			( new Frontend( $this ) )->register();
-			( new Ajax() )->register();
-		}
-
-		if ( Feature_Flags::is_enabled( 'search', 'results' ) ) {
-			( new Results_Query() )->register();
+		if ( is_admin() ) {
+			( new Admin_Page( $indexer ) )->boot();
 		}
 	}
 

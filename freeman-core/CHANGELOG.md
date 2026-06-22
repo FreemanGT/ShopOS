@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.0] — 2026-06-22
+
+- Search Wave 8.4 graduation: module is now always-on (three search feature flags removed) since Advanced Woo Search was deactivated and the engine is live. The originally planned parity-tooling/cutover was obsoleted. Module-enable toggle is the single kill-switch; an unbuilt index degrades safely. Wave 8 epic complete.
+
 ## [1.20.1] — 2026-06-22
 
 - Search 8.3a live-QA fixes: clamp search(term, -1) so the results page + facet feed no longer build invalid LIMIT -1 (was a blank grid + empty facets once AWS was deactivated); remove the field_selector setting (shortcode-only) in favour of a hardcoded selector the [freeman_search] field matches.
