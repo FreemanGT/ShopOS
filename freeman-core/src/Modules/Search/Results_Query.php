@@ -73,19 +73,24 @@ final class Results_Query {
 	 * ----------------------------------------------------------------- */
 
 	/**
-	 * Whether the engine should drive this query. Product search only — a generic
-	 * theme search (no product post type) spans pages/posts and is left to WP.
+	 * Whether the engine should drive this query. We deliberately do NOT gate on
+	 * is_search(): on this store the search results page is rendered by an
+	 * Elementor product-archive template whose main query carries post_type
+	 * `product` but NOT the `s` query var (the term lives only in the URL), so
+	 * is_search() is false and $q->get('s') is empty there. The trigger is instead
+	 * "a product main query + a search term in the request" — which also covers
+	 * the plain native search. A product query with no request term (the ordinary
+	 * shop archive) is left alone.
 	 *
 	 * @param bool   $is_admin   In wp-admin.
 	 * @param bool   $is_main    Main query.
-	 * @param bool   $is_search  Search query.
-	 * @param bool   $is_product Product post type.
-	 * @param string $term       Search term.
+	 * @param bool   $is_product Product post type / archive.
+	 * @param string $term       Request search term.
 	 * @param bool   $has_data   Index has rows.
 	 * @return bool
 	 */
-	public static function should_handle( $is_admin, $is_main, $is_search, $is_product, $term, $has_data ) {
-		return ! $is_admin && $is_main && $is_search && $is_product && '' !== trim( (string) $term ) && (bool) $has_data;
+	public static function should_handle( $is_admin, $is_main, $is_product, $term, $has_data ) {
+		return ! $is_admin && $is_main && $is_product && '' !== trim( (string) $term ) && (bool) $has_data;
 	}
 
 	/**
@@ -106,7 +111,11 @@ final class Results_Query {
 	 * ----------------------------------------------------------------- */
 
 	/**
-	 * pre_get_posts: take over a front-end product search main query.
+	 * pre_get_posts: take over the front-end product main query when the URL
+	 * carries a search term — including an Elementor product-archive page that
+	 * never set the `s` query var on its main query (so the term is read from the
+	 * request, not the query). Constraining the main query fixes both the grid
+	 * content and the pagination (max_num_pages follows the engine match count).
 	 *
 	 * @param \WP_Query $q Query.
 	 */
@@ -115,17 +124,42 @@ final class Results_Query {
 		if ( ! $q instanceof \WP_Query ) {
 			return;
 		}
-		$post_type  = $q->get( 'post_type' );
-		$is_product = ( 'product' === $post_type ) || ( is_array( $post_type ) && in_array( 'product', $post_type, true ) );
-		$term       = (string) $q->get( 's' );
+		$term = $this->request_search_term();
 
-		if ( ! self::should_handle( is_admin(), $q->is_main_query(), $q->is_search(), $is_product, $term, $this->repo->has_data() ) ) {
+		if ( ! self::should_handle( is_admin(), $q->is_main_query(), $this->is_product_query( $q ), $term, $this->repo->has_data() ) ) {
 			return;
 		}
 
-		$q->set( 'post__in', self::plan_ids( $this->repo->search( trim( $term ), -1 ) ) );
+		$q->set( 'post__in', self::plan_ids( $this->repo->search( $term, -1 ) ) );
 		$q->set( 'orderby', 'post__in' );
 		$this->active = true;
+	}
+
+	/**
+	 * The search term from the request (where it actually lives — the main query
+	 * may not carry it as the `s` var on an archive-template render). Sanitised.
+	 *
+	 * @return string
+	 */
+	private function request_search_term() {
+		if ( ! isset( $_GET['s'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return '';
+		}
+		return trim( sanitize_text_field( wp_unslash( $_GET['s'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
+
+	/**
+	 * Whether a query targets products — by post type or as the product archive.
+	 *
+	 * @param \WP_Query $q Query.
+	 * @return bool
+	 */
+	private function is_product_query( $q ) {
+		$post_type = $q->get( 'post_type' );
+		if ( 'product' === $post_type || ( is_array( $post_type ) && in_array( 'product', $post_type, true ) ) ) {
+			return true;
+		}
+		return $q->is_post_type_archive( 'product' );
 	}
 
 	/**
@@ -133,10 +167,9 @@ final class Results_Query {
 	 * search page. The widget in "current query" mode doesn't recognise a search
 	 * as an archive, so it falls back to source `all` and renders every product
 	 * through its own `freeman_core/product_slider/query_args` filter — we hook
-	 * that and inject the engine matches. Scoped to current-query widgets, and the
-	 * search is read from $wp_the_query (Elementor swaps $wp_query during the
-	 * widget render, so is_search()/get_search_query() are unreliable there — the
-	 * widget reads $wp_the_query for the same reason).
+	 * that and inject the engine matches. Scoped to current-query widgets; the
+	 * term is read from the request (the main query may not carry `s` on an
+	 * Elementor archive render, and $wp_query is swapped during the widget render).
 	 *
 	 * @param array $args     wc_get_products() args.
 	 * @param array $settings Widget settings.
@@ -146,14 +179,8 @@ final class Results_Query {
 		if ( ! is_array( $args ) || ( is_array( $settings ) ? ( $settings['source'] ?? '' ) : '' ) !== 'current_query' ) {
 			return $args;
 		}
-		$main = ( isset( $GLOBALS['wp_the_query'] ) && $GLOBALS['wp_the_query'] instanceof \WP_Query )
-			? $GLOBALS['wp_the_query']
-			: null;
-		if ( ! $main instanceof \WP_Query || ! $main->is_search() || ! $this->repo->has_data() ) {
-			return $args;
-		}
-		$term = trim( (string) $main->get( 's' ) );
-		if ( '' === $term ) {
+		$term = $this->request_search_term();
+		if ( '' === $term || ! $this->repo->has_data() ) {
 			return $args;
 		}
 

@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.3] — 2026-06-22
+
+- Search 8.3c: read the search term from the request, not the main query. On an Elementor product-archive search page the main query carries post_type=product but not the s query var, so the engine never constrained the grid (all products + pagination) while ShopFilters facets were correct. apply() now triggers on a product main query with a request search term and constrains it, fixing grid content and pagination.
+
 ## [1.21.2] — 2026-06-22
 
 - Search 8.3b fix: constrain the Freeman ProductSlider search grid via its query_args filter (the previous the_posts net regressed to zero products because the widget renders its own query); read the term from wp_the_query to survive Elementor swap; inject engine ids via wc_get_products include. Also lower the index debounce 30s to 10s for near-live freshness.

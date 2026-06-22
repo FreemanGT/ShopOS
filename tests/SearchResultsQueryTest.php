@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 final class SearchResultsQueryTest extends TestCase {
 
 	public function test_should_handle_true_for_frontend_product_search_with_data(): void {
-		$this->assertTrue( Results_Query::should_handle( false, true, true, true, 'hoodie', true ) );
+		$this->assertTrue( Results_Query::should_handle( false, true, true, 'hoodie', true ) );
 	}
 
 	/**
@@ -25,14 +25,13 @@ final class SearchResultsQueryTest extends TestCase {
 	}
 
 	public static function non_handling_cases(): array {
-		// [is_admin, is_main, is_search, is_product, term, has_data]
+		// [is_admin, is_main, is_product, term, has_data]
 		return array(
-			'admin'              => array( array( true, true, true, true, 'x', true ) ),
-			'not main query'     => array( array( false, false, true, true, 'x', true ) ),
-			'not a search'       => array( array( false, true, false, true, 'x', true ) ),
-			'not product search' => array( array( false, true, true, false, 'x', true ) ),
-			'blank term'         => array( array( false, true, true, true, '   ', true ) ),
-			'empty index'        => array( array( false, true, true, true, 'x', false ) ),
+			'admin'                  => array( array( true, true, true, 'x', true ) ),
+			'not main query'         => array( array( false, false, true, 'x', true ) ),
+			'not a product query'    => array( array( false, true, false, 'x', true ) ),
+			'no term in request'     => array( array( false, true, true, '   ', true ) ),
+			'empty index'            => array( array( false, true, true, 'x', false ) ),
 		);
 	}
 
