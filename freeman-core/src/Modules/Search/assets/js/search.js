@@ -129,15 +129,15 @@
 				var title = el('span', 'fc-search-item__title');
 				title.textContent = it.title;
 				body.appendChild(title);
-				if (show.sku && it.sku) {
-					var sku = el('span', 'fc-search-item__sku');
-					sku.textContent = it.sku;
-					body.appendChild(sku);
-				}
 				if (show.price) {
 					var price = el('span', 'fc-search-item__price');
 					price.innerHTML = it.price_html || '';
 					body.appendChild(price);
+				}
+				if (show.sku && it.sku) {
+					var sku = el('span', 'fc-search-item__sku');
+					sku.textContent = it.sku;
+					body.appendChild(sku);
 				}
 				a.appendChild(body);
 				panel.appendChild(a);
@@ -216,19 +216,15 @@
 			var palettePanel = el('div', 'fc-search-modal__panel');
 			var header = el('div', 'fc-search-modal__header');
 
-			var iconHint = el('span', 'fc-search-modal__icon');
-			iconHint.innerHTML = ICON;
-
 			var closeBtn = el('button', 'fc-search-modal__close');
 			closeBtn.type = 'button';
 			closeBtn.setAttribute('aria-label', cfg.labels.close);
 			closeBtn.innerHTML = CLOSE_ICON;
 
-			// Drop the icon in where the form was, then move the form into the
+			// Drop the trigger in where the form was, then move the form into the
 			// palette header so its native GET submit (and the mobile Search button)
 			// are preserved.
 			form.parentNode.insertBefore(trigger, form);
-			header.appendChild(iconHint);
 			header.appendChild(form);
 			header.appendChild(closeBtn);
 			panel.classList.add('fc-search-panel--palette');

@@ -47,8 +47,8 @@
 }
 
 .fc-search-item__img {
-	width: 48px;
-	height: 48px;
+	width: 52px;
+	height: 52px;
 	object-fit: cover;
 	border-radius: var(--fm-radius-md, 6px);
 	background: var(--fm-color-paper-dim, #f1efea);
@@ -58,7 +58,7 @@
 .fc-search-item__body {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 3px;
 	min-width: 0;
 	flex: 1 1 auto;
 }
@@ -80,11 +80,11 @@
 	white-space: nowrap;
 }
 
+/* Price lives inside the body stack so it tracks the title's alignment —
+ * right-aligned under RTL, left-aligned under LTR — instead of floating to the
+ * opposite edge of the row. */
 .fc-search-item__price {
-	flex: 0 0 auto;
-	margin-inline-start: var(--fm-space-md, 16px);
-	text-align: end;
-	font-weight: var(--fm-weight-medium, 500);
+	font-weight: var(--fm-weight-semi, 600);
 	color: var(--fm-color-ink, #1b1b1b);
 	white-space: nowrap;
 }
@@ -149,7 +149,7 @@
 	box-shadow: none !important;
 	-webkit-appearance: none;
 	appearance: none;
-	color: inherit;
+	color: var(--fm-color-ink, #1b1b1b) !important;
 	line-height: 0;
 	cursor: pointer;
 	border-radius: var(--fm-radius-round, 50%);
@@ -217,41 +217,46 @@
 .fc-search-modal__header {
 	display: flex;
 	align-items: center;
-	gap: var(--fm-space-sm, 8px);
-	padding: var(--fm-space-sm, 8px) var(--fm-space-md, 16px);
+	gap: var(--fm-space-md, 16px);
+	padding: var(--fm-space-md, 16px);
 	border-bottom: 1px solid var(--fm-color-hairline, #e6e6e2);
 }
 
-.fc-search-modal__icon {
-	display: inline-flex;
-	flex: 0 0 auto;
-	line-height: 0;
-	color: var(--fm-color-ink-muted, #6b6b6b);
-}
-
-/* The field is borderless inside the panel — the panel is its frame. */
 .fc-search-modal .fc-search-form {
 	flex: 1 1 auto;
 	min-width: 0;
 	gap: var(--fm-space-sm, 8px);
 }
 
+/*
+ * The field is a self-contained rounded search box. Every box property carries
+ * !important so it survives Elementor / theme input styling on the live store
+ * (a grey fill, square corners, or a heavy black focus border otherwise leak
+ * through). Focus is a subtle ink-soft border — no ring, no slab.
+ */
 .fc-search-modal .fc-search-field {
 	flex: 1 1 auto;
 	width: 100%;
 	min-width: 0;
-	height: var(--fm-input-height, 44px);
-	padding: 0;
-	border: 0;
-	border-radius: 0;
-	background: transparent;
-	color: var(--fm-color-ink, #1b1b1b);
-	font-size: var(--fm-text-lg, 1.15rem);
+	height: 3rem;
+	padding: 0 var(--fm-space-md, 16px) !important;
+	border: 1px solid var(--fm-color-hairline, #e6e6e2) !important;
+	border-radius: var(--fm-radius-lg, 12px) !important;
+	background: var(--fm-color-paper, #fff) !important;
+	color: var(--fm-color-ink, #1b1b1b) !important;
+	font-size: var(--fm-text-md, 1rem);
 	font-family: inherit;
-	outline: none;
-	box-shadow: none;
+	outline: none !important;
+	box-shadow: none !important;
 	-webkit-appearance: none;
 	appearance: none;
+}
+
+.fc-search-modal .fc-search-field:focus,
+.fc-search-modal .fc-search-field:focus-visible {
+	border-color: var(--fm-color-ink-soft, #3a3a3a) !important;
+	outline: none !important;
+	box-shadow: none !important;
 }
 
 .fc-search-modal .fc-search-field::placeholder {
@@ -259,38 +264,47 @@
 	opacity: 1;
 }
 
-/* Close button — body-appended, clear of Elementor widget scope. */
+/* Hide the dated native search clear "x". */
+.fc-search-modal .fc-search-field::-webkit-search-cancel-button,
+.fc-search-modal .fc-search-field::-webkit-search-decoration {
+	-webkit-appearance: none;
+	appearance: none;
+	display: none;
+}
+
+/*
+ * Close button — body-appended, but Elementor's global button rules can still
+ * reach it, so the visual resets carry !important too. A clean icon-only target
+ * with a soft circular hover.
+ */
 .fc-search-modal__close {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	flex: 0 0 auto;
-	width: 2.25rem;
-	height: 2.25rem;
-	padding: 0;
+	width: 2.75rem;
+	height: 2.75rem;
+	padding: 0 !important;
 	margin: 0;
-	background: transparent;
-	border: 0;
-	box-shadow: none;
+	background: transparent !important;
+	border: 0 !important;
+	box-shadow: none !important;
 	-webkit-appearance: none;
 	appearance: none;
-	color: var(--fm-color-ink-muted, #6b6b6b);
+	color: var(--fm-color-ink, #1b1b1b) !important;
 	line-height: 0;
 	cursor: pointer;
 	border-radius: var(--fm-radius-round, 50%);
-	transition: background-color var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease),
-		color var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease);
+	transition: background-color var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease);
 }
 
 .fc-search-modal__close:hover {
-	background: var(--fm-color-paper-dim, #f1efea);
-	color: var(--fm-color-ink, #1b1b1b);
+	background: var(--fm-color-paper-dim, #f1efea) !important;
 }
 
 .fc-search-modal__close:focus-visible {
 	outline: 2px solid var(--fm-color-ink, #1b1b1b);
 	outline-offset: 2px;
-	color: var(--fm-color-ink, #1b1b1b);
 }
 
 /* Submit — brand primary; hidden on desktop (Enter / "see all" carries it). */
@@ -299,12 +313,13 @@
 	flex: 0 0 auto;
 	align-items: center;
 	justify-content: center;
-	height: var(--fm-input-height, 44px);
-	padding: 0 var(--fm-space-lg, 24px);
-	background: var(--fm-color-accent, #1b1b1b);
-	color: var(--fm-color-accent-text, #fff);
-	border: 0;
-	border-radius: var(--fm-radius-sm, 4px);
+	height: 3rem;
+	padding: 0 var(--fm-space-lg, 24px) !important;
+	background: var(--fm-color-accent, #1b1b1b) !important;
+	color: var(--fm-color-accent-text, #fff) !important;
+	border: 0 !important;
+	border-radius: var(--fm-radius-lg, 12px) !important;
+	box-shadow: none !important;
 	font-family: inherit;
 	font-size: var(--fm-text-xs, 0.75rem);
 	font-weight: var(--fm-weight-semi, 600);
@@ -364,14 +379,6 @@ body.fc-search-open {
 		height: 100%;
 		border: 0;
 		border-radius: 0;
-	}
-
-	.fc-search-modal__header {
-		padding: var(--fm-space-md, 16px);
-	}
-
-	.fc-search-modal__icon {
-		display: none;
 	}
 
 	.fc-search-modal .fc-search-submit {

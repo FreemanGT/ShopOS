@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.12] — 2026-06-23
+
+- Search palette RTL + live-store polish: prices now sit in the result body so they right-align under the title in RTL (no longer float to the opposite edge); the header search field is a rounded white box with a subtle ink-soft focus border (kills the theme grey fill, square corners, and heavy black focus outline that leaked through on the live store); the trigger icon is forced to ink so it stays visible on tinted headers; removed the redundant in-modal search icon; hid the dated native search clear button; and hardened the close + submit button resets with !important so Elementor cannot re-skin them. CSS/JS only.
+
 ## [1.21.11] — 2026-06-23
 
 - Search redesign: replace the full-width header bar with a centered command palette (dimmed backdrop, full-screen on mobile with a visible Search button). The header search trigger is now a clean icon-only button with transparent-background resets that survive Elementor theme styling. Result rows redesigned with right-aligned price, ink-muted SKU, hover and keyboard-selected states, and a proper see-all footer; fixes the flexbox min-width overflow that pushed prices off-screen.
