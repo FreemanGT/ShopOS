@@ -190,6 +190,14 @@ final class Feature_Flags {
 				'shared'      => false,
 			),
 			array(
+				'module'      => 'search',
+				'feature'     => 'results',
+				'label'       => __( 'Search — results page', 'freeman-core' ),
+				'description' => __( 'Makes the engine drive the native product search-results grid (relevance-ordered post__in via pre_get_posts) and feeds Shop Filters facet counts the same id set. Falls back to native WP search when the index is empty. Off: WordPress / the search plugin owns the results page. The pre-cutover staging switch before Advanced Woo Search is disabled.', 'freeman-core' ),
+				'since'       => '1.20.0',
+				'shared'      => false,
+			),
+			array(
 				'module'      => 'variation_swatches',
 				'feature'     => 'bundle_compat',
 				'label'       => __( 'Variation Swatches — WPC Bundles / FBT compatibility', 'freeman-core' ),

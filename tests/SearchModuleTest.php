@@ -66,6 +66,19 @@ final class SearchModuleTest extends TestCase {
 		$this->assertArrayNotHasKey( 'woocommerce_update_product', $GLOBALS['fr_hooks'] );
 	}
 
+	public function test_boot_wires_results_query_when_flag_is_on(): void {
+		$GLOBALS['fr_opts']['freeman_core_search_results_enabled'] = '1';
+
+		( new Module() )->boot();
+
+		$this->assertArrayHasKey( 'pre_get_posts', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'posts_search', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'freeman_core/shop_filters/search_product_ids', $GLOBALS['fr_hooks'] );
+		// Results flag alone wires no indexer hooks and no public dropdown endpoint.
+		$this->assertArrayNotHasKey( 'woocommerce_update_product', $GLOBALS['fr_hooks'] );
+		$this->assertArrayNotHasKey( 'wp_ajax_freeman_core_search_query', $GLOBALS['fr_hooks'] );
+	}
+
 	public function test_settings_schema_has_dropdown_fields(): void {
 		$schema = ( new Module() )->settings_schema();
 

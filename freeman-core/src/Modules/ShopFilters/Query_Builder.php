@@ -616,7 +616,20 @@ final class Query_Builder {
 				'ignore_sticky_posts' => true,
 			)
 		);
-		return array_map( 'intval', (array) $query->posts );
+		$ids = array_map( 'intval', (array) $query->posts );
+
+		/**
+		 * Filters the product ids a search term resolves to before they seed the
+		 * facet base universe. The Search module supplies its engine-ranked ids
+		 * here so the panel's facets match the engine-driven search grid; without
+		 * a listener this is WooCommerce's native title/content search.
+		 *
+		 * @since 1.20.0
+		 *
+		 * @param int[]  $ids  Native WP product-search ids.
+		 * @param string $term Search term.
+		 */
+		return array_map( 'intval', (array) apply_filters( 'freeman_core/shop_filters/search_product_ids', $ids, (string) $term ) );
 	}
 
 	/**

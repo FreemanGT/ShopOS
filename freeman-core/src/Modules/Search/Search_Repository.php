@@ -67,6 +67,18 @@ final class Search_Repository {
 	}
 
 	/**
+	 * Whether the index has any rows. The Wave 3 results page uses this to decide
+	 * between driving the search grid from the engine and falling back to native
+	 * WP search (so a site that enabled the results flag before ever reindexing
+	 * isn't left with a broken search).
+	 *
+	 * @return bool
+	 */
+	public function has_data() {
+		return $this->count_indexed_products() > 0;
+	}
+
+	/**
 	 * Empty the whole index (used before a full rebuild).
 	 */
 	public function clear_all() {

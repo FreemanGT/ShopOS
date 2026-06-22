@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.20.0] — 2026-06-22
+
+- Search Wave 8.3: engine-driven product search results page. Results_Query takes over the native search grid (pre_get_posts: relevance-ordered post__in + posts_search neutralisation), falls back to native WP search when the index is empty, and coexists with Shop Filters facets (intersect-and-preserve-order) via the additive freeman_core/shop_filters/search_product_ids filter. Behind freeman_core_search_results_enabled (default off).
+
 ## [1.19.1] — 2026-06-22
 
 - Search 8.2a: add [freeman_search] shortcode — a standalone product search box (native GET form, auto-enhanced by the dropdown JS via the default selector; JS-off runs a normal product search). Gated by the existing dropdown flag.

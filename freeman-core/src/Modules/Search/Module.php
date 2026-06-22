@@ -105,6 +105,10 @@ final class Module extends Module_Base {
 			( new Frontend( $this ) )->register();
 			( new Ajax() )->register();
 		}
+
+		if ( Feature_Flags::is_enabled( 'search', 'results' ) ) {
+			( new Results_Query() )->register();
+		}
 	}
 
 	/**
