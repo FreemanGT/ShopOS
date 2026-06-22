@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.13] — 2026-06-23
+
+- Search: eliminate the flash of the native search bar before JS runs. render_form now emits the icon trigger server-side with the form hidden by a wrapper-scoped rule (search.css loads render-blocking in head), so only the icon ever paints; search.js adopts that trigger instead of creating a duplicate, and a noscript block restores the native bar when JS is off.
+
 ## [1.21.12] — 2026-06-23
 
 - Search palette RTL + live-store polish: prices now sit in the result body so they right-align under the title in RTL (no longer float to the opposite edge); the header search field is a rounded white box with a subtle ink-soft focus border (kills the theme grey fill, square corners, and heavy black focus outline that leaked through on the live store); the trigger icon is forced to ink so it stays visible on tinted headers; removed the redundant in-modal search icon; hid the dated native search clear button; and hardened the close + submit button resets with !important so Elementor cannot re-skin them. CSS/JS only.

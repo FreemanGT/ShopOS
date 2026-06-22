@@ -69,12 +69,23 @@ final class Frontend {
 			'freeman_search'
 		);
 
-		return '<form role="search" method="get" class="fc-search-form" action="' . esc_url( home_url( '/' ) ) . '">'
+		// The search icon is rendered server-side and the form starts hidden (via
+		// the wrapper-scoped rule in search.css, which loads in <head> before first
+		// paint). search.js then adopts this trigger and moves the form into the
+		// command palette. This prevents the native bar from flashing before JS
+		// runs. The <noscript> block restores the native bar when JS is unavailable.
+		$icon = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
+
+		return '<div class="fc-search-shortcode">'
+			. '<button type="button" class="fc-search-trigger" aria-haspopup="dialog" aria-expanded="false" aria-label="' . esc_attr( $atts['placeholder'] ) . '">' . $icon . '</button>'
+			. '<form role="search" method="get" class="fc-search-form" action="' . esc_url( home_url( '/' ) ) . '">'
 			. '<input type="search" class="fc-search-field" name="s" value="' . esc_attr( get_search_query() ) . '"'
 			. ' placeholder="' . esc_attr( $atts['placeholder'] ) . '" aria-label="' . esc_attr( $atts['placeholder'] ) . '" autocomplete="off" />'
 			. '<input type="hidden" name="post_type" value="product" />'
 			. '<button type="submit" class="fc-search-submit">' . esc_html( $atts['button'] ) . '</button>'
-			. '</form>';
+			. '</form>'
+			. '<noscript><style>.fc-search-shortcode .fc-search-trigger{display:none}.fc-search-shortcode .fc-search-form{display:flex}</style></noscript>'
+			. '</div>';
 	}
 
 	/**

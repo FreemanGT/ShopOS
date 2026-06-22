@@ -200,12 +200,18 @@
 		// --- Palette mode: icon → centered command palette over a dimmed scrim. --
 
 		function setupOverlay() {
-			trigger = el('button', 'fc-search-trigger');
-			trigger.type = 'button';
-			trigger.setAttribute('aria-label', cfg.labels.toggle);
-			trigger.setAttribute('aria-expanded', 'false');
-			trigger.setAttribute('aria-haspopup', 'dialog');
-			trigger.innerHTML = ICON;
+			// Prefer the server-rendered trigger (it paints immediately, so the
+			// native bar never flashes); only synthesise one if it's absent.
+			trigger = form.parentNode.querySelector('.fc-search-trigger');
+			if (!trigger) {
+				trigger = el('button', 'fc-search-trigger');
+				trigger.type = 'button';
+				trigger.setAttribute('aria-label', cfg.labels.toggle);
+				trigger.setAttribute('aria-expanded', 'false');
+				trigger.setAttribute('aria-haspopup', 'dialog');
+				trigger.innerHTML = ICON;
+				form.parentNode.insertBefore(trigger, form);
+			}
 
 			modal = el('div', 'fc-search-modal');
 			modal.setAttribute('role', 'dialog');
@@ -221,10 +227,9 @@
 			closeBtn.setAttribute('aria-label', cfg.labels.close);
 			closeBtn.innerHTML = CLOSE_ICON;
 
-			// Drop the trigger in where the form was, then move the form into the
-			// palette header so its native GET submit (and the mobile Search button)
-			// are preserved.
-			form.parentNode.insertBefore(trigger, form);
+			// Move the form into the palette header (this lifts it out of the
+			// .fc-search-shortcode wrapper, so its hidden-by-default rule stops
+			// applying); its native GET submit + mobile Search button are preserved.
 			header.appendChild(form);
 			header.appendChild(closeBtn);
 			panel.classList.add('fc-search-panel--palette');

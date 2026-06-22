@@ -136,6 +136,21 @@
 	min-width: 0;
 }
 
+/*
+ * Shortcode wrapper: the icon trigger paints immediately; the form starts
+ * hidden so the native bar never flashes before search.js lifts the form into
+ * the command palette (at which point this wrapper-scoped rule stops matching).
+ * The shortcode's <noscript> block reverses this when JS is unavailable.
+ */
+.fc-search-shortcode {
+	display: inline-flex;
+	align-items: center;
+}
+
+.fc-search-shortcode .fc-search-form {
+	display: none;
+}
+
 /* --- Icon trigger (lives in the header — must beat Elementor buttons) ----- */
 .fc-search-trigger {
 	display: inline-flex;
