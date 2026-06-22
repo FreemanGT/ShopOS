@@ -174,6 +174,14 @@ final class Feature_Flags {
 				'shared'      => false,
 			),
 			array(
+				'module'      => 'search',
+				'feature'     => 'indexer',
+				'label'       => __( 'Search — product index', 'freeman-core' ),
+				'description' => __( 'Builds and maintains the in-house full-text product search index (background reindex queue + 5-minute reconcile sweep + the "Reindex all" tool under Freeman → Search). Off: no index maintenance. This only populates the index — there is no storefront search surface yet.', 'freeman-core' ),
+				'since'       => '1.18.0',
+				'shared'      => false,
+			),
+			array(
 				'module'      => 'variation_swatches',
 				'feature'     => 'bundle_compat',
 				'label'       => __( 'Variation Swatches — WPC Bundles / FBT compatibility', 'freeman-core' ),

@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.18.0] — 2026-06-22
+
+- Search Wave 8.1 foundation: in-house full-text product search index (freeman_search_index FULLTEXT table) + dirty-queue indexer + Reindex all admin tool, behind freeman_core_search_indexer_enabled (default off). Staged to replace Advanced Woo Search.
+
 ## [1.17.5] — 2026-06-21
 
 - Hover-gate variation swatch tooltips and scale so touch devices select a variation on the first tap

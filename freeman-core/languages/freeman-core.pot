@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Freeman Core 1.16.1\n"
+"Project-Id-Version: Freeman Core 1.18.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/freeman-core\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-18T21:03:43+00:00\n"
+"POT-Creation-Date: 2026-06-22T16:49:16+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: freeman-core\n"
@@ -420,10 +420,18 @@ msgid "Adds the quick-view icon to product cards and the slide-in drawer (image,
 msgstr ""
 
 #: src/Core/Feature_Flags.php:179
-msgid "Variation Swatches — WPC Bundles / FBT compatibility"
+msgid "Search — product index"
 msgstr ""
 
 #: src/Core/Feature_Flags.php:180
+msgid "Builds and maintains the in-house full-text product search index (background reindex queue + 5-minute reconcile sweep + the \"Reindex all\" tool under Freeman → Search). Off: no index maintenance. This only populates the index — there is no storefront search surface yet."
+msgstr ""
+
+#: src/Core/Feature_Flags.php:187
+msgid "Variation Swatches — WPC Bundles / FBT compatibility"
+msgstr ""
+
+#: src/Core/Feature_Flags.php:188
 msgid "Forwards all buy-box form fields to WooCommerce's add-to-cart endpoint so WPC Product Bundles and WPC Frequently-Bought-Together hidden inputs reach the cart; exposes a JS flag for the runtime."
 msgstr ""
 
@@ -667,7 +675,7 @@ msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:293
 #: src/Modules/CategorySlider/Widget.php:556
-#: src/Modules/ProductSlider/Widget.php:549
+#: src/Modules/ProductSlider/Widget.php:558
 msgid "Hidden"
 msgstr ""
 
@@ -728,57 +736,57 @@ msgid "Card name color"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:482
-#: src/Modules/ProductSlider/Widget.php:453
+#: src/Modules/ProductSlider/Widget.php:462
 msgid "Behavior"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:490
-#: src/Modules/ProductSlider/Widget.php:476
+#: src/Modules/ProductSlider/Widget.php:485
 msgid "Direction"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:495
-#: src/Modules/ProductSlider/Widget.php:481
+#: src/Modules/ProductSlider/Widget.php:490
 msgid "Auto (follow site)"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:496
-#: src/Modules/ProductSlider/Widget.php:482
+#: src/Modules/ProductSlider/Widget.php:491
 msgid "Force LTR"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:497
-#: src/Modules/ProductSlider/Widget.php:483
+#: src/Modules/ProductSlider/Widget.php:492
 msgid "Force RTL"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:499
-#: src/Modules/ProductSlider/Widget.php:485
+#: src/Modules/ProductSlider/Widget.php:494
 msgid "RTL flips arrows, drag direction, and progress bar."
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:506
-#: src/Modules/ProductSlider/Widget.php:493
+#: src/Modules/ProductSlider/Widget.php:502
 msgid "Scroll snap"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:511
-#: src/Modules/ProductSlider/Widget.php:498
+#: src/Modules/ProductSlider/Widget.php:507
 msgid "Free-scroll"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:512
-#: src/Modules/ProductSlider/Widget.php:499
+#: src/Modules/ProductSlider/Widget.php:508
 msgid "Per card"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:513
-#: src/Modules/ProductSlider/Widget.php:500
+#: src/Modules/ProductSlider/Widget.php:509
 msgid "Per page"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:521
-#: src/Modules/ProductSlider/Widget.php:509
+#: src/Modules/ProductSlider/Widget.php:518
 msgid "Enable mouse drag"
 msgstr ""
 
@@ -787,52 +795,52 @@ msgid "Drag cards left or right to scroll the row. Clicks still navigate normall
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:532
-#: src/Modules/ProductSlider/Widget.php:521
+#: src/Modules/ProductSlider/Widget.php:530
 msgid "Show arrow buttons"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:549
-#: src/Modules/ProductSlider/Widget.php:542
+#: src/Modules/ProductSlider/Widget.php:551
 msgid "Indicator"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:554
-#: src/Modules/ProductSlider/Widget.php:547
+#: src/Modules/ProductSlider/Widget.php:556
 msgid "Progress bar"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:555
-#: src/Modules/ProductSlider/Widget.php:548
+#: src/Modules/ProductSlider/Widget.php:557
 msgid "Pagination dots"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:558
-#: src/Modules/ProductSlider/Widget.php:551
+#: src/Modules/ProductSlider/Widget.php:560
 msgid "Replaces the legacy \"Show progress bar\" toggle. When unset on pre-existing widgets, the legacy value is honored."
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:566
-#: src/Modules/ProductSlider/Widget.php:560
+#: src/Modules/ProductSlider/Widget.php:569
 msgid "Show progress bar"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:577
-#: src/Modules/ProductSlider/Widget.php:572
+#: src/Modules/ProductSlider/Widget.php:581
 msgid "Autoplay"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:588
-#: src/Modules/ProductSlider/Widget.php:584
+#: src/Modules/ProductSlider/Widget.php:593
 msgid "Autoplay delay (ms)"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:600
-#: src/Modules/ProductSlider/Widget.php:599
+#: src/Modules/ProductSlider/Widget.php:608
 msgid "Loop"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:604
-#: src/Modules/ProductSlider/Widget.php:603
+#: src/Modules/ProductSlider/Widget.php:612
 msgid "When the autoplay reaches the end, smoothly wrap back to the start. Drag-past-end-wraps is intentionally out of scope."
 msgstr ""
 
@@ -845,12 +853,12 @@ msgid "Scroll categories"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:900
-#: src/Modules/ProductSlider/Widget.php:1203
+#: src/Modules/ProductSlider/Widget.php:1212
 msgid "Previous"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:903
-#: src/Modules/ProductSlider/Widget.php:1206
+#: src/Modules/ProductSlider/Widget.php:1215
 msgid "Next"
 msgstr ""
 
@@ -871,13 +879,13 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: src/Modules/CategorySlider/Widget.php:995
-#: src/Modules/ProductSlider/Widget.php:1279
+#: src/Modules/ProductSlider/Widget.php:1288
 msgid "Slide navigation"
 msgstr ""
 
 #. translators: %d page index, 1-based
 #: src/Modules/CategorySlider/Widget.php:997
-#: src/Modules/ProductSlider/Widget.php:1281
+#: src/Modules/ProductSlider/Widget.php:1290
 #, php-format
 msgid "Page %d"
 msgstr ""
@@ -935,10 +943,12 @@ msgid "Which variation gets pre-selected. \"Cheapest\" scans display_price; \"Fi
 msgstr ""
 
 #: src/Modules/HoverSwap/Gallery_Slider.php:161
+#: src/Modules/QuickView/templates/drawer-content.php:41
 msgid "Previous image"
 msgstr ""
 
 #: src/Modules/HoverSwap/Gallery_Slider.php:162
+#: src/Modules/QuickView/templates/drawer-content.php:44
 msgid "Next image"
 msgstr ""
 
@@ -1258,6 +1268,7 @@ msgid "Date"
 msgstr ""
 
 #: src/Modules/ProductSlider/Widget.php:137
+#: src/Modules/ProductSlider/Widget.php:429
 #: src/Modules/ShopFilters/Labels.php:60
 msgid "Price"
 msgstr ""
@@ -1381,39 +1392,39 @@ msgstr ""
 msgid "Product name"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:428
+#: src/Modules/ProductSlider/Widget.php:437
 msgid "Product name color"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:439
+#: src/Modules/ProductSlider/Widget.php:448
 msgid "Price color"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:461
+#: src/Modules/ProductSlider/Widget.php:470
 msgid "Display as"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:466
+#: src/Modules/ProductSlider/Widget.php:475
 msgid "Slider"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:467
+#: src/Modules/ProductSlider/Widget.php:476
 msgid "Grid"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:469
+#: src/Modules/ProductSlider/Widget.php:478
 msgid "Slider = draggable horizontal row with progress bar. Grid = static layout (no drag, no arrows)."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:513
+#: src/Modules/ProductSlider/Widget.php:522
 msgid "Drag cards left or right to scroll the row. Clicks still navigate normally — drag only engages after a deliberate horizontal motion."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:1059
+#: src/Modules/ProductSlider/Widget.php:1068
 msgid "No products match the current Query settings."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:1202
+#: src/Modules/ProductSlider/Widget.php:1211
 msgid "Scroll products"
 msgstr ""
 
@@ -1651,9 +1662,6 @@ msgid "במלאי"
 msgstr ""
 
 #: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:109
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:656
-#: src/Modules/VariationSwatches/legacy/templates/shop-simple-pick.php:87
-#: src/Modules/VariationSwatches/legacy/templates/simple-buy-box.php:71
 msgid "אזל מהמלאי"
 msgstr ""
 
@@ -2008,6 +2016,91 @@ msgstr ""
 msgid "Restock Notify subscriptions"
 msgstr ""
 
+#. translators: 1: indexed product count, 2: last refresh time, 3: scheduled state
+#: src/Modules/Search/Admin_Page.php:93
+#, php-format
+msgid "Indexed: %1$d products. Last refresh: %2$s. Auto-reindex: %3$s."
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:95
+#: src/Modules/ShopFilters/Admin_Page.php:97
+msgid "never"
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:96
+#: src/Modules/ShopFilters/Admin_Page.php:98
+msgid "scheduled"
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:96
+#: src/Modules/ShopFilters/Admin_Page.php:98
+msgid "not scheduled"
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:101
+#: src/Modules/ShopFilters/Admin_Page.php:103
+msgid "Search index"
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:104
+#: src/Modules/ShopFilters/Admin_Page.php:106
+msgid "WP-Cron is disabled on this site (DISABLE_WP_CRON), so the automatic refresh depends on a real server cron triggering Action Scheduler. Make sure that is configured, or rebuild on demand with the button below."
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:106
+#: src/Modules/ShopFilters/Admin_Page.php:108
+msgid "The index refreshes automatically as products change. Use this to rebuild from scratch (e.g. after a bulk import that bypassed the normal save hooks)."
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:108
+#: src/Modules/ShopFilters/Admin_Page.php:110
+msgid "Reindex all products"
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:109
+#: src/Modules/ShopFilters/Admin_Page.php:111
+#: src/Modules/VariableStockFix/Module.php:510
+msgid "Stop"
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:126
+#: src/Modules/ShopFilters/Admin_Page.php:128
+msgid "Counting products…"
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:127
+#: src/Modules/ShopFilters/Admin_Page.php:129
+msgid "Indexing from"
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:128
+#: src/Modules/ShopFilters/Admin_Page.php:130
+msgid "Reindex complete."
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:129
+#: src/Modules/ShopFilters/Admin_Page.php:131
+#: src/Modules/VariableStockFix/Module.php:533
+msgid "Stopped."
+msgstr ""
+
+#: src/Modules/Search/Admin_Page.php:130
+#: src/Modules/ShopFilters/Admin_Page.php:132
+msgid "indexed"
+msgstr ""
+
+#: src/Modules/Search/Module.php:42
+msgid "Search"
+msgstr ""
+
+#: src/Modules/Search/Module.php:51
+msgid "In-house full-text product search. Wave 1 builds and maintains the search index; the storefront search surface arrives in later waves."
+msgstr ""
+
+#: src/Modules/Search/Module.php:92
+msgid "Every 5 minutes (Freeman Search)"
+msgstr ""
+
 #: src/Modules/ShopFilters/Admin_Config_Page.php:90
 msgid "Filter configuration"
 msgstr ""
@@ -2020,60 +2113,6 @@ msgstr ""
 #: src/Modules/ShopFilters/Admin_Page.php:94
 #, php-format
 msgid "Indexed: %1$d products, %2$d rows. Last refresh: %3$s. Auto-reindex: %4$s."
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:97
-msgid "never"
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:98
-msgid "scheduled"
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:98
-msgid "not scheduled"
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:103
-msgid "Search index"
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:106
-msgid "WP-Cron is disabled on this site (DISABLE_WP_CRON), so the automatic refresh depends on a real server cron triggering Action Scheduler. Make sure that is configured, or rebuild on demand with the button below."
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:108
-msgid "The index refreshes automatically as products change. Use this to rebuild from scratch (e.g. after a bulk import that bypassed the normal save hooks)."
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:110
-msgid "Reindex all products"
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:111
-#: src/Modules/VariableStockFix/Module.php:510
-msgid "Stop"
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:128
-msgid "Counting products…"
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:129
-msgid "Indexing from"
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:130
-msgid "Reindex complete."
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:131
-#: src/Modules/VariableStockFix/Module.php:533
-msgid "Stopped."
-msgstr ""
-
-#: src/Modules/ShopFilters/Admin_Page.php:132
-msgid "indexed"
 msgstr ""
 
 #: src/Modules/ShopFilters/Labels.php:39
@@ -2435,69 +2474,6 @@ msgstr ""
 msgid "Swatch"
 msgstr ""
 
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:648
-#: src/Modules/VariationSwatches/legacy/includes/class-frontend.php:274
-#: src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:159
-msgid "Choose an option"
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:649
-#: src/Modules/VariationSwatches/legacy/includes/class-frontend.php:275
-msgid "This combination is not available"
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:650
-#: src/Modules/VariationSwatches/legacy/includes/class-frontend.php:276
-msgid "נוסף לעגלה"
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:651
-#: src/Modules/VariationSwatches/legacy/templates/shop-simple-pick.php:79
-#: src/Modules/VariationSwatches/legacy/templates/shop-variation-pick.php:192
-#: src/Modules/VariationSwatches/legacy/templates/simple-buy-box.php:70
-#: src/Modules/VariationSwatches/legacy/templates/simple-buy-box.php:122
-#: src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:292
-#: src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:340
-msgid "הוספה לעגלה"
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:652
-#: src/Modules/VariationSwatches/legacy/templates/shop-variation-pick.php:92
-msgid "בחר/י אפשרות"
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:653
-#, php-format
-msgid "+%d"
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:654
-msgid "−"
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:655
-#: src/Modules/VariationSwatches/legacy/templates/shop-variation-pick.php:70
-#: src/Modules/VariationSwatches/legacy/templates/simple-buy-box.php:47
-#: src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:131
-msgid "החל מ:"
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:657
-msgid "לא זמין"
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:658
-msgid "שגיאה, נסו שוב"
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:660
-msgid "סגירה"
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/includes/class-archive.php:661
-msgid "הודעות חנות"
-msgstr ""
-
 #: src/Modules/VariationSwatches/legacy/includes/class-archive.php:695
 #: src/Modules/VariationSwatches/legacy/includes/class-archive.php:709
 msgid "Session expired. Please refresh the page."
@@ -2531,15 +2507,6 @@ msgstr ""
 
 #: src/Modules/VariationSwatches/legacy/includes/class-settings.php:149
 msgid "These settings are now under Freeman → Variation Swatches."
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/templates/shop-simple-pick.php:69
-msgid "כמות"
-msgstr ""
-
-#: src/Modules/VariationSwatches/legacy/templates/simple-buy-box.php:98
-#: src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:313
-msgid "קנה עכשיו"
 msgstr ""
 
 #: src/Modules/VariationSwatches/Module.php:54

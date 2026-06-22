@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.18.0] — 2026-06-22
+
+- Search Wave 8.1 foundation: in-house full-text product search index (freeman_search_index FULLTEXT table) + dirty-queue indexer + Reindex all admin tool, behind freeman_core_search_indexer_enabled (default off). Staged to replace Advanced Woo Search.
+
 ## [1.17.5] — 2026-06-21
 
 - Mobile: variation swatches now select on the first tap. The buy-box and shop-grid swatches revealed a tooltip / scaled on `:hover`, which made iOS treat the first tap as a hover (selection needed a second tap). Those hover-reveal rules are now gated behind `@media (hover: hover)`, matching the HoverSwap / ProductSlider pattern. Mouse users are unchanged; the swatch name stays available to assistive tech via `aria-label` / screen-reader text.
