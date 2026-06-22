@@ -2,6 +2,14 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.8] — 2026-06-23
+
+- Search dropdown display controls: admin toggles for product image, price and SKU on each result, plus a max-results count (1-20). SKU search fix: a variable product's variation SKUs are now folded into the search index, so searching by a variation SKU finds the product (a reindex is required for existing products).
+
+## [1.21.7] — 2026-06-23
+
+- Search: hide out-of-stock products everywhere (live dropdown, results page, and facet feed). Redesign the search UI to a single icon that expands a full-width bar below the header with live results beneath it; full-screen takeover with a visible Search button on mobile.
+
 ## [1.21.6] — 2026-06-23
 
 - Search results: fix the ProductSlider grid showing the whole catalog on an Elementor search-archive template. A product search is no longer treated as a plain archive, so the grid routes through the query path the search-results filter constrains (limit -1, single page). Removes the temporary 1.21.5 diagnostic logging.

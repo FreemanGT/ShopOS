@@ -35,14 +35,17 @@ final class Query_Engine {
 	 * @param string[] $tag_names         Tag term names.
 	 * @param string   $short_description Short description (may contain HTML).
 	 * @param string   $content           Long description (may contain HTML).
+	 * @param string[] $variation_skus    Variation SKUs (variable products keep
+	 *                                     SKUs per-variation, not on the parent).
 	 * @return string
 	 */
-	public static function build_search_text( $title, $sku, array $category_names, array $tag_names, $short_description, $content ) {
+	public static function build_search_text( $title, $sku, array $category_names, array $tag_names, $short_description, $content, array $variation_skus = array() ) {
 		$parts = array_merge(
 			array( (string) $title, (string) $sku ),
 			array_map( 'strval', $category_names ),
 			array_map( 'strval', $tag_names ),
-			array( (string) $short_description, (string) $content )
+			array( (string) $short_description, (string) $content ),
+			array_map( 'strval', $variation_skus )
 		);
 
 		$text = strip_tags( implode( ' ', $parts ) );

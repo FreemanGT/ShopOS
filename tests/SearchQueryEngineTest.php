@@ -48,6 +48,24 @@ final class SearchQueryEngineTest extends TestCase {
 		$this->assertSame( 'Just A Title', Query_Engine::build_search_text( '  Just A Title  ', '', array(), array(), '', '' ) );
 	}
 
+	public function test_build_search_text_includes_variation_skus(): void {
+		// Variable products keep SKUs per-variation; they must reach the blob so a
+		// variation-SKU search matches the parent (the search_text LIKE fallback).
+		$text = Query_Engine::build_search_text(
+			'Tee',
+			'PARENT-SKU',
+			array(),
+			array(),
+			'',
+			'',
+			array( 'VAR-S', 'VAR-M' )
+		);
+
+		$this->assertStringContainsString( 'PARENT-SKU', $text );
+		$this->assertStringContainsString( 'VAR-S', $text );
+		$this->assertStringContainsString( 'VAR-M', $text );
+	}
+
 	public function test_search_sql_has_score_match_and_like_fallback(): void {
 		$sql = Query_Engine::search_sql( 'wp_freeman_search_index' );
 

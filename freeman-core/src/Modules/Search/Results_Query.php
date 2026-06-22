@@ -130,7 +130,7 @@ final class Results_Query {
 			return;
 		}
 
-		$q->set( 'post__in', self::plan_ids( $this->repo->search( $term, -1 ) ) );
+		$q->set( 'post__in', self::plan_ids( $this->repo->search( $term, -1, true ) ) );
 		$q->set( 'orderby', 'post__in' );
 		$this->active = true;
 	}
@@ -216,7 +216,7 @@ final class Results_Query {
 
 		// wc_get_products() uses `include` (+ orderby=include to keep rank). [0]
 		// on a no-match forces an empty grid (engine authoritative once indexed).
-		$args['include'] = self::plan_ids( $this->repo->search( $term, -1 ) );
+		$args['include'] = self::plan_ids( $this->repo->search( $term, -1, true ) );
 		$args['orderby'] = 'include';
 		$args['limit']   = -1;
 		return $args;
@@ -251,6 +251,6 @@ final class Results_Query {
 		if ( ! $this->repo->has_data() ) {
 			return $ids;
 		}
-		return $this->repo->search( (string) $term, -1 );
+		return $this->repo->search( (string) $term, -1, true );
 	}
 }

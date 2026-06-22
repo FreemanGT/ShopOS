@@ -1,7 +1,14 @@
 /**
- * Freeman Search — live dropdown.
- * Body-appended, fixed-positioned by JS under the search input.
+ * Freeman Search — live dropdown + expanding search bar.
+ *
+ * Two presentations share the result-item styles below:
+ *  - Anchored: body-appended panel, fixed-positioned by JS under the field.
+ *  - Overlay: the [freeman_search] icon expands a full-width bar (a sheet that
+ *    drops below the header) with the results panel beneath it; full-screen on
+ *    mobile with a visible Search button.
  */
+
+/* --- Result panel + items (shared) --------------------------------------- */
 .fc-search-panel {
 	z-index: 99999;
 	max-height: 70vh;
@@ -51,6 +58,14 @@
 	white-space: nowrap;
 }
 
+.fc-search-item__sku {
+	opacity: 0.55;
+	font-size: 0.78em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .fc-search-item__price {
 	opacity: 0.8;
 	font-size: 0.85em;
@@ -91,4 +106,182 @@
 .fc-search-form .fc-search-field {
 	flex: 1 1 auto;
 	min-width: 0;
+}
+
+/* --- Icon trigger -------------------------------------------------------- */
+.fc-search-trigger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.35rem;
+	margin: 0;
+	background: none;
+	border: 0;
+	color: inherit;
+	line-height: 0;
+	cursor: pointer;
+	border-radius: 50%;
+}
+
+.fc-search-trigger:hover {
+	opacity: 0.7;
+}
+
+.fc-search-trigger:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
+/* --- Full-width overlay bar ---------------------------------------------- */
+.fc-search-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+}
+
+.fc-search-overlay.is-open {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+}
+
+.fc-search-scrim {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.45);
+}
+
+.fc-search-bar {
+	position: absolute;
+	top: var(--fc-bar-top, 0);
+	left: 0;
+	right: 0;
+	background: #fff;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.fc-search-bar__inner {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 1rem 1.25rem;
+}
+
+.fc-search-bar__icon {
+	display: inline-flex;
+	line-height: 0;
+	opacity: 0.45;
+	flex: 0 0 auto;
+}
+
+.fc-search-bar .fc-search-form {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.fc-search-bar .fc-search-field {
+	width: 100%;
+	border: 0;
+	border-bottom: 2px solid #e3e3e3;
+	border-radius: 0;
+	padding: 0.5rem 0.25rem;
+	font-size: 1.15rem;
+	background: transparent;
+	outline: none;
+}
+
+.fc-search-bar .fc-search-field:focus {
+	border-bottom-color: #111;
+}
+
+/* No submit button on desktop — live results carry it; mobile re-shows it. */
+.fc-search-bar .fc-search-submit {
+	display: none;
+}
+
+.fc-search-close {
+	flex: 0 0 auto;
+	background: none;
+	border: 0;
+	color: inherit;
+	font-size: 1.75rem;
+	line-height: 1;
+	padding: 0 0.25rem;
+	cursor: pointer;
+	opacity: 0.7;
+}
+
+.fc-search-close:hover {
+	opacity: 1;
+}
+
+/* Results sit inside the bar, aligned with its inner content. */
+.fc-search-panel--overlay {
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	max-width: 1100px;
+	margin: 0 auto;
+	max-height: 60vh;
+	padding: 0 1.25rem 0.5rem;
+}
+
+body.fc-search-open {
+	overflow: hidden;
+}
+
+/* Motion only when the user hasn't asked to reduce it. */
+@media (prefers-reduced-motion: no-preference) {
+	.fc-search-overlay {
+		transition: opacity 0.18s ease, visibility 0.18s ease;
+	}
+
+	.fc-search-bar {
+		transform: translateY(-12px);
+		transition: transform 0.22s ease;
+	}
+
+	.fc-search-overlay.is-open .fc-search-bar {
+		transform: translateY(0);
+	}
+}
+
+/* --- Mobile: full-screen takeover with a visible Search button ----------- */
+@media (max-width: 768px) {
+	.fc-search-bar {
+		top: 0;
+		bottom: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.fc-search-bar__inner {
+		padding: 0.85rem 1rem;
+		max-width: none;
+	}
+
+	.fc-search-bar__icon {
+		display: none;
+	}
+
+	.fc-search-bar .fc-search-submit {
+		display: inline-block;
+		flex: 0 0 auto;
+	}
+
+	.fc-search-panel--overlay {
+		max-width: none;
+		max-height: none;
+		flex: 1 1 auto;
+		padding: 0 1rem 1rem;
+	}
+
+	.fc-search-scrim {
+		display: none;
+	}
 }

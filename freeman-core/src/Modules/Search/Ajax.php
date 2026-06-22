@@ -29,6 +29,18 @@ final class Ajax {
 	const LIMIT  = 8;
 
 	/**
+	 * @var Module
+	 */
+	private $module;
+
+	/**
+	 * @param Module $module Owning module (for the dropdown display settings).
+	 */
+	public function __construct( Module $module ) {
+		$this->module = $module;
+	}
+
+	/**
 	 * Register the public query action (logged-in + logged-out).
 	 */
 	public function register() {
@@ -68,7 +80,8 @@ final class Ajax {
 		if ( ! class_exists( '\\WooCommerce' ) ) {
 			return array();
 		}
-		$ids   = ( new Search_Repository() )->search( $term, self::LIMIT );
+		$limit = max( 1, min( 20, (int) $this->module->get_option( 'max_results', self::LIMIT ) ) );
+		$ids   = ( new Search_Repository() )->search( $term, $limit, true );
 		$items = array();
 		foreach ( $ids as $id ) {
 			$product = wc_get_product( $id );
@@ -81,6 +94,7 @@ final class Ajax {
 				'title'      => $product->get_name(),
 				'url'        => get_permalink( $id ),
 				'price_html' => $product->get_price_html(),
+				'sku'        => $product->get_sku(),
 				'image'      => $image_id
 					? wp_get_attachment_image_url( $image_id, 'woocommerce_thumbnail' )
 					: wc_placeholder_img_src( 'woocommerce_thumbnail' ),

@@ -277,7 +277,8 @@ final class Indexer {
 			$this->term_names( $pid, 'product_cat' ),
 			$this->term_names( $pid, 'product_tag' ),
 			$product->get_short_description(),
-			$product->get_description()
+			$product->get_description(),
+			$this->variation_skus( $product )
 		);
 
 		$this->repo->upsert(
@@ -287,6 +288,31 @@ final class Indexer {
 			$search_text,
 			$product->is_in_stock() ? 1 : 0
 		);
+	}
+
+	/**
+	 * Non-empty SKUs of a variable product's variations, so searching a variation
+	 * SKU finds the parent (variations aren't indexed in their own right). Empty
+	 * for non-variable products.
+	 *
+	 * @param \WC_Product $product Product.
+	 * @return string[]
+	 */
+	private function variation_skus( $product ) {
+		if ( ! $product->is_type( 'variable' ) ) {
+			return array();
+		}
+		$skus = array();
+		foreach ( $product->get_children() as $child_id ) {
+			$variation = wc_get_product( $child_id );
+			if ( $variation instanceof \WC_Product ) {
+				$sku = (string) $variation->get_sku();
+				if ( '' !== $sku ) {
+					$skus[] = $sku;
+				}
+			}
+		}
+		return $skus;
 	}
 
 	/**

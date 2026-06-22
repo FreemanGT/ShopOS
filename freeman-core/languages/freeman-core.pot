@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Freeman Core 1.20.1\n"
+"Project-Id-Version: Freeman Core 1.21.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/freeman-core\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-22T19:09:49+00:00\n"
+"POT-Creation-Date: 2026-06-22T21:49:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: freeman-core\n"
@@ -845,12 +845,12 @@ msgid "Scroll categories"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:900
-#: src/Modules/ProductSlider/Widget.php:1212
+#: src/Modules/ProductSlider/Widget.php:1237
 msgid "Previous"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:903
-#: src/Modules/ProductSlider/Widget.php:1215
+#: src/Modules/ProductSlider/Widget.php:1240
 msgid "Next"
 msgstr ""
 
@@ -871,13 +871,13 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: src/Modules/CategorySlider/Widget.php:995
-#: src/Modules/ProductSlider/Widget.php:1288
+#: src/Modules/ProductSlider/Widget.php:1317
 msgid "Slide navigation"
 msgstr ""
 
 #. translators: %d page index, 1-based
 #: src/Modules/CategorySlider/Widget.php:997
-#: src/Modules/ProductSlider/Widget.php:1290
+#: src/Modules/ProductSlider/Widget.php:1319
 #, php-format
 msgid "Page %d"
 msgstr ""
@@ -1412,16 +1412,16 @@ msgstr ""
 msgid "Drag cards left or right to scroll the row. Clicks still navigate normally — drag only engages after a deliberate horizontal motion."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:1068
+#: src/Modules/ProductSlider/Widget.php:1093
 msgid "No products match the current Query settings."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:1211
+#: src/Modules/ProductSlider/Widget.php:1236
 msgid "Scroll products"
 msgstr ""
 
 #: src/Modules/QuickView/Ajax.php:58
-#: src/Modules/Search/Ajax.php:46
+#: src/Modules/Search/Ajax.php:58
 #: src/Modules/ShopFilters/Ajax.php:46
 msgid "Too many requests. Please slow down."
 msgstr ""
@@ -2087,20 +2087,25 @@ msgid "Search products…"
 msgstr ""
 
 #: src/Modules/Search/Frontend.php:66
+#: src/Modules/Search/Frontend.php:133
 #: src/Modules/Search/Module.php:41
 msgid "Search"
 msgstr ""
 
-#: src/Modules/Search/Frontend.php:123
+#: src/Modules/Search/Frontend.php:129
 msgid "No products found"
 msgstr ""
 
-#: src/Modules/Search/Frontend.php:124
+#: src/Modules/Search/Frontend.php:130
 msgid "See all results"
 msgstr ""
 
-#: src/Modules/Search/Frontend.php:125
+#: src/Modules/Search/Frontend.php:131
 msgid "Searching…"
+msgstr ""
+
+#: src/Modules/Search/Frontend.php:134
+msgid "Close search"
 msgstr ""
 
 #: src/Modules/Search/Module.php:50
@@ -2123,7 +2128,39 @@ msgstr ""
 msgid "Idle delay after the last keystroke before a request fires."
 msgstr ""
 
-#: src/Modules/Search/Module.php:118
+#: src/Modules/Search/Module.php:74
+msgid "Max dropdown results"
+msgstr ""
+
+#: src/Modules/Search/Module.php:77
+msgid "How many products the live dropdown shows (clamped 1–20)."
+msgstr ""
+
+#: src/Modules/Search/Module.php:80
+msgid "Show product image"
+msgstr ""
+
+#: src/Modules/Search/Module.php:82
+msgid "Display the thumbnail on each dropdown result"
+msgstr ""
+
+#: src/Modules/Search/Module.php:86
+msgid "Show price"
+msgstr ""
+
+#: src/Modules/Search/Module.php:88
+msgid "Display the price on each dropdown result"
+msgstr ""
+
+#: src/Modules/Search/Module.php:92
+msgid "Show SKU"
+msgstr ""
+
+#: src/Modules/Search/Module.php:94
+msgid "Display the SKU on each dropdown result"
+msgstr ""
+
+#: src/Modules/Search/Module.php:142
 msgid "Every 5 minutes (Freeman Search)"
 msgstr ""
 

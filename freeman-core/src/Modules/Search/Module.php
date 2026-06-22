@@ -70,6 +70,30 @@ final class Module extends Module_Base {
 				'default'     => 200,
 				'description' => __( 'Idle delay after the last keystroke before a request fires.', 'freeman-core' ),
 			),
+			'max_results'    => array(
+				'label'       => __( 'Max dropdown results', 'freeman-core' ),
+				'type'        => 'number',
+				'default'     => 8,
+				'description' => __( 'How many products the live dropdown shows (clamped 1–20).', 'freeman-core' ),
+			),
+			'show_image'     => array(
+				'label'          => __( 'Show product image', 'freeman-core' ),
+				'type'           => 'checkbox',
+				'checkbox_label' => __( 'Display the thumbnail on each dropdown result', 'freeman-core' ),
+				'default'        => 'yes',
+			),
+			'show_price'     => array(
+				'label'          => __( 'Show price', 'freeman-core' ),
+				'type'           => 'checkbox',
+				'checkbox_label' => __( 'Display the price on each dropdown result', 'freeman-core' ),
+				'default'        => 'yes',
+			),
+			'show_sku'       => array(
+				'label'          => __( 'Show SKU', 'freeman-core' ),
+				'type'           => 'checkbox',
+				'checkbox_label' => __( 'Display the SKU on each dropdown result', 'freeman-core' ),
+				'default'        => 'no',
+			),
 		);
 	}
 
@@ -92,7 +116,7 @@ final class Module extends Module_Base {
 		add_action( 'init', array( $indexer, 'ensure_scheduled' ) );
 
 		( new Frontend( $this ) )->register();
-		( new Ajax() )->register();
+		( new Ajax( $this ) )->register();
 		( new Results_Query() )->register();
 
 		if ( is_admin() ) {

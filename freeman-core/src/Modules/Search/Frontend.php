@@ -119,10 +119,19 @@ final class Frontend {
 			'selector' => 'input[type="search"], input[name="s"]',
 			'minChars' => (int) $this->module->get_option( 'min_chars', 2 ),
 			'debounce' => (int) $this->module->get_option( 'debounce_ms', 200 ),
+			// What each dropdown result row renders (admin-controlled).
+			'show'     => array(
+				'image' => 'yes' === $this->module->get_option( 'show_image', 'yes' ),
+				'price' => 'yes' === $this->module->get_option( 'show_price', 'yes' ),
+				'sku'   => 'yes' === $this->module->get_option( 'show_sku', 'no' ),
+			),
 			'labels'   => array(
 				'noResults' => __( 'No products found', 'freeman-core' ),
 				'seeAll'    => __( 'See all results', 'freeman-core' ),
 				'searching' => __( 'Searching…', 'freeman-core' ),
+				// Accessible labels for the JS-built icon trigger + close button.
+				'toggle'    => __( 'Search', 'freeman-core' ),
+				'close'     => __( 'Close search', 'freeman-core' ),
 			),
 		);
 	}
