@@ -1,33 +1,44 @@
 /**
- * Freeman Search — live dropdown + expanding search bar.
+ * Freeman Search — live dropdown + centered command-palette search.
  *
  * Two presentations share the result-item styles below:
- *  - Anchored: body-appended panel, fixed-positioned by JS under the field.
- *  - Overlay: the [freeman_search] icon expands a full-width bar (a sheet that
- *    drops below the header) with the results panel beneath it; full-screen on
- *    mobile with a visible Search button.
+ *  - Anchored: body-appended panel, JS-positioned under a matched field.
+ *  - Palette:  the [freeman_search] icon opens a centered command palette over a
+ *              dimmed backdrop with the field + live results; full-screen on
+ *              mobile with a visible Search button.
+ *
+ * Every value reads from the --fm-* token layer with a theme-independent
+ * fallback. Interactive controls reset aggressively (the trigger lives in the
+ * Elementor header, so it carries !important resets to survive theme button
+ * styling; modal-internal controls are body-appended and clear of widget scope).
  */
 
-/* --- Result panel + items (shared) --------------------------------------- */
+/* --- Result list + rows (shared by both presentations) ------------------- */
 .fc-search-panel {
 	z-index: var(--fm-z-overlay, 5000);
 	max-height: 70vh;
 	overflow-y: auto;
 	background: var(--fm-color-paper, #fff);
 	border: 1px solid var(--fm-color-hairline, #e6e6e2);
-	border-radius: 0 0 var(--fm-radius-md, 6px) var(--fm-radius-md, 6px);
+	border-radius: var(--fm-radius-md, 6px);
 	box-shadow: var(--fm-shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
 	font-size: var(--fm-text-sm, 0.9rem);
+	color: var(--fm-color-ink, #1b1b1b);
 }
 
 .fc-search-item {
 	display: flex;
 	align-items: center;
-	gap: 0.75rem;
-	padding: 0.6rem 0.85rem;
+	gap: var(--fm-space-md, 16px);
+	padding: var(--fm-space-sm, 8px) var(--fm-space-md, 16px);
 	color: inherit;
 	text-decoration: none;
 	border-bottom: 1px solid var(--fm-color-hairline, #e6e6e2);
+	transition: background-color var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease);
+}
+
+.fc-search-item:last-child {
+	border-bottom: 0;
 }
 
 .fc-search-item:hover,
@@ -36,23 +47,26 @@
 }
 
 .fc-search-item__img {
-	width: 44px;
-	height: 44px;
+	width: 48px;
+	height: 48px;
 	object-fit: cover;
-	border-radius: var(--fm-radius-sm, 4px);
+	border-radius: var(--fm-radius-md, 6px);
+	background: var(--fm-color-paper-dim, #f1efea);
 	flex: 0 0 auto;
 }
 
 .fc-search-item__body {
 	display: flex;
 	flex-direction: column;
-	gap: 0.15rem;
+	gap: 2px;
 	min-width: 0;
+	flex: 1 1 auto;
 }
 
 .fc-search-item__title {
-	font-weight: var(--fm-weight-semi, 600);
-	line-height: 1.25;
+	font-weight: var(--fm-weight-medium, 500);
+	line-height: 1.3;
+	color: var(--fm-color-ink, #1b1b1b);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -60,45 +74,60 @@
 
 .fc-search-item__sku {
 	color: var(--fm-color-ink-muted, #6b6b6b);
-	font-size: 0.78em;
+	font-size: var(--fm-text-xs, 0.75rem);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
 .fc-search-item__price {
-	font-size: 0.85em;
+	flex: 0 0 auto;
+	margin-inline-start: var(--fm-space-md, 16px);
+	text-align: end;
+	font-weight: var(--fm-weight-medium, 500);
+	color: var(--fm-color-ink, #1b1b1b);
+	white-space: nowrap;
 }
 
 .fc-search-item__price del {
 	color: var(--fm-color-ink-muted, #6b6b6b);
-	margin-inline-end: 0.35em;
+	font-weight: var(--fm-weight-regular, 400);
+	margin-inline-end: 0.4em;
 }
 
 .fc-search-empty {
-	padding: 0.85rem;
+	padding: var(--fm-space-xl, 40px) var(--fm-space-md, 16px);
 	text-align: center;
 	color: var(--fm-color-ink-muted, #6b6b6b);
 }
 
 .fc-search-more {
-	display: block;
-	padding: 0.65rem 0.85rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4em;
+	padding: var(--fm-space-md, 16px);
 	text-align: center;
 	font-weight: var(--fm-weight-semi, 600);
-	color: inherit;
+	font-size: var(--fm-text-xs, 0.75rem);
+	letter-spacing: var(--fm-tracking-wide, 0.04em);
+	text-transform: uppercase;
+	color: var(--fm-color-ink, #1b1b1b);
 	text-decoration: none;
+	border-top: 1px solid var(--fm-color-hairline, #e6e6e2);
+	transition: background-color var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease);
+}
+
+.fc-search-more:hover,
+.fc-search-more:focus-visible {
 	background: var(--fm-color-paper-soft, #faf9f7);
+	outline: 0;
 }
 
-.fc-search-more:hover {
-	background: var(--fm-color-paper-dim, #f1efea);
-}
-
-/* [freeman_search] standalone box — layout only; fields inherit theme styling. */
+/* [freeman_search] native (no-JS) box — layout only; theme styles the field. */
 .fc-search-form {
 	display: flex;
-	gap: 0.5rem;
+	gap: var(--fm-space-sm, 8px);
 	align-items: center;
 }
 
@@ -107,136 +136,195 @@
 	min-width: 0;
 }
 
-/* --- Icon trigger -------------------------------------------------------- */
+/* --- Icon trigger (lives in the header — must beat Elementor buttons) ----- */
 .fc-search-trigger {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	padding: 0.35rem;
+	width: auto;
+	padding: var(--fm-space-sm, 8px);
 	margin: 0;
-	background: none;
-	border: 0;
+	background: transparent !important;
+	border: 0 !important;
+	box-shadow: none !important;
+	-webkit-appearance: none;
+	appearance: none;
 	color: inherit;
 	line-height: 0;
 	cursor: pointer;
-	border-radius: 50%;
+	border-radius: var(--fm-radius-round, 50%);
+	transition: opacity var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease),
+		transform var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease);
 }
 
 .fc-search-trigger:hover {
-	opacity: 0.7;
+	opacity: 0.65;
 }
 
 .fc-search-trigger:focus-visible {
 	outline: 2px solid currentColor;
-	outline-offset: 2px;
+	outline-offset: 3px;
 }
 
-/* --- Full-width overlay bar ---------------------------------------------- */
-.fc-search-overlay {
+@media (prefers-reduced-motion: no-preference) {
+	.fc-search-trigger:active {
+		transform: scale(0.92);
+	}
+}
+
+/* --- Centered command palette -------------------------------------------- */
+.fc-search-modal {
 	position: fixed;
 	inset: 0;
 	z-index: var(--fm-z-modal, 10000);
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 12vh var(--fm-space-md, 16px) var(--fm-space-md, 16px);
 	opacity: 0;
 	visibility: hidden;
 	pointer-events: none;
 }
 
-.fc-search-overlay.is-open {
+.fc-search-modal.is-open {
 	opacity: 1;
 	visibility: visible;
 	pointer-events: auto;
 }
 
-.fc-search-scrim {
-	position: absolute;
+.fc-search-modal__scrim {
+	position: fixed;
 	inset: 0;
-	background: rgba(0, 0, 0, 0.45);
+	background: rgba(17, 17, 17, 0.5);
 }
 
-.fc-search-bar {
-	position: absolute;
-	top: var(--fc-bar-top, 0);
-	left: 0;
-	right: 0;
+.fc-search-modal__panel {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	min-width: 0;
+	max-width: 600px;
+	max-height: 76vh;
 	background: var(--fm-color-paper, #fff);
-	box-shadow: var(--fm-shadow-lg, 0 24px 48px rgba(0, 0, 0, 0.12));
+	border: 1px solid var(--fm-color-hairline, #e6e6e2);
+	border-radius: var(--fm-radius-lg, 12px);
+	box-shadow: var(--fm-shadow-xl, 0 40px 80px rgba(0, 0, 0, 0.18));
+	overflow: hidden;
 }
 
-.fc-search-bar__inner {
+.fc-search-modal__header {
 	display: flex;
 	align-items: center;
-	gap: 0.75rem;
-	max-width: 1100px;
-	margin: 0 auto;
-	padding: 1rem 1.25rem;
+	gap: var(--fm-space-sm, 8px);
+	padding: var(--fm-space-sm, 8px) var(--fm-space-md, 16px);
+	border-bottom: 1px solid var(--fm-color-hairline, #e6e6e2);
 }
 
-.fc-search-bar__icon {
+.fc-search-modal__icon {
 	display: inline-flex;
+	flex: 0 0 auto;
 	line-height: 0;
 	color: var(--fm-color-ink-muted, #6b6b6b);
-	flex: 0 0 auto;
 }
 
-.fc-search-bar .fc-search-form {
+/* The field is borderless inside the panel — the panel is its frame. */
+.fc-search-modal .fc-search-form {
 	flex: 1 1 auto;
 	min-width: 0;
+	gap: var(--fm-space-sm, 8px);
 }
 
-.fc-search-bar .fc-search-field {
+.fc-search-modal .fc-search-field {
+	flex: 1 1 auto;
 	width: 100%;
+	min-width: 0;
+	height: var(--fm-input-height, 44px);
+	padding: 0;
 	border: 0;
-	border-bottom: 2px solid var(--fm-color-hairline, #e6e6e2);
 	border-radius: 0;
-	padding: 0.5rem 0.25rem;
-	font-size: var(--fm-text-lg, 1.15rem);
 	background: transparent;
+	color: var(--fm-color-ink, #1b1b1b);
+	font-size: var(--fm-text-lg, 1.15rem);
+	font-family: inherit;
 	outline: none;
+	box-shadow: none;
+	-webkit-appearance: none;
+	appearance: none;
 }
 
-.fc-search-bar .fc-search-field:focus {
-	border-bottom-color: var(--fm-color-accent, #1b1b1b);
+.fc-search-modal .fc-search-field::placeholder {
+	color: var(--fm-color-ink-muted, #6b6b6b);
+	opacity: 1;
 }
 
-/* No submit button on desktop — live results carry it; mobile re-shows it. */
-.fc-search-bar .fc-search-submit {
-	display: none;
-}
-
-.fc-search-close {
+/* Close button — body-appended, clear of Elementor widget scope. */
+.fc-search-modal__close {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	flex: 0 0 auto;
-	background: none;
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	margin: 0;
+	background: transparent;
 	border: 0;
-	color: inherit;
+	box-shadow: none;
+	-webkit-appearance: none;
+	appearance: none;
+	color: var(--fm-color-ink-muted, #6b6b6b);
 	line-height: 0;
-	padding: 0.35rem;
 	cursor: pointer;
 	border-radius: var(--fm-radius-round, 50%);
-	opacity: 0.7;
+	transition: background-color var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease),
+		color var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease);
 }
 
-.fc-search-close:hover {
-	opacity: 1;
+.fc-search-modal__close:hover {
+	background: var(--fm-color-paper-dim, #f1efea);
+	color: var(--fm-color-ink, #1b1b1b);
 }
 
-.fc-search-close:focus-visible {
-	outline: 2px solid currentColor;
+.fc-search-modal__close:focus-visible {
+	outline: 2px solid var(--fm-color-ink, #1b1b1b);
 	outline-offset: 2px;
-	opacity: 1;
+	color: var(--fm-color-ink, #1b1b1b);
 }
 
-/* Results sit inside the bar, aligned with its inner content. */
-.fc-search-panel--overlay {
+/* Submit — brand primary; hidden on desktop (Enter / "see all" carries it). */
+.fc-search-modal .fc-search-submit {
+	display: none;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	height: var(--fm-input-height, 44px);
+	padding: 0 var(--fm-space-lg, 24px);
+	background: var(--fm-color-accent, #1b1b1b);
+	color: var(--fm-color-accent-text, #fff);
+	border: 0;
+	border-radius: var(--fm-radius-sm, 4px);
+	font-family: inherit;
+	font-size: var(--fm-text-xs, 0.75rem);
+	font-weight: var(--fm-weight-semi, 600);
+	letter-spacing: var(--fm-tracking-wide, 0.04em);
+	text-transform: uppercase;
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+/* Results fill the panel and scroll; the panel supplies the frame. */
+.fc-search-panel--palette {
+	flex: 1 1 auto;
+	min-width: 0;
 	border: 0;
 	border-radius: 0;
 	box-shadow: none;
-	max-width: 1100px;
-	margin: 0 auto;
-	max-height: 60vh;
-	padding: 0 1.25rem 0.5rem;
+	max-height: none;
+	overflow-x: hidden;
+	font-size: var(--fm-text-sm, 0.9rem);
 }
 
 body.fc-search-open {
@@ -245,52 +333,48 @@ body.fc-search-open {
 
 /* Motion only when the user hasn't asked to reduce it. */
 @media (prefers-reduced-motion: no-preference) {
-	.fc-search-overlay {
+	.fc-search-modal {
 		transition: opacity var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease),
 			visibility var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease);
 	}
 
-	.fc-search-bar {
-		transform: translateY(-12px);
+	.fc-search-modal__panel {
+		transform: translateY(-8px) scale(0.98);
 		transition: transform var(--fm-motion-base, 280ms) var(--fm-ease-out, ease);
 	}
 
-	.fc-search-overlay.is-open .fc-search-bar {
-		transform: translateY(0);
+	.fc-search-modal.is-open .fc-search-modal__panel {
+		transform: none;
 	}
 }
 
 /* --- Mobile: full-screen takeover with a visible Search button ----------- */
 @media (max-width: 768px) {
-	.fc-search-bar {
-		top: 0;
-		bottom: 0;
-		display: flex;
-		flex-direction: column;
+	.fc-search-modal {
+		padding: 0;
 	}
 
-	.fc-search-bar__inner {
-		padding: 0.85rem 1rem;
-		max-width: none;
-	}
-
-	.fc-search-bar__icon {
+	.fc-search-modal__scrim {
 		display: none;
 	}
 
-	.fc-search-bar .fc-search-submit {
-		display: inline-block;
-		flex: 0 0 auto;
-	}
-
-	.fc-search-panel--overlay {
+	.fc-search-modal__panel {
 		max-width: none;
 		max-height: none;
-		flex: 1 1 auto;
-		padding: 0 1rem 1rem;
+		height: 100%;
+		border: 0;
+		border-radius: 0;
 	}
 
-	.fc-search-scrim {
+	.fc-search-modal__header {
+		padding: var(--fm-space-md, 16px);
+	}
+
+	.fc-search-modal__icon {
 		display: none;
+	}
+
+	.fc-search-modal .fc-search-submit {
+		display: inline-flex;
 	}
 }

@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.11] — 2026-06-23
+
+- Search redesign: replace the full-width header bar with a centered command palette (dimmed backdrop, full-screen on mobile with a visible Search button). The header search trigger is now a clean icon-only button with transparent-background resets that survive Elementor theme styling. Result rows redesigned with right-aligned price, ink-muted SKU, hover and keyboard-selected states, and a proper see-all footer; fixes the flexbox min-width overflow that pushed prices off-screen.
+
 ## [1.21.10] — 2026-06-23
 
 - Search bar polish: align the live-search panel, overlay and close icon to the design-token layer (colors, shadows, motion, z-scale, radii, type). Fix the cool-gray result-row hover to the warm paper-soft token, replace opacity-based text muting with the ink-muted ramp, unify the close glyph to the search-icon stroke family, and add the missing close-button focus-visible ring.

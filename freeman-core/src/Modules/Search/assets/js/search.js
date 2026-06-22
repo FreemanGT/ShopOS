@@ -66,12 +66,12 @@
 		var items = [];
 		var active = -1;
 
-		// The shortcode form gets the icon/overlay treatment; everything else keeps
-		// the classic anchored dropdown (unchanged behaviour).
+		// The shortcode form gets the icon → command-palette treatment; everything
+		// else keeps the classic anchored dropdown (unchanged behaviour).
 		var form = input.closest('form.fc-search-form');
 		var overlayMode = !!form;
 
-		var trigger, overlay, bar;
+		var trigger, modal;
 
 		function open() {
 			if (panel.hidden) {
@@ -197,59 +197,54 @@
 			setupAnchored();
 		}
 
-		// --- Overlay mode: icon → full-width bar below the header. ---------------
+		// --- Palette mode: icon → centered command palette over a dimmed scrim. --
 
 		function setupOverlay() {
 			trigger = el('button', 'fc-search-trigger');
 			trigger.type = 'button';
 			trigger.setAttribute('aria-label', cfg.labels.toggle);
 			trigger.setAttribute('aria-expanded', 'false');
+			trigger.setAttribute('aria-haspopup', 'dialog');
 			trigger.innerHTML = ICON;
 
-			overlay = el('div', 'fc-search-overlay');
-			var scrim = el('div', 'fc-search-scrim');
-			bar = el('div', 'fc-search-bar');
-			var inner = el('div', 'fc-search-bar__inner');
+			modal = el('div', 'fc-search-modal');
+			modal.setAttribute('role', 'dialog');
+			modal.setAttribute('aria-modal', 'true');
+			modal.setAttribute('aria-label', cfg.labels.toggle);
 
-			var iconHint = el('span', 'fc-search-bar__icon');
+			var scrim = el('div', 'fc-search-modal__scrim');
+			var palettePanel = el('div', 'fc-search-modal__panel');
+			var header = el('div', 'fc-search-modal__header');
+
+			var iconHint = el('span', 'fc-search-modal__icon');
 			iconHint.innerHTML = ICON;
 
-			var closeBtn = el('button', 'fc-search-close');
+			var closeBtn = el('button', 'fc-search-modal__close');
 			closeBtn.type = 'button';
 			closeBtn.setAttribute('aria-label', cfg.labels.close);
 			closeBtn.innerHTML = CLOSE_ICON;
 
-			// Drop the icon in where the form was, then move the form into the bar so
-			// its native GET submit (and the mobile Search button) are preserved.
+			// Drop the icon in where the form was, then move the form into the
+			// palette header so its native GET submit (and the mobile Search button)
+			// are preserved.
 			form.parentNode.insertBefore(trigger, form);
-			inner.appendChild(iconHint);
-			inner.appendChild(form);
-			inner.appendChild(closeBtn);
-			bar.appendChild(inner);
-			panel.classList.add('fc-search-panel--overlay');
-			bar.appendChild(panel);
-			overlay.appendChild(scrim);
-			overlay.appendChild(bar);
-			document.body.appendChild(overlay);
+			header.appendChild(iconHint);
+			header.appendChild(form);
+			header.appendChild(closeBtn);
+			panel.classList.add('fc-search-panel--palette');
+			palettePanel.appendChild(header);
+			palettePanel.appendChild(panel);
+			modal.appendChild(scrim);
+			modal.appendChild(palettePanel);
+			document.body.appendChild(modal);
 
 			trigger.addEventListener('click', openOverlay);
 			closeBtn.addEventListener('click', closeOverlay);
 			scrim.addEventListener('click', closeOverlay);
-			window.addEventListener('resize', function () { if (overlay.classList.contains('is-open')) { placeBar(); } });
-			window.addEventListener('scroll', function () { if (overlay.classList.contains('is-open')) { placeBar(); } }, true);
-		}
-
-		// Anchor the bar's top to the trigger's bottom edge so it sits just below
-		// the header. Exposed as a CSS var so the mobile full-screen rule can ignore
-		// it (it pins the bar to the top of the viewport instead).
-		function placeBar() {
-			var r = trigger.getBoundingClientRect();
-			overlay.style.setProperty('--fc-bar-top', Math.max(0, r.bottom) + 'px');
 		}
 
 		function openOverlay() {
-			placeBar();
-			overlay.classList.add('is-open');
+			modal.classList.add('is-open');
 			document.body.classList.add('fc-search-open');
 			trigger.setAttribute('aria-expanded', 'true');
 			input.focus();
@@ -258,7 +253,7 @@
 
 		function closeOverlay() {
 			close();
-			overlay.classList.remove('is-open');
+			modal.classList.remove('is-open');
 			document.body.classList.remove('fc-search-open');
 			trigger.setAttribute('aria-expanded', 'false');
 			trigger.focus();
