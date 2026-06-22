@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.9] — 2026-06-23
+
+- Fix: the search dropdown image, price and SKU stopped showing after saving the Search settings page. Settings_Hub stores checkboxes as 1/0, but the dropdown payload compared against the 'yes' string, so saved toggles read as off. It now reads them as booleans (matching how the settings UI renders the checked state).
+
 ## [1.21.8] — 2026-06-23
 
 - Search dropdown display controls: admin toggles for product image, price and SKU on each result, plus a max-results count (1-20). SKU search fix: a variable product's variation SKUs are now folded into the search index, so searching by a variation SKU finds the product (a reindex is required for existing products).

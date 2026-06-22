@@ -29,6 +29,9 @@
 
 	var ICON = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
+	// Close glyph drawn from the same stroke family as ICON so the two read as one set.
+	var CLOSE_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+
 	// What each result row renders. Defaults preserve the original look if the
 	// localized payload predates these flags (image + price on, SKU off).
 	var show = (cfg.show && typeof cfg.show === 'object') ? cfg.show : { image: true, price: true, sku: false };
@@ -214,7 +217,7 @@
 			var closeBtn = el('button', 'fc-search-close');
 			closeBtn.type = 'button';
 			closeBtn.setAttribute('aria-label', cfg.labels.close);
-			closeBtn.innerHTML = '&times;';
+			closeBtn.innerHTML = CLOSE_ICON;
 
 			// Drop the icon in where the form was, then move the form into the bar so
 			// its native GET submit (and the mobile Search button) are preserved.

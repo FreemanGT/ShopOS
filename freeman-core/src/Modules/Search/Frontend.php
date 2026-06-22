@@ -119,11 +119,14 @@ final class Frontend {
 			'selector' => 'input[type="search"], input[name="s"]',
 			'minChars' => (int) $this->module->get_option( 'min_chars', 2 ),
 			'debounce' => (int) $this->module->get_option( 'debounce_ms', 200 ),
-			// What each dropdown result row renders (admin-controlled).
+			// What each dropdown result row renders (admin-controlled). Settings_Hub
+			// stores checkboxes as 1/0; the schema default is the 'yes'/'no' string —
+			// filter_var (what the Hub itself uses to render the checked state) reads
+			// both correctly.
 			'show'     => array(
-				'image' => 'yes' === $this->module->get_option( 'show_image', 'yes' ),
-				'price' => 'yes' === $this->module->get_option( 'show_price', 'yes' ),
-				'sku'   => 'yes' === $this->module->get_option( 'show_sku', 'no' ),
+				'image' => filter_var( $this->module->get_option( 'show_image', 'yes' ), FILTER_VALIDATE_BOOLEAN ),
+				'price' => filter_var( $this->module->get_option( 'show_price', 'yes' ), FILTER_VALIDATE_BOOLEAN ),
+				'sku'   => filter_var( $this->module->get_option( 'show_sku', 'no' ), FILTER_VALIDATE_BOOLEAN ),
 			),
 			'labels'   => array(
 				'noResults' => __( 'No products found', 'freeman-core' ),

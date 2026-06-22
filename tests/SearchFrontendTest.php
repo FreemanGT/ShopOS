@@ -42,6 +42,21 @@ final class SearchFrontendTest extends TestCase {
 		$this->assertFalse( $payload['show']['sku'] );
 	}
 
+	public function test_display_toggles_read_saved_integer_values(): void {
+		// Settings_Hub persists checkboxes as 1/0 (not the schema's 'yes'/'no'
+		// string default), so the payload must read them as booleans — otherwise a
+		// saved settings page hides image/price/SKU. Regression for 1.21.9.
+		$GLOBALS['fr_opts']['freeman_core_search_show_image'] = 0;
+		$GLOBALS['fr_opts']['freeman_core_search_show_price'] = 1;
+		$GLOBALS['fr_opts']['freeman_core_search_show_sku']   = 1;
+
+		$payload = ( new Frontend( new Module() ) )->localized_payload();
+
+		$this->assertFalse( $payload['show']['image'] );
+		$this->assertTrue( $payload['show']['price'] );
+		$this->assertTrue( $payload['show']['sku'] );
+	}
+
 	public function test_payload_honours_numeric_setting_overrides(): void {
 		$GLOBALS['fr_opts']['freeman_core_search_min_chars']   = 3;
 		$GLOBALS['fr_opts']['freeman_core_search_debounce_ms'] = 350;
