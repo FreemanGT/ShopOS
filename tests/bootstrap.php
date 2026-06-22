@@ -155,6 +155,9 @@ if ( ! function_exists( '_e' ) ) {
 if ( ! function_exists( 'home_url' ) ) {
 	function home_url( $path = '' ) { return 'https://example.test' . (string) $path; }
 }
+if ( ! function_exists( 'get_search_query' ) ) {
+	function get_search_query( $escaped = true ) { return $GLOBALS['fr_search_query'] ?? ''; }
+}
 if ( ! function_exists( 'admin_url' ) ) {
 	function admin_url( $path = '' ) { return 'https://example.test/wp-admin/' . ltrim( (string) $path, '/' ); }
 }

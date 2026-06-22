@@ -41,4 +41,21 @@ final class SearchFrontendTest extends TestCase {
 		$this->assertSame( '#my-search', $payload['selector'] );
 		$this->assertSame( 3, $payload['minChars'] );
 	}
+
+	public function test_shortcode_form_is_enhanceable_and_native(): void {
+		$html = ( new Frontend( new Module() ) )->render_form();
+
+		// input[name="s"] type=search → matched by the default dropdown selector.
+		$this->assertStringContainsString( 'type="search"', $html );
+		$this->assertStringContainsString( 'name="s"', $html );
+		// GET form to home + product post type → native product search with JS off.
+		$this->assertStringContainsString( 'method="get"', $html );
+		$this->assertStringContainsString( 'name="post_type" value="product"', $html );
+	}
+
+	public function test_shortcode_honours_placeholder_attr(): void {
+		$html = ( new Frontend( new Module() ) )->render_form( array( 'placeholder' => 'Find gear' ) );
+
+		$this->assertStringContainsString( 'placeholder="Find gear"', $html );
+	}
 }

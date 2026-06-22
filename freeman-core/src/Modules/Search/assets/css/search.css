@@ -80,3 +80,15 @@
 .fc-search-more:hover {
 	background: #f0f0f0;
 }
+
+/* [freeman_search] standalone box — layout only; fields inherit theme styling. */
+.fc-search-form {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.fc-search-form .fc-search-field {
+	flex: 1 1 auto;
+	min-width: 0;
+}

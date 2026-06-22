@@ -8,6 +8,11 @@
  * configurable selector rather than markup we render — progressive enhancement,
  * the native form still submits with JS off.
  *
+ * Also provides a `[freeman_search]` shortcode that prints a standalone product
+ * search box. It renders `input[name="s"]`, which the default selector already
+ * matches, so the same dropdown JS enhances it with no extra config; JS-off it
+ * submits a normal product search.
+ *
  * Only constructed when the dropdown feature flag is on (Module::boot()).
  *
  * @package FreemanCore
@@ -41,6 +46,36 @@ final class Frontend {
 	 */
 	public function register() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
+		add_shortcode( 'freeman_search', array( $this, 'render_form' ) );
+	}
+
+	/**
+	 * `[freeman_search]` — a standalone product search box. Renders a native GET
+	 * form to the home URL with `post_type=product`, so with JS off it performs a
+	 * normal product search; the dropdown JS enhances it via the default selector
+	 * (the field is `input[type="search"]` named `s`).
+	 *
+	 * Pure (string-returning) — unit-tested.
+	 *
+	 * @param array|string $atts Shortcode attributes: placeholder, button.
+	 * @return string
+	 */
+	public function render_form( $atts = array() ) {
+		$atts = shortcode_atts(
+			array(
+				'placeholder' => __( 'Search products…', 'freeman-core' ),
+				'button'      => __( 'Search', 'freeman-core' ),
+			),
+			$atts,
+			'freeman_search'
+		);
+
+		return '<form role="search" method="get" class="fc-search-form" action="' . esc_url( home_url( '/' ) ) . '">'
+			. '<input type="search" class="fc-search-field" name="s" value="' . esc_attr( get_search_query() ) . '"'
+			. ' placeholder="' . esc_attr( $atts['placeholder'] ) . '" aria-label="' . esc_attr( $atts['placeholder'] ) . '" autocomplete="off" />'
+			. '<input type="hidden" name="post_type" value="product" />'
+			. '<button type="submit" class="fc-search-submit">' . esc_html( $atts['button'] ) . '</button>'
+			. '</form>';
 	}
 
 	/**
