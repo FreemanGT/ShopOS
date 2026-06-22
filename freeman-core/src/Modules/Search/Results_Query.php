@@ -59,6 +59,7 @@ final class Results_Query {
 	public function register() {
 		add_action( 'pre_get_posts', array( $this, 'apply' ), 5 );
 		add_filter( 'posts_search', array( $this, 'neutralize_search' ), 10, 2 );
+		add_filter( 'the_posts', array( $this, 'enforce_on_search' ), 99999, 2 );
 		add_filter( 'freeman_core/shop_filters/search_product_ids', array( $this, 'supply_engine_ids' ), 10, 2 );
 	}
 
@@ -95,6 +96,33 @@ final class Results_Query {
 		return empty( $ids ) ? array( 0 ) : $ids;
 	}
 
+	/**
+	 * Filter a fetched post list to the engine ids, in engine-rank order. Posts
+	 * not in the id set are dropped; the result follows the id order. Pure.
+	 *
+	 * @param array $posts Post objects (or ids).
+	 * @param int[] $ids   Engine ids, best-first.
+	 * @return array
+	 */
+	public static function order_posts_by_ids( array $posts, array $ids ) {
+		$rank = array();
+		$i    = 0;
+		foreach ( array_map( 'intval', $ids ) as $id ) {
+			if ( ! isset( $rank[ $id ] ) ) {
+				$rank[ $id ] = $i++;
+			}
+		}
+		$kept = array();
+		foreach ( $posts as $post ) {
+			$pid = is_object( $post ) ? (int) ( $post->ID ?? 0 ) : (int) $post;
+			if ( isset( $rank[ $pid ] ) ) {
+				$kept[ $rank[ $pid ] ] = $post;
+			}
+		}
+		ksort( $kept );
+		return array_values( $kept );
+	}
+
 	/* -----------------------------------------------------------------
 	 * WP adapters (integration / live QA)
 	 * ----------------------------------------------------------------- */
@@ -120,6 +148,35 @@ final class Results_Query {
 		$q->set( 'post__in', self::plan_ids( $this->repo->search( trim( $term ), -1 ) ) );
 		$q->set( 'orderby', 'post__in' );
 		$this->active = true;
+	}
+
+	/**
+	 * the_posts safety net (priority 99999): constrain + reorder the final product
+	 * list on a search to the engine's ids. This catches the grid even when it is
+	 * rendered by a query that bypasses the main query — on this store Elementor
+	 * swaps $wp_query, so the pre_get_posts/is_main_query() path above misses the
+	 * real grid while this runs on whatever query actually produces the posts
+	 * (the same reason Shop Filters enforces on the_posts for AWS). Scoped to a
+	 * product query carrying a search term.
+	 *
+	 * @param array     $posts Posts from the query.
+	 * @param \WP_Query $q     Query.
+	 * @return array
+	 */
+	public function enforce_on_search( $posts, $q ) {
+		if ( is_admin() || ! $q instanceof \WP_Query || empty( $posts ) ) {
+			return $posts;
+		}
+		$term = (string) $q->get( 's' );
+		if ( '' === trim( $term ) ) {
+			return $posts;
+		}
+		$post_type  = $q->get( 'post_type' );
+		$is_product = ( 'product' === $post_type ) || ( is_array( $post_type ) && in_array( 'product', $post_type, true ) );
+		if ( ! $is_product || ! $this->repo->has_data() ) {
+			return $posts;
+		}
+		return self::order_posts_by_ids( $posts, $this->repo->search( trim( $term ), -1 ) );
 	}
 
 	/**

@@ -45,6 +45,26 @@ final class SearchResultsQueryTest extends TestCase {
 		$this->assertSame( array( 9, 4, 7 ), Results_Query::plan_ids( array( 9, 4, 7 ) ) );
 	}
 
+	public function test_order_posts_by_ids_filters_and_reorders(): void {
+		// Native query fetched many; engine matched 3, in its own rank order.
+		$posts = array(
+			(object) array( 'ID' => 10 ),
+			(object) array( 'ID' => 20 ),
+			(object) array( 'ID' => 30 ),
+			(object) array( 'ID' => 40 ),
+		);
+		$out = Results_Query::order_posts_by_ids( $posts, array( 30, 10 ) );
+
+		$this->assertSame( array( 30, 10 ), array_map( static fn ( $p ) => $p->ID, $out ) );
+	}
+
+	public function test_order_posts_by_ids_empty_ids_drops_everything(): void {
+		// Engine no-match → empty grid (engine authoritative once indexed).
+		$posts = array( (object) array( 'ID' => 10 ) );
+
+		$this->assertSame( array(), Results_Query::order_posts_by_ids( $posts, array() ) );
+	}
+
 	public function test_neutralize_search_passes_through_when_inactive(): void {
 		// A fresh instance hasn't taken over any query → native search SQL is kept.
 		// (The active-path neutralisation, has_data() and supply_engine_ids() touch

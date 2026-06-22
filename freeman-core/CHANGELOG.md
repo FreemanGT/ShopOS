@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.1] — 2026-06-22
+
+- Search 8.3b: results-grid enforcement via the_posts net. Fixes the grid showing more products than the engine matched when the search results grid is rendered by a query that bypasses the main query (Elementor query-swap) — order_posts_by_ids filters + reorders the final product list to the engine ids, mirroring Shop Filters' AWS enforcement.
+
 ## [1.21.0] — 2026-06-22
 
 - Search Wave 8.4 graduation: module is now always-on (three search feature flags removed) since Advanced Woo Search was deactivated and the engine is live. The originally planned parity-tooling/cutover was obsoleted. Module-enable toggle is the single kill-switch; an unbuilt index degrades safely. Wave 8 epic complete.
