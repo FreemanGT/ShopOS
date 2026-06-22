@@ -1,5 +1,17 @@
 # Freeman Core — Changelog
 
+## [1.21.6] — 2026-06-23
+
+- Search results: fix the ProductSlider grid showing the whole catalog on an Elementor search-archive template. A product search is no longer treated as a plain archive, so the grid routes through the query path the search-results filter constrains (limit -1, single page). Removes the temporary 1.21.5 diagnostic logging.
+
+## [1.21.5] — 2026-06-22
+
+- TEMP diagnostic build: logs SEARCHDIAG lines (Freeman to Tools) to trace why the search-results ProductSlider grid is not constrained to engine matches - no behavior change, to be reverted in the fix release
+
+## [1.21.4] — 2026-06-22
+
+- Search: constrain the search-results grid when the Elementor archive ProductSlider uses the All-products source (grid mode), not only Current query - fixes the storefront search showing the whole catalog
+
 ## [1.21.3] — 2026-06-22
 
 - Search 8.3c: read the search term from the request, not the main query. On an Elementor product-archive search page the main query carries post_type=product but not the s query var, so the engine never constrained the grid (all products + pagination) while ShopFilters facets were correct. apply() now triggers on a product main query with a request search term and constrains it, fixing grid content and pagination.

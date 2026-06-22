@@ -45,13 +45,33 @@ final class SearchResultsQueryTest extends TestCase {
 	}
 
 	public function test_constrain_slider_query_ignores_non_current_query_widgets(): void {
-		// A genuinely-configured "featured"/"all" ProductSlider on a search page
-		// must be left alone — only a "current query" widget reflects the search.
+		// A genuinely-curated "featured" ProductSlider on a search page must be left
+		// alone — and a passthrough with no settings must not blow up.
 		$rq   = new Results_Query();
 		$args = array( 'limit' => 12 );
 
 		$this->assertSame( $args, $rq->constrain_slider_query( $args, array( 'source' => 'featured' ) ) );
 		$this->assertSame( $args, $rq->constrain_slider_query( $args, array() ) );
+	}
+
+	/**
+	 * @dataProvider slider_constraint_cases
+	 */
+	public function test_should_constrain_slider( string $source, bool $is_grid, bool $expected ): void {
+		$this->assertSame( $expected, Results_Query::should_constrain_slider( $source, $is_grid ) );
+	}
+
+	public static function slider_constraint_cases(): array {
+		// [source, is_grid, expected]
+		return array(
+			'current query slider'  => array( 'current_query', false, true ),
+			'current query grid'    => array( 'current_query', true, true ),
+			'all products grid'     => array( 'all', true, true ),    // the Elementor archive results grid.
+			'all products slider'   => array( 'all', false, false ),  // decorative carousel — leave alone.
+			'featured grid'         => array( 'featured', true, false ),
+			'category grid'         => array( 'category', true, false ),
+			'no source'             => array( '', false, false ),
+		);
 	}
 
 	public function test_neutralize_search_passes_through_when_inactive(): void {

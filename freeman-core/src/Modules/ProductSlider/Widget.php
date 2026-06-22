@@ -767,7 +767,16 @@ final class Widget extends Widget_Base {
 		if ( 'current_query' === $source ) {
 			$is_grid = ( ( $s['display_mode'] ?? 'slider' ) === 'grid' );
 			$main    = $this->main_query();
-			if ( $this->is_product_archive( $main ) ) {
+			// A product *search* rendered through an archive template is not a
+			// plain archive: the template hands us an unconstrained main query (the
+			// search engine's match constraint lives elsewhere and may not reach
+			// this query object), so reading its posts here would render the whole
+			// catalog. Fall through to the standard wc_get_products() path instead,
+			// where the search-results filter (freeman_core/product_slider/query_args)
+			// narrows the grid to the matches. Genuine archives (shop / category /
+			// tag) still read the main query directly.
+			$main_is_search = ( $main instanceof \WP_Query && $main->is_search() );
+			if ( self::should_use_archive( $main_is_search, $this->is_product_archive( $main ) ) ) {
 				return $this->collect_archive_products( $main, $is_grid, $limit );
 			}
 			$source = 'all';
@@ -950,6 +959,22 @@ final class Widget extends Widget_Base {
 		return $query instanceof \WP_Query
 			&& ( $query->is_post_type_archive( 'product' )
 				|| $query->is_tax( array( 'product_cat', 'product_tag' ) ) );
+	}
+
+	/**
+	 * Whether the `current_query` grid should read the archive main query
+	 * directly. A genuine product archive (shop / category / tag) → yes; a
+	 * product *search* rendered through an archive template → no, because its main
+	 * query is not constrained by the search engine, so the grid must instead go
+	 * through the standard wc_get_products() path where the search-results filter
+	 * narrows it to the matches.
+	 *
+	 * @param bool $main_is_search     The main query is a search.
+	 * @param bool $is_product_archive The main query is a product archive.
+	 * @return bool
+	 */
+	public static function should_use_archive( $main_is_search, $is_product_archive ) {
+		return ! $main_is_search && (bool) $is_product_archive;
 	}
 
 	/**
@@ -1252,8 +1277,12 @@ final class Widget extends Widget_Base {
 			// wc_setup_loop() (which woocommerce_pagination() depends on).
 			// main_query() reads $wp_the_query to survive that swap.
 			if ( ! $is_slider && 'current_query' === ( $s['source'] ?? '' ) && function_exists( 'paginate_links' ) ) {
-				$main      = $this->main_query();
-				$max_pages = ( $main instanceof \WP_Query && ! empty( $main->max_num_pages ) ) ? (int) $main->max_num_pages : 1;
+				$main = $this->main_query();
+				// A search renders the full engine result set in one grid (the
+				// wc_get_products() path uses limit=-1), so there is no archive
+				// pagination — only paginate a genuine archive.
+				$main_is_search = ( $main instanceof \WP_Query && $main->is_search() );
+				$max_pages      = ( ! $main_is_search && $main instanceof \WP_Query && ! empty( $main->max_num_pages ) ) ? (int) $main->max_num_pages : 1;
 				if ( $max_pages > 1 ) {
 					$paged = max( 1, (int) get_query_var( 'paged' ), (int) get_query_var( 'page' ) );
 					$links = paginate_links(

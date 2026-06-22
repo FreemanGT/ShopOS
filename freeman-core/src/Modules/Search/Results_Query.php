@@ -163,20 +163,50 @@ final class Results_Query {
 	}
 
 	/**
+	 * Whether a ProductSlider widget on a search page should be constrained to the
+	 * engine matches. Two cases reflect the live search:
+	 *
+	 * - `current_query` (any display mode): the widget stands in for the archive
+	 *   query, so a search must narrow it. (On a search it falls through to the
+	 *   `all` code path and reaches the `query_args` filter we hook here.)
+	 * - `all` in *grid* mode: an Elementor archive template's products grid is
+	 *   frequently configured with the fixed `all products` source rather than
+	 *   `current query`; in grid mode it is the results grid, so a search must
+	 *   narrow it too — otherwise the whole catalog renders (the live arba4 bug).
+	 *
+	 * Other fixed sources (`featured`/`category`/`tag`/`related`/`manual`) and a
+	 * slider-mode `all` carousel are intentional curations and left untouched.
+	 *
+	 * @param string $source  Widget `source` setting.
+	 * @param bool   $is_grid Widget renders as a grid (vs slider).
+	 * @return bool
+	 */
+	public static function should_constrain_slider( $source, $is_grid ) {
+		if ( 'current_query' === $source ) {
+			return true;
+		}
+		return 'all' === $source && (bool) $is_grid;
+	}
+
+	/**
 	 * Constrain a Freeman ProductSlider widget's query to the engine ids on a
-	 * search page. The widget in "current query" mode doesn't recognise a search
-	 * as an archive, so it falls back to source `all` and renders every product
-	 * through its own `freeman_core/product_slider/query_args` filter — we hook
-	 * that and inject the engine matches. Scoped to current-query widgets; the
-	 * term is read from the request (the main query may not carry `s` on an
-	 * Elementor archive render, and $wp_query is swapped during the widget render).
+	 * search page, by injecting them through its own
+	 * `freeman_core/product_slider/query_args` filter. Scoped by
+	 * should_constrain_slider() (current-query widgets, plus the grid-mode
+	 * all-products archive grid). The term is read from the request (the main
+	 * query may not carry `s` on an Elementor archive render, and $wp_query is
+	 * swapped during the widget render).
 	 *
 	 * @param array $args     wc_get_products() args.
 	 * @param array $settings Widget settings.
 	 * @return array
 	 */
 	public function constrain_slider_query( $args, $settings ) {
-		if ( ! is_array( $args ) || ( is_array( $settings ) ? ( $settings['source'] ?? '' ) : '' ) !== 'current_query' ) {
+		if ( ! is_array( $args ) || ! is_array( $settings ) ) {
+			return $args;
+		}
+		$is_grid = ( ( $settings['display_mode'] ?? 'slider' ) === 'grid' );
+		if ( ! self::should_constrain_slider( (string) ( $settings['source'] ?? '' ), $is_grid ) ) {
 			return $args;
 		}
 		$term = $this->request_search_term();

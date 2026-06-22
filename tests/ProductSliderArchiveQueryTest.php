@@ -38,11 +38,13 @@ if ( ! class_exists( 'WP_Query' ) ) {
 		public $max_num_pages = 1;
 		private $pta = false;
 		private $tax = false;
-		public function __construct( $posts = array(), $pta = false, $tax = false, $max = 1 ) {
-			$this->posts = $posts; $this->pta = (bool) $pta; $this->tax = (bool) $tax; $this->max_num_pages = (int) $max;
+		private $search = false;
+		public function __construct( $posts = array(), $pta = false, $tax = false, $max = 1, $search = false ) {
+			$this->posts = $posts; $this->pta = (bool) $pta; $this->tax = (bool) $tax; $this->max_num_pages = (int) $max; $this->search = (bool) $search;
 		}
 		public function is_post_type_archive( $type = "" ) { return $this->pta; }
 		public function is_tax( $tax = "" ) { return $this->tax; }
+		public function is_search() { return $this->search; }
 	}' );
 }
 
@@ -149,5 +151,27 @@ final class ProductSliderArchiveQueryTest extends TestCase {
 		$q   = new \WP_Query( array( 1, 2, 3 ) );
 		$out = $this->invoke( 'collect_archive_products', array( $q, true, 99 ) );
 		$this->assertCount( 2, $out );
+	}
+
+	/**
+	 * The current_query grid reads the archive query for a genuine archive, but a
+	 * product *search* rendered through an archive template must fall through to
+	 * the wc_get_products() path (where the search-results filter constrains it) —
+	 * else the unconstrained main query renders the whole catalog (the arba4 bug).
+	 *
+	 * @dataProvider archive_routing_cases
+	 */
+	public function test_should_use_archive( bool $main_is_search, bool $is_product_archive, bool $expected ): void {
+		$this->assertSame( $expected, Widget::should_use_archive( $main_is_search, $is_product_archive ) );
+	}
+
+	public static function archive_routing_cases(): array {
+		// [main_is_search, is_product_archive, expected]
+		return array(
+			'genuine archive'        => array( false, true, true ),
+			'search on archive tmpl' => array( true, true, false ),  // route through wc_get_products() so search constrains it.
+			'search, not archive'    => array( true, false, false ),
+			'neither'                => array( false, false, false ),
+		);
 	}
 }
