@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.10] — 2026-06-23
+
+- Search bar polish: align the live-search panel, overlay and close icon to the design-token layer (colors, shadows, motion, z-scale, radii, type). Fix the cool-gray result-row hover to the warm paper-soft token, replace opacity-based text muting with the ink-muted ramp, unify the close glyph to the search-icon stroke family, and add the missing close-button focus-visible ring.
+
 ## [1.21.9] — 2026-06-23
 
 - Fix: the search dropdown image, price and SKU stopped showing after saving the Search settings page. Settings_Hub stores checkboxes as 1/0, but the dropdown payload compared against the 'yes' string, so saved toggles read as off. It now reads them as booleans (matching how the settings UI renders the checked state).
