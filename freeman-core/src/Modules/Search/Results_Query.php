@@ -17,10 +17,15 @@
  * facet panel's base universe is fed engine ids via the additive
  * `freeman_core/shop_filters/search_product_ids` filter.
  *
- * The pre_get_posts adapter touches WP_Query / $wpdb (integration / live QA);
- * the gating + id planning are pure statics, unit-tested.
+ * Freeman ProductSlider grids: a "current query" ProductSlider doesn't treat a
+ * search as an archive, so it renders source `all` (every product) through its
+ * `freeman_core/product_slider/query_args` filter — we hook that and inject the
+ * engine matches (constrain_slider_query), which is how the engine reaches the
+ * grid on stores that render search results with the widget rather than the
+ * theme's native loop.
  *
- * Only constructed when the results feature flag is on (Module::boot()).
+ * The WP adapters touch WP_Query / $wpdb (integration / live QA); the gating +
+ * id planning are pure statics, unit-tested.
  *
  * @package FreemanCore
  */
@@ -59,7 +64,7 @@ final class Results_Query {
 	public function register() {
 		add_action( 'pre_get_posts', array( $this, 'apply' ), 5 );
 		add_filter( 'posts_search', array( $this, 'neutralize_search' ), 10, 2 );
-		add_filter( 'the_posts', array( $this, 'enforce_on_search' ), 99999, 2 );
+		add_filter( 'freeman_core/product_slider/query_args', array( $this, 'constrain_slider_query' ), 10, 2 );
 		add_filter( 'freeman_core/shop_filters/search_product_ids', array( $this, 'supply_engine_ids' ), 10, 2 );
 	}
 
@@ -96,33 +101,6 @@ final class Results_Query {
 		return empty( $ids ) ? array( 0 ) : $ids;
 	}
 
-	/**
-	 * Filter a fetched post list to the engine ids, in engine-rank order. Posts
-	 * not in the id set are dropped; the result follows the id order. Pure.
-	 *
-	 * @param array $posts Post objects (or ids).
-	 * @param int[] $ids   Engine ids, best-first.
-	 * @return array
-	 */
-	public static function order_posts_by_ids( array $posts, array $ids ) {
-		$rank = array();
-		$i    = 0;
-		foreach ( array_map( 'intval', $ids ) as $id ) {
-			if ( ! isset( $rank[ $id ] ) ) {
-				$rank[ $id ] = $i++;
-			}
-		}
-		$kept = array();
-		foreach ( $posts as $post ) {
-			$pid = is_object( $post ) ? (int) ( $post->ID ?? 0 ) : (int) $post;
-			if ( isset( $rank[ $pid ] ) ) {
-				$kept[ $rank[ $pid ] ] = $post;
-			}
-		}
-		ksort( $kept );
-		return array_values( $kept );
-	}
-
 	/* -----------------------------------------------------------------
 	 * WP adapters (integration / live QA)
 	 * ----------------------------------------------------------------- */
@@ -151,32 +129,40 @@ final class Results_Query {
 	}
 
 	/**
-	 * the_posts safety net (priority 99999): constrain + reorder the final product
-	 * list on a search to the engine's ids. This catches the grid even when it is
-	 * rendered by a query that bypasses the main query — on this store Elementor
-	 * swaps $wp_query, so the pre_get_posts/is_main_query() path above misses the
-	 * real grid while this runs on whatever query actually produces the posts
-	 * (the same reason Shop Filters enforces on the_posts for AWS). Scoped to a
-	 * product query carrying a search term.
+	 * Constrain a Freeman ProductSlider widget's query to the engine ids on a
+	 * search page. The widget in "current query" mode doesn't recognise a search
+	 * as an archive, so it falls back to source `all` and renders every product
+	 * through its own `freeman_core/product_slider/query_args` filter — we hook
+	 * that and inject the engine matches. Scoped to current-query widgets, and the
+	 * search is read from $wp_the_query (Elementor swaps $wp_query during the
+	 * widget render, so is_search()/get_search_query() are unreliable there — the
+	 * widget reads $wp_the_query for the same reason).
 	 *
-	 * @param array     $posts Posts from the query.
-	 * @param \WP_Query $q     Query.
+	 * @param array $args     wc_get_products() args.
+	 * @param array $settings Widget settings.
 	 * @return array
 	 */
-	public function enforce_on_search( $posts, $q ) {
-		if ( is_admin() || ! $q instanceof \WP_Query || empty( $posts ) ) {
-			return $posts;
+	public function constrain_slider_query( $args, $settings ) {
+		if ( ! is_array( $args ) || ( is_array( $settings ) ? ( $settings['source'] ?? '' ) : '' ) !== 'current_query' ) {
+			return $args;
 		}
-		$term = (string) $q->get( 's' );
-		if ( '' === trim( $term ) ) {
-			return $posts;
+		$main = ( isset( $GLOBALS['wp_the_query'] ) && $GLOBALS['wp_the_query'] instanceof \WP_Query )
+			? $GLOBALS['wp_the_query']
+			: null;
+		if ( ! $main instanceof \WP_Query || ! $main->is_search() || ! $this->repo->has_data() ) {
+			return $args;
 		}
-		$post_type  = $q->get( 'post_type' );
-		$is_product = ( 'product' === $post_type ) || ( is_array( $post_type ) && in_array( 'product', $post_type, true ) );
-		if ( ! $is_product || ! $this->repo->has_data() ) {
-			return $posts;
+		$term = trim( (string) $main->get( 's' ) );
+		if ( '' === $term ) {
+			return $args;
 		}
-		return self::order_posts_by_ids( $posts, $this->repo->search( trim( $term ), -1 ) );
+
+		// wc_get_products() uses `include` (+ orderby=include to keep rank). [0]
+		// on a no-match forces an empty grid (engine authoritative once indexed).
+		$args['include'] = self::plan_ids( $this->repo->search( $term, -1 ) );
+		$args['orderby'] = 'include';
+		$args['limit']   = -1;
+		return $args;
 	}
 
 	/**

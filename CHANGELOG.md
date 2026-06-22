@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.2] — 2026-06-22
+
+- Search 8.3b fix: constrain the Freeman ProductSlider search grid via its query_args filter (the previous the_posts net regressed to zero products because the widget renders its own query); read the term from wp_the_query to survive Elementor swap; inject engine ids via wc_get_products include. Also lower the index debounce 30s to 10s for near-live freshness.
+
 ## [1.21.1] — 2026-06-22
 
 - Search 8.3b: results-grid enforcement via the_posts net. Fixes the grid showing more products than the engine matched when the search results grid is rendered by a query that bypasses the main query (Elementor query-swap) — order_posts_by_ids filters + reorders the final product list to the engine ids, mirroring Shop Filters' AWS enforcement.

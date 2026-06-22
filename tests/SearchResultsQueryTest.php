@@ -45,24 +45,14 @@ final class SearchResultsQueryTest extends TestCase {
 		$this->assertSame( array( 9, 4, 7 ), Results_Query::plan_ids( array( 9, 4, 7 ) ) );
 	}
 
-	public function test_order_posts_by_ids_filters_and_reorders(): void {
-		// Native query fetched many; engine matched 3, in its own rank order.
-		$posts = array(
-			(object) array( 'ID' => 10 ),
-			(object) array( 'ID' => 20 ),
-			(object) array( 'ID' => 30 ),
-			(object) array( 'ID' => 40 ),
-		);
-		$out = Results_Query::order_posts_by_ids( $posts, array( 30, 10 ) );
+	public function test_constrain_slider_query_ignores_non_current_query_widgets(): void {
+		// A genuinely-configured "featured"/"all" ProductSlider on a search page
+		// must be left alone — only a "current query" widget reflects the search.
+		$rq   = new Results_Query();
+		$args = array( 'limit' => 12 );
 
-		$this->assertSame( array( 30, 10 ), array_map( static fn ( $p ) => $p->ID, $out ) );
-	}
-
-	public function test_order_posts_by_ids_empty_ids_drops_everything(): void {
-		// Engine no-match → empty grid (engine authoritative once indexed).
-		$posts = array( (object) array( 'ID' => 10 ) );
-
-		$this->assertSame( array(), Results_Query::order_posts_by_ids( $posts, array() ) );
+		$this->assertSame( $args, $rq->constrain_slider_query( $args, array( 'source' => 'featured' ) ) );
+		$this->assertSame( $args, $rq->constrain_slider_query( $args, array() ) );
 	}
 
 	public function test_neutralize_search_passes_through_when_inactive(): void {

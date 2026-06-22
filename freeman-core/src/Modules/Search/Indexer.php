@@ -33,7 +33,7 @@ final class Indexer {
 	const AS_GROUP         = 'freeman-search';
 	const BATCH_SIZE       = 50;
 	const SWEEP_INTERVAL   = 300; // 5 minutes.
-	const DEBOUNCE_DELAY   = 30;
+	const DEBOUNCE_DELAY   = 10;  // Seconds after a product change before its reindex drains. Low for near-live search on a fast-moving shop; still batched/background so bulk edits collapse to one reindex per product.
 
 	/**
 	 * Index storage.
