@@ -119,6 +119,17 @@ final class Module extends Module_Base {
 		$original_post    = $post;
 		$original_product = isset( $GLOBALS['product'] ) ? $GLOBALS['product'] : null;
 
+		// admin-ajax runs in an admin context ( is_admin() === true ), so WP and
+		// plugins resolve the admin/user locale (often English) instead of the
+		// site front-end locale. That makes the WooCommerce summary plus the
+		// VariationSwatches buy box — which keys its He/En labels off
+		// determine_locale() — render in English inside the drawer while the rest
+		// of the storefront is in the site language (Add to cart / Buy now /
+		// Categories / SKU / In stock). Render in the site locale so the drawer
+		// matches the front end. switch_to_locale() pushes onto a stack; only
+		// restore when it actually switched, to keep the stack balanced.
+		$switched_locale = function_exists( 'switch_to_locale' ) && switch_to_locale( get_locale() );
+
 		$post = get_post( $product->get_id() ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		if ( $post ) {
 			setup_postdata( $post );
@@ -138,6 +149,10 @@ final class Module extends Module_Base {
 		$post               = $original_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$GLOBALS['product'] = $original_product;
 		wp_reset_postdata();
+
+		if ( $switched_locale && function_exists( 'restore_previous_locale' ) ) {
+			restore_previous_locale();
+		}
 
 		return $html;
 	}
