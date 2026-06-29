@@ -11,11 +11,11 @@
  * — silently snaps to the matching real slide. This covers both arrow clicks
  * and native swipe past an edge.
  *
- * Positioning: smooth navigation uses scrollIntoView (RTL-correct, and only at
- * interaction time, when the card is already on-screen, so it never scrolls the
- * page). Instant repositioning (initial start + clone snap) adjusts the
- * viewport's own scrollLeft by a measured screen-space delta — RTL-correct and
- * page-safe (it never moves an off-screen card into view on load).
+ * Positioning: both smooth navigation and instant repositioning (initial start
+ * + clone snap) adjust the viewport's OWN scrollLeft by a measured screen-space
+ * delta — RTL-correct and page-safe. scrollIntoView is avoided on purpose: it
+ * aligns the slide within every scrollable ancestor, which scrolled the parent
+ * ProductSlider carousel row when a card gallery is nested inside it.
  *
  * Re-initialises sliders appended by Infinite Scroll / Quick View via a
  * MutationObserver. Controls live inside the product-link anchor, so every
@@ -50,15 +50,19 @@
 		return best;
 	}
 
-	// Smooth scroll a slide to the inline-start edge (RTL-correct). Safe at
-	// interaction time — the card is on-screen, so block:'nearest' is a no-op
-	// vertically and the page never moves.
-	function scrollToSlide(slide, smooth) {
-		slide.scrollIntoView({
-			behavior: (!smooth || REDUCED) ? 'auto' : 'smooth',
-			block: 'nearest',
-			inline: 'start'
-		});
+	// Smooth-scroll a slide to the viewport's inline-start edge (RTL-correct).
+	// Scrolls the slider's OWN viewport only — by the same screen-space delta as
+	// snapInstant(), just animated. scrollIntoView is deliberately avoided: it
+	// aligns the slide within EVERY scrollable ancestor, so a card gallery nested
+	// inside a ProductSlider (ul.cs-track, a horizontal scroller) had its arrow
+	// scroll the whole carousel row.
+	function scrollToSlide(vp, slide, smooth) {
+		var delta = slide.getBoundingClientRect().left - vp.getBoundingClientRect().left;
+		if (!smooth || REDUCED || typeof vp.scrollBy !== 'function') {
+			vp.scrollLeft += delta;
+		} else {
+			vp.scrollBy({ left: delta, behavior: 'smooth' });
+		}
 	}
 
 	// Instant reposition by adjusting the viewport's own scrollLeft by the
@@ -110,13 +114,13 @@
 		if (prev) {
 			prev.addEventListener('click', function (e) {
 				stop(e);
-				scrollToSlide(slides[activeIndex(vp, slides) - 1] || slides[0], true);
+				scrollToSlide(vp, slides[activeIndex(vp, slides) - 1] || slides[0], true);
 			});
 		}
 		if (next) {
 			next.addEventListener('click', function (e) {
 				stop(e);
-				scrollToSlide(slides[activeIndex(vp, slides) + 1] || slides[slides.length - 1], true);
+				scrollToSlide(vp, slides[activeIndex(vp, slides) + 1] || slides[slides.length - 1], true);
 			});
 		}
 
@@ -161,7 +165,7 @@
 		});
 		window.addEventListener('pointerup', function () {
 			if (down && moved) {
-				scrollToSlide(slides[activeIndex(vp, slides)], true);
+				scrollToSlide(vp, slides[activeIndex(vp, slides)], true);
 			}
 			down = false;
 		});
