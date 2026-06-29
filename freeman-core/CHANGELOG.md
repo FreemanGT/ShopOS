@@ -1,5 +1,10 @@
 # Freeman Core — Changelog
 
+## [1.21.15] — 2026-06-30
+
+- QuickView drawer now renders in the site locale (switch_to_locale around the admin-ajax render) so the WooCommerce summary + VariationSwatches buy-box strings (Add to cart / Buy now / Categories / SKU / In stock) match the storefront language instead of falling back to English.
+- Card-image gallery arrows scroll the gallery's own viewport instead of via scrollIntoView, so clicking an arrow on a card inside a ProductSlider (e.g. related products in slider mode) no longer scrolls the whole carousel row.
+
 ## [1.21.14] — 2026-06-30
 
 - Shared /page/N/ infinite-scroll links reset to page 1 on a fresh load so recipients see the full result set; pages no longer push /page/N/ into the address bar as pages auto-load.
