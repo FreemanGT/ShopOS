@@ -2,6 +2,11 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.16] — 2026-06-30
+
+- Search: every storefront string (field placeholder, search button, no-results / see-all / searching messages, toggle + close accessible names) is now editable in Freeman → Search settings via the Labels system; blank fields keep the English default.
+- Shop Filters: new "Filter panel style" setting. Classic (default) keeps the current checkbox layout unchanged; Refined renders attribute values as pill buttons (selected = filled), collapses each facet behind a chevron header, truncates long lists behind a show-more, uses filled chips with circular remove badges + a circular drawer-close button, and contains the panel height with its own scroll.
+
 ## [1.21.15] — 2026-06-30
 
 - QuickView drawer now renders in the site locale (switch_to_locale around the admin-ajax render) so the WooCommerce summary + VariationSwatches buy-box strings (Add to cart / Buy now / Categories / SKU / In stock) match the storefront language instead of falling back to English.
