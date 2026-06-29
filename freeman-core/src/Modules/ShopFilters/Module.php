@@ -96,6 +96,17 @@ final class Module extends Module_Base {
 			'description' => __( 'Default product ordering for shop and category pages (until the shopper picks a sort). Blank keeps the WooCommerce default.', 'freeman-core' ),
 		);
 
+		$schema['filter_style'] = array(
+			'label'       => __( 'Filter panel style', 'freeman-core' ),
+			'type'        => 'select',
+			'choices'     => array(
+				'classic' => __( 'Classic — checkbox lists (current)', 'freeman-core' ),
+				'refined' => __( 'Refined — size pills, collapsible facets, compact', 'freeman-core' ),
+			),
+			'default'     => 'classic',
+			'description' => __( 'Visual style of the storefront filter panel. Classic keeps the current checkbox layout. Refined renders attribute values as pill buttons, collapses long facet lists with a “show more”, uses circular remove buttons, and contains the panel height with its own scroll.', 'freeman-core' ),
+		);
+
 		return $schema;
 	}
 

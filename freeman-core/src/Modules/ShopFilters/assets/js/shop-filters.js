@@ -209,4 +209,60 @@
 			}
 		});
 	}
+
+	/* ---- refined style (opt-in): show-more truncation + collapsible facets ---- */
+	if (panel.classList.contains('freeman-sf--refined')) {
+		var SHOW_MORE_CAP = 8;
+
+		// Long term lists collapse to the cap behind a numeric "+N" toggle, so a
+		// big attribute (numeric sizes) doesn't stretch the panel.
+		panel.querySelectorAll('.freeman-sf__terms').forEach(function (list) {
+			var terms = Array.prototype.slice.call(list.children).filter(function (n) {
+				return n.classList && n.classList.contains('freeman-sf__term');
+			});
+			if (terms.length <= SHOW_MORE_CAP) { return; }
+			var hidden = terms.slice(SHOW_MORE_CAP);
+			hidden.forEach(function (t) { t.classList.add('is-sf-hidden'); });
+
+			var more = document.createElement('button');
+			more.type = 'button';
+			more.className = 'freeman-sf__more';
+			more.setAttribute('aria-expanded', 'false');
+			more.textContent = '+' + hidden.length;
+			more.addEventListener('click', function () {
+				var open = more.getAttribute('aria-expanded') === 'true';
+				hidden.forEach(function (t) { t.classList.toggle('is-sf-hidden', open); });
+				more.setAttribute('aria-expanded', String(!open));
+				more.textContent = open ? '+' + hidden.length : '−';
+			});
+			list.parentNode.insertBefore(more, list.nextSibling);
+		});
+
+		// Each facet / categories title becomes a collapse toggle with a chevron.
+		panel.querySelectorAll('.freeman-sf__facet-title, .freeman-sf__categories-title').forEach(function (title) {
+			var box = title.closest('.freeman-sf__facet, .freeman-sf__categories');
+			if (!box) { return; }
+
+			var chevron = document.createElement('span');
+			chevron.className = 'freeman-sf__chevron';
+			chevron.setAttribute('aria-hidden', 'true');
+			title.appendChild(chevron);
+
+			title.setAttribute('role', 'button');
+			title.setAttribute('tabindex', '0');
+			title.setAttribute('aria-expanded', 'true');
+
+			function toggleFacet() {
+				var collapsed = box.classList.toggle('is-sf-collapsed');
+				title.setAttribute('aria-expanded', String(!collapsed));
+			}
+			title.addEventListener('click', toggleFacet);
+			title.addEventListener('keydown', function (e) {
+				if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+					e.preventDefault();
+					toggleFacet();
+				}
+			});
+		});
+	}
 })();

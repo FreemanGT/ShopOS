@@ -30,6 +30,18 @@ final class ShopFiltersModuleTest extends TestCase {
 		$this->assertFalse( ( new Module() )->is_enabled() );
 	}
 
+	public function test_filter_style_setting_defaults_to_classic(): void {
+		$schema = ( new Module() )->settings_schema();
+
+		$this->assertArrayHasKey( 'filter_style', $schema );
+		$this->assertSame( 'select', $schema['filter_style']['type'] );
+		$this->assertSame( 'classic', $schema['filter_style']['default'] );
+		$this->assertSame(
+			array( 'classic', 'refined' ),
+			array_keys( $schema['filter_style']['choices'] )
+		);
+	}
+
 	public function test_boot_wires_indexer_hooks(): void {
 		( new Module() )->boot();
 

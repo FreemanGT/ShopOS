@@ -217,6 +217,180 @@
 	box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2271b1;
 }
 
+/* ============================================================
+   Refined panel style — opt-in via Freeman → Shop Filters →
+   "Filter panel style" = Refined (adds `freeman-sf--refined`).
+   Every rule below is scoped to that modifier, so the Classic
+   style stays untouched.
+   ============================================================ */
+
+/* Attribute terms render as pill buttons. The native checkbox stays as the
+   (visually hidden) state holder, so readSelection() + the reload transport
+   are unchanged — only the presentation differs. */
+.freeman-sf--refined .freeman-sf__terms {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4em;
+}
+
+.freeman-sf--refined .freeman-sf__term {
+	margin: 0;
+}
+
+.freeman-sf--refined .freeman-sf__term label {
+	gap: 0.4em;
+	padding: 0.38em 0.85em;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: var(--fm-radius-pill, 999px);
+	font-size: 0.88em;
+	line-height: 1.4;
+	transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.freeman-sf--refined .freeman-sf__term label:hover {
+	border-color: rgba(0, 0, 0, 0.3);
+}
+
+.freeman-sf--refined .freeman-sf__term .freeman-sf__checkbox {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	margin: 0;
+	pointer-events: none;
+}
+
+/* Selected = filled. :has() lets the whole pill react to the inner checkbox. */
+.freeman-sf--refined .freeman-sf__term label:has(.freeman-sf__checkbox:checked) {
+	background: #111;
+	border-color: #111;
+	color: #fff;
+}
+
+.freeman-sf--refined .freeman-sf__term label:has(.freeman-sf__checkbox:checked) .freeman-sf__term-count {
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.freeman-sf--refined .freeman-sf__term label:has(.freeman-sf__checkbox:focus-visible) {
+	box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2271b1;
+}
+
+/* "Show more" toggle (JS-injected once a facet exceeds the cap). */
+.freeman-sf--refined .freeman-sf__term.is-sf-hidden {
+	display: none;
+}
+
+.freeman-sf--refined .freeman-sf__more {
+	margin: 0.5em 0 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	font-size: 0.85em;
+	text-decoration: underline;
+	opacity: 0.7;
+	cursor: pointer;
+}
+
+.freeman-sf--refined .freeman-sf__more:hover {
+	opacity: 1;
+}
+
+/* Collapsible facets — the JS turns each title into a toggle + appends a
+   chevron, and toggles `is-sf-collapsed` on the facet/categories wrapper. */
+.freeman-sf--refined .freeman-sf__facet-title,
+.freeman-sf--refined .freeman-sf__categories-title {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5em;
+	cursor: pointer;
+}
+
+.freeman-sf--refined .freeman-sf__chevron {
+	flex: 0 0 auto;
+	width: 0.5em;
+	height: 0.5em;
+	border-right: 2px solid currentColor;
+	border-bottom: 2px solid currentColor;
+	transform: rotate(45deg);
+	opacity: 0.45;
+	transition: transform 0.2s ease;
+}
+
+.freeman-sf--refined .is-sf-collapsed .freeman-sf__chevron {
+	transform: rotate(-135deg);
+}
+
+.freeman-sf--refined .freeman-sf__facet.is-sf-collapsed .freeman-sf__terms,
+.freeman-sf--refined .freeman-sf__facet.is-sf-collapsed .freeman-sf__more,
+.freeman-sf--refined .freeman-sf__facet.is-sf-collapsed .freeman-sf__swatches,
+.freeman-sf--refined .freeman-sf__categories.is-sf-collapsed .freeman-sf__cat-list {
+	display: none;
+}
+
+/* Active-filter chips → filled pills with a circular × badge. */
+.freeman-sf--refined .freeman-sf__chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45em;
+	border-color: #111;
+	background: #111;
+	color: #fff;
+}
+
+.freeman-sf--refined .freeman-sf__chip:hover {
+	border-color: #000;
+	background: #000;
+}
+
+.freeman-sf--refined .freeman-sf__chip-x {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.25em;
+	height: 1.25em;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.22);
+	font-size: 0.95em;
+	line-height: 1;
+}
+
+/* Circular close button (mobile drawer head). Higher specificity than the
+   mobile rule, so the size/shape win while `display` stays from that rule. */
+.freeman-sf--refined .freeman-sf__close {
+	width: 2.2em;
+	height: 2.2em;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: 50%;
+	font-size: 1.25rem;
+	transition: background-color 0.15s ease;
+}
+
+.freeman-sf--refined .freeman-sf__close:hover {
+	background: rgba(0, 0, 0, 0.05);
+}
+
+/* Desktop: contain the panel height so a large catalogue can't make a
+   page-tall sidebar. Mobile keeps its own fixed bottom-sheet (below). */
+@media (min-width: 769px) {
+	.freeman-sf--refined .freeman-sf__panel {
+		position: sticky;
+		top: 1em;
+		max-height: calc(100vh - 2em);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		padding-inline-end: 0.25em;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.freeman-sf--refined .freeman-sf__chevron,
+	.freeman-sf--refined .freeman-sf__term label {
+		transition: none;
+	}
+}
+
 /* ---- loading hint ---- */
 .freeman-sf--loading {
 	opacity: 0.6;

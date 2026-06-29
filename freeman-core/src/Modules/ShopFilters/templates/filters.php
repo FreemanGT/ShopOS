@@ -27,8 +27,14 @@ use Freeman\Core\Modules\ShopFilters\Module;
 
 // Effective sort selection: the URL's orderby, else the configured default.
 $sf_current_sort = '' !== (string) $orderby ? (string) $orderby : (string) get_option( 'freeman_core_shop_filters_default_sort', '' );
+
+// Panel style (Freeman → Shop Filters). 'classic' renders today's checkbox
+// layout verbatim; 'refined' adds the `freeman-sf--refined` modifier the CSS/JS
+// key the pill/accordion/show-more/scroll treatment off — classic markup is
+// otherwise unchanged.
+$sf_style = ( 'refined' === get_option( 'freeman_core_shop_filters_filter_style', 'classic' ) ) ? ' freeman-sf--refined' : '';
 ?>
-<div class="freeman-sf" data-freeman-sf>
+<div class="freeman-sf<?php echo esc_attr( $sf_style ); ?>" data-freeman-sf>
 	<button type="button" class="freeman-sf__toggle fm-btn fm-btn--ghost fm-btn--block" data-freeman-sf-toggle aria-expanded="false" aria-controls="freeman-sf-panel">
 		<?php echo esc_html( Labels::get( 'toggle' ) ); ?>
 	</button>
@@ -62,7 +68,7 @@ $sf_current_sort = '' !== (string) $orderby ? (string) $orderby : (string) get_o
 					class="freeman-sf__chip"
 					data-freeman-sf-taxonomy="<?php echo esc_attr( $sf_chip['taxonomy'] ); ?>"
 					data-freeman-sf-slug="<?php echo esc_attr( $sf_chip['slug'] ); ?>"
-				><?php echo esc_html( $sf_chip['label'] ); ?> &times;</button>
+				><?php echo esc_html( $sf_chip['label'] ); ?> <span class="freeman-sf__chip-x" aria-hidden="true">&times;</span></button>
 			<?php endforeach; ?>
 			<?php if ( ! empty( $sf_chips ) ) : ?>
 				<button type="button" class="freeman-sf__clear fm-btn fm-btn--link" data-freeman-sf-clear><?php echo esc_html( Labels::get( 'clear_all' ) ); ?></button>
