@@ -57,7 +57,29 @@ final class Module extends Module_Base {
 	 * @return array
 	 */
 	public function settings_schema() {
-		return array(
+		$schema = array();
+
+		// Storefront label overrides: one text field per search string. Blank = the
+		// English default (Labels::get() falls back), so leaving these empty keeps
+		// the current output. Lets the site set Hebrew wording without code
+		// (QuickView / ShopFilters Labels precedent).
+		$first = true;
+		foreach ( Labels::defaults() as $key => $def ) {
+			/* translators: %s: the English default wording for this field. */
+			$desc = sprintf( __( 'Default: %s', 'freeman-core' ), $def['default'] );
+			if ( $first ) {
+				$desc = __( 'Search wording — leave a field blank to use its English default.', 'freeman-core' ) . ' ' . $desc;
+			}
+			$schema[ 'label_' . $key ] = array(
+				'label'       => $def['label'],
+				'type'        => 'text',
+				'default'     => '',
+				'description' => $desc,
+			);
+			$first = false;
+		}
+
+		$schema += array(
 			'min_chars'      => array(
 				'label'       => __( 'Minimum characters', 'freeman-core' ),
 				'type'        => 'number',
@@ -95,6 +117,8 @@ final class Module extends Module_Base {
 				'default'        => 'no',
 			),
 		);
+
+		return $schema;
 	}
 
 	/**

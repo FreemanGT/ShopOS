@@ -60,10 +60,12 @@ final class Frontend {
 	 * @return string
 	 */
 	public function render_form( $atts = array() ) {
+		// Att defaults come from the admin label settings (Labels::get() falls back
+		// to the English default when unset); a per-shortcode att still overrides.
 		$atts = shortcode_atts(
 			array(
-				'placeholder' => __( 'Search products…', 'freeman-core' ),
-				'button'      => __( 'Search', 'freeman-core' ),
+				'placeholder' => Labels::get( 'placeholder' ),
+				'button'      => Labels::get( 'button' ),
 			),
 			$atts,
 			'freeman_search'
@@ -139,13 +141,15 @@ final class Frontend {
 				'price' => filter_var( $this->module->get_option( 'show_price', 'yes' ), FILTER_VALIDATE_BOOLEAN ),
 				'sku'   => filter_var( $this->module->get_option( 'show_sku', 'no' ), FILTER_VALIDATE_BOOLEAN ),
 			),
+			// Admin-overridable wording (Labels::get() falls back to the English
+			// default when the setting is blank).
 			'labels'   => array(
-				'noResults' => __( 'No products found', 'freeman-core' ),
-				'seeAll'    => __( 'See all results', 'freeman-core' ),
-				'searching' => __( 'Searching…', 'freeman-core' ),
+				'noResults' => Labels::get( 'no_results' ),
+				'seeAll'    => Labels::get( 'see_all' ),
+				'searching' => Labels::get( 'searching' ),
 				// Accessible labels for the JS-built icon trigger + close button.
-				'toggle'    => __( 'Search', 'freeman-core' ),
-				'close'     => __( 'Close search', 'freeman-core' ),
+				'toggle'    => Labels::get( 'toggle' ),
+				'close'     => Labels::get( 'close' ),
 			),
 		);
 	}

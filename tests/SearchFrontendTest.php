@@ -83,4 +83,23 @@ final class SearchFrontendTest extends TestCase {
 
 		$this->assertStringContainsString( 'placeholder="Find gear"', $html );
 	}
+
+	public function test_payload_labels_reflect_saved_overrides(): void {
+		$GLOBALS['fr_opts']['freeman_core_search_label_no_results'] = 'אין תוצאות';
+		$GLOBALS['fr_opts']['freeman_core_search_label_see_all']    = 'הצג הכל';
+
+		$payload = ( new Frontend( new Module() ) )->localized_payload();
+
+		$this->assertSame( 'אין תוצאות', $payload['labels']['noResults'] );
+		$this->assertSame( 'הצג הכל', $payload['labels']['seeAll'] );
+	}
+
+	public function test_shortcode_placeholder_default_comes_from_label_setting(): void {
+		// No att passed → the placeholder default is the admin label setting.
+		$GLOBALS['fr_opts']['freeman_core_search_label_placeholder'] = 'חפש מוצר';
+
+		$html = ( new Frontend( new Module() ) )->render_form();
+
+		$this->assertStringContainsString( 'placeholder="חפש מוצר"', $html );
+	}
 }
