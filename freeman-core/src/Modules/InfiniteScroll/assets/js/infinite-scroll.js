@@ -196,6 +196,29 @@
     }
     window.addEventListener('pagehide', saveSnapshot);
 
+    // ---------------------------------------------------------------
+    // Heal shared /page/N/ deep-links.
+    //
+    // A FRESH (non back/forward) landing on /page/N/ that has a product grid
+    // is almost always a link copied from someone else's infinite-scrolled
+    // address bar — on a cold load it renders only page N, so the recipient
+    // sees "a few results" instead of the full set. Reset to page 1 (strip
+    // the /page/N/ segment, keep the query string + hash so ?s=… search and
+    // other params survive) and let infinite scroll take over from there.
+    //
+    // Scoped to pages that actually have a product grid in the main scope, so
+    // blog / other paginated archives are left alone. Skipped on back/forward
+    // so the restore path above is untouched. Best-effort: a grid that mounts
+    // only via late JS is missed here and simply keeps today's behavior.
+    // ---------------------------------------------------------------
+    (function resetPagedDeepLink() {
+        if (isBackForward()) return;
+        if (!/\/page\/\d+\/?$/.test(location.pathname)) return;
+        if (!firstMatchIn(resolveScope(document), CONTAINER_SELECTORS)) return;
+        var base = location.pathname.replace(/\/page\/\d+\/?$/, '/');
+        location.replace(base + location.search + location.hash);
+    })();
+
     // Replay the saved grid before init() seeds, so all restored products
     // are seen and pagination resumes from the right page.
     function restoreGridIfPending() {
@@ -587,10 +610,13 @@
         // | disabled). Default is pushState — flag-ON-with-defaults is
         // byte-identical to flag-OFF.
         if (!OPTS.triggerModesEnabled) {
-            try {
-                var u0 = new URL(url);
-                window.history.pushState({ freemanPage: u0.pathname }, '', u0.pathname + u0.search);
-            } catch (e) { /* noop */ }
+            // Clean-URLs default: do NOT push /page/N/ into the address bar as
+            // pages auto-load. A URL copied while scrolled to page N would
+            // otherwise read /page/N/ and, when shared, render only page N
+            // onward on a fresh load — "only a few results". Leaving the URL on
+            // the base archive keeps shared links pointing at page 1 / the full
+            // result set. The trigger_modes branch below still honours an
+            // explicit history_mode choice for sites that opt back into it.
             return;
         }
         var mode = OPTS.historyMode || 'pushState';

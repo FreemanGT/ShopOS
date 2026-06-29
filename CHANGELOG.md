@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.14] — 2026-06-30
+
+- Shared /page/N/ infinite-scroll links reset to page 1 on a fresh load so recipients see the full result set; pages no longer push /page/N/ into the address bar as pages auto-load.
+
 ## [1.21.13] — 2026-06-23
 
 - Search: eliminate the flash of the native search bar before JS runs. render_form now emits the icon trigger server-side with the form hidden by a wrapper-scoped rule (search.css loads render-blocking in head), so only the icon ever paints; search.js adopts that trigger instead of creating a duplicate, and a noscript block restores the native bar when JS is off.
