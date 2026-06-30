@@ -1,5 +1,11 @@
 # Freeman Core — Changelog
 
+## [1.21.18] — 2026-06-30
+
+- ProductSlider grid images: fixed cut-off (object-fit cover to contain so the whole product shows) and blur (loop thumbnail now requests the larger "large" source — up to 1024px — instead of the ~324px woocommerce_thumbnail that upscaled on hi-DPI). Scoped to the widget render; image-height control unchanged.
+- Shop Filters (refined style only): the attribute facets (e.g. Size) no longer get pushed out of view when the category tree is expanded — the tree now has its own bounded height + internal scroll inside the height-contained desktop panel. Classic style unchanged.
+- Shop Filters (refined style only): the collapsible-facet chevron is smaller and subtler (0.32em, 1.5px stroke, lower opacity).
+
 ## [1.21.17] — 2026-06-30
 
 - Refined Shop Filters style: readable ink/paper palette (fixes selected-pill black-on-black on hover) and instant render with no entry fades or flashing leftover shells on select/reload.
