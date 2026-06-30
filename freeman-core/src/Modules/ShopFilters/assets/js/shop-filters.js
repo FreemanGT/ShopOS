@@ -210,43 +210,39 @@
 		});
 	}
 
-	/* ---- refined style (opt-in): show-more truncation + collapsible facets ---- */
+	/* ---- refined style (opt-in): show-more toggle + collapsible facets ---- */
 	if (panel.classList.contains('freeman-sf--refined')) {
 		var SHOW_MORE_CAP = 8;
 
-		// Long term lists collapse to the cap behind a numeric "+N" toggle, so a
-		// big attribute (numeric sizes) doesn't stretch the panel.
+		// The long-list cap is CSS (:nth-child(n+9)), so the full list never
+		// flashes before this runs. Here we only add a "+N" toggle that flips
+		// `is-sf-expanded` on the list to reveal the rest — no per-term DOM churn.
 		panel.querySelectorAll('.freeman-sf__terms').forEach(function (list) {
-			var terms = Array.prototype.slice.call(list.children).filter(function (n) {
-				return n.classList && n.classList.contains('freeman-sf__term');
-			});
-			if (terms.length <= SHOW_MORE_CAP) { return; }
-			var hidden = terms.slice(SHOW_MORE_CAP);
-			hidden.forEach(function (t) { t.classList.add('is-sf-hidden'); });
+			var count = 0;
+			for (var i = 0; i < list.children.length; i++) {
+				if (list.children[i].classList && list.children[i].classList.contains('freeman-sf__term')) { count++; }
+			}
+			if (count <= SHOW_MORE_CAP) { return; }
 
+			var extra = count - SHOW_MORE_CAP;
 			var more = document.createElement('button');
 			more.type = 'button';
 			more.className = 'freeman-sf__more';
 			more.setAttribute('aria-expanded', 'false');
-			more.textContent = '+' + hidden.length;
+			more.textContent = '+' + extra;
 			more.addEventListener('click', function () {
-				var open = more.getAttribute('aria-expanded') === 'true';
-				hidden.forEach(function (t) { t.classList.toggle('is-sf-hidden', open); });
-				more.setAttribute('aria-expanded', String(!open));
-				more.textContent = open ? '+' + hidden.length : '−';
+				var open = list.classList.toggle('is-sf-expanded');
+				more.setAttribute('aria-expanded', String(open));
+				more.textContent = open ? '−' : '+' + extra;
 			});
 			list.parentNode.insertBefore(more, list.nextSibling);
 		});
 
-		// Each facet / categories title becomes a collapse toggle with a chevron.
+		// Each facet / categories title becomes a collapse toggle. The chevron is
+		// a CSS ::after, so nothing is injected (no node popping in on reload).
 		panel.querySelectorAll('.freeman-sf__facet-title, .freeman-sf__categories-title').forEach(function (title) {
 			var box = title.closest('.freeman-sf__facet, .freeman-sf__categories');
 			if (!box) { return; }
-
-			var chevron = document.createElement('span');
-			chevron.className = 'freeman-sf__chevron';
-			chevron.setAttribute('aria-hidden', 'true');
-			title.appendChild(chevron);
 
 			title.setAttribute('role', 'button');
 			title.setAttribute('tabindex', '0');

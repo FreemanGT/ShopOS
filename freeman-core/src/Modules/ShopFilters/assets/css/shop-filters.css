@@ -239,16 +239,19 @@
 
 .freeman-sf--refined .freeman-sf__term label {
 	gap: 0.4em;
-	padding: 0.38em 0.85em;
-	border: 1px solid rgba(0, 0, 0, 0.15);
+	padding: 0.4em 0.9em;
+	border: 1px solid var(--fm-color-hairline, rgba(0, 0, 0, 0.14));
 	border-radius: var(--fm-radius-pill, 999px);
+	background: var(--fm-color-paper, #fff);
+	color: var(--fm-color-ink, #1b1b1b);
 	font-size: 0.88em;
 	line-height: 1.4;
-	transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .freeman-sf--refined .freeman-sf__term label:hover {
-	border-color: rgba(0, 0, 0, 0.3);
+	border-color: var(--fm-color-ink, #1b1b1b);
+	background: var(--fm-color-paper-soft, #faf9f7);
 }
 
 .freeman-sf--refined .freeman-sf__term .freeman-sf__checkbox {
@@ -260,24 +263,33 @@
 	pointer-events: none;
 }
 
-/* Selected = filled. :has() lets the whole pill react to the inner checkbox. */
+/* Selected = soft fill + ink ring + weight. Text stays INK in every state
+   (incl. hover), so no theme hover can produce ink-on-ink. The inset ring
+   reads as a 2px border with no layout shift. */
 .freeman-sf--refined .freeman-sf__term label:has(.freeman-sf__checkbox:checked) {
-	background: #111;
-	border-color: #111;
-	color: #fff;
+	background: var(--fm-color-accent-soft, #f1efea);
+	border-color: var(--fm-color-ink, #1b1b1b);
+	box-shadow: inset 0 0 0 1px var(--fm-color-ink, #1b1b1b);
+	color: var(--fm-color-ink, #1b1b1b);
+	font-weight: 600;
 }
 
-.freeman-sf--refined .freeman-sf__term label:has(.freeman-sf__checkbox:checked) .freeman-sf__term-count {
-	color: rgba(255, 255, 255, 0.7);
+.freeman-sf--refined .freeman-sf__term-count {
+	color: var(--fm-color-ink-muted, #767676);
 }
 
 .freeman-sf--refined .freeman-sf__term label:has(.freeman-sf__checkbox:focus-visible) {
-	box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2271b1;
+	box-shadow: 0 0 0 2px var(--fm-color-paper, #fff), 0 0 0 4px var(--fm-color-ink, #1b1b1b);
 }
 
-/* "Show more" toggle (JS-injected once a facet exceeds the cap). */
-.freeman-sf--refined .freeman-sf__term.is-sf-hidden {
+/* Long lists cap at 8 via CSS — immediate, so the full list never flashes
+   before JS runs. The JS-injected "+N" toggle adds `is-sf-expanded` to reveal. */
+.freeman-sf--refined .freeman-sf__terms .freeman-sf__term:nth-child(n + 9) {
 	display: none;
+}
+
+.freeman-sf--refined .freeman-sf__terms.is-sf-expanded .freeman-sf__term:nth-child(n + 9) {
+	display: block;
 }
 
 .freeman-sf--refined .freeman-sf__more {
@@ -296,8 +308,8 @@
 	opacity: 1;
 }
 
-/* Collapsible facets — the JS turns each title into a toggle + appends a
-   chevron, and toggles `is-sf-collapsed` on the facet/categories wrapper. */
+/* Collapsible facets. The chevron is a CSS ::after (no JS-injected node, so
+   nothing pops in on reload); the JS only toggles `is-sf-collapsed`. */
 .freeman-sf--refined .freeman-sf__facet-title,
 .freeman-sf--refined .freeman-sf__categories-title {
 	display: flex;
@@ -307,18 +319,21 @@
 	cursor: pointer;
 }
 
-.freeman-sf--refined .freeman-sf__chevron {
+.freeman-sf--refined .freeman-sf__facet-title::after,
+.freeman-sf--refined .freeman-sf__categories-title::after {
+	content: "";
 	flex: 0 0 auto;
 	width: 0.5em;
 	height: 0.5em;
 	border-right: 2px solid currentColor;
 	border-bottom: 2px solid currentColor;
 	transform: rotate(45deg);
-	opacity: 0.45;
+	opacity: 0.4;
 	transition: transform 0.2s ease;
 }
 
-.freeman-sf--refined .is-sf-collapsed .freeman-sf__chevron {
+.freeman-sf--refined .is-sf-collapsed .freeman-sf__facet-title::after,
+.freeman-sf--refined .is-sf-collapsed .freeman-sf__categories-title::after {
 	transform: rotate(-135deg);
 }
 
@@ -329,30 +344,31 @@
 	display: none;
 }
 
-/* Active-filter chips → filled pills with a circular × badge. */
+/* Active-filter chips → soft pills with a circular × badge. Ink text + a
+   tinted (not solid-dark) badge, so nothing inverts on hover. */
 .freeman-sf--refined .freeman-sf__chip {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.45em;
-	border-color: #111;
-	background: #111;
-	color: #fff;
+	background: var(--fm-color-accent-soft, #f1efea);
+	border-color: var(--fm-color-ink, #1b1b1b);
+	color: var(--fm-color-ink, #1b1b1b);
 }
 
 .freeman-sf--refined .freeman-sf__chip:hover {
-	border-color: #000;
-	background: #000;
+	background: var(--fm-color-paper-dim, #f1efea);
+	border-color: var(--fm-color-ink, #1b1b1b);
 }
 
 .freeman-sf--refined .freeman-sf__chip-x {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 1.25em;
-	height: 1.25em;
+	width: 1.2em;
+	height: 1.2em;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.22);
-	font-size: 0.95em;
+	background: var(--fm-color-hairline, rgba(0, 0, 0, 0.12));
+	font-size: 0.85em;
 	line-height: 1;
 }
 
@@ -361,14 +377,23 @@
 .freeman-sf--refined .freeman-sf__close {
 	width: 2.2em;
 	height: 2.2em;
-	border: 1px solid rgba(0, 0, 0, 0.15);
+	border: 1px solid var(--fm-color-hairline, rgba(0, 0, 0, 0.15));
 	border-radius: 50%;
 	font-size: 1.25rem;
 	transition: background-color 0.15s ease;
 }
 
 .freeman-sf--refined .freeman-sf__close:hover {
-	background: rgba(0, 0, 0, 0.05);
+	background: var(--fm-color-paper-dim, rgba(0, 0, 0, 0.05));
+}
+
+/* The chosen style renders instant — kill the entry fades / cascade (owner:
+   "no fades, no lags, smooth"). Hover transitions stay; only load-time
+   animations are removed, so nothing visibly fades in on select/reload. */
+.freeman-sf--refined .freeman-sf__chip,
+.freeman-sf--refined .freeman-sf__checkbox:checked + .freeman-sf__term-label,
+.freeman-sf--refined .freeman-sf__swatch-input:checked + .freeman-sf__swatch-chip {
+	animation: none;
 }
 
 /* Desktop: contain the panel height so a large catalogue can't make a
@@ -384,9 +409,17 @@
 	}
 }
 
+@media (max-width: 768px) {
+	.freeman-sf--refined.freeman-sf--open .freeman-sf__panel > * {
+		animation: none;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.freeman-sf--refined .freeman-sf__chevron,
-	.freeman-sf--refined .freeman-sf__term label {
+	.freeman-sf--refined .freeman-sf__facet-title::after,
+	.freeman-sf--refined .freeman-sf__categories-title::after,
+	.freeman-sf--refined .freeman-sf__term label,
+	.freeman-sf--refined .freeman-sf__close {
 		transition: none;
 	}
 }
