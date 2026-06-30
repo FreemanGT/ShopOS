@@ -1197,6 +1197,19 @@ final class Widget extends Widget_Base {
 		};
 		add_filter( 'post_class', $cs_card_filter );
 
+		// Request the larger `large` image (up to 1024px) for the loop
+		// thumbnail instead of `woocommerce_thumbnail` (~324px). Grid cards
+		// render wider than 324px on hi-DPI screens — even the 600px
+		// `woocommerce_single` upscaled on a full-width archive — so the
+		// small source looked blurry. `large` gives headroom up to ~512px
+		// card width at 2x DPR and is capped at the original. Scoped to this
+		// render and removed after the loop so other product loops stay
+		// unchanged.
+		$cs_thumb_size_filter = static function () {
+			return 'large';
+		};
+		add_filter( 'single_product_archive_thumbnail_size', $cs_thumb_size_filter );
+
 		$track_classes = ( $is_slider ? 'cs-track' : 'cs-grid' ) . ' products columns-' . (int) $per_view;
 		?>
 		<div
@@ -1325,6 +1338,7 @@ final class Widget extends Widget_Base {
 		<?php
 
 		remove_filter( 'post_class', $cs_card_filter );
+		remove_filter( 'single_product_archive_thumbnail_size', $cs_thumb_size_filter );
 
 		if ( ! $show_sale_badge ) {
 			add_action( 'woocommerce_before_shop_loop_item_title', 'woocommerce_show_product_loop_sale_flash', 10 );

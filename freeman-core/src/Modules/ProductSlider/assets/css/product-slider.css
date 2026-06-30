@@ -178,7 +178,7 @@
 	width: 100%;
 	height: var(--cs-card-h);
 	margin: 0;
-	object-fit: cover;
+	object-fit: contain;
 	box-shadow: none;
 	transition: transform .5s cubic-bezier(.2,.7,.2,1);
 }
