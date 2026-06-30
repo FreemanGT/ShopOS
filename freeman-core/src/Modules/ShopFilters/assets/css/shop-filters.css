@@ -323,12 +323,12 @@
 .freeman-sf--refined .freeman-sf__categories-title::after {
 	content: "";
 	flex: 0 0 auto;
-	width: 0.5em;
-	height: 0.5em;
-	border-right: 2px solid currentColor;
-	border-bottom: 2px solid currentColor;
+	width: 0.32em;
+	height: 0.32em;
+	border-right: 1.5px solid currentColor;
+	border-bottom: 1.5px solid currentColor;
 	transform: rotate(45deg);
-	opacity: 0.4;
+	opacity: 0.3;
 	transition: transform 0.2s ease;
 }
 
@@ -342,6 +342,18 @@
 .freeman-sf--refined .freeman-sf__facet.is-sf-collapsed .freeman-sf__swatches,
 .freeman-sf--refined .freeman-sf__categories.is-sf-collapsed .freeman-sf__cat-list {
 	display: none;
+}
+
+/* The category tree sits above the attribute facets (Size, Colour, …) in the
+   panel. On desktop the panel is height-contained (see the min-width:769px
+   rule below), so a long expanded tree consumed the whole panel and pushed the
+   attribute facets below the scroll fold — they read as "hidden when
+   categories are open". Bound the tree's own height with an internal scroll so
+   every facet stays reachable. Refined-only; classic is unchanged. */
+.freeman-sf--refined .freeman-sf__categories .freeman-sf__cat-list {
+	max-height: 16em;
+	overflow-y: auto;
+	overscroll-behavior: contain;
 }
 
 /* Active-filter chips → soft pills with a circular × badge. Ink text + a
