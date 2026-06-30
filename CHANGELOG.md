@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.17] — 2026-06-30
+
+- Refined Shop Filters style: readable ink/paper palette (fixes selected-pill black-on-black on hover) and instant render with no entry fades or flashing leftover shells on select/reload.
+
 ## [1.21.16] — 2026-06-30
 
 - Search: every storefront string (field placeholder, search button, no-results / see-all / searching messages, toggle + close accessible names) is now editable in Freeman → Search settings via the Labels system; blank fields keep the English default.
