@@ -980,6 +980,26 @@ final class Widget extends Widget_Base {
 	}
 
 	/**
+	 * The card thumbnail's `sizes` attribute for a column layout (pure). Slots
+	 * mirror the stylesheet's breakpoints: ≤640px = mobile columns (a slider's
+	 * fractional peek widens the slot), ≤1024px = tablet columns, above = a
+	 * fixed pixel estimate from a generous 1400px content width — over-
+	 * estimating the slot only rounds UP to the next srcset candidate, so
+	 * sharpness is never sacrificed while viewport-width downloads are.
+	 *
+	 * @param int|float $per_view        Desktop columns.
+	 * @param int|float $per_view_tablet Tablet columns.
+	 * @param int|float $per_view_mobile Mobile columns (float peek in slider mode).
+	 * @return string
+	 */
+	public static function card_sizes_attr( $per_view, $per_view_tablet, $per_view_mobile ) {
+		$desktop = (int) ceil( 1400 / max( 1.0, (float) $per_view ) );
+		$tablet  = (int) ceil( 100 / max( 1.0, (float) $per_view_tablet ) );
+		$mobile  = (int) ceil( 100 / max( 1.0, (float) $per_view_mobile ) );
+		return sprintf( '(max-width: 640px) %dvw, (max-width: 1024px) %dvw, %dpx', $mobile, $tablet, $desktop );
+	}
+
+	/**
 	 * Collect visible WC_Product objects from a query's posts. Grid mode
 	 * returns the full page (render() paginates the rest); slider mode bounds
 	 * the row at $limit, since paginating a draggable row is meaningless.
@@ -1212,6 +1232,19 @@ final class Widget extends Widget_Base {
 		};
 		add_filter( 'single_product_archive_thumbnail_size', $cs_thumb_size_filter );
 
+		// WordPress's default sizes attr for `large` claims the image is
+		// viewport-wide ("(max-width: 1024px) 100vw, 1024px"), so every card
+		// downloaded the biggest srcset candidate — ~5-10x the bytes the
+		// rendered slot needs, across a whole grid per pageview. Describe the
+		// real card slot (the same column math as the CSS breakpoints) and let
+		// srcset pick the right candidate; hi-DPI screens still resolve a
+		// large-enough source through the device-pixel-ratio multiplier.
+		$cs_sizes        = self::card_sizes_attr( $per_view, $per_view_tablet, $per_view_mobile );
+		$cs_sizes_filter = static function () use ( $cs_sizes ) {
+			return $cs_sizes;
+		};
+		add_filter( 'wp_calculate_image_sizes', $cs_sizes_filter );
+
 		$track_classes = ( $is_slider ? 'cs-track' : 'cs-grid' ) . ' products columns-' . (int) $per_view;
 		?>
 		<div
@@ -1351,6 +1384,7 @@ final class Widget extends Widget_Base {
 
 		remove_filter( 'post_class', $cs_card_filter );
 		remove_filter( 'single_product_archive_thumbnail_size', $cs_thumb_size_filter );
+		remove_filter( 'wp_calculate_image_sizes', $cs_sizes_filter );
 
 		if ( ! $show_sale_badge ) {
 			add_action( 'woocommerce_before_shop_loop_item_title', 'woocommerce_show_product_loop_sale_flash', 10 );
