@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.19] — 2026-07-02
+
+- Search crash fix: cap engine reads at 500, memoize per-request, lazy has_data gate + server-side dropdown min-chars
+
 ## [1.21.18] — 2026-06-30
 
 - ProductSlider grid images: fixed cut-off (object-fit cover to contain so the whole product shows) and blur (loop thumbnail now requests the larger "large" source — up to 1024px — instead of the ~324px woocommerce_thumbnail that upscaled on hi-DPI). Scoped to the widget render; image-height control unchanged.
