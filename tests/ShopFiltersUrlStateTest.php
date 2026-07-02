@@ -96,4 +96,23 @@ final class ShopFiltersUrlStateTest extends TestCase {
 		$params = Url_State::serialize( array( 'filters' => array( 'pa_clothing-size' => array( $slug ) ) ) );
 		$this->assertSame( $slug, $params['filter_pa_clothing-size'] );
 	}
+
+	public function test_encodes_raw_utf8_nonlatin_slug(): void {
+		// Regression: PHP urldecodes $_GET, so a percent-encoded Hebrew slug in
+		// the URL arrives at parse() as raw UTF-8 — the old sanitizer stripped
+		// every non-ASCII character, silently dropping the facet from the parsed
+		// state (unconstrained grid: "count says 2, click shows everything").
+		// Raw non-ASCII must canonicalise to the percent-encoded slug form.
+		$encoded = '0-3-%d7%97%d7%95%d7%93%d7%a9%d7%99%d7%9d';
+		$state   = Url_State::parse( array( 'filter_pa_clothing-size' => '0-3-חודשים' ) );
+		$this->assertSame( array( $encoded ), $state['filters']['pa_clothing-size'] );
+
+		// The canonical form round-trips through serialize unchanged.
+		$params = Url_State::serialize( array( 'filters' => array( 'pa_clothing-size' => array( $encoded ) ) ) );
+		$this->assertSame( $encoded, $params['filter_pa_clothing-size'] );
+
+		// Pure-ASCII slugs are byte-identical to the old behavior.
+		$ascii = Url_State::parse( array( 'filter_pa_color' => 'Dark-Blue' ) );
+		$this->assertSame( array( 'dark-blue' ), $ascii['filters']['pa_color'] );
+	}
 }

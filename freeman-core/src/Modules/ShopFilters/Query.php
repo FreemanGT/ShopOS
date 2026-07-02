@@ -397,7 +397,13 @@ final class Query {
 			$taxonomy = (string) $taxonomy;
 			$term_ids = array();
 			foreach ( (array) $slugs as $slug ) {
-				$term = get_term_by( 'slug', (string) $slug, $taxonomy );
+				$slug = (string) $slug;
+				$term = get_term_by( 'slug', $slug, $taxonomy );
+				if ( ! $term && false !== strpos( $slug, '%' ) ) {
+					// Url_State canonicalises to the percent-encoded form; an
+					// importer-created term may store the raw-UTF-8 original.
+					$term = get_term_by( 'slug', rawurldecode( $slug ), $taxonomy );
+				}
 				if ( $term && ! is_wp_error( $term ) ) {
 					$term_ids[] = (int) $term->term_id;
 				}

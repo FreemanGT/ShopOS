@@ -203,11 +203,24 @@ final class Url_State {
 	 * it would mangle the slug so get_term_by( 'slug', … ) finds nothing and the
 	 * storefront query forces post__in=[0] — a blank grid.
 	 *
+	 * Raw non-ASCII is percent-encoded first: PHP urldecodes $_GET, so a
+	 * percent-encoded Hebrew slug arrives here as raw UTF-8 bytes — the old
+	 * character filter stripped them all, silently dropping the facet from the
+	 * parsed state (an unconstrained grid: "count says 2, shows everything").
+	 * Re-encoding restores the canonical percent-encoded form.
+	 *
 	 * @param string $raw Raw value.
 	 * @return string
 	 */
 	private static function sanitize_slug( $raw ) {
-		$slug = strtolower( trim( (string) $raw ) );
+		$slug = preg_replace_callback(
+			'/[^\x00-\x7F]+/',
+			static function ( $m ) {
+				return rawurlencode( $m[0] );
+			},
+			trim( (string) $raw )
+		);
+		$slug = strtolower( (string) $slug );
 		return (string) preg_replace( '/[^a-z0-9_%-]/', '', $slug );
 	}
 
