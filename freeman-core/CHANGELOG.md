@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.21] — 2026-07-02
+
+- Shop Filters accuracy fix: constrain Elementor-rendered grids - broadened listing gate + ProductSlider query_args listener with Search composition
+
 ## [1.21.20] — 2026-07-02
 
 - Search results grid pagination: page slices instead of one giant grid + engine-driven page count via new grid_max_pages widget hook
