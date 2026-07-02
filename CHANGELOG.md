@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.20] — 2026-07-02
+
+- Search results grid pagination: page slices instead of one giant grid + engine-driven page count via new grid_max_pages widget hook
+
 ## [1.21.19] — 2026-07-02
 
 - Search crash fix: cap engine reads at 500, memoize per-request, lazy has_data gate + server-side dropdown min-chars
