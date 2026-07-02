@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.24] — 2026-07-02
+
+- Shop Filters perf: 5-minute facet-response cache keyed by browse state + index revision, invalidated on every index write
+
 ## [1.21.23] — 2026-07-02
 
 - ProductSlider grid images: correct sizes attribute so cards download the right srcset candidate instead of the viewport-wide large source
