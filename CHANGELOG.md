@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.22] — 2026-07-02
+
+- Shop Filters: raw-UTF-8 Hebrew slugs canonicalise to percent-encoded form + decoded-form term-lookup fallback
+
 ## [1.21.21] — 2026-07-02
 
 - Shop Filters accuracy fix: constrain Elementor-rendered grids - broadened listing gate + ProductSlider query_args listener with Search composition
