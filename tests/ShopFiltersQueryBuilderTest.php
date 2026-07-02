@@ -160,4 +160,57 @@ final class ShopFiltersQueryBuilderTest extends TestCase {
 		$this->assertSame( 5, $nodes[1]['parent'] );
 		$this->assertSame( 'shirts', $nodes[1]['slug'] );
 	}
+
+	public function test_cache_signature_is_stable_across_param_order(): void {
+		// The same selection expressed with different URL parameter / CSV slug
+		// order must share one cache entry.
+		$a = Query_Builder::cache_signature(
+			array(
+				'filter_pa_color' => 'red,blue',
+				'filter_pa_size'  => 'm',
+				'context_id'      => '7',
+			),
+			true,
+			12,
+			3,
+			'1.21.24'
+		);
+		$b = Query_Builder::cache_signature(
+			array(
+				'context_id'      => 7,
+				'filter_pa_size'  => 'm',
+				'filter_pa_color' => 'blue,red',
+			),
+			true,
+			12,
+			3,
+			'1.21.24'
+		);
+
+		$this->assertSame( $a, $b );
+		$this->assertStringStartsWith( 'freeman_core_sf_q_', $a );
+	}
+
+	public function test_cache_signature_varies_by_state_context_and_rev(): void {
+		$base = array( array( 'filter_pa_color' => 'red', 'context_id' => 0 ), false, 12, 1, '1.21.24' );
+
+		$key = Query_Builder::cache_signature( ...$base );
+
+		$other_filter                       = $base;
+		$other_filter[0]['filter_pa_color'] = 'blue';
+		$other_context                      = $base;
+		$other_context[0]['context_id']     = 9;
+		$other_rev                          = $base;
+		$other_rev[3]                       = 2;
+		$other_oos                          = $base;
+		$other_oos[1]                       = true;
+		$other_paged                        = $base;
+		$other_paged[0]['paged']            = '2';
+
+		$this->assertNotSame( $key, Query_Builder::cache_signature( ...$other_filter ) );
+		$this->assertNotSame( $key, Query_Builder::cache_signature( ...$other_context ) );
+		$this->assertNotSame( $key, Query_Builder::cache_signature( ...$other_rev ) );
+		$this->assertNotSame( $key, Query_Builder::cache_signature( ...$other_oos ) );
+		$this->assertNotSame( $key, Query_Builder::cache_signature( ...$other_paged ) );
+	}
 }

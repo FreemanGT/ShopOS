@@ -471,13 +471,36 @@ final class Query_Builder {
 		// filtered grid is empty.
 		$hide_oos = ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) );
 
+		$search = isset( $request['search'] ) ? trim( (string) $request['search'] ) : '';
+
+		// Serve repeat browse states from a short-lived transient: the build
+		// below sweeps the whole base's postings plus two meta_lookup reads on
+		// every shop/category pageview, even with nothing selected. The key
+		// folds in the index revision (bumped on every index write), so a
+		// product/stock change invalidates within the indexer's drain latency
+		// and the TTL only backstops a missed bump. Search states are skipped:
+		// per-term churn, and the engine ids are already memoized per request.
+		$cache_key = '';
+		if ( '' === $search ) {
+			$cache_key = self::cache_signature(
+				$request,
+				$hide_oos,
+				$this->products_per_page(),
+				(int) get_option( Indexer::REV_OPTION, 0 ),
+				FREEMAN_CORE_VERSION
+			);
+			$cached    = get_transient( $cache_key );
+			if ( is_array( $cached ) ) {
+				return $cached;
+			}
+		}
+
 		// Base universe:
 		//  - a search results page facets over the products matching the query
 		//    (so the panel shows only what's in the results, not the whole store);
 		//  - a category page expands to the queried term + all its descendants
 		//    (the index stores only directly-assigned product_cat rows);
 		//  - the shop page is every indexed product.
-		$search = isset( $request['search'] ) ? trim( (string) $request['search'] ) : '';
 		if ( '' !== $search ) {
 			$base = $this->repo->filter_indexed( $this->search_product_ids( $search ), $hide_oos );
 		} elseif ( $context_id > 0 ) {
@@ -575,7 +598,7 @@ final class Query_Builder {
 		$per_page = $this->products_per_page();
 		$paged    = max( 1, (int) $state['paged'] );
 
-		return array(
+		$response = array(
 			'facets'        => $facets,
 			'category_tree' => $category_tree,
 			'price'         => $price_facet,
@@ -588,6 +611,47 @@ final class Query_Builder {
 			),
 			'url'           => $this->page_url( $context_id, $state, $paged ),
 		);
+
+		if ( '' !== $cache_key ) {
+			set_transient( $cache_key, $response, 5 * MINUTE_IN_SECONDS );
+		}
+		return $response;
+	}
+
+	/**
+	 * Cache key for a browse-state facet response (pure given its inputs). The
+	 * parsed state is normalised — facets sorted by taxonomy, slugs sorted
+	 * within each facet — so equivalent selections that differ only in URL
+	 * parameter order share one entry. The index-revision and plugin-version
+	 * segments retire stale entries without needing deletes.
+	 *
+	 * @param array  $request  Raw request params.
+	 * @param bool   $hide_oos Store-level hide-out-of-stock flag.
+	 * @param int    $per_page Products per page (pagination totals depend on it).
+	 * @param int    $rev      Index revision (Indexer::REV_OPTION).
+	 * @param string $version  Plugin version.
+	 * @return string
+	 */
+	public static function cache_signature( array $request, $hide_oos, $per_page, $rev, $version ) {
+		$state   = Url_State::parse( $request );
+		$filters = isset( $state['filters'] ) && is_array( $state['filters'] ) ? $state['filters'] : array();
+		ksort( $filters );
+		foreach ( $filters as $taxonomy => $slugs ) {
+			$slugs = (array) $slugs;
+			sort( $slugs );
+			$filters[ $taxonomy ] = array_values( $slugs );
+		}
+		$state['filters'] = $filters;
+
+		$payload = array(
+			'state'      => $state,
+			'context_id' => isset( $request['context_id'] ) ? (int) $request['context_id'] : 0,
+			'hide_oos'   => (bool) $hide_oos,
+			'per_page'   => (int) $per_page,
+			'rev'        => (int) $rev,
+			'ver'        => (string) $version,
+		);
+		return 'freeman_core_sf_q_' . md5( (string) wp_json_encode( $payload ) );
 	}
 
 	/* -----------------------------------------------------------------

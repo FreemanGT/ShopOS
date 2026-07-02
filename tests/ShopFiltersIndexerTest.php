@@ -54,4 +54,16 @@ final class ShopFiltersIndexerTest extends TestCase {
 
 		$this->assertSame( array(), $indexer->get_dirty_queue() );
 	}
+
+	public function test_bump_rev_increments_the_index_revision(): void {
+		// The revision is the invalidation segment of Query_Builder's facet
+		// cache key; each index-write batch advances it. (The drain/reconcile
+		// call sites need WooCommerce + WP_Query and are integration.)
+		$indexer = new Indexer();
+
+		$this->assertSame( 0, (int) get_option( Indexer::REV_OPTION, 0 ) );
+		$indexer->bump_rev();
+		$indexer->bump_rev();
+		$this->assertSame( 2, (int) get_option( Indexer::REV_OPTION, 0 ) );
+	}
 }

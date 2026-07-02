@@ -28,6 +28,7 @@ final class Indexer {
 	const QUEUE_OPTION     = 'freeman_core_shop_filters_dirty_queue';
 	const WATERMARK_OPTION = 'freeman_core_shop_filters_last_sweep_gmt';
 	const LAST_RUN_OPTION  = 'freeman_core_shop_filters_last_run_gmt';
+	const REV_OPTION       = 'freeman_core_shop_filters_index_rev';
 	const DRAIN_HOOK       = 'freeman_core_shop_filters_drain_queue';
 	const RECONCILE_HOOK   = 'freeman_core_shop_filters_reconcile';
 	const CRON_SCHEDULE    = 'freeman_shop_filters_5min';
@@ -167,6 +168,17 @@ final class Indexer {
 			$this->reindex_product( (int) $product_id );
 		}
 		$this->flush_runtime_cache();
+		$this->bump_rev();
+	}
+
+	/**
+	 * Advance the index revision — the version segment of Query_Builder's
+	 * facet-response cache key, so every batch of index writes retires all
+	 * cached facet payloads at once (event-driven invalidation; the cache TTL
+	 * only backstops a missed bump). Public: a deliberate invalidation API.
+	 */
+	public function bump_rev() {
+		update_option( self::REV_OPTION, (int) get_option( self::REV_OPTION, 0 ) + 1, false );
 	}
 
 	/* -----------------------------------------------------------------
@@ -228,6 +240,7 @@ final class Indexer {
 		}
 		update_option( self::WATERMARK_OPTION, $last_modified, false );
 		$this->flush_runtime_cache();
+		$this->bump_rev();
 
 		if ( count( $query->posts ) === self::BATCH_SIZE ) {
 			$this->chain_reconcile();
@@ -405,6 +418,7 @@ final class Indexer {
 		}
 
 		$this->flush_runtime_cache();
+		$this->bump_rev();
 		return $count;
 	}
 
