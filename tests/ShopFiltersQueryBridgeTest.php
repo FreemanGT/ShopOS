@@ -59,6 +59,81 @@ final class ShopFiltersQueryBridgeTest extends TestCase {
 
 		$this->assertNotFalse( has_filter( 'woocommerce_product_query_tax_query' ) );
 		$this->assertNotFalse( has_action( 'pre_get_posts' ) );
+		$this->assertNotFalse( has_filter( 'freeman_core/product_slider/query_args' ) );
+	}
+
+	/**
+	 * @dataProvider listing_cases
+	 */
+	public function test_is_product_listing_query_matrix( bool $wc, bool $singular, $post_type, bool $archive, bool $expected ): void {
+		$this->assertSame( $expected, Query::is_product_listing_query( $wc, $singular, $post_type, $archive ) );
+	}
+
+	public static function listing_cases(): array {
+		// [wc_conditionals, is_singular, post_type, query_says_product_archive, expected]
+		return array(
+			'wc conditionals'                => array( true, false, '', false, true ),
+			'query archive predicates'       => array( false, false, '', true, true ),
+			'product post_type string'       => array( false, false, 'product', false, true ), // the Elementor archive main query.
+			'product in post_type array'     => array( false, false, array( 'product', 'page' ), false, true ),
+			'singular vetoes everything'     => array( true, true, 'product', true, false ), // a filter_* param must not 404 a product page.
+			'plain page'                     => array( false, false, 'page', false, false ),
+			'no signals'                     => array( false, false, '', false, false ),
+		);
+	}
+
+	/**
+	 * @dataProvider slider_constraint_cases
+	 */
+	public function test_should_constrain_slider( string $source, bool $is_grid, bool $expected ): void {
+		$this->assertSame( $expected, Query::should_constrain_slider( $source, $is_grid ) );
+	}
+
+	public static function slider_constraint_cases(): array {
+		// [source, is_grid, expected] — deliberately the Search module's matrix.
+		return array(
+			'current query slider' => array( 'current_query', false, true ),
+			'current query grid'   => array( 'current_query', true, true ),
+			'all products grid'    => array( 'all', true, true ),
+			'all products slider'  => array( 'all', false, false ),
+			'featured grid'        => array( 'featured', true, false ),
+			'no source'            => array( '', false, false ),
+		);
+	}
+
+	public function test_compose_include_sets_filtered_ids_when_no_existing(): void {
+		$this->assertSame( array( 5, 9 ), Query::compose_include( null, array( 5, 9 ) ) );
+		$this->assertSame( array( 5, 9 ), Query::compose_include( array(), array( 5, 9 ) ) );
+	}
+
+	public function test_compose_include_empty_filtered_forces_zero(): void {
+		$this->assertSame( array( 0 ), Query::compose_include( null, array() ) );
+	}
+
+	public function test_compose_include_intersects_preserving_existing_order(): void {
+		// The existing include is the Search engine's relevance ranking — the
+		// intersect must keep ITS order, not the filtered set's.
+		$this->assertSame(
+			array( 9, 4 ),
+			Query::compose_include( array( 9, 4, 7 ), array( 4, 5, 9 ) )
+		);
+	}
+
+	public function test_compose_include_empty_intersection_forces_zero(): void {
+		$this->assertSame( array( 0 ), Query::compose_include( array( 1, 2 ), array( 3, 4 ) ) );
+	}
+
+	public function test_compose_include_respects_search_no_match_sentinel(): void {
+		// Search found nothing ([0]); the filters must not resurrect products.
+		$this->assertSame( array( 0 ), Query::compose_include( array( 0 ), array( 3, 4 ) ) );
+	}
+
+	public function test_constrain_slider_query_ignores_curated_widgets(): void {
+		$q    = new Query();
+		$args = array( 'limit' => 12 );
+
+		$this->assertSame( $args, $q->constrain_slider_query( $args, array( 'source' => 'featured', 'display_mode' => 'grid' ) ) );
+		$this->assertSame( $args, $q->constrain_slider_query( $args, array() ) );
 	}
 
 	public function test_intersect_id_sets_ands_across_facets(): void {

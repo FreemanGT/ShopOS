@@ -13,7 +13,9 @@
  * attribute archives) — appends our clauses to WC's tax_query, preserving the
  * product_visibility clause WC already set. Secondary: a tightly-scoped
  * `pre_get_posts` for product *search* results, which WC's product_query path
- * does not always govern.
+ * does not always govern. Tertiary: the Freeman ProductSlider widget's
+ * `freeman_core/product_slider/query_args` filter, for grids that build their
+ * own wc_get_products() query instead of reading the (constrained) main query.
  *
  * tax_query_for() — the array building — is pure and unit-tested; the hook
  * wiring is integration / live QA.
@@ -58,6 +60,10 @@ final class Query {
 		// result list on the_posts after us, so we must run LAST to have the final
 		// say on the displayed products.
 		add_filter( 'the_posts', array( $this, 'enforce_filters_on_search' ), 99999, 2 );
+		// Priority 20 — after the Search module's engine constraint (10), so on a
+		// search+filter page we intersect INTO the engine's ranked include list
+		// rather than overwrite it.
+		add_filter( 'freeman_core/product_slider/query_args', array( $this, 'constrain_slider_query' ), 20, 2 );
 	}
 
 	/**
@@ -202,6 +208,102 @@ final class Query {
 			}
 		}
 		$q->set( 'post__in', $ids );
+	}
+
+	/**
+	 * Whether a ProductSlider widget stands in for the filterable listing grid
+	 * (pure seam — deliberately the same matrix as the Search module's, kept
+	 * separate so either module can be toggled off without the other losing
+	 * its constraint):
+	 *
+	 * - `current_query` (any display mode): the widget renders the archive.
+	 * - `all` in *grid* mode: an Elementor archive template's products grid is
+	 *   frequently configured with the fixed `all products` source.
+	 *
+	 * Other fixed sources and a slider-mode `all` carousel are intentional
+	 * curations — a size filter must not rewrite a "featured" row.
+	 *
+	 * @param string $source  Widget `source` setting.
+	 * @param bool   $is_grid Widget renders as a grid (vs slider).
+	 * @return bool
+	 */
+	public static function should_constrain_slider( $source, $is_grid ) {
+		if ( 'current_query' === $source ) {
+			return true;
+		}
+		return 'all' === $source && (bool) $is_grid;
+	}
+
+	/**
+	 * Compose the widget's include list with the filtered id set (pure).
+	 * No existing include → the filtered set outright; an existing include
+	 * (the Search engine ran first at priority 10) → intersect, preserving the
+	 * EXISTING order (the engine's relevance ranking). Empty either way → [0],
+	 * wc_get_products' "no results" (an empty include means "no constraint").
+	 *
+	 * @param int[]|null $existing     The widget args' current include list.
+	 * @param int[]      $filtered_ids The index's in-stock ids for the selection.
+	 * @return int[]
+	 */
+	public static function compose_include( $existing, array $filtered_ids ) {
+		$filtered = array_values( array_filter( array_map( 'intval', $filtered_ids ) ) );
+		if ( ! is_array( $existing ) || empty( $existing ) ) {
+			return empty( $filtered ) ? array( 0 ) : $filtered;
+		}
+		$kept = array_values( array_intersect( array_map( 'intval', $existing ), $filtered ) );
+		return empty( $kept ) ? array( 0 ) : $kept;
+	}
+
+	/**
+	 * Constrain a Freeman ProductSlider widget's own wc_get_products() query to
+	 * the active filter selection, via the widget's query_args filter. This is
+	 * the path the main-query constraint above cannot reach: when the widget's
+	 * archive detection fails (Elementor-swapped query, fixed `all` source, a
+	 * product search) it builds its own query, which pre-1.21.21 ignored the
+	 * selection entirely — the "facet says 2, grid shows the whole catalog"
+	 * bug, the Shop Filters twin of the Search fix in 1.21.2–1.21.6.
+	 *
+	 * @param array $args     wc_get_products() args.
+	 * @param array $settings Widget settings.
+	 * @return array
+	 */
+	public function constrain_slider_query( $args, $settings ) {
+		if ( ! is_array( $args ) || ! is_array( $settings ) ) {
+			return $args;
+		}
+		$source  = (string) ( $settings['source'] ?? '' );
+		$is_grid = ( ( $settings['display_mode'] ?? 'slider' ) === 'grid' );
+		if ( ! self::should_constrain_slider( $source, $is_grid ) ) {
+			return $args;
+		}
+		$filters = $this->current_filters();
+		if ( empty( $filters ) ) {
+			return $args;
+		}
+		if ( ! $this->index_has_data() ) {
+			return $args; // Same fallback stance as the main-query bridge.
+		}
+
+		$existing = ( isset( $args['include'] ) && is_array( $args['include'] ) ) ? $args['include'] : null;
+		$include  = self::compose_include( $existing, $this->instock_product_ids( $filters ) );
+
+		// A current-query grid paginates (the widget renders paginate_links off
+		// the — now constrained — main query), so hand it the current page's
+		// slice; a fixed-source grid has no pagination and keeps its own limit.
+		// Only when we are the sole constrainer: an existing include means the
+		// Search engine (priority 10) already sliced to the current page, and
+		// slicing its page again would empty every page after the first.
+		if ( null === $existing && 'current_query' === $source && $is_grid ) {
+			$per_page = (int) get_option( 'posts_per_page', 12 );
+			$per_page = $per_page > 0 ? $per_page : 12;
+			$paged    = max( 1, (int) get_query_var( 'paged' ), (int) get_query_var( 'page' ) );
+			$slice    = array_slice( $include, ( $paged - 1 ) * $per_page, $per_page );
+			$include  = empty( $slice ) ? array( 0 ) : $slice;
+			$args['limit'] = count( $include );
+		}
+
+		$args['include'] = $include;
+		return $args;
 	}
 
 	/**
@@ -441,21 +543,62 @@ final class Query {
 	}
 
 	/**
-	 * Whether a query is the storefront product listing the price filter applies
-	 * to (shop / product taxonomy archive, or a product search).
+	 * Whether a query is a storefront product listing (pure seam). Any signal
+	 * qualifies: WooCommerce's own conditionals, the query's product post_type,
+	 * or the query object's own archive predicates. The gate was previously
+	 * is_shop()/is_product_taxonomy()-only (plus product search), which an
+	 * Elementor product-archive template's main query fails — its post_type is
+	 * `product` but the WC conditionals are false, so the filter selection was
+	 * silently never applied and the grid showed everything while the panel
+	 * counts (index-driven, query-independent) stayed correct. Same blind spot
+	 * and same fix shape as the Search module's should_handle() (1.21.3).
+	 * Singular requests are vetoed outright so a filter_* param on a product
+	 * page URL can never post__in-constrain the page into a 404.
+	 *
+	 * @param bool         $wc_conditionals             is_shop() / is_product_taxonomy().
+	 * @param bool         $is_singular                 Singular request.
+	 * @param string|array $post_type                   The query's post_type var.
+	 * @param bool         $query_says_product_archive  The query object's own archive predicates.
+	 * @return bool
+	 */
+	public static function is_product_listing_query( $wc_conditionals, $is_singular, $post_type, $query_says_product_archive ) {
+		if ( $is_singular ) {
+			return false;
+		}
+		if ( $wc_conditionals || $query_says_product_archive ) {
+			return true;
+		}
+		return ( 'product' === $post_type ) || ( is_array( $post_type ) && in_array( 'product', $post_type, true ) );
+	}
+
+	/**
+	 * Whether a query is the storefront product listing the filters apply to
+	 * (WP adapter over the pure seam above).
 	 *
 	 * @param \WP_Query $query Query.
 	 * @return bool
 	 */
 	private function is_product_listing( $query ) {
-		if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() ) ) {
-			return true;
+		return self::is_product_listing_query(
+			function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() ),
+			(bool) $query->is_singular(),
+			$query->get( 'post_type' ),
+			$query->is_post_type_archive( 'product' ) || $query->is_tax( self::product_taxonomies() )
+		);
+	}
+
+	/**
+	 * The taxonomies whose archives are product listings: category, tag, plus
+	 * the registered pa_* attribute taxonomies when WC is loaded.
+	 *
+	 * @return string[]
+	 */
+	private static function product_taxonomies() {
+		$taxonomies = array( 'product_cat', 'product_tag' );
+		if ( function_exists( 'wc_get_attribute_taxonomy_names' ) ) {
+			$taxonomies = array_merge( $taxonomies, (array) wc_get_attribute_taxonomy_names() );
 		}
-		if ( ! $query->is_search() ) {
-			return false;
-		}
-		$post_type = $query->get( 'post_type' );
-		return ( 'product' === $post_type ) || ( is_array( $post_type ) && in_array( 'product', $post_type, true ) );
+		return $taxonomies;
 	}
 
 	/**
