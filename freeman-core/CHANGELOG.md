@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.23] — 2026-07-02
+
+- ProductSlider grid images: correct sizes attribute so cards download the right srcset candidate instead of the viewport-wide large source
+
 ## [1.21.22] — 2026-07-02
 
 - Shop Filters: raw-UTF-8 Hebrew slugs canonicalise to percent-encoded form + decoded-form term-lookup fallback
