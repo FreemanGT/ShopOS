@@ -61,12 +61,32 @@ final class Ajax {
 		$request = Security::sanitize_recursive( wp_unslash( $_REQUEST ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$term    = ( is_array( $request ) && isset( $request['q'] ) ) ? (string) $request['q'] : '';
 
+		if ( ! self::term_meets_min_chars( $term, (int) $this->module->get_option( 'min_chars', 2 ) ) ) {
+			// The client already gates keystrokes on minChars; enforcing it here
+			// keeps a crafted short request from running the broad LIKE fallback
+			// scan. Empty success (not an error) — same shape the dropdown shows
+			// for "no results".
+			wp_send_json_success( array( 'items' => array(), 'more_url' => '' ) );
+		}
+
 		wp_send_json_success(
 			array(
 				'items'    => $this->build_results( $term ),
 				'more_url' => $this->more_url( $term ),
 			)
 		);
+	}
+
+	/**
+	 * Whether a term is long enough to query (pure seam). Multibyte-aware so a
+	 * two-letter Hebrew term counts as 2, not 4.
+	 *
+	 * @param string $term Search term.
+	 * @param int    $min  Configured minimum characters.
+	 * @return bool
+	 */
+	public static function term_meets_min_chars( $term, $min ) {
+		return mb_strlen( trim( (string) $term ) ) >= max( 1, (int) $min );
 	}
 
 	/**

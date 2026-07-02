@@ -125,6 +125,12 @@ final class Results_Query {
 			return;
 		}
 		$term = $this->request_search_term();
+		if ( '' === $term ) {
+			// Cheap gate first: pre_get_posts fires for every WP_Query on every
+			// page, and has_data() below costs a COUNT on the index table — only
+			// consult it once a request actually carries a search term.
+			return;
+		}
 
 		if ( ! self::should_handle( is_admin(), $q->is_main_query(), $this->is_product_query( $q ), $term, $this->repo->has_data() ) ) {
 			return;

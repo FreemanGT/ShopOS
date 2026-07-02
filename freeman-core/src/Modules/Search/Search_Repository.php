@@ -20,6 +20,56 @@ defined( 'ABSPATH' ) || exit;
 final class Search_Repository {
 
 	/**
+	 * Hard ceiling for one search() read. Bounds the results-page / facet-feed
+	 * "unlimited" (-1) calls: Hebrew terms match via the search_text LIKE
+	 * fallback (below the FULLTEXT token size), so a broad term can match a
+	 * large share of the catalogue — uncapped, those ids get hydrated into
+	 * WC_Product objects downstream and exhaust the request's memory.
+	 */
+	const MAX_RESULTS = 500;
+
+	/**
+	 * Per-request memo for search() results (term|limit|stock => ids). One
+	 * results-page request runs the same term through the main-query
+	 * constraint, the ProductSlider constraint and the Shop Filters facet
+	 * feed; the memo collapses those to a single ranked query.
+	 *
+	 * @var array<string,int[]>
+	 */
+	private static $search_memo = array();
+
+	/**
+	 * Per-request memo for the index row count (has_data() gates run on hot
+	 * paths and must not re-COUNT per WP_Query).
+	 *
+	 * @var int|null
+	 */
+	private static $count_memo = null;
+
+	/**
+	 * Drop the per-request memos. Called from every index write below so a
+	 * write-then-read request never serves stale results; also used in tests.
+	 */
+	public static function reset_runtime_cache() {
+		self::$search_memo = array();
+		self::$count_memo  = null;
+	}
+
+	/**
+	 * The LIMIT actually sent to MySQL. MySQL has no LIMIT -1, and the
+	 * "unlimited" results-page call must not be (the pre-1.21.19 4294967295
+	 * mapping is what let one broad search hydrate the whole catalogue), so
+	 * non-positive AND oversized limits both clamp to MAX_RESULTS.
+	 *
+	 * @param int $limit Requested limit (<=0 means "no limit").
+	 * @return int
+	 */
+	public static function effective_limit( $limit ) {
+		$limit = (int) $limit;
+		return ( $limit > 0 ) ? min( $limit, self::MAX_RESULTS ) : self::MAX_RESULTS;
+	}
+
+	/**
 	 * Insert or replace a product's single index row. REPLACE keyed on the
 	 * product_id primary key, so a reindex is one statement with no stale rows.
 	 *
@@ -42,6 +92,7 @@ final class Search_Repository {
 			),
 			array( '%d', '%s', '%s', '%s', '%d' )
 		);
+		self::reset_runtime_cache();
 	}
 
 	/**
@@ -52,6 +103,7 @@ final class Search_Repository {
 	public function delete_product( $product_id ) {
 		global $wpdb;
 		$wpdb->delete( Database::table_name(), array( 'product_id' => (int) $product_id ), array( '%d' ) );
+		self::reset_runtime_cache();
 	}
 
 	/**
@@ -61,9 +113,13 @@ final class Search_Repository {
 	 * @return int
 	 */
 	public function count_indexed_products() {
+		if ( null !== self::$count_memo ) {
+			return self::$count_memo;
+		}
 		global $wpdb;
-		$table = Database::table_name();
-		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery
+		$table            = Database::table_name();
+		self::$count_memo = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery
+		return self::$count_memo;
 	}
 
 	/**
@@ -85,6 +141,7 @@ final class Search_Repository {
 		global $wpdb;
 		$table = Database::table_name();
 		$wpdb->query( "TRUNCATE TABLE {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery
+		self::reset_runtime_cache();
 	}
 
 	/* -----------------------------------------------------------------
@@ -112,14 +169,18 @@ final class Search_Repository {
 			return array();
 		}
 
-		// MySQL has no LIMIT -1; map "unlimited" (the results-page call) to an
-		// effectively-infinite cap so the prepared LIMIT clause stays valid.
-		$limit = ( (int) $limit > 0 ) ? (int) $limit : 4294967295;
+		$limit = self::effective_limit( $limit );
+
+		$key = $term . '|' . $limit . '|' . ( $in_stock_only ? '1' : '0' );
+		if ( isset( self::$search_memo[ $key ] ) ) {
+			return self::$search_memo[ $key ];
+		}
 
 		$sql  = Query_Engine::search_sql( Database::table_name(), $in_stock_only );
 		$args = Query_Engine::search_args( $term, $limit, array( $wpdb, 'esc_like' ) );
 		$ids  = $wpdb->get_col( $wpdb->prepare( $sql, $args ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
-		return array_map( 'intval', (array) $ids );
+		self::$search_memo[ $key ] = array_map( 'intval', (array) $ids );
+		return self::$search_memo[ $key ];
 	}
 }
