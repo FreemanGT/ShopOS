@@ -65,6 +65,7 @@ final class Results_Query {
 		add_action( 'pre_get_posts', array( $this, 'apply' ), 5 );
 		add_filter( 'posts_search', array( $this, 'neutralize_search' ), 10, 2 );
 		add_filter( 'freeman_core/product_slider/query_args', array( $this, 'constrain_slider_query' ), 10, 2 );
+		add_filter( 'freeman_core/product_slider/grid_max_pages', array( $this, 'grid_max_pages' ), 10, 2 );
 		add_filter( 'freeman_core/shop_filters/search_product_ids', array( $this, 'supply_engine_ids' ), 10, 2 );
 	}
 
@@ -104,6 +105,24 @@ final class Results_Query {
 	public static function plan_ids( array $ids ) {
 		$ids = array_values( array_filter( array_map( 'intval', $ids ) ) );
 		return empty( $ids ) ? array( 0 ) : $ids;
+	}
+
+	/**
+	 * One page of engine ids for the widget grid (rank order preserved). An
+	 * empty slice — no matches, or a page past the end — becomes [0] so
+	 * wc_get_products renders an empty grid rather than "no constraint".
+	 *
+	 * @param int[] $ids      Ranked engine ids.
+	 * @param int   $paged    1-based page number.
+	 * @param int   $per_page Products per page.
+	 * @return int[]
+	 */
+	public static function paginate_ids( array $ids, $paged, $per_page ) {
+		$ids      = array_values( array_filter( array_map( 'intval', $ids ) ) );
+		$paged    = max( 1, (int) $paged );
+		$per_page = max( 1, (int) $per_page );
+		$slice    = array_slice( $ids, ( $paged - 1 ) * $per_page, $per_page );
+		return empty( $slice ) ? array( 0 ) : $slice;
 	}
 
 	/* -----------------------------------------------------------------
@@ -220,12 +239,68 @@ final class Results_Query {
 			return $args;
 		}
 
-		// wc_get_products() uses `include` (+ orderby=include to keep rank). [0]
-		// on a no-match forces an empty grid (engine authoritative once indexed).
-		$args['include'] = self::plan_ids( $this->repo->search( $term, -1, true ) );
+		// wc_get_products() uses `include` (+ orderby=include to keep rank).
+		// Only the current page's slice is hydrated — pre-1.21.20 this passed
+		// every match with limit=-1, which on a broad term meant hundreds of
+		// WC_Product objects in one request. [0] (no matches / page past the
+		// end) forces an empty grid (engine authoritative once indexed).
+		$slice = self::paginate_ids( $this->repo->search( $term, -1, true ), self::current_page(), self::per_page() );
+
+		$args['include'] = $slice;
 		$args['orderby'] = 'include';
-		$args['limit']   = -1;
+		$args['limit']   = count( $slice );
 		return $args;
+	}
+
+	/**
+	 * Page count for a current-query grid on a search page. The widget's own
+	 * count comes from the main query's max_num_pages — but on an Elementor
+	 * archive template the query object the widget can see may be a different,
+	 * unconstrained instance (the 1.21.5 diagnostic), so the engine, which
+	 * actually feeds the grid through constrain_slider_query(), supplies the
+	 * real match count here. Same guards as the grid constraint; the repeated
+	 * search() read is served from the repository's per-request memo.
+	 *
+	 * @param int   $max_pages Page count from the main query.
+	 * @param array $settings  Widget settings.
+	 * @return int
+	 */
+	public function grid_max_pages( $max_pages, $settings ) {
+		if ( ! is_array( $settings ) ) {
+			return $max_pages;
+		}
+		$is_grid = ( ( $settings['display_mode'] ?? 'slider' ) === 'grid' );
+		if ( ! self::should_constrain_slider( (string) ( $settings['source'] ?? '' ), $is_grid ) ) {
+			return $max_pages;
+		}
+		$term = $this->request_search_term();
+		if ( '' === $term || ! $this->repo->has_data() ) {
+			return $max_pages;
+		}
+		$total = count( $this->repo->search( $term, -1, true ) );
+		return max( 1, (int) ceil( $total / self::per_page() ) );
+	}
+
+	/**
+	 * The current 1-based page (both pagination query vars, like the widget's
+	 * own pagination block reads them).
+	 *
+	 * @return int
+	 */
+	private static function current_page() {
+		return max( 1, (int) get_query_var( 'paged' ), (int) get_query_var( 'page' ) );
+	}
+
+	/**
+	 * Products per grid page — the blog per-page option, 12 when non-positive
+	 * (the same source Shop Filters' Query_Builder::products_per_page() uses,
+	 * so the search grid and the facet panel agree on page size).
+	 *
+	 * @return int
+	 */
+	private static function per_page() {
+		$per_page = (int) get_option( 'posts_per_page', 12 );
+		return $per_page > 0 ? $per_page : 12;
 	}
 
 	/**

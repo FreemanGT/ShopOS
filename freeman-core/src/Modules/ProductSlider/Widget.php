@@ -773,8 +773,10 @@ final class Widget extends Widget_Base {
 			// this query object), so reading its posts here would render the whole
 			// catalog. Fall through to the standard wc_get_products() path instead,
 			// where the search-results filter (freeman_core/product_slider/query_args)
-			// narrows the grid to the matches. Genuine archives (shop / category /
-			// tag) still read the main query directly.
+			// narrows the grid to the current page of matches (and the
+			// grid_max_pages filter below supplies the matching page count).
+			// Genuine archives (shop / category / tag) still read the main query
+			// directly.
 			$main_is_search = ( $main instanceof \WP_Query && $main->is_search() );
 			if ( self::should_use_archive( $main_is_search, $this->is_product_archive( $main ) ) ) {
 				return $this->collect_archive_products( $main, $is_grid, $limit );
@@ -1290,12 +1292,22 @@ final class Widget extends Widget_Base {
 			// wc_setup_loop() (which woocommerce_pagination() depends on).
 			// main_query() reads $wp_the_query to survive that swap.
 			if ( ! $is_slider && 'current_query' === ( $s['source'] ?? '' ) && function_exists( 'paginate_links' ) ) {
-				$main = $this->main_query();
-				// A search renders the full engine result set in one grid (the
-				// wc_get_products() path uses limit=-1), so there is no archive
-				// pagination — only paginate a genuine archive.
-				$main_is_search = ( $main instanceof \WP_Query && $main->is_search() );
-				$max_pages      = ( ! $main_is_search && $main instanceof \WP_Query && ! empty( $main->max_num_pages ) ) ? (int) $main->max_num_pages : 1;
+				$main      = $this->main_query();
+				$max_pages = ( $main instanceof \WP_Query && ! empty( $main->max_num_pages ) ) ? (int) $main->max_num_pages : 1;
+
+				/**
+				 * Page count for a current-query grid. On a product search the
+				 * grid is fed by the search engine through the query_args
+				 * filter (one page slice per request since 1.21.20), and the
+				 * main query object visible here may be a different,
+				 * unconstrained instance on an Elementor archive template — so
+				 * the Search module overrides the count with the real engine
+				 * match count. Genuine archives keep the main query's value.
+				 *
+				 * @param int   $max_pages Page count from the main query.
+				 * @param array $s         Widget settings.
+				 */
+				$max_pages = max( 1, (int) apply_filters( 'freeman_core/product_slider/grid_max_pages', $max_pages, $s ) );
 				if ( $max_pages > 1 ) {
 					$paged = max( 1, (int) get_query_var( 'paged' ), (int) get_query_var( 'page' ) );
 					$links = paginate_links(
