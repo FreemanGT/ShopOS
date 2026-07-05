@@ -29,6 +29,8 @@ final class Indexer {
 	const WATERMARK_OPTION = 'freeman_core_shop_filters_last_sweep_gmt';
 	const LAST_RUN_OPTION  = 'freeman_core_shop_filters_last_run_gmt';
 	const REV_OPTION       = 'freeman_core_shop_filters_index_rev';
+	const REV_AT_OPTION    = 'freeman_core_shop_filters_index_rev_at';
+	const REV_DEBOUNCE     = 60; // min seconds between order-churn rev bumps (A4).
 	const DRAIN_HOOK       = 'freeman_core_shop_filters_drain_queue';
 	const RECONCILE_HOOK   = 'freeman_core_shop_filters_reconcile';
 	const CRON_SCHEDULE    = 'freeman_shop_filters_5min';
@@ -168,17 +170,34 @@ final class Indexer {
 			$this->reindex_product( (int) $product_id );
 		}
 		$this->flush_runtime_cache();
-		$this->bump_rev();
+		$this->maybe_bump_rev();
 	}
 
 	/**
 	 * Advance the index revision — the version segment of Query_Builder's
 	 * facet-response cache key, so every batch of index writes retires all
 	 * cached facet payloads at once (event-driven invalidation; the cache TTL
-	 * only backstops a missed bump). Public: a deliberate invalidation API.
+	 * only backstops a missed bump). Public: a deliberate invalidation API —
+	 * always bumps (reconcile / full-rebuild use this).
 	 */
 	public function bump_rev() {
 		update_option( self::REV_OPTION, (int) get_option( self::REV_OPTION, 0 ) + 1, false );
+		update_option( self::REV_AT_OPTION, time(), false );
+	}
+
+	/**
+	 * Debounced rev bump for the high-frequency drain path (A4): on a busy store
+	 * every order-driven stock write would otherwise retire the whole facet cache,
+	 * collapsing its effective TTL to the inter-order gap. Bumps only when at
+	 * least REV_DEBOUNCE seconds have passed since the last bump (from any source);
+	 * within the window the write is absorbed and the caches keep serving —
+	 * lagging counts by at most REV_DEBOUNCE, with the 5-min TTL as backstop.
+	 */
+	public function maybe_bump_rev() {
+		if ( time() - (int) get_option( self::REV_AT_OPTION, 0 ) < self::REV_DEBOUNCE ) {
+			return;
+		}
+		$this->bump_rev();
 	}
 
 	/* -----------------------------------------------------------------

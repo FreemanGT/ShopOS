@@ -24,11 +24,25 @@ defined( 'ABSPATH' ) || exit;
 final class Query_Builder {
 
 	/**
+	 * Seconds a facet-cache rebuild lock is held (A4 single-flight): long enough
+	 * to cover a build, short enough to self-heal if a request dies mid-build.
+	 */
+	const REBUILD_LOCK_TTL = 30;
+
+	/**
 	 * Index repository.
 	 *
 	 * @var Index_Repository
 	 */
 	private $repo;
+
+	/**
+	 * Per-request memo of the indexed taxonomy set (drives facet config AND
+	 * cache-key validation, so it's read on the hot cache-hit path).
+	 *
+	 * @var string[]|null
+	 */
+	private $available_tax_memo = null;
 
 	/**
 	 * Constructor.
@@ -37,6 +51,21 @@ final class Query_Builder {
 	 */
 	public function __construct( Index_Repository $repo = null ) {
 		$this->repo = $repo ? $repo : new Index_Repository();
+	}
+
+	/**
+	 * Indexed taxonomies, memoised for the life of this request. Used both to
+	 * drive the facet config and to strip junk `filter_<tax>` params from the
+	 * cache key before the transient lookup (A2), so it must be cheap on the
+	 * cache-hit path — one DISTINCT query at most.
+	 *
+	 * @return string[]
+	 */
+	private function available_taxonomies() {
+		if ( null === $this->available_tax_memo ) {
+			$this->available_tax_memo = $this->repo->available_taxonomies();
+		}
+		return $this->available_tax_memo;
 	}
 
 	/* -----------------------------------------------------------------
@@ -471,27 +500,36 @@ final class Query_Builder {
 		// filtered grid is empty.
 		$hide_oos = ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) );
 
-		$search = isset( $request['search'] ) ? trim( (string) $request['search'] ) : '';
+		$search   = isset( $request['search'] ) ? trim( (string) $request['search'] ) : '';
+		$per_page = $this->products_per_page();
+		$paged    = max( 1, (int) $state['paged'] );
+
+		// Indexed taxonomies drive the facet config below AND validate the cache
+		// key (A2) — memoised so the hot cache-hit path pays it at most once.
+		$available = $this->available_taxonomies();
 
 		// Serve repeat browse states from a short-lived transient: the build
 		// below sweeps the whole base's postings plus two meta_lookup reads on
 		// every shop/category pageview, even with nothing selected. The key
-		// folds in the index revision (bumped on every index write), so a
+		// folds in the index revision (bumped on index writes), so a
 		// product/stock change invalidates within the indexer's drain latency
-		// and the TTL only backstops a missed bump. Search states are skipped:
+		// and the TTL only backstops a missed bump. The key drops junk
+		// `filter_<tax>` params (A2) and is page-invariant (A3): pagination is
+		// rebuilt per request in with_pagination(). Search states are skipped:
 		// per-term churn, and the engine ids are already memoized per request.
 		$cache_key = '';
 		if ( '' === $search ) {
 			$cache_key = self::cache_signature(
 				$request,
 				$hide_oos,
-				$this->products_per_page(),
+				$per_page,
 				(int) get_option( Indexer::REV_OPTION, 0 ),
-				FREEMAN_CORE_VERSION
+				FREEMAN_CORE_VERSION,
+				$available
 			);
-			$cached    = get_transient( $cache_key );
+			$cached = get_transient( $cache_key );
 			if ( is_array( $cached ) ) {
-				return $cached;
+				return $this->with_pagination( $cached, $context_id, $state, $paged, $per_page );
 			}
 		}
 
@@ -516,7 +554,6 @@ final class Query_Builder {
 		// size drops out of both the counts and the grid (requirement #2). The grid
 		// is constrained to the same in-stock set in Query::apply_instock_post_in().
 		$postings   = $this->repo->postings_for_products( $base, $hide_oos );
-		$available  = $this->repo->available_taxonomies();
 		$facet_defs = Facet_Config::resolve( $available, $context_id );
 
 		// Attribute facets render in facets[] (checkbox or colour/image swatches);
@@ -594,28 +631,92 @@ final class Query_Builder {
 		$flags_facet   = self::shape_flag_facet( $onsale_count, $instock_count, $onsale_selected, $instock_selected, $show_instock );
 		$grid_products = self::filter_by_flags( $grid_products, $flag_map, $onsale_selected, $instock_selected );
 
-		$count    = count( $grid_products );
-		$per_page = $this->products_per_page();
-		$paged    = max( 1, (int) $state['paged'] );
+		$count = count( $grid_products );
 
-		$response = array(
+		// Cache only the page-invariant payload (A3) — facet counts don't depend
+		// on the page; pagination + url are rebuilt per request below.
+		$payload = array(
 			'facets'        => $facets,
 			'category_tree' => $category_tree,
 			'price'         => $price_facet,
 			'flags'         => $flags_facet,
 			'count'         => $count,
-			'pagination'    => array(
-				'current'     => $paged,
-				'total_pages' => $per_page > 0 ? (int) ceil( $count / $per_page ) : 1,
-				'next_url'    => $this->page_url( $context_id, $state, $paged + 1 ),
-			),
-			'url'           => $this->page_url( $context_id, $state, $paged ),
 		);
 
-		if ( '' !== $cache_key ) {
-			set_transient( $cache_key, $response, 5 * MINUTE_IN_SECONDS );
+		// Store only "real" states (A2): skip when filters were supplied but none
+		// resolved to a real term (garbage/probe slugs), so junk can't populate
+		// the cache. Single-flight the write behind a short rebuild lock (A4) so
+		// concurrent misses don't stampede the same option row.
+		if ( '' !== $cache_key && self::should_store_state( $filters, $active ) && self::acquire_rebuild_lock( $cache_key ) ) {
+			set_transient( $cache_key, $payload, 5 * MINUTE_IN_SECONDS );
+			self::release_rebuild_lock( $cache_key );
 		}
-		return $response;
+
+		return $this->with_pagination( $payload, $context_id, $state, $paged, $per_page );
+	}
+
+	/**
+	 * Wrap a cached (page-invariant) facet payload with the per-request
+	 * pagination block + canonical url. Keeps the response shape identical to the
+	 * pre-A3 single-object form so consumers are unaffected.
+	 *
+	 * @param array $payload    Page-invariant payload (facets/tree/price/flags/count).
+	 * @param int   $context_id Context term id.
+	 * @param array $state      Parsed Url_State.
+	 * @param int   $paged      Current page.
+	 * @param int   $per_page   Products per page.
+	 * @return array
+	 */
+	private function with_pagination( array $payload, $context_id, array $state, $paged, $per_page ) {
+		$count               = isset( $payload['count'] ) ? (int) $payload['count'] : 0;
+		$payload['pagination'] = array(
+			'current'     => $paged,
+			'total_pages' => $per_page > 0 ? (int) ceil( $count / $per_page ) : 1,
+			'next_url'    => $this->page_url( $context_id, $state, $paged + 1 ),
+		);
+		$payload['url'] = $this->page_url( $context_id, $state, $paged );
+		return $payload;
+	}
+
+	/**
+	 * Whether a facet response should be cached. States that carried filter
+	 * params but resolved to no active term (garbage / probe slugs) are not
+	 * stored, so junk selections can't inflate cache storage (A2). Pure.
+	 *
+	 * @param array $filters Raw parsed filters (taxonomy => slugs).
+	 * @param array $active  Resolved active selection (taxonomy => term ids).
+	 * @return bool
+	 */
+	public static function should_store_state( array $filters, array $active ) {
+		return ! ( ! empty( $filters ) && empty( $active ) );
+	}
+
+	/**
+	 * Best-effort single-flight lock for a facet-cache rebuild (A4). Returns true
+	 * if this request may write the entry; false if another request already holds
+	 * the lock (it will build + return but skip the redundant store). Not atomic
+	 * — a rare double write is harmless (identical payload).
+	 *
+	 * @param string $cache_key Facet-response cache key.
+	 * @return bool
+	 */
+	public static function acquire_rebuild_lock( $cache_key ) {
+		$lock = $cache_key . '_lock';
+		if ( false !== get_transient( $lock ) ) {
+			return false;
+		}
+		set_transient( $lock, 1, self::REBUILD_LOCK_TTL );
+		return true;
+	}
+
+	/**
+	 * Release a rebuild lock taken by acquire_rebuild_lock().
+	 *
+	 * @param string $cache_key Facet-response cache key.
+	 * @return void
+	 */
+	public static function release_rebuild_lock( $cache_key ) {
+		delete_transient( $cache_key . '_lock' );
 	}
 
 	/**
@@ -625,16 +726,27 @@ final class Query_Builder {
 	 * parameter order share one entry. The index-revision and plugin-version
 	 * segments retire stale entries without needing deletes.
 	 *
-	 * @param array  $request  Raw request params.
-	 * @param bool   $hide_oos Store-level hide-out-of-stock flag.
-	 * @param int    $per_page Products per page (pagination totals depend on it).
-	 * @param int    $rev      Index revision (Indexer::REV_OPTION).
-	 * @param string $version  Plugin version.
+	 * @param array    $request          Raw request params.
+	 * @param bool     $hide_oos         Store-level hide-out-of-stock flag.
+	 * @param int      $per_page         Products per page (pagination totals depend on it).
+	 * @param int      $rev              Index revision (Indexer::REV_OPTION).
+	 * @param string   $version          Plugin version.
+	 * @param string[] $valid_taxonomies Indexed taxonomies; `filter_<tax>` params
+	 *                                   outside this set are dropped from the key
+	 *                                   (A2). An empty list skips validation.
 	 * @return string
 	 */
-	public static function cache_signature( array $request, $hide_oos, $per_page, $rev, $version ) {
+	public static function cache_signature( array $request, $hide_oos, $per_page, $rev, $version, array $valid_taxonomies = array() ) {
 		$state   = Url_State::parse( $request );
 		$filters = isset( $state['filters'] ) && is_array( $state['filters'] ) ? $state['filters'] : array();
+
+		// A2: drop filter_<tax> entries whose taxonomy isn't actually indexed, so
+		// junk/probe params can't inflate cache-key cardinality. Equivalent
+		// selections that differ only by junk collapse to one entry.
+		if ( ! empty( $valid_taxonomies ) ) {
+			$filters = array_intersect_key( $filters, array_flip( array_map( 'strval', $valid_taxonomies ) ) );
+		}
+
 		ksort( $filters );
 		foreach ( $filters as $taxonomy => $slugs ) {
 			$slugs = (array) $slugs;
@@ -642,6 +754,10 @@ final class Query_Builder {
 			$filters[ $taxonomy ] = array_values( $slugs );
 		}
 		$state['filters'] = $filters;
+
+		// A3: facet counts are page-invariant — pagination is computed per request
+		// outside the cached payload, so `paged` must not fragment the key.
+		unset( $state['paged'] );
 
 		$payload = array(
 			'state'      => $state,

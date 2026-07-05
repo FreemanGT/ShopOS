@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.30] — 2026-07-05
+
+- ShopFilters facet-cache hardening: validate cache-key taxonomies and skip junk states (A2), page-invariant key (A3), debounced rev bumps plus single-flight rebuild lock (A4)
+
 ## [1.21.29] — 2026-07-05
 
 - ShopFilters skips the dead native product-search WP_Query on search-results facet builds via a new pre_search_product_ids pre-filter that the Search engine feeds when its index has data

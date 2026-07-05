@@ -66,4 +66,21 @@ final class ShopFiltersIndexerTest extends TestCase {
 		$indexer->bump_rev();
 		$this->assertSame( 2, (int) get_option( Indexer::REV_OPTION, 0 ) );
 	}
+
+	public function test_maybe_bump_rev_debounces_within_window(): void {
+		// A4: the high-frequency drain path must not retire the whole facet cache
+		// on every order — bumps collapse within REV_DEBOUNCE seconds.
+		$indexer = new Indexer();
+
+		$indexer->maybe_bump_rev(); // REV_AT starts at 0 → first bump goes through.
+		$this->assertSame( 1, (int) get_option( Indexer::REV_OPTION, 0 ) );
+
+		$indexer->maybe_bump_rev(); // Within the window → absorbed.
+		$this->assertSame( 1, (int) get_option( Indexer::REV_OPTION, 0 ) );
+
+		// Age the last-bump timestamp past the debounce window.
+		update_option( Indexer::REV_AT_OPTION, time() - Indexer::REV_DEBOUNCE - 1, false );
+		$indexer->maybe_bump_rev();
+		$this->assertSame( 2, (int) get_option( Indexer::REV_OPTION, 0 ) );
+	}
 }

@@ -204,13 +204,80 @@ final class ShopFiltersQueryBuilderTest extends TestCase {
 		$other_rev[3]                       = 2;
 		$other_oos                          = $base;
 		$other_oos[1]                       = true;
-		$other_paged                        = $base;
-		$other_paged[0]['paged']            = '2';
 
 		$this->assertNotSame( $key, Query_Builder::cache_signature( ...$other_filter ) );
 		$this->assertNotSame( $key, Query_Builder::cache_signature( ...$other_context ) );
 		$this->assertNotSame( $key, Query_Builder::cache_signature( ...$other_rev ) );
 		$this->assertNotSame( $key, Query_Builder::cache_signature( ...$other_oos ) );
-		$this->assertNotSame( $key, Query_Builder::cache_signature( ...$other_paged ) );
+	}
+
+	public function test_cache_signature_is_page_invariant(): void {
+		// A3: facet counts don't depend on the page, so ?paged=N must share one
+		// cache entry (pagination is rebuilt per request outside the payload).
+		$base               = array( array( 'filter_pa_color' => 'red', 'context_id' => 0 ), false, 12, 1, '1.21.30' );
+		$paged2             = $base;
+		$paged2[0]['paged'] = '2';
+		$paged5             = $base;
+		$paged5[0]['paged'] = '5';
+
+		$key = Query_Builder::cache_signature( ...$base );
+		$this->assertSame( $key, Query_Builder::cache_signature( ...$paged2 ) );
+		$this->assertSame( $key, Query_Builder::cache_signature( ...$paged5 ) );
+	}
+
+	public function test_cache_signature_drops_unindexed_taxonomy_from_key(): void {
+		// A2: a filter_<tax> for a taxonomy that isn't indexed must not fragment
+		// the key — a probe param collapses to the same entry as the bare state.
+		$valid = array( 'pa_color', 'pa_size' );
+
+		$clean = Query_Builder::cache_signature(
+			array( 'filter_pa_color' => 'red', 'context_id' => 0 ),
+			false, 12, 1, '1.21.30', $valid
+		);
+		$with_junk = Query_Builder::cache_signature(
+			array( 'filter_pa_color' => 'red', 'filter_bogus' => 'x', 'context_id' => 0 ),
+			false, 12, 1, '1.21.30', $valid
+		);
+		$this->assertSame( $clean, $with_junk );
+
+		// A junk-only taxonomy collapses to the bare (no-filter) state.
+		$bare = Query_Builder::cache_signature( array( 'context_id' => 0 ), false, 12, 1, '1.21.30', $valid );
+		$junk = Query_Builder::cache_signature( array( 'filter_bogus' => 'x', 'context_id' => 0 ), false, 12, 1, '1.21.30', $valid );
+		$this->assertSame( $bare, $junk );
+	}
+
+	public function test_cache_signature_keeps_indexed_taxonomy_variance(): void {
+		// Validation must not flatten legitimately different selections.
+		$valid = array( 'pa_color' );
+		$red   = Query_Builder::cache_signature( array( 'filter_pa_color' => 'red' ), false, 12, 1, '1.21.30', $valid );
+		$blue  = Query_Builder::cache_signature( array( 'filter_pa_color' => 'blue' ), false, 12, 1, '1.21.30', $valid );
+		$this->assertNotSame( $red, $blue );
+	}
+
+	/**
+	 * @dataProvider should_store_cases
+	 */
+	public function test_should_store_state( array $filters, array $active, bool $expected ): void {
+		$this->assertSame( $expected, Query_Builder::should_store_state( $filters, $active ) );
+	}
+
+	public static function should_store_cases(): array {
+		return array(
+			'empty state (bare shop page) stores' => array( array(), array(), true ),
+			'valid selection stores'              => array( array( 'pa_color' => array( 'red' ) ), array( 'pa_color' => array( 11 ) ), true ),
+			'partial resolve stores'              => array( array( 'pa_color' => array( 'red', 'ghost' ) ), array( 'pa_color' => array( 11 ) ), true ),
+			'garbage-only filters skip store'     => array( array( 'pa_color' => array( 'ghost' ) ), array(), false ),
+		);
+	}
+
+	public function test_rebuild_lock_is_single_flight(): void {
+		$GLOBALS['fr_transients'] = array();
+		$key                      = 'freeman_core_sf_q_' . md5( 'lock-test' );
+
+		$this->assertTrue( Query_Builder::acquire_rebuild_lock( $key ), 'first caller acquires' );
+		$this->assertFalse( Query_Builder::acquire_rebuild_lock( $key ), 'second caller is locked out' );
+
+		Query_Builder::release_rebuild_lock( $key );
+		$this->assertTrue( Query_Builder::acquire_rebuild_lock( $key ), 'lock is re-acquirable after release' );
 	}
 }
