@@ -68,6 +68,30 @@ final class ProductPageTemplateTest extends TestCase {
 		$this->assertSame( array( 'third_party_callback' ), $remaining, 'only WC defaults detach; third parties stay' );
 	}
 
+	public function test_trust_html_is_empty_until_a_label_is_written(): void {
+		$this->assertSame( '', Template_Loader::trust_html(), 'both trust labels default empty = no line' );
+	}
+
+	public function test_trust_html_renders_only_filled_items(): void {
+		$GLOBALS['fr_opts']['freeman_core_product_page_label_trust_shipping'] = 'משלוח מהיר עד 3 ימי עסקים';
+
+		$html = Template_Loader::trust_html();
+
+		$this->assertStringContainsString( 'fm-pdp__trust', $html );
+		$this->assertStringContainsString( 'משלוח מהיר עד 3 ימי עסקים', $html );
+		$this->assertSame( 1, substr_count( $html, 'fm-pdp__trust-item' ), 'the blank returns item is skipped' );
+	}
+
+	public function test_trust_html_renders_both_items_and_escapes(): void {
+		$GLOBALS['fr_opts']['freeman_core_product_page_label_trust_shipping'] = 'Fast shipping';
+		$GLOBALS['fr_opts']['freeman_core_product_page_label_trust_returns']  = 'Returns <b>30</b> days';
+
+		$html = Template_Loader::trust_html();
+
+		$this->assertSame( 2, substr_count( $html, 'fm-pdp__trust-item' ) );
+		$this->assertStringContainsString( 'Returns &lt;b&gt;30&lt;/b&gt; days', $html );
+	}
+
 	public function test_body_class_scopes_only_product_pages(): void {
 		$this->assertSame( array( 'a' ), $this->loader()->body_class( array( 'a' ) ) );
 

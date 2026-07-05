@@ -72,6 +72,7 @@ get_header( 'shop' ); ?>
 							do_action( 'woocommerce_single_product_summary' );
 							?>
 						</div>
+						<?php echo \Freeman\Core\Modules\ProductPage\Template_Loader::trust_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts; '' when both labels are empty. ?>
 					</div>
 				</div>
 
@@ -114,12 +115,21 @@ get_header( 'shop' ); ?>
 					/** Third-party attachments only — WC's tabs / upsells / related were detached at takeover. Documented in woocommerce/templates/content-single-product.php */
 					do_action( 'woocommerce_after_single_product_summary' );
 
+					// Scoped size bump for the upsell/related loops: the default
+					// woocommerce_thumbnail (~324px) upscales blurry in this grid
+					// on hi-DPI (the ProductSlider 1.21.18 lesson). Consumer-only
+					// filter use — added and removed around the two loops.
+					$fm_large_thumbs = static function () {
+						return 'large';
+					};
+					add_filter( 'single_product_archive_thumbnail_size', $fm_large_thumbs );
 					if ( function_exists( 'woocommerce_upsell_display' ) ) {
 						woocommerce_upsell_display();
 					}
 					if ( function_exists( 'woocommerce_output_related_products' ) ) {
 						woocommerce_output_related_products();
 					}
+					remove_filter( 'single_product_archive_thumbnail_size', $fm_large_thumbs );
 					?>
 				</div>
 

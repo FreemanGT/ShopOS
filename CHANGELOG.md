@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.22.1] — 2026-07-06
+
+- PDP critique follow-up: editorial gallery (stacked/2-up desktop, scroll-snap strip + dots mobile, no flexslider chrome), VariationSwatches buy-box reconciliation via its own CSS variables + sticky-bar defer guard, trust line under the CTA (settings-editable, empty = hidden), accordion + image-swap motion, sticky-bar price sync, related-grid image sharpness
+
 ## [1.22.0] — 2026-07-06
 
 - Wave 9 - ProductPage module: designed single-product template takeover (flag layout), coupon-price notice with live-coupon validation and per-variation price map (flag coupon_notice), low-stock urgency badge with editable strings and inherited font (flag stock_urgency); all three flags default off

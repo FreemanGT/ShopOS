@@ -67,11 +67,17 @@ final class Template_Loader {
 
 	/**
 	 * Declare the WC product-gallery features the designed page relies on.
+	 *
+	 * Deliberately NO `wc-product-gallery-slider`: without flexslider the
+	 * gallery images render as a plain stacked wrapper, which the stylesheet
+	 * lays out editorially (first image full-width + 2-up grid on desktop,
+	 * scroll-snap strip with dots on mobile) instead of the stock
+	 * main-image-plus-thumbnails chrome. Zoom + lightbox init per image
+	 * independent of the slider.
 	 */
 	public function add_gallery_supports() {
 		add_theme_support( 'wc-product-gallery-zoom' );
 		add_theme_support( 'wc-product-gallery-lightbox' );
-		add_theme_support( 'wc-product-gallery-slider' );
 	}
 
 	/**
@@ -112,6 +118,38 @@ final class Template_Loader {
 		$file     = $override ? $override : FREEMAN_CORE_PATH . 'src/Modules/ProductPage/templates/single-product.php';
 
 		return is_readable( $file ) ? $file : '';
+	}
+
+	/**
+	 * The reassurance line under the add-to-cart button: shipping + returns
+	 * wording from Labels, each item hidden while its label is empty, the
+	 * whole line '' when both are. Pure given the options — unit-tested.
+	 *
+	 * @return string
+	 */
+	public static function trust_html() {
+		$icons = array(
+			// Truck (shipping).
+			'trust_shipping' => '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M1.5 4.5h10v9h-10zM11.5 7.5h3.6l3.4 3.2v2.8h-3" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="5.5" cy="14.5" r="1.6" stroke="currentColor" stroke-width="1.4"/><circle cx="14.8" cy="14.5" r="1.6" stroke="currentColor" stroke-width="1.4"/></svg>',
+			// Arrows (returns).
+			'trust_returns'  => '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.5 8.5a6 6 0 0 1 11 2.5m0-2.5v3h-3M15.5 11.5a6 6 0 0 1-11-2.5m0 2.5v-3h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+		);
+
+		$items = '';
+		foreach ( $icons as $key => $icon ) {
+			$text = Labels::get( $key );
+			if ( '' === trim( $text ) ) {
+				continue;
+			}
+			$items .= '<span class="fm-pdp__trust-item">' . $icon
+				. '<span>' . esc_html( $text ) . '</span></span>';
+		}
+
+		if ( '' === $items ) {
+			return '';
+		}
+
+		return '<div class="fm-pdp__trust">' . $items . '</div>';
 	}
 
 	/**

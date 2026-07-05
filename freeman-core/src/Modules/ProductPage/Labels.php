@@ -55,6 +55,16 @@ final class Labels {
 				'label'   => __( 'Stock urgency — few units left ({count} = quantity)', 'freeman-core' ),
 				'default' => __( 'Only {count} left in stock', 'freeman-core' ),
 			),
+			// Trust line (designed layout): empty default = the item is hidden,
+			// so the line only appears once the owner writes the wording.
+			'trust_shipping'     => array(
+				'label'   => __( 'Trust line — shipping (empty = hidden)', 'freeman-core' ),
+				'default' => '',
+			),
+			'trust_returns'      => array(
+				'label'   => __( 'Trust line — returns (empty = hidden)', 'freeman-core' ),
+				'default' => '',
+			),
 		);
 	}
 

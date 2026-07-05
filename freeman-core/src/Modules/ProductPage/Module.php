@@ -108,6 +108,7 @@ final class Module extends Module_Base {
 		$sections = array(
 			'coupon_'  => $coupon_section,
 			'urgency_' => $urgency_section,
+			'trust_'   => __( 'Trust line (designed layout)', 'freeman-core' ),
 		);
 		foreach ( Labels::defaults() as $key => $def ) {
 			$section = __( 'Wording', 'freeman-core' );
@@ -117,13 +118,16 @@ final class Module extends Module_Base {
 					break;
 				}
 			}
+			$description = '' === $def['default']
+				? __( 'Shown under the add-to-cart button on the designed layout; leave empty to hide.', 'freeman-core' )
+				/* translators: %s: the English default wording for this field. */
+				: sprintf( __( 'Leave blank to use the default: %s', 'freeman-core' ), $def['default'] );
 			$schema[ 'label_' . $key ] = array(
 				'label'       => $def['label'],
 				'type'        => 'text',
 				'default'     => '',
 				'section'     => $section,
-				/* translators: %s: the English default wording for this field. */
-				'description' => sprintf( __( 'Leave blank to use the default: %s', 'freeman-core' ), $def['default'] ),
+				'description' => $description,
 			);
 		}
 
