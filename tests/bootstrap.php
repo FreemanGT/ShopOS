@@ -113,6 +113,35 @@ if ( ! function_exists( 'has_action' ) ) {
 		return has_filter( $tag, $callback );
 	}
 }
+if ( ! function_exists( 'remove_action' ) ) {
+	function remove_action( $tag, $cb, $priority = 10 ) {
+		if ( empty( $GLOBALS['fr_hooks'][ $tag ] ) ) {
+			return false;
+		}
+		$GLOBALS['fr_hooks'][ $tag ] = array_values(
+			array_filter(
+				$GLOBALS['fr_hooks'][ $tag ],
+				static function ( $h ) use ( $cb, $priority ) {
+					return $h['cb'] !== $cb || (int) $h['priority'] !== (int) $priority;
+				}
+			)
+		);
+		return true;
+	}
+}
+// locate_template — resolves from $GLOBALS['fr_locate_template'] so tests can
+// simulate a theme override ('' = no override, the WP default).
+if ( ! function_exists( 'locate_template' ) ) {
+	function locate_template( $template_names ) {
+		return $GLOBALS['fr_locate_template'] ?? '';
+	}
+}
+if ( ! function_exists( 'add_theme_support' ) ) {
+	function add_theme_support( $feature ) {
+		$GLOBALS['fr_theme_supports'][] = $feature;
+		return true;
+	}
+}
 if ( ! function_exists( 'sanitize_text_field' ) ) {
 	function sanitize_text_field( $v ) { return is_scalar( $v ) ? (string) $v : ''; }
 }
