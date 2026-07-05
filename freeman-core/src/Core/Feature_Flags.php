@@ -181,6 +181,30 @@ final class Feature_Flags {
 				'since'       => '1.11.40',
 				'shared'      => false,
 			),
+			array(
+				'module'      => 'product_page',
+				'feature'     => 'coupon_notice',
+				'label'       => __( 'Product Page — coupon-price notice', 'freeman-core' ),
+				'description' => __( 'Shows an "enter coupon X and pay Y" notice on the product page, computed from the coupon code + percent in the module settings. Hidden automatically when no live WooCommerce coupon with that code exists. Renders via the single-product summary hook and the [freeman_discounted_price] shortcode.', 'freeman-core' ),
+				'since'       => '1.22.0',
+				'shared'      => false,
+			),
+			array(
+				'module'      => 'product_page',
+				'feature'     => 'stock_urgency',
+				'label'       => __( 'Product Page — low-stock urgency badge', 'freeman-core' ),
+				'description' => __( 'Shows a scarcity badge ("Last one in stock" / "Only N left") when the picked variation has low managed stock. Threshold and wording are module settings. Renders via the single-product summary hook and the [freeman_stock_urgency] shortcode.', 'freeman-core' ),
+				'since'       => '1.22.0',
+				'shared'      => false,
+			),
+			array(
+				'module'      => 'product_page',
+				'feature'     => 'layout',
+				'label'       => __( 'Product Page — designed layout (template takeover)', 'freeman-core' ),
+				'description' => __( 'Replaces the single-product template (including an Elementor Pro single-product template) with the Freeman-designed responsive product page: native WC gallery with zoom/lightbox/thumbnails, sticky summary, accordion sections, restyled related products and a mobile sticky add-to-cart bar. Off: the current product page renders untouched.', 'freeman-core' ),
+				'since'       => '1.22.0',
+				'shared'      => false,
+			),
 		);
 	}
 }
