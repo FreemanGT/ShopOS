@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.32] — 2026-07-05
+
+- Indexer background-churn reduction (remediation PR-10, audit B1+B3): gate ensure_scheduled to admin/cron so the Action Scheduler existence query no longer runs on every storefront pageview, and drop the idle-tick watermark re-park in both reconcile sweeps. Mirrored across the Search + ShopFilters indexers; index output identical, no flag.
+
 ## [1.21.31] — 2026-07-05
 
 - ShopFilters facet-build efficiency (remediation PR-9, audit A5+A6+A7): prime term/term-meta caches in one get_terms per taxonomy, merge the price + flag meta_lookup reads into one SELECT, memoize instock resolution per request and swap COUNT(*) for a SELECT 1 LIMIT 1 existence probe. Output byte-identical, no flag.

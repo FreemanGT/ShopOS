@@ -81,6 +81,15 @@ final class Indexer {
 	 * Action Scheduler; falls back to a custom-recurrence wp-cron event.
 	 */
 	public function ensure_scheduled() {
+		// Skip the Action Scheduler existence SELECT on plain front-end pageviews
+		// (B1): the recurring sweep only needs (re)scheduling from an admin or
+		// cron request, and both the activation request and the wp-cron loopback
+		// qualify — so the schedule self-heals without paying a DB query on every
+		// storefront hit.
+		$is_cron = function_exists( 'wp_doing_cron' ) ? wp_doing_cron() : ( defined( 'DOING_CRON' ) && DOING_CRON );
+		if ( ! self::should_ensure_scheduled( is_admin(), $is_cron ) ) {
+			return;
+		}
 		if ( function_exists( 'as_schedule_recurring_action' ) && function_exists( 'as_next_scheduled_action' ) ) {
 			if ( ! as_next_scheduled_action( self::RECONCILE_HOOK ) ) {
 				as_schedule_recurring_action( time() + self::SWEEP_INTERVAL, self::SWEEP_INTERVAL, self::RECONCILE_HOOK, array(), self::AS_GROUP );
@@ -90,6 +99,20 @@ final class Indexer {
 		if ( ! wp_next_scheduled( self::RECONCILE_HOOK ) ) {
 			wp_schedule_event( time() + self::SWEEP_INTERVAL, self::CRON_SCHEDULE, self::RECONCILE_HOOK );
 		}
+	}
+
+	/**
+	 * Whether ensure_scheduled() should do its (DB-touching) scheduling work on
+	 * this request (B1). Only admin or cron requests — a plain storefront pageview
+	 * skips it, since the schedule is already in place from a prior admin/cron
+	 * request (activation is admin; the wp-cron loopback is cron). Pure.
+	 *
+	 * @param bool $is_admin Whether this is an admin (or admin-ajax) request.
+	 * @param bool $is_cron  Whether this is a cron request.
+	 * @return bool
+	 */
+	public static function should_ensure_scheduled( $is_admin, $is_cron ) {
+		return (bool) $is_admin || (bool) $is_cron;
 	}
 
 	/**
@@ -214,7 +237,12 @@ final class Indexer {
 
 		$query = new \WP_Query( $args );
 		if ( empty( $query->posts ) ) {
-			update_option( self::WATERMARK_OPTION, gmdate( 'Y-m-d H:i:s' ), false );
+			// Caught up — leave the watermark where it is (B3): re-parking it to
+			// "now" every idle tick was a pure option write per 5-min sweep. The
+			// existing watermark is already correct: the next sweep's
+			// post_modified_gmt > watermark window only ever contains genuinely
+			// new modifications (an empty window is a cheap indexed seek), so a
+			// lagging watermark costs nothing and misses nothing.
 			return;
 		}
 

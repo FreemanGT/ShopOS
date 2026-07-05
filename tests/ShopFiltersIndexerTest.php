@@ -83,4 +83,23 @@ final class ShopFiltersIndexerTest extends TestCase {
 		$indexer->maybe_bump_rev();
 		$this->assertSame( 2, (int) get_option( Indexer::REV_OPTION, 0 ) );
 	}
+
+	/**
+	 * B1: the recurring-sweep scheduling (an Action Scheduler existence SELECT)
+	 * runs only on admin or cron requests — a plain storefront pageview skips it.
+	 *
+	 * @dataProvider schedule_gate_cases
+	 */
+	public function test_should_ensure_scheduled_gates_to_admin_or_cron( bool $is_admin, bool $is_cron, bool $expected ): void {
+		$this->assertSame( $expected, Indexer::should_ensure_scheduled( $is_admin, $is_cron ) );
+	}
+
+	public static function schedule_gate_cases(): array {
+		return array(
+			'front-end pageview skips'  => array( false, false, false ),
+			'admin request schedules'   => array( true, false, true ),
+			'cron request schedules'    => array( false, true, true ),
+			'admin + cron schedules'    => array( true, true, true ),
+		);
+	}
 }
