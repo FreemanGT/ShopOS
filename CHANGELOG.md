@@ -1,6 +1,6 @@
 # Freeman Changelog
 
-This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
+This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
 ## [1.21.40] — 2026-07-05
 

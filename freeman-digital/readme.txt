@@ -85,6 +85,14 @@ Unlike general caching plugins (which this complements — works great alongside
 
 == Changelog ==
 
+= 1.7.5 =
+* FEATURE: Frontend cdnjs preconnect hint is now gated behind a new `fe_preconnect_cdnjs` option (default ON). `opts()` merges defaults on every read, so existing installs still emit the hint — zero behavior change — but a site that doesn't use cdnjs can now switch it off from the "Add Preconnect Hints" admin card.
+* SECURITY: `FD_Indexes` DDL hardening (defense in depth) — allowlist-validate the table identifier, index name and column-list token before backtick-interpolating them into ALTER/DROP/CREATE INDEX, mirroring the existing MyISAM-convert table-name check. Reachable callers already gate these to static definitions behind nonce + `manage_options`, so this is belt-and-suspenders, not a live hole.
+* FIX: `readme.txt` Stable tag bumped to 1.7.5 (had been stale since 1.7.4).
+
+= 1.7.4 =
+* CORRECTNESS: `apply_deep` now calls `FD_Core::opts()` directly instead of a `function_exists('FD_Core::opts')` ternary that never resolves for a `Class::method` string, so the `wp_parse_args` defaults merge runs. Previously, on stores that never saved FD settings, deep reindex read a missing `idx_enable_maintenance_mode` and silently ran without maintenance mode.
+
 = 1.7.3 =
 * SECURITY: `wc_optimize_delete_options` DELETE rewriter now routes the captured LIKE pattern through `$wpdb->prepare()` with a `%s` placeholder instead of `esc_sql()`. No exploit vector was known (the LIKE patterns are always plugin/core-generated, never user input), but the prepared-statement form is the correct defensive pattern and removes a long-running audit flag.
 * FEATURE: Profiler retention is now configurable. New "Retention" card on the Profiler tab exposes `prof_retention_days` (1–365, default 7) and `prof_max_rows` (1,000–1,000,000, default 50,000). `prune_old_rows()` clamps both values to the safe range so a corrupt option can't wipe the table or let it grow unbounded.

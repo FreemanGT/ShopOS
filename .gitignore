@@ -7,6 +7,7 @@ dist/
 .vscode/
 .claude/
 *.zip
-!freeman-theme.zip.example
 .phpunit.result.cache
 coverage/
+.gstack/
+.impeccable/
