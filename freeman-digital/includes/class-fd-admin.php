@@ -428,6 +428,7 @@ class FD_Admin {
 
         echo '<div class="fd-section"><h2>' . esc_html__('Resource Hints & Preloading', 'freeman-digital') . '</h2>';
         $this->tog('fe_add_preconnect', __('Add Preconnect Hints', 'freeman-digital'), $o, __('Tells the browser to start connecting to external domains (Google Fonts, CDNs) before they\'re needed. Saves 100-300ms per external domain.', 'freeman-digital'));
+        $this->tog('fe_preconnect_cdnjs', __('Preconnect to cdnjs.cloudflare.com', 'freeman-digital'), $o, __('Adds a preconnect hint for cdnjs (used by some Elementor addons). Turn off if your site does not load anything from cdnjs. Only applies when Add Preconnect Hints is on.', 'freeman-digital'));
         ?>
         <div class="fd-field" style="margin-top:10px">
             <label><strong><?php esc_html_e('Additional Preconnect Domains', 'freeman-digital'); ?></strong> <?php esc_html_e('(one per line)', 'freeman-digital'); ?></label>

@@ -198,6 +198,10 @@ class FD_Indexes {
     public static function deep_reindex_table($tbl, $target) {
         global $wpdb;
         $pf = $wpdb->prefix . $tbl;
+        // Defense in depth: only ever backtick-interpolate a plain table identifier
+        // into DDL (mirrors ajax_convert_myisam). Reachable callers already gate $tbl
+        // to a static definitions map, so this is a belt-and-suspenders guard.
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $pf)) return false;
         if (!$wpdb->get_var($wpdb->prepare("SELECT COUNT(1) FROM information_schema.tables WHERE table_schema=%s AND table_name=%s",DB_NAME,$pf)))
             return false;
         $cur = self::get_current_indexes($pf);
@@ -206,6 +210,8 @@ class FD_Indexes {
         $skip = array('woo_','crp_','yarpp_','fd_');
         foreach ($all as $name) {
             $s=false; foreach($skip as $p) if(strpos($name,$p)===0){$s=true;break;} if($s)continue;
+            // Defense in depth: never backtick-interpolate a non-identifier index name.
+            if ($name !== 'PRIMARY KEY' && !preg_match('/^[a-zA-Z0-9_]+$/', $name)) continue;
             $ic = isset($cur[$name]); $it = isset($target[$name]);
             if ($ic && $it && $cur[$name]===$target[$name]) continue;
             if ($ic && $it && $cur[$name]!==$target[$name]) {
@@ -412,8 +418,10 @@ class FD_Indexes {
     public static function create($selected) {
         global $wpdb;
         $all=self::get_definitions(); $created=$dropped=0;
-        foreach($all as $i){if(!in_array($i['name'],$selected)){$tbl=$wpdb->prefix.$i['table'];if($wpdb->get_var($wpdb->prepare("SELECT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s AND INDEX_NAME=%s",$tbl,$i['name']))){$wpdb->query("DROP INDEX `{$i['name']}` ON `{$tbl}`");$dropped++;}}}
-        foreach($all as $i){if(in_array($i['name'],$selected)){$tbl=$wpdb->prefix.$i['table'];if(!$wpdb->get_var($wpdb->prepare("SELECT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s AND INDEX_NAME=%s",$tbl,$i['name']))){$wpdb->query("CREATE INDEX `{$i['name']}` ON `{$tbl}` ({$i['columns']})");$created++;}}}
+        // Defense in depth: the definitions are static, but validate the identifiers
+        // and column list before backtick-interpolating them into DROP/CREATE INDEX.
+        foreach($all as $i){if(!preg_match('/^[a-zA-Z0-9_]+$/',$i['name'])||!preg_match('/^[a-zA-Z0-9_]+$/',$i['table']))continue;if(!in_array($i['name'],$selected)){$tbl=$wpdb->prefix.$i['table'];if($wpdb->get_var($wpdb->prepare("SELECT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s AND INDEX_NAME=%s",$tbl,$i['name']))){$wpdb->query("DROP INDEX `{$i['name']}` ON `{$tbl}`");$dropped++;}}}
+        foreach($all as $i){if(!preg_match('/^[a-zA-Z0-9_]+$/',$i['name'])||!preg_match('/^[a-zA-Z0-9_]+$/',$i['table'])||!preg_match('/^[a-zA-Z0-9_,()\s]+$/',$i['columns']))continue;if(in_array($i['name'],$selected)){$tbl=$wpdb->prefix.$i['table'];if(!$wpdb->get_var($wpdb->prepare("SELECT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s AND INDEX_NAME=%s",$tbl,$i['name']))){$wpdb->query("CREATE INDEX `{$i['name']}` ON `{$tbl}` ({$i['columns']})");$created++;}}}
         if (class_exists('FD_Activity_Log')) {
             FD_Activity_Log::record('secondary_indexes_update', array(
                 'rows_affected' => $created + $dropped,

@@ -143,6 +143,7 @@ class FD_Core {
             'fe_optimize_google_fonts'      => 1,
             'fe_font_display_swap'          => 1,
             'fe_add_preconnect'             => 1,
+            'fe_preconnect_cdnjs'           => 1,
             'fe_preconnect_domains'         => '',
             'fe_preload_lcp'                => 0,
             'fe_lcp_image_url'              => '',

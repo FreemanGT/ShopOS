@@ -154,8 +154,10 @@ class FD_Frontend {
             $domains[] = 'https://fonts.gstatic.com';
         }
 
-        // Common CDNs used by Elementor/addons
-        $domains[] = 'https://cdnjs.cloudflare.com';
+        // Common CDNs used by Elementor/addons (opt-out via the cdnjs toggle)
+        if (!empty($this->o['fe_preconnect_cdnjs'])) {
+            $domains[] = 'https://cdnjs.cloudflare.com';
+        }
 
         // Custom domains from settings
         if (!empty($this->o['fe_preconnect_domains'])) {
