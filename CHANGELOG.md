@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.27] — 2026-07-05
+
+- ProductFeed: gate feed success on the tmp-to-final rename via promote_feed(); result-check the size-sidecar and dir-guard writes; fix latent Logger::info/error miscalls to Logger::log on the failure path
+
 ## [1.21.26] — 2026-07-05
 
 - CheapestDefaultVariation strategy select: schema key options renamed to choices so the dropdown renders (Settings_Hub reads choices); plus a repo-wide select-schema invariant test

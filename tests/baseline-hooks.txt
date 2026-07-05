@@ -18,9 +18,9 @@ freeman-core/src/Modules/InfiniteScroll/Module.php:267:		$resolved = apply_filte
 freeman-core/src/Modules/InfiniteScroll/Module.php:286:		do_action( 'freeman_core/infinite_scroll/before_render' );
 freeman-core/src/Modules/InfiniteScroll/Module.php:304:		do_action( 'freeman_core/infinite_scroll/after_render' );
 freeman-core/src/Modules/InfiniteScroll/Module.php:324:		$resolved = apply_filters( 'freeman_core/infinite_scroll/selector', $setting );
-freeman-core/src/Modules/ProductFeed/Generator.php:163:			do_action( 'freeman_core/product_feed/after_generate', $this->feed_file(), $elapsed );
-freeman-core/src/Modules/ProductFeed/Generator.php:224:			$args = (array) apply_filters(
-freeman-core/src/Modules/ProductFeed/Generator.php:262:				$xml = (string) apply_filters( 'freeman_core/product_feed/item', $this->product_xml( $product ), $product );
+freeman-core/src/Modules/ProductFeed/Generator.php:167:			do_action( 'freeman_core/product_feed/after_generate', $this->feed_file(), $elapsed );
+freeman-core/src/Modules/ProductFeed/Generator.php:254:			$args = (array) apply_filters(
+freeman-core/src/Modules/ProductFeed/Generator.php:292:				$xml = (string) apply_filters( 'freeman_core/product_feed/item', $this->product_xml( $product ), $product );
 freeman-core/src/Modules/ProductFeed/Server.php:94:		do_action( 'freeman_core/product_feed/before_serve' );
 freeman-core/src/Modules/ProductSlider/Widget.php:1343:				$max_pages = max( 1, (int) apply_filters( 'freeman_core/product_slider/grid_max_pages', $max_pages, $s ) );
 freeman-core/src/Modules/ProductSlider/Widget.php:899:		$args = (array) apply_filters( 'freeman_core/product_slider/query_args', $args, $s );

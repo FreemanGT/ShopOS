@@ -106,7 +106,11 @@ final class Generator {
 		$dir = $this->feed_dir();
 		if ( ! is_dir( $dir ) ) {
 			wp_mkdir_p( $dir );
-			file_put_contents( $dir . '/index.php', "<?php // Silence is golden.\n" ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_file_put_contents
+			// Best-effort directory-listing guard: a failure here doesn't affect
+			// feed correctness, so log a warning and carry on.
+			if ( false === file_put_contents( $dir . '/index.php', "<?php // Silence is golden.\n" ) ) { // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_file_put_contents
+				Logger::log( 'ProductFeed: could not write directory index guard in ' . $dir, 'warning' );
+			}
 		}
 	}
 
@@ -127,7 +131,7 @@ final class Generator {
 
 		$lock = fopen( $this->lock_file(), 'c+' );
 		if ( ! $lock || ! flock( $lock, LOCK_EX | LOCK_NB ) ) {
-			Logger::info( 'ProductFeed: another generation already running, skipping.' );
+			Logger::log( 'ProductFeed: another generation already running, skipping.' );
 			return;
 		}
 
@@ -136,15 +140,15 @@ final class Generator {
 
 		try {
 			$this->write_feed( $tmp );
-			rename( $tmp, $this->feed_file() );
-			// Sidecar size file written by write_feed() — promote the tmp
-			// alongside the .gz so they stay in sync.
-			if ( file_exists( $tmp . '.size' ) ) {
-				rename( $tmp . '.size', $this->size_file() );
+			// A failed promotion must NOT be recorded as a successful run — throw
+			// into the catch below so the last good feed stays served, no
+			// timestamp is written, and after_generate never fires.
+			if ( ! $this->promote_feed( $tmp ) ) {
+				throw new \RuntimeException( 'ProductFeed: feed promotion failed' );
 			}
 			update_option( self::OPT_LAST_GEN, current_time( 'mysql' ), false );
 			$elapsed = round( microtime( true ) - $start, 2 );
-			Logger::info( "ProductFeed generated in {$elapsed}s" );
+			Logger::log( "ProductFeed generated in {$elapsed}s" );
 
 			/**
 			 * Fires after a successful feed generation, once the new file is
@@ -162,7 +166,7 @@ final class Generator {
 			 */
 			do_action( 'freeman_core/product_feed/after_generate', $this->feed_file(), $elapsed );
 		} catch ( \Throwable $e ) {
-			Logger::error( 'ProductFeed error: ' . $e->getMessage() );
+			Logger::log( 'ProductFeed error: ' . $e->getMessage(), 'error' );
 			if ( file_exists( $tmp ) ) {
 				@unlink( $tmp ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 			}
@@ -176,10 +180,36 @@ final class Generator {
 	}
 
 	/**
+	 * Promote the freshly written tmp files into place.
+	 *
+	 * Returns true only when the main feed file rename succeeds — a false
+	 * return signals the caller to treat the run as failed (no timestamp, no
+	 * after_generate). The size sidecar is best-effort: if its rename fails the
+	 * feed is already live and correct, so we warn and still report success (the
+	 * next run re-syncs the sidecar).
+	 *
+	 * @param string $tmp Tmp feed path (the `.gz.tmp`).
+	 * @return bool True on successful feed promotion.
+	 */
+	private function promote_feed( $tmp ) {
+		if ( ! @rename( $tmp, $this->feed_file() ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- return value is checked and logged below.
+			Logger::log( 'ProductFeed: failed to promote ' . $tmp . ' → ' . $this->feed_file(), 'error' );
+			return false;
+		}
+		// Sidecar size file written by write_feed() — promote it alongside the
+		// .gz so they stay in sync. Best-effort: a failure here doesn't unwind
+		// the already-live feed.
+		if ( file_exists( $tmp . '.size' ) && ! @rename( $tmp . '.size', $this->size_file() ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- return value is checked and logged below.
+			Logger::log( 'ProductFeed: failed to promote size sidecar for ' . $this->feed_file(), 'warning' );
+		}
+		return true;
+	}
+
+	/**
 	 * Write the gzipped XML to the given tmp path.
 	 *
 	 * @param string $tmp_file Tmp path.
-	 * @throws \RuntimeException On gzopen failure.
+	 * @throws \RuntimeException On gzopen or size-sidecar write failure.
 	 */
 	private function write_feed( $tmp_file ) {
 		$gz = gzopen( $tmp_file, 'wb9' );
@@ -276,8 +306,11 @@ final class Generator {
 		gzclose( $gz );
 
 		// Sidecar size file. Written next to the tmp.gz so an atomic rename
-		// from tmp → final keeps both files in sync.
-		file_put_contents( $tmp_file . '.size', (string) $uncompressed ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_file_put_contents
+		// from tmp → final keeps both files in sync. A write failure aborts the
+		// run (throws into generate()'s catch) so a stale feed is never promoted.
+		if ( false === file_put_contents( $tmp_file . '.size', (string) $uncompressed ) ) { // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_file_put_contents
+			throw new \RuntimeException( 'Cannot write size sidecar for ' . esc_html( $tmp_file ) );
+		}
 	}
 
 	/* -----------------------------------------------------------------
