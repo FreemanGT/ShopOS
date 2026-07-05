@@ -284,7 +284,7 @@ class FD_Indexes {
         $defs = self::get_deep_definitions();
         $res = array();
 
-        $opts = function_exists('FD_Core::opts') ? FD_Core::opts() : get_option(FD_OPT, array());
+        $opts = FD_Core::opts();
         $use_maintenance = !empty($opts['idx_enable_maintenance_mode']);
 
         if ($use_maintenance) {
