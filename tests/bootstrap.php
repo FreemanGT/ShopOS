@@ -244,6 +244,18 @@ if ( ! function_exists( 'delete_term_meta' ) ) {
 		return true;
 	}
 }
+// get_term_by — resolves from a $GLOBALS['fr_term_by'] map keyed
+// "taxonomy:field:value" => term object (or false when unmapped).
+if ( ! function_exists( 'get_term_by' ) ) {
+	function get_term_by( $field, $value, $taxonomy = '' ) {
+		return $GLOBALS['fr_term_by'][ $taxonomy . ':' . $field . ':' . $value ] ?? false;
+	}
+}
+if ( ! function_exists( 'is_wp_error' ) ) {
+	function is_wp_error( $thing ) {
+		return $thing instanceof \WP_Error;
+	}
+}
 
 // get_terms — backward-compat with tests that set $GLOBALS['fr_get_terms_return']
 // (CategorySliderHooksTest etc.); falls back to the 4b path that honors a

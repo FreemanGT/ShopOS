@@ -188,4 +188,62 @@ final class ShopFiltersQueryBridgeTest extends TestCase {
 
 		$this->assertSame( array(), Query::filter_posts_to_ids( $posts, array() ) );
 	}
+
+	/**
+	 * A $wpdb stand-in counting the reads the in-stock resolution + has_rows probe
+	 * make, so the memo test can assert how many actually ran.
+	 */
+	private function counting_wpdb(): object {
+		return new class() {
+			public $prefix        = 'wp_';
+			public $get_col_calls = 0;
+			public $get_var_calls = 0;
+			public function prepare( $sql, ...$args ) {
+				return $sql;
+			}
+			public function get_col( $sql ) {
+				$this->get_col_calls++;
+				return array( '11' );
+			}
+			public function get_var( $sql ) {
+				$this->get_var_calls++;
+				return '1';
+			}
+		};
+	}
+
+	/**
+	 * A7: the same selection resolves to in-stock ids up to three times per
+	 * request (main-query post__in, slider constraint, search enforcement); the
+	 * per-request memo collapses identical resolutions to one index read, and the
+	 * has_rows() probe (SELECT 1 LIMIT 1, memoized in index_has_data) runs once.
+	 */
+	public function test_instock_resolution_is_memoized_per_request(): void {
+		$orig_wpdb = $GLOBALS['wpdb'] ?? null;
+		$orig_get  = $_GET;
+		$orig_by   = $GLOBALS['fr_term_by'] ?? null;
+
+		$GLOBALS['wpdb']        = $this->counting_wpdb();
+		$_GET                   = array( 'filter_pa_color' => 'red' );
+		$GLOBALS['fr_term_by']  = array( 'pa_color:slug:red' => (object) array( 'term_id' => 11 ) );
+
+		$q        = new Query();
+		$settings = array( 'source' => 'current_query', 'display_mode' => 'slider' );
+
+		$first  = $q->constrain_slider_query( array( 'include' => array( 11, 12 ) ), $settings );
+		$second = $q->constrain_slider_query( array( 'include' => array( 11, 12 ) ), $settings );
+
+		// Correctness: the widget's include is intersected down to the in-stock id.
+		$this->assertSame( array( 11 ), $first['include'] );
+		$this->assertSame( $first, $second );
+
+		// Efficiency: the second identical resolution reuses the memo, and the
+		// has_rows() existence probe runs at most once.
+		$this->assertSame( 1, $GLOBALS['wpdb']->get_col_calls, 'in-stock resolution must memoize' );
+		$this->assertLessThanOrEqual( 1, $GLOBALS['wpdb']->get_var_calls, 'has_rows() must not re-probe' );
+
+		$GLOBALS['wpdb']       = $orig_wpdb;
+		$_GET                  = $orig_get;
+		$GLOBALS['fr_term_by'] = $orig_by;
+	}
 }

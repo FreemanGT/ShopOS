@@ -280,4 +280,49 @@ final class ShopFiltersQueryBuilderTest extends TestCase {
 		Query_Builder::release_rebuild_lock( $key );
 		$this->assertTrue( Query_Builder::acquire_rebuild_lock( $key ), 'lock is re-acquirable after release' );
 	}
+
+	/**
+	 * A6: one wc_product_meta_lookup read feeds both the price and the flag facet.
+	 * shape_product_meta maps the shared rows into the parallel price + flag maps
+	 * the build consumes — min/max as floats, onsale as `=== 1`, in_stock as
+	 * `stock_status === 'instock'`.
+	 */
+	public function test_shape_product_meta_splits_rows_into_prices_and_flags(): void {
+		$rows = array(
+			(object) array( 'product_id' => 11, 'min_price' => '9.50', 'max_price' => '19.00', 'onsale' => '1', 'stock_status' => 'instock' ),
+			(object) array( 'product_id' => 12, 'min_price' => '5', 'max_price' => '5', 'onsale' => '0', 'stock_status' => 'outofstock' ),
+		);
+
+		$shaped = Query_Builder::shape_product_meta( $rows );
+
+		$this->assertSame(
+			array(
+				11 => array( 'min' => 9.5, 'max' => 19.0 ),
+				12 => array( 'min' => 5.0, 'max' => 5.0 ),
+			),
+			$shaped['prices']
+		);
+		$this->assertSame(
+			array(
+				11 => array( 'onsale' => true, 'in_stock' => true ),
+				12 => array( 'onsale' => false, 'in_stock' => false ),
+			),
+			$shaped['flags']
+		);
+	}
+
+	public function test_shape_product_meta_empty_rows_yield_empty_maps(): void {
+		$shaped = Query_Builder::shape_product_meta( array() );
+
+		$this->assertSame( array(), $shaped['prices'] );
+		$this->assertSame( array(), $shaped['flags'] );
+	}
+
+	public function test_shape_product_meta_defaults_missing_columns(): void {
+		// A lookup row missing price/flag columns coerces to 0.0 / false, not a notice.
+		$shaped = Query_Builder::shape_product_meta( array( (object) array( 'product_id' => 7 ) ) );
+
+		$this->assertSame( array( 'min' => 0.0, 'max' => 0.0 ), $shaped['prices'][7] );
+		$this->assertSame( array( 'onsale' => false, 'in_stock' => false ), $shaped['flags'][7] );
+	}
 }

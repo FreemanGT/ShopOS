@@ -85,6 +85,19 @@ final class Index_Repository {
 	}
 
 	/**
+	 * Whether the index has at least one row. A `SELECT 1 … LIMIT 1` existence
+	 * probe — the query bridge only needs the boolean, so it stops at the first
+	 * row instead of counting the whole table (A7).
+	 *
+	 * @return bool
+	 */
+	public function has_rows() {
+		global $wpdb;
+		$table = Database::table_name();
+		return null !== $wpdb->get_var( "SELECT 1 FROM {$table} LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery
+	}
+
+	/**
 	 * Empty the whole index (used before a full rebuild).
 	 */
 	public function clear_all() {

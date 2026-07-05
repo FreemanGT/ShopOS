@@ -592,12 +592,19 @@ final class Query_Builder {
 			$category_tree = Category_Tree::build( self::shape_category_nodes( $cat_counts, $cat_meta ) );
 		}
 
+		// Price + flags share one wc_product_meta_lookup read (A6): both facets
+		// key off the same term-filtered id list, so the min/max price and the
+		// on-sale/stock-status columns come back in a single SELECT rather than
+		// two identical-id sweeps.
+		$meta     = $this->product_meta( $computed['products'] );
+		$prices   = $meta['prices'];
+		$flag_map = $meta['flags'];
+
 		// Price facet (numeric bands). Price isn't in the index (§5.2) — read it
 		// from wc_product_meta_lookup for the term-filtered set. Band counts are
 		// self-excluded w.r.t. the price selection (computed over the term-filtered
 		// set); the grid count below additionally applies the selected bands.
 		$selected_bands = isset( $state['price_bands'] ) && is_array( $state['price_bands'] ) ? $state['price_bands'] : array();
-		$prices         = $this->product_prices( $computed['products'] );
 		$price_facet    = array();
 		$grid_products  = $computed['products'];
 		if ( ! empty( $prices ) ) {
@@ -617,7 +624,6 @@ final class Query_Builder {
 		$onsale_selected  = ! empty( $state['onsale'] );
 		$instock_selected = ! empty( $state['in_stock'] );
 		$show_instock     = ! $hide_oos;
-		$flag_map         = $this->product_flags( $computed['products'] );
 		$onsale_count     = 0;
 		$instock_count    = 0;
 		foreach ( $flag_map as $flag ) {
@@ -873,6 +879,32 @@ final class Query_Builder {
 	}
 
 	/**
+	 * Warm WP's term + term-meta object caches for a set of term ids in one
+	 * query, so the subsequent per-term get_term()/get_term_meta() reads are
+	 * cache hits rather than N separate lookups (A5). Best-effort — a failed or
+	 * empty prime just means the per-term reads fall through as before.
+	 *
+	 * @param string $taxonomy Taxonomy.
+	 * @param int[]  $term_ids Term ids to prime.
+	 * @return void
+	 */
+	private function prime_terms( $taxonomy, array $term_ids ) {
+		$taxonomy = (string) $taxonomy;
+		$term_ids = array_values( array_unique( array_filter( array_map( 'intval', $term_ids ) ) ) );
+		if ( '' === $taxonomy || empty( $term_ids ) || ! function_exists( 'get_terms' ) ) {
+			return;
+		}
+		get_terms(
+			array(
+				'taxonomy'               => $taxonomy,
+				'include'                => $term_ids,
+				'hide_empty'             => false,
+				'update_term_meta_cache' => true,
+			)
+		);
+	}
+
+	/**
 	 * Display metadata (slug, name, menu order) for every term the engine
 	 * returned, so shape_facets() can render and order checkboxes.
 	 *
@@ -883,6 +915,10 @@ final class Query_Builder {
 		$index = array();
 		foreach ( $engine_facets as $taxonomy => $counts ) {
 			$taxonomy = (string) $taxonomy;
+			// Prime the term + term-meta caches for the whole taxonomy in one
+			// query (A5) so the per-term get_term()/get_term_meta() reads below
+			// hit cache instead of firing 2-4 queries each.
+			$this->prime_terms( $taxonomy, array_keys( $counts ) );
 			foreach ( array_keys( $counts ) as $term_id ) {
 				$term_id = (int) $term_id;
 				$term    = get_term( $term_id, $taxonomy );
@@ -946,6 +982,9 @@ final class Query_Builder {
 	 * @return array<int,array<string,mixed>>
 	 */
 	private function build_category_meta( array $term_ids ) {
+		// Prime the term + term-meta caches for all product_cat terms in one query
+		// (A5) so the per-term get_term()/get_term_meta() reads below hit cache.
+		$this->prime_terms( 'product_cat', $term_ids );
 		$meta = array();
 		foreach ( $term_ids as $term_id ) {
 			$term_id = (int) $term_id;
@@ -964,16 +1003,23 @@ final class Query_Builder {
 	}
 
 	/**
-	 * Read min/max price for a set of products from wc_product_meta_lookup (§5.2 —
-	 * price lives in WooCommerce's lookup, never duplicated in our index).
+	 * Read min/max price AND the on-sale/stock-status flags for a set of products
+	 * in ONE wc_product_meta_lookup SELECT (§5.2 — price + flags live in
+	 * WooCommerce's lookup, never duplicated in our index). The price facet and
+	 * the flag facet key off the same term-filtered id list, so a single read
+	 * feeds both (A6). The row → (prices, flags) mapping is the pure
+	 * shape_product_meta() seam.
 	 *
 	 * @param int[] $product_ids Product ids.
-	 * @return array<int,array{min:float,max:float}>
+	 * @return array{prices:array<int,array{min:float,max:float}>,flags:array<int,array{onsale:bool,in_stock:bool}>}
 	 */
-	private function product_prices( array $product_ids ) {
+	private function product_meta( array $product_ids ) {
 		$product_ids = array_values( array_unique( array_map( 'intval', $product_ids ) ) );
 		if ( empty( $product_ids ) ) {
-			return array();
+			return array(
+				'prices' => array(),
+				'flags'  => array(),
+			);
 		}
 
 		global $wpdb;
@@ -982,55 +1028,42 @@ final class Query_Builder {
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT product_id, min_price, max_price FROM {$lookup} WHERE product_id IN ({$placeholders})",
+				"SELECT product_id, min_price, max_price, onsale, stock_status FROM {$lookup} WHERE product_id IN ({$placeholders})",
 				$product_ids
 			)
 		);
 		// phpcs:enable
 
-		$prices = array();
-		foreach ( (array) $rows as $row ) {
-			$prices[ (int) $row->product_id ] = array(
-				'min' => (float) $row->min_price,
-				'max' => (float) $row->max_price,
-			);
-		}
-		return $prices;
+		return self::shape_product_meta( (array) $rows );
 	}
 
 	/**
-	 * Read the on-sale + stock-status flags for a set of products from
-	 * wc_product_meta_lookup (§5.2 — never duplicated in the index).
+	 * Map wc_product_meta_lookup rows into the parallel price + flag maps the
+	 * facet build consumes: min/max as floats, onsale as `onsale === 1`, in_stock
+	 * as `stock_status === 'instock'`. Pure.
 	 *
-	 * @param int[] $product_ids Product ids.
-	 * @return array<int,array{onsale:bool,in_stock:bool}>
+	 * @param array $rows Rows with product_id, min_price, max_price, onsale, stock_status.
+	 * @return array{prices:array<int,array{min:float,max:float}>,flags:array<int,array{onsale:bool,in_stock:bool}>}
 	 */
-	private function product_flags( array $product_ids ) {
-		$product_ids = array_values( array_unique( array_map( 'intval', $product_ids ) ) );
-		if ( empty( $product_ids ) ) {
-			return array();
-		}
-
-		global $wpdb;
-		$lookup       = $wpdb->prefix . 'wc_product_meta_lookup';
-		$placeholders = implode( ', ', array_fill( 0, count( $product_ids ), '%d' ) );
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT product_id, onsale, stock_status FROM {$lookup} WHERE product_id IN ({$placeholders})",
-				$product_ids
-			)
-		);
-		// phpcs:enable
-
-		$flags = array();
-		foreach ( (array) $rows as $row ) {
-			$flags[ (int) $row->product_id ] = array(
-				'onsale'   => ( 1 === (int) $row->onsale ),
-				'in_stock' => ( 'instock' === (string) $row->stock_status ),
+	public static function shape_product_meta( array $rows ) {
+		$prices = array();
+		$flags  = array();
+		foreach ( $rows as $row ) {
+			$row        = (object) $row;
+			$product_id = (int) ( $row->product_id ?? 0 );
+			$prices[ $product_id ] = array(
+				'min' => (float) ( $row->min_price ?? 0 ),
+				'max' => (float) ( $row->max_price ?? 0 ),
+			);
+			$flags[ $product_id ] = array(
+				'onsale'   => ( 1 === (int) ( $row->onsale ?? 0 ) ),
+				'in_stock' => ( 'instock' === (string) ( $row->stock_status ?? '' ) ),
 			);
 		}
-		return $flags;
+		return array(
+			'prices' => $prices,
+			'flags'  => $flags,
+		);
 	}
 
 	/**

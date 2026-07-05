@@ -47,6 +47,16 @@ final class Query {
 	private $index_has_data = null;
 
 	/**
+	 * Per-request memo of resolved in-stock product ids, keyed by the serialized
+	 * filter selection. The same selection is resolved up to three times per
+	 * request (main-query post__in, slider constraint, search enforcement) with
+	 * request-constant filters, so one build is reused (A7).
+	 *
+	 * @var array<string,int[]>
+	 */
+	private $instock_memo = array();
+
+	/**
 	 * Wire the bridge. Only called from Module::boot() when the frontend flag
 	 * is on.
 	 */
@@ -390,6 +400,10 @@ final class Query {
 	 * @return int[]
 	 */
 	private function instock_product_ids( array $filters ) {
+		$memo_key = md5( (string) wp_json_encode( $filters ) );
+		if ( isset( $this->instock_memo[ $memo_key ] ) ) {
+			return $this->instock_memo[ $memo_key ];
+		}
 		$in_stock_only = ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) );
 		$repo          = $this->repo();
 		$sets          = array();
@@ -410,7 +424,8 @@ final class Query {
 			}
 			$sets[] = empty( $term_ids ) ? array() : $repo->product_ids_in_terms( $taxonomy, $term_ids, $in_stock_only );
 		}
-		return self::intersect_id_sets( $sets );
+		$this->instock_memo[ $memo_key ] = self::intersect_id_sets( $sets );
+		return $this->instock_memo[ $memo_key ];
 	}
 
 	/**
@@ -421,7 +436,7 @@ final class Query {
 	 */
 	private function index_has_data() {
 		if ( null === $this->index_has_data ) {
-			$this->index_has_data = $this->repo()->count_rows() > 0;
+			$this->index_has_data = $this->repo()->has_rows();
 		}
 		return $this->index_has_data;
 	}

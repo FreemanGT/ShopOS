@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.31] — 2026-07-05
+
+- ShopFilters facet-build efficiency (remediation PR-9, audit A5+A6+A7): prime term/term-meta caches in one get_terms per taxonomy, merge the price + flag meta_lookup reads into one SELECT, memoize instock resolution per request and swap COUNT(*) for a SELECT 1 LIMIT 1 existence probe. Output byte-identical, no flag.
+
 ## [1.21.30] — 2026-07-05
 
 - ShopFilters facet-cache hardening: validate cache-key taxonomies and skip junk states (A2), page-invariant key (A3), debounced rev bumps plus single-flight rebuild lock (A4)
