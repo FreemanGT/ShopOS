@@ -106,7 +106,7 @@
 
     var OPTS = {
         skeletonCount: (CFG.skeletonCount | 0) || 6,
-        rootMargin: '800px 0px',
+        rootMargin: CFG.rootMargin || '800px 0px',
         fadeStaggerMs: 40,
         mutationDebounceMs: 200,
         maxPages: (CFG.maxPages | 0) || 50,

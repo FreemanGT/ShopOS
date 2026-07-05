@@ -654,7 +654,9 @@ final class Query_Builder {
 		// the cache. Single-flight the write behind a short rebuild lock (A4) so
 		// concurrent misses don't stampede the same option row.
 		if ( '' !== $cache_key && self::should_store_state( $filters, $active ) && self::acquire_rebuild_lock( $cache_key ) ) {
-			set_transient( $cache_key, $payload, 5 * MINUTE_IN_SECONDS );
+			/** Filter the facet-response cache TTL, in seconds. @since 1.21.40 */
+			$ttl = (int) apply_filters( 'freeman_core/shop_filters/facet_cache_ttl', 5 * MINUTE_IN_SECONDS );
+			set_transient( $cache_key, $payload, $ttl );
 			self::release_rebuild_lock( $cache_key );
 		}
 

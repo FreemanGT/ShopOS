@@ -91,6 +91,18 @@ final class Security {
 	 * @return bool True if allowed, false if rate-limited.
 	 */
 	public static function rate_limit( $bucket, $max = 10, $window = 60 ) {
+		/**
+		 * Filter the effective rate-limit ceiling + window for a bucket.
+		 *
+		 * @since 1.21.40
+		 * @param array  $defaults [ 'max' => int hits, 'window' => int seconds ].
+		 * @param string $bucket   The rate-limit bucket id.
+		 */
+		$defaults = apply_filters( 'freeman_core/rate_limit_defaults', array( 'max' => $max, 'window' => $window ), $bucket );
+		if ( is_array( $defaults ) ) {
+			$max    = isset( $defaults['max'] ) ? (int) $defaults['max'] : $max;
+			$window = isset( $defaults['window'] ) ? (int) $defaults['window'] : $window;
+		}
 		$ip   = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'anon';
 		$key  = 'fmrl_' . md5( $bucket . '|' . $ip );
 		$hits = (int) get_transient( $key );

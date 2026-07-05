@@ -1273,7 +1273,8 @@ final class Widget extends Widget_Base {
 		// render and removed after the loop so other product loops stay
 		// unchanged.
 		$cs_thumb_size_filter = static function () {
-			return 'large';
+			/** Filter the image size used for grid/archive product cards. @since 1.21.40 */
+			return apply_filters( 'freeman_core/product_slider/archive_thumbnail_size', 'large' );
 		};
 		add_filter( 'single_product_archive_thumbnail_size', $cs_thumb_size_filter );
 

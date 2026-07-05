@@ -220,6 +220,8 @@ final class Module extends Module_Base {
 		return array(
 			'skeletonCount'       => (int) $this->get_option( 'skeleton_count', 6 ),
 			'maxPages'            => (int) $this->get_option( 'max_pages', 50 ),
+			/** Filter the IntersectionObserver rootMargin (prefetch distance). @since 1.21.40 */
+			'rootMargin'          => (string) apply_filters( 'freeman_core/infinite_scroll/root_margin', '800px 0px' ),
 			'endMessage'          => (string) $this->get_option( 'end_message', __( 'You have reached the end.', 'freeman-core' ) ),
 			'errorMessage'        => __( 'Could not load more.', 'freeman-core' ),
 			'loadMoreLabel'       => __( 'Load more', 'freeman-core' ),

@@ -86,6 +86,24 @@ final class SearchRepositorySearchTest extends TestCase {
 		);
 	}
 
+	public function test_max_results_filter_overrides_the_cap(): void {
+		add_filter(
+			'freeman_core/search/max_results',
+			static function () {
+				return 50;
+			}
+		);
+		try {
+			// The filtered cap applies to both the "unlimited" and the oversized path.
+			$this->assertSame( 50, Search_Repository::effective_limit( -1 ) );
+			$this->assertSame( 50, Search_Repository::effective_limit( 999999 ) );
+			// A smaller explicit limit still wins over the filtered cap.
+			$this->assertSame( 10, Search_Repository::effective_limit( 10 ) );
+		} finally {
+			unset( $GLOBALS['fr_hooks']['freeman_core/search/max_results'] );
+		}
+	}
+
 	public function test_search_memoizes_identical_reads(): void {
 		$GLOBALS['wpdb'] = $this->counting_wpdb();
 		$repo            = new Search_Repository();

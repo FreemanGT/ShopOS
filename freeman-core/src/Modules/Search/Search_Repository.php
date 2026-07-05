@@ -66,7 +66,9 @@ final class Search_Repository {
 	 */
 	public static function effective_limit( $limit ) {
 		$limit = (int) $limit;
-		return ( $limit > 0 ) ? min( $limit, self::MAX_RESULTS ) : self::MAX_RESULTS;
+		/** Filter the hard cap on search results returned in one query. @since 1.21.40 */
+		$cap = (int) apply_filters( 'freeman_core/search/max_results', self::MAX_RESULTS );
+		return ( $limit > 0 ) ? min( $limit, $cap ) : $cap;
 	}
 
 	/**

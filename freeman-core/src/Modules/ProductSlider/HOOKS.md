@@ -19,6 +19,20 @@ settings array.
 `source = 'related'` (delegates to `wc_get_related_products()`) bypass this
 filter — those code paths never build `$args`.
 
+### `freeman_core/product_slider/archive_thumbnail_size` (filter, since 1.21.40)
+```php
+apply_filters(
+    'freeman_core/product_slider/archive_thumbnail_size',
+    string $size // default 'large'
+);
+```
+Filters the registered image size used for grid/archive product-card
+thumbnails. Applied via a render-scoped `single_product_archive_thumbnail_size`
+filter added before the loop and removed after, so other product loops are
+unaffected. Default `'large'` (set in 1.21.18 to stop the ~324px
+`woocommerce_thumbnail` upscaling blurry on hi-DPI cards); return e.g.
+`'woocommerce_single'` for a smaller source.
+
 ## WooCommerce hook stack
 
 Each slider item is rendered with `wc_get_template_part( 'content',

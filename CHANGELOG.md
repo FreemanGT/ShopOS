@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.40] — 2026-07-05
+
+- Additive tunability filters: facet-cache TTL, search max-results cap, rate-limit defaults, ProductSlider archive thumbnail size, and InfiniteScroll observer rootMargin are now filterable (all additive, no flags)
+
 ## [1.21.39] — 2026-07-05
 
 - Comment-only sweep: corrected the stale flag-gated docblocks in Search, ShopFilters and HoverSwap to note the modules are always-on since their graduation versions, and annotated the sanctioned uninstall.php error_log exception
