@@ -1112,16 +1112,50 @@ final class Query_Builder {
 	}
 
 	/**
-	 * Products-per-page for the advisory total_pages count. Reads the site's
-	 * posts-per-page setting; the swapped grid is the front-end URL itself, so
-	 * WooCommerce remains the source of truth for actual pagination — this only
-	 * sizes the count shown in the panel.
+	 * Products-per-page for the advisory total_pages count. Prefers the
+	 * WooCommerce shop grid size over the blog posts-per-page so the panel's
+	 * count matches the storefront on stores where the two differ.
 	 *
 	 * @return int
 	 */
 	private function products_per_page() {
-		$per_page = (int) get_option( 'posts_per_page', 12 );
-		return $per_page > 0 ? $per_page : 12;
+		return self::resolve_per_page( self::wc_grid_per_page(), (int) get_option( 'posts_per_page', 12 ) );
+	}
+
+	/**
+	 * The WooCommerce shop grid's products-per-page — the same value the
+	 * storefront loop uses (`loop_shop_per_page` over the WC default), so a
+	 * grid-slice / pagination count keys off the real page size rather than the
+	 * blog posts-per-page. Returns 0 when WooCommerce is unavailable, signalling
+	 * resolve_per_page() to fall back. Integration (reads a live WC filter).
+	 *
+	 * @return int
+	 */
+	public static function wc_grid_per_page() {
+		if ( ! function_exists( 'wc_get_default_products_per_page' ) ) {
+			return 0;
+		}
+		/** This filter is documented in WooCommerce (WC_Query::product_query). */
+		return (int) apply_filters( 'loop_shop_per_page', wc_get_default_products_per_page() );
+	}
+
+	/**
+	 * Pick the effective products-per-page: the WooCommerce shop grid size when
+	 * it resolves to a positive value, else the blog posts-per-page, else 12
+	 * (mirroring the pre-existing `> 0 ? : 12` clamp so the "show all" / -1 edge
+	 * behaves as before). Pure.
+	 *
+	 * @param int $wc_per_page   WooCommerce shop grid size (0 when unavailable).
+	 * @param int $blog_per_page Blog posts-per-page fallback.
+	 * @return int
+	 */
+	public static function resolve_per_page( $wc_per_page, $blog_per_page ) {
+		$wc = (int) $wc_per_page;
+		if ( $wc > 0 ) {
+			return $wc;
+		}
+		$blog = (int) $blog_per_page;
+		return $blog > 0 ? $blog : 12;
 	}
 
 	/**

@@ -325,4 +325,25 @@ final class ShopFiltersQueryBuilderTest extends TestCase {
 		$this->assertSame( array( 'min' => 0.0, 'max' => 0.0 ), $shaped['prices'][7] );
 		$this->assertSame( array( 'onsale' => false, 'in_stock' => false ), $shaped['flags'][7] );
 	}
+
+	/**
+	 * PR-12: the grid slice + advisory count follow the WooCommerce shop grid
+	 * size (loop_shop_per_page) when it resolves, else the blog posts-per-page,
+	 * else 12 — mirroring the pre-existing `> 0 ? : 12` clamp.
+	 *
+	 * @dataProvider per_page_cases
+	 */
+	public function test_resolve_per_page_prefers_shop_grid_then_blog( int $wc, int $blog, int $expected ): void {
+		$this->assertSame( $expected, Query_Builder::resolve_per_page( $wc, $blog ) );
+	}
+
+	public static function per_page_cases(): array {
+		return array(
+			'shop grid wins over blog'   => array( 24, 10, 24 ),
+			'wc unavailable falls to blog' => array( 0, 10, 10 ),
+			'negative wc falls to blog'  => array( -1, 10, 10 ),
+			'both zero → 12 default'      => array( 0, 0, 12 ),
+			'negative blog → 12 default'  => array( 0, -5, 12 ),
+		);
+	}
 }

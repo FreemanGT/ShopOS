@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.33] — 2026-07-05
+
+- ShopFilters grid per-page source of truth (remediation PR-12): the filtered-grid page slice and the advisory panel count now follow the WooCommerce shop grid size (loop_shop_per_page) instead of the blog posts_per_page, so stores where the two differ paginate correctly. Byte-identical where they agree; no flag.
+
 ## [1.21.32] — 2026-07-05
 
 - Indexer background-churn reduction (remediation PR-10, audit B1+B3): gate ensure_scheduled to admin/cron so the Action Scheduler existence query no longer runs on every storefront pageview, and drop the idle-tick watermark re-park in both reconcile sweeps. Mirrored across the Search + ShopFilters indexers; index output identical, no flag.

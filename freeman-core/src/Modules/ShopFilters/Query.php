@@ -304,8 +304,10 @@ final class Query {
 		// Search engine (priority 10) already sliced to the current page, and
 		// slicing its page again would empty every page after the first.
 		if ( null === $existing && 'current_query' === $source && $is_grid ) {
-			$per_page = (int) get_option( 'posts_per_page', 12 );
-			$per_page = $per_page > 0 ? $per_page : 12;
+			// Match the WooCommerce shop grid size (loop_shop_per_page) rather than
+			// the blog posts-per-page, so the page slice lines up with how many
+			// products the storefront grid actually shows per page.
+			$per_page = Query_Builder::resolve_per_page( Query_Builder::wc_grid_per_page(), (int) get_option( 'posts_per_page', 12 ) );
 			$paged    = max( 1, (int) get_query_var( 'paged' ), (int) get_query_var( 'page' ) );
 			$slice    = array_slice( $include, ( $paged - 1 ) * $per_page, $per_page );
 			$include  = empty( $slice ) ? array( 0 ) : $slice;
