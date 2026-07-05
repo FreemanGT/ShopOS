@@ -59,8 +59,8 @@ final class Indexer {
 	 * ----------------------------------------------------------------- */
 
 	/**
-	 * Register the WC lifecycle listeners + cron callbacks. Only called from
-	 * Module::boot() when the indexer feature flag is on.
+	 * Register the WC lifecycle listeners + cron callbacks. Called from
+	 * Module::boot() whenever the module is enabled (always-on since 1.12.26).
 	 */
 	public function register_hooks() {
 		add_action( 'woocommerce_update_product', array( $this, 'handle_product_event' ), 20, 1 );

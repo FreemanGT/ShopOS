@@ -7,8 +7,8 @@
  * wording) without code (§4.2 — English defaults, locale-specific opt-in). Each
  * label is stored under its own option (`freeman_core_shop_filters_label_<key>`,
  * the same name Settings_Hub writes for the matching `label_<key>` field); an
- * unset / blank option falls back to the English default here, so flag-off
- * behaviour is byte-identical to before this phase.
+ * unset / blank option falls back to the English default here, so an
+ * untouched-settings site is byte-identical to before this phase.
  *
  * This map is the single source of truth: the module's settings_schema() builds
  * its text fields from defaults(), and the templates resolve text through get().

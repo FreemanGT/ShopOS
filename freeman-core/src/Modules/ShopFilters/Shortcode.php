@@ -5,11 +5,11 @@
  * Drops the filter panel into an Elementor shortcode/HTML element (decision
  * §5.4 — no Elementor widget). Server-renders the initial facet tree for the
  * current context so the first paint is correct and SEO-visible without JS, and
- * enqueues the front-end script that takes over on interaction. Only wired when
- * the frontend feature flag is on (Module::boot()); flag-off renders nothing.
+ * enqueues the front-end script that takes over on interaction. Wired whenever
+ * the module is enabled (always-on since 1.12.26; Module::boot()).
  *
  * The render path touches WooCommerce / the query, so it is exercised by live
- * QA; the registration and the flag-off empty-output contract are unit-tested.
+ * QA; the shortcode-tag registration is unit-tested.
  *
  * @package FreemanCore
  */

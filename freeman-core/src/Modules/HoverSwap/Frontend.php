@@ -9,7 +9,7 @@
  * absolutely positions it over the thumbnail and cross-fades it in on card
  * hover. No JS — infinite-scroll-loaded cards carry the overlay too.
  *
- * Only constructed when the frontend feature flag is on (Module::boot()).
+ * Constructed whenever the module is active (always-on since 1.16.1, routed by the `card_image_mode` setting).
  *
  * @package FreemanCore
  */

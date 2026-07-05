@@ -6,8 +6,8 @@
  * plugin. Wave 1 is the foundation only: a background full-text index
  * (`freeman_search_index`) kept fresh by an event-driven queue + reconcile
  * sweep, plus a "Reindex all" admin tool. No storefront search surface yet —
- * the live dropdown (Wave 2) and results page (Wave 3) come later. Gated by the
- * `search`/`indexer` feature flag; off = zero hooks, no index maintenance.
+ * the live dropdown (Wave 2) and results page (Wave 3) shipped in later waves.
+ * Always-on since 1.21.0 (Wave 8.4); the search feature flags were removed then.
  *
  * @package FreemanCore
  */
@@ -51,8 +51,8 @@ final class Module extends Module_Base {
 	}
 
 	/**
-	 * Settings schema. The live-dropdown knobs (Freeman → Search), used only when
-	 * the dropdown feature flag is on.
+	 * Settings schema. The live-dropdown knobs (Freeman → Search), always wired
+	 * since the dropdown graduated to always-on in 1.21.0.
 	 *
 	 * @return array
 	 */

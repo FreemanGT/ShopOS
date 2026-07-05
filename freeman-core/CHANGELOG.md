@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.39] — 2026-07-05
+
+- Comment-only sweep: corrected the stale flag-gated docblocks in Search, ShopFilters and HoverSwap to note the modules are always-on since their graduation versions, and annotated the sanctioned uninstall.php error_log exception
+
 ## [1.21.38] — 2026-07-05
 
 - VariationSwatches, ShopFilters and QuickView high z-indexes route through the theme --fm-z-* tokens with the current literals kept as fallbacks, so theme sites share one z-index ladder while non-theme sites stay byte-identical

@@ -4,8 +4,8 @@
  *
  * Action `freeman_core_search_query` (admin-AJAX, mirroring Shop Filters — no
  * REST). Public: logged-in + logged-out, guarded by a nonce + a per-IP rate
- * limit. Only wired when the dropdown feature flag is on (Module::boot()), so
- * flag-off leaves no public surface.
+ * limit. Wired whenever the module is enabled (always-on since 1.21.0;
+ * Module::boot()).
  *
  * The handler echoes JSON built from live WC products, so it is live-QA; the
  * ranked id query it delegates to (Query_Engine pure SQL) is unit-tested.

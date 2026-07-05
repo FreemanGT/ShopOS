@@ -19,6 +19,9 @@ foreach ( $plugin->registry()->all() as $module ) {
 	try {
 		$module->on_uninstall();
 	} catch ( \Throwable $e ) {
+		// Hard Rule #8 sanctioned exception: uninstall runs in a minimal bootstrap
+		// where Logger's hook/DB surface may already be torn down, so error_log is
+		// the only dependable sink for a module cleanup failure here.
 		error_log( '[FreemanCore][uninstall] ' . $e->getMessage() );
 	}
 }

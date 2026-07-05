@@ -5,7 +5,7 @@
  * call followed by offset-paged batch calls driven by inline JS, so a full
  * rebuild of a medium catalogue never blocks a single request.
  *
- * Only wired when the indexer feature flag is on (Module::boot()).
+ * Wired whenever the module is enabled (always-on since 1.21.0; Module::boot()).
  *
  * @package FreemanCore
  */

@@ -56,8 +56,8 @@ final class Indexer {
 	 * ----------------------------------------------------------------- */
 
 	/**
-	 * Register the WC lifecycle listeners + cron callbacks. Only called from
-	 * Module::boot() when the indexer feature flag is on.
+	 * Register the WC lifecycle listeners + cron callbacks. Called from
+	 * Module::boot() whenever the module is enabled (always-on since 1.21.0).
 	 *
 	 * ponytail: no term-rename hooks (set_object_terms / edited_term). A category
 	 * or tag rename doesn't bump a product's modified date, so the 5-min sweep

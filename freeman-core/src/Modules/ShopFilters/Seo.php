@@ -6,8 +6,8 @@
  * its clean category/shop page, so for those URLs we emit `noindex,follow` and
  * canonicalise to the clean archive — keeping the clean page indexable and
  * stopping search engines hoarding filter permutations. Query-string only, no
- * rewrite rules (so it stays additive), and gated by a default-off flag so an
- * SEO-plugin-governed site can opt out.
+ * rewrite rules (so it stays additive). Always-on since 1.12.26 (the default-off
+ * `seo_policy` flag that used to gate it was removed then).
  *
  * We route through whichever SEO plugin is active (RankMath / SEOPress / Yoast)
  * rather than emit a second canonical/robots tag alongside it; with no plugin

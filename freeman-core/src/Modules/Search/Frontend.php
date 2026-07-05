@@ -12,7 +12,7 @@
  * matches, so the same dropdown JS enhances it with no extra config; JS-off it
  * submits a normal product search.
  *
- * Only constructed when the dropdown feature flag is on (Module::boot()).
+ * Constructed whenever the module is enabled (always-on since 1.21.0; Module::boot()).
  *
  * @package FreemanCore
  */

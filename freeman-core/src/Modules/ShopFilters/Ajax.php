@@ -4,8 +4,8 @@
  *
  * Action `freeman_core_shop_filters_query` (admin-AJAX per decision §5.5 — no
  * REST). Public: registered for both logged-in and logged-out visitors, guarded
- * by a nonce + a per-IP rate limit. Only wired when the frontend feature flag
- * is on (Module::boot()), so flag-off leaves no public surface.
+ * by a nonce + a per-IP rate limit. Wired whenever the module is enabled
+ * (always-on since 1.12.26; Module::boot()).
  *
  * The handler echoes JSON, so it is exercised by live QA; the registration
  * wiring and the response-shaping algebra it delegates to (Query_Builder pure
