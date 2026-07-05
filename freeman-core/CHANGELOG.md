@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.22.0] — 2026-07-06
+
+- Wave 9 - ProductPage module: designed single-product template takeover (flag layout), coupon-price notice with live-coupon validation and per-variation price map (flag coupon_notice), low-stock urgency badge with editable strings and inherited font (flag stock_urgency); all three flags default off
+
 ## [1.21.40] — 2026-07-05
 
 - Additive tunability filters: facet-cache TTL, search max-results cap, rate-limit defaults, ProductSlider archive thumbnail size, and InfiniteScroll observer rootMargin are now filterable (all additive, no flags)
