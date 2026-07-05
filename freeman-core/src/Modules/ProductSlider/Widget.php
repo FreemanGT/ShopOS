@@ -1029,20 +1029,24 @@ final class Widget extends Widget_Base {
 	/**
 	 * Two-pass query for popularity / rating / price orderby — works around
 	 * WC's INNER JOIN on the sort meta key, which silently excludes products
-	 * with no `total_sales` / `_wc_average_rating` / `_price` row.
+	 * with no `total_sales` / `average_rating` / `min_price` row.
 	 *
 	 * 1. Fetch all eligible product IDs ordered by date (no JOIN on the
 	 *    sort meta).
-	 * 2. Bulk-load postmeta into WP's object cache, then read the sort
-	 *    key per ID (missing rows default to 0 so the product still sorts).
+	 * 2. Read the one sort column from `wc_product_meta_lookup` for those IDs
+	 *    in a single indexed query (missing rows default to 0 so the product
+	 *    still sorts). Replaces the former whole-catalog `update_meta_cache()`
+	 *    postmeta prime — audit C1, the biggest per-pageview cost.
 	 * 3. Sort in PHP, load top-N product objects, drop hidden ones.
 	 *
-	 * Defensive cap of 5000 IDs keeps the in-PHP sort bounded — far above
-	 * any realistic shop slider input — without unbounded memory on a
+	 * Defensive cap of 5000 IDs keeps the in-PHP sort + the IN() list bounded —
+	 * far above any realistic shop slider input — without unbounded memory on a
 	 * runaway catalog. Beyond 5000, only the newest 5000 by date are
 	 * considered for the ranking.
 	 *
 	 * @since 1.11.42
+	 * @since 1.21.28 Sort values read from `wc_product_meta_lookup` (min_price /
+	 *                average_rating / total_sales) instead of postmeta.
 	 *
 	 * @param array $args Filtered wc_get_products args; `orderby` is
 	 *                    `popularity`, `rating`, or `price` and `order` is
@@ -1053,12 +1057,12 @@ final class Widget extends Widget_Base {
 		$sort_orderby = (string) ( $args['orderby'] ?? '' );
 		$sort_order   = ( 'ASC' === ( $args['order'] ?? 'DESC' ) ) ? 'ASC' : 'DESC';
 		$limit        = max( 1, (int) ( $args['limit'] ?? 12 ) );
-		$meta_key_map = array(
+		$column_map = array(
 			'popularity' => 'total_sales',
-			'rating'     => '_wc_average_rating',
-			'price'      => '_price',
+			'rating'     => 'average_rating',
+			'price'      => 'min_price',
 		);
-		$meta_key     = $meta_key_map[ $sort_orderby ] ?? 'total_sales';
+		$column       = $column_map[ $sort_orderby ] ?? 'total_sales';
 
 		$id_args            = $args;
 		$id_args['orderby'] = 'date';
@@ -1075,15 +1079,7 @@ final class Widget extends Widget_Base {
 			$ids = array_slice( $ids, 0, 5000 );
 		}
 
-		if ( function_exists( 'update_meta_cache' ) ) {
-			update_meta_cache( 'post', $ids );
-		}
-
-		$values = array();
-		foreach ( $ids as $id ) {
-			$raw           = get_post_meta( $id, $meta_key, true );
-			$values[ $id ] = ( '' === $raw || null === $raw ) ? 0.0 : (float) $raw;
-		}
+		$values = $this->sort_values( $ids, $column );
 
 		if ( 'ASC' === $sort_order ) {
 			asort( $values, SORT_NUMERIC );
@@ -1104,6 +1100,55 @@ final class Widget extends Widget_Base {
 			}
 		}
 		return $products;
+	}
+
+	/**
+	 * Read one `wc_product_meta_lookup` column for a set of products in a single
+	 * indexed query, returned as an `[ id => float ]` map. Replaces the former
+	 * whole-catalog `update_meta_cache()` postmeta prime (audit C1): the lookup
+	 * table already carries `total_sales` / `average_rating` / `min_price`,
+	 * densely populated for every product. IDs with no lookup row (or a NULL
+	 * value) default to 0.0 so they still rank rather than dropping out.
+	 *
+	 * @since 1.21.28
+	 *
+	 * @param int[]  $ids    Candidate product ids (already unique + capped).
+	 * @param string $column Whitelisted lookup column: total_sales | average_rating | min_price.
+	 * @return array<int,float> id => sort value.
+	 */
+	private function sort_values( array $ids, $column ) {
+		// $column is interpolated into SQL (column names can't be bound
+		// placeholders), so it MUST come from this allowlist.
+		$allowed = array( 'total_sales', 'average_rating', 'min_price' );
+		if ( ! in_array( $column, $allowed, true ) ) {
+			$column = 'total_sales';
+		}
+		// Seed every candidate at 0.0 so an id missing from the lookup still
+		// ranks (preserving the no-drop guarantee), in date order.
+		$values = array_fill_keys( $ids, 0.0 );
+		if ( empty( $ids ) ) {
+			return $values;
+		}
+
+		global $wpdb;
+		$lookup       = $wpdb->prefix . 'wc_product_meta_lookup';
+		$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT product_id, {$column} AS sort_value FROM {$lookup} WHERE product_id IN ({$placeholders})",
+				$ids
+			)
+		);
+		// phpcs:enable
+
+		foreach ( (array) $rows as $row ) {
+			$id = (int) $row->product_id;
+			if ( isset( $values[ $id ] ) ) {
+				$values[ $id ] = ( null === $row->sort_value ) ? 0.0 : (float) $row->sort_value;
+			}
+		}
+		return $values;
 	}
 
 	protected function render() {

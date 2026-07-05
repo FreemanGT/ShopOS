@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.28] — 2026-07-05
+
+- ProductSlider popularity/rating/price orderby reads the sort column from wc_product_meta_lookup in one indexed query instead of priming whole-catalog postmeta every pageview (audit C1); price sorts on canonical min_price
+
 ## [1.21.27] — 2026-07-05
 
 - ProductFeed: gate feed success on the tmp-to-final rename via promote_feed(); result-check the size-sidecar and dir-guard writes; fix latent Logger::info/error miscalls to Logger::log on the failure path

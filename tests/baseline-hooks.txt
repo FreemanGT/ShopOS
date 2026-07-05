@@ -22,7 +22,7 @@ freeman-core/src/Modules/ProductFeed/Generator.php:167:			do_action( 'freeman_co
 freeman-core/src/Modules/ProductFeed/Generator.php:254:			$args = (array) apply_filters(
 freeman-core/src/Modules/ProductFeed/Generator.php:292:				$xml = (string) apply_filters( 'freeman_core/product_feed/item', $this->product_xml( $product ), $product );
 freeman-core/src/Modules/ProductFeed/Server.php:94:		do_action( 'freeman_core/product_feed/before_serve' );
-freeman-core/src/Modules/ProductSlider/Widget.php:1343:				$max_pages = max( 1, (int) apply_filters( 'freeman_core/product_slider/grid_max_pages', $max_pages, $s ) );
+freeman-core/src/Modules/ProductSlider/Widget.php:1388:				$max_pages = max( 1, (int) apply_filters( 'freeman_core/product_slider/grid_max_pages', $max_pages, $s ) );
 freeman-core/src/Modules/ProductSlider/Widget.php:899:		$args = (array) apply_filters( 'freeman_core/product_slider/query_args', $args, $s );
 freeman-core/src/Modules/QuickView/Ajax.php:78:		$html = (string) apply_filters( 'freeman_core/quick_view/drawer_html', $html, $product_id );
 freeman-core/src/Modules/QuickView/Frontend.php:142:		if ( ! apply_filters( 'freeman_core/quick_view/show_trigger', true, $product ) ) {

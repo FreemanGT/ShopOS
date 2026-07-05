@@ -40,20 +40,29 @@ if ( ! function_exists( 'is_tax' ) ) {
 use Freeman\Core\Modules\ProductSlider\Widget;
 
 /**
- * Covers the 1.11.42 popularity / rating / price orderby fix in
+ * Covers the popularity / rating / price orderby in
  * Widget::fetch_products_by_meta_orderby() — the two-pass query that bypasses
- * WC's INNER JOIN on `total_sales` / `_wc_average_rating` / `_price`, so
- * products with no sales / reviews / price still appear and the sort actually
- * applies.
+ * WC's INNER JOIN on the sort meta so products with no sales / reviews / price
+ * still appear and the sort actually applies.
  *
- * Tests assert sort order via the sequence of wc_get_product() lookups
- * captured by the bootstrap stub. The returned objects' get_id() is meaningless
- * (snapshot stub hardcodes 42), but the IDs PASSED to wc_get_product reflect
- * the in-PHP sort exactly.
+ * As of 1.21.28 (audit C1) the per-product sort value is read from
+ * `wc_product_meta_lookup` (total_sales / average_rating / min_price) in a
+ * single indexed query instead of an `update_meta_cache()` whole-catalog
+ * postmeta prime. These tests drive a $wpdb double (per the SearchRepository
+ * pattern): the double answers the lookup SELECT from a per-test [ id => value ]
+ * map, omitting ids not in the map to exercise the no-lookup-row default-0 path.
+ *
+ * Sort order is asserted via the sequence of wc_get_product() lookups captured
+ * by the bootstrap stub. The returned objects' get_id() is meaningless (snapshot
+ * stub hardcodes 42), but the IDs PASSED to wc_get_product reflect the in-PHP
+ * sort exactly.
  *
  * @covers \Freeman\Core\Modules\ProductSlider\Widget
  */
 final class ProductSliderPopularityOrderbyTest extends TestCase {
+
+	/** @var object|null Original $wpdb to restore. */
+	private $original_wpdb;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -63,7 +72,48 @@ final class ProductSliderPopularityOrderbyTest extends TestCase {
 		$GLOBALS['fr_wc_products']            = array();
 		$GLOBALS['fr_wc_get_product_return']  = new \WC_Product();
 		$GLOBALS['fr_wc_get_product_calls']   = array();
-		$GLOBALS['fr_post_meta']              = array();
+		$this->original_wpdb                  = $GLOBALS['wpdb'] ?? null;
+	}
+
+	protected function tearDown(): void {
+		$GLOBALS['wpdb'] = $this->original_wpdb;
+		parent::tearDown();
+	}
+
+	/**
+	 * A $wpdb stand-in that answers the wc_product_meta_lookup SELECT from the
+	 * given [ id => value ] map. Ids absent from the map return no row — the
+	 * production code then defaults them to 0.0. Captures the last SQL (so tests
+	 * can assert the selected column) and counts get_results() calls (so "one
+	 * indexed query" is verifiable).
+	 */
+	private function install_wpdb( array $values ): object {
+		$db = new class() {
+			public $prefix           = 'wp_';
+			public $values           = array();
+			public $last_sql         = '';
+			public $get_results_runs = 0;
+			private $captured_ids    = array();
+			public function prepare( $sql, $args = array() ) {
+				$this->last_sql     = $sql;
+				$this->captured_ids = is_array( $args ) ? $args : array_slice( func_get_args(), 1 );
+				return $sql;
+			}
+			public function get_results( $sql ) {
+				$this->get_results_runs++;
+				$rows = array();
+				foreach ( $this->captured_ids as $id ) {
+					$id = (int) $id;
+					if ( array_key_exists( $id, $this->values ) ) {
+						$rows[] = (object) array( 'product_id' => $id, 'sort_value' => $this->values[ $id ] );
+					}
+				}
+				return $rows;
+			}
+		};
+		$db->values      = $values;
+		$GLOBALS['wpdb'] = $db;
+		return $db;
 	}
 
 	/** Invoke the private fetch_products() with the given settings. */
@@ -77,6 +127,7 @@ final class ProductSliderPopularityOrderbyTest extends TestCase {
 
 	public function test_popularity_orderby_calls_wc_get_products_with_ids_return_and_date_orderby(): void {
 		$GLOBALS['fr_wc_get_products_return'] = array( 100, 200, 300 );
+		$this->install_wpdb( array( 100 => 5, 200 => 50, 300 => 20 ) );
 
 		$this->fetch( array(
 			'limit'   => 12,
@@ -94,10 +145,8 @@ final class ProductSliderPopularityOrderbyTest extends TestCase {
 	}
 
 	public function test_popularity_orderby_sorts_by_total_sales_descending(): void {
-		$GLOBALS['fr_wc_get_products_return']        = array( 100, 200, 300 );
-		$GLOBALS['fr_post_meta'][100]['total_sales'] = 5;
-		$GLOBALS['fr_post_meta'][200]['total_sales'] = 50;
-		$GLOBALS['fr_post_meta'][300]['total_sales'] = 20;
+		$GLOBALS['fr_wc_get_products_return'] = array( 100, 200, 300 );
+		$db = $this->install_wpdb( array( 100 => 5, 200 => 50, 300 => 20 ) );
 
 		$this->fetch( array(
 			'limit'   => 12,
@@ -108,13 +157,15 @@ final class ProductSliderPopularityOrderbyTest extends TestCase {
 
 		// Lookup order = sort order (desc by total_sales): 200 → 300 → 100.
 		$this->assertSame( array( 200, 300, 100 ), array_slice( $GLOBALS['fr_wc_get_product_calls'], 0, 3 ) );
+		$this->assertStringContainsString( 'total_sales', $db->last_sql );
+		$this->assertSame( 1, $db->get_results_runs, 'sort values must come from a single indexed query' );
 	}
 
-	public function test_popularity_orderby_includes_products_without_total_sales_meta(): void {
-		// Only product 200 has a total_sales row. WC's INNER JOIN would drop
-		// 100 and 300 entirely; the bypass must still reach all three.
-		$GLOBALS['fr_wc_get_products_return']        = array( 100, 200, 300 );
-		$GLOBALS['fr_post_meta'][200]['total_sales'] = 10;
+	public function test_popularity_orderby_includes_products_without_total_sales_row(): void {
+		// Only product 200 has a lookup value. Products missing from the lookup
+		// (no row) must still reach the ranking at 0, not be dropped.
+		$GLOBALS['fr_wc_get_products_return'] = array( 100, 200, 300 );
+		$this->install_wpdb( array( 200 => 10 ) );
 
 		$this->fetch( array(
 			'limit'   => 12,
@@ -124,18 +175,16 @@ final class ProductSliderPopularityOrderbyTest extends TestCase {
 		) );
 
 		$lookups = $GLOBALS['fr_wc_get_product_calls'];
-		$this->assertCount( 3, $lookups, 'all eligible products must be considered, not just those with total_sales meta' );
+		$this->assertCount( 3, $lookups, 'all eligible products must be considered, not just those with a lookup row' );
 		$this->assertSame( 200, $lookups[0], 'product with sales must lead' );
 		// 100 and 300 are tied at 0 — order between them is implementation-defined,
 		// but both must appear in the lookup set after 200.
 		$this->assertEqualsCanonicalizing( array( 100, 300 ), array_slice( $lookups, 1 ) );
 	}
 
-	public function test_rating_orderby_sorts_by_wc_average_rating_descending(): void {
-		$GLOBALS['fr_wc_get_products_return']               = array( 100, 200, 300 );
-		$GLOBALS['fr_post_meta'][100]['_wc_average_rating'] = 3.5;
-		$GLOBALS['fr_post_meta'][200]['_wc_average_rating'] = 4.8;
-		$GLOBALS['fr_post_meta'][300]['_wc_average_rating'] = 4.2;
+	public function test_rating_orderby_sorts_by_average_rating_descending(): void {
+		$GLOBALS['fr_wc_get_products_return'] = array( 100, 200, 300 );
+		$db = $this->install_wpdb( array( 100 => 3.5, 200 => 4.8, 300 => 4.2 ) );
 
 		$this->fetch( array(
 			'limit'   => 12,
@@ -145,14 +194,13 @@ final class ProductSliderPopularityOrderbyTest extends TestCase {
 		) );
 
 		$this->assertSame( array( 200, 300, 100 ), array_slice( $GLOBALS['fr_wc_get_product_calls'], 0, 3 ) );
+		$this->assertStringContainsString( 'average_rating', $db->last_sql );
 	}
 
-	public function test_price_orderby_sorts_by_price_meta(): void {
+	public function test_price_orderby_sorts_by_min_price(): void {
 		// Prices 29.99 / 9.99 / 19.99 — DESC expects 100, 300, 200.
-		$GLOBALS['fr_wc_get_products_return']  = array( 100, 200, 300 );
-		$GLOBALS['fr_post_meta'][100]['_price'] = '29.99';
-		$GLOBALS['fr_post_meta'][200]['_price'] = '9.99';
-		$GLOBALS['fr_post_meta'][300]['_price'] = '19.99';
+		$GLOBALS['fr_wc_get_products_return'] = array( 100, 200, 300 );
+		$db = $this->install_wpdb( array( 100 => '29.99', 200 => '9.99', 300 => '19.99' ) );
 
 		$this->fetch( array(
 			'limit'   => 12,
@@ -161,17 +209,18 @@ final class ProductSliderPopularityOrderbyTest extends TestCase {
 			'source'  => 'all',
 		) );
 
-		// Confirms `price` now uses the meta-orderby bypass (return=ids path).
+		// Confirms `price` now uses the meta-orderby bypass (return=ids path)
+		// and the canonical min_price lookup column (not _price postmeta).
 		$this->assertSame( 'ids', $GLOBALS['fr_wc_get_products_args']['return'] );
+		$this->assertStringContainsString( 'min_price', $db->last_sql );
 		$this->assertSame( array( 100, 300, 200 ), array_slice( $GLOBALS['fr_wc_get_product_calls'], 0, 3 ) );
 	}
 
-	public function test_price_orderby_includes_products_without_price_meta(): void {
-		// Product 200 priced; 100 and 300 have no _price ("price on request").
-		// WC's INNER JOIN would drop them; the bypass keeps all three, with the
-		// price-less ones sorting as 0.
-		$GLOBALS['fr_wc_get_products_return']   = array( 100, 200, 300 );
-		$GLOBALS['fr_post_meta'][200]['_price'] = '49.00';
+	public function test_price_orderby_includes_products_without_price_row(): void {
+		// Product 200 priced; 100 and 300 have no lookup price ("price on
+		// request"). They must still appear, sorting as 0.
+		$GLOBALS['fr_wc_get_products_return'] = array( 100, 200, 300 );
+		$this->install_wpdb( array( 200 => '49.00' ) );
 
 		$this->fetch( array(
 			'limit'   => 12,
@@ -185,11 +234,27 @@ final class ProductSliderPopularityOrderbyTest extends TestCase {
 		$this->assertSame( 200, $lookups[0], 'priced product leads on DESC' );
 	}
 
+	public function test_price_orderby_treats_null_lookup_value_as_zero(): void {
+		// A lookup row exists but min_price is NULL (unpriced) — must default to
+		// 0 and still rank, not corrupt the sort.
+		$GLOBALS['fr_wc_get_products_return'] = array( 100, 200 );
+		$this->install_wpdb( array( 100 => '15.00', 200 => null ) );
+
+		$this->fetch( array(
+			'limit'   => 12,
+			'orderby' => 'price',
+			'order'   => 'DESC',
+			'source'  => 'all',
+		) );
+
+		$lookups = $GLOBALS['fr_wc_get_product_calls'];
+		$this->assertCount( 2, $lookups );
+		$this->assertSame( 100, $lookups[0], 'priced product leads; NULL sorts as 0' );
+	}
+
 	public function test_popularity_orderby_asc_reverses_sort(): void {
-		$GLOBALS['fr_wc_get_products_return']        = array( 100, 200, 300 );
-		$GLOBALS['fr_post_meta'][100]['total_sales'] = 5;
-		$GLOBALS['fr_post_meta'][200]['total_sales'] = 50;
-		$GLOBALS['fr_post_meta'][300]['total_sales'] = 20;
+		$GLOBALS['fr_wc_get_products_return'] = array( 100, 200, 300 );
+		$this->install_wpdb( array( 100 => 5, 200 => 50, 300 => 20 ) );
 
 		$this->fetch( array(
 			'limit'   => 12,
@@ -202,12 +267,8 @@ final class ProductSliderPopularityOrderbyTest extends TestCase {
 	}
 
 	public function test_popularity_orderby_respects_limit(): void {
-		$GLOBALS['fr_wc_get_products_return']        = array( 100, 200, 300, 400, 500 );
-		$GLOBALS['fr_post_meta'][100]['total_sales'] = 1;
-		$GLOBALS['fr_post_meta'][200]['total_sales'] = 5;
-		$GLOBALS['fr_post_meta'][300]['total_sales'] = 3;
-		$GLOBALS['fr_post_meta'][400]['total_sales'] = 4;
-		$GLOBALS['fr_post_meta'][500]['total_sales'] = 2;
+		$GLOBALS['fr_wc_get_products_return'] = array( 100, 200, 300, 400, 500 );
+		$this->install_wpdb( array( 100 => 1, 200 => 5, 300 => 3, 400 => 4, 500 => 2 ) );
 
 		$out = $this->fetch( array(
 			'limit'   => 2,
