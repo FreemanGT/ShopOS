@@ -94,6 +94,30 @@ final class CSV_Exporter {
 	 * @param object[] $rows Row objects from `Subscribers::all()`.
 	 * @return string Full CSV body including UTF-8 BOM, header row, data rows.
 	 */
+	/**
+	 * Neutralize spreadsheet formula injection in a CSV field.
+	 *
+	 * Subscriber-supplied values (name, email) end up in a CSV that admins
+	 * open in Excel/Sheets, where a leading `=`, `+`, `-`, `@`, tab or CR
+	 * turns the cell into an executable formula (e.g. `=HYPERLINK(...)`).
+	 * The standard OWASP mitigation is a leading apostrophe, which
+	 * spreadsheets treat as "literal text follows". Accepted tradeoff:
+	 * benign values that start with `+`/`-` (phone-number-shaped names)
+	 * also gain the apostrophe.
+	 *
+	 * @param string $value Raw field value.
+	 * @return string Value safe to hand to fputcsv.
+	 */
+	public static function escape_csv_field( string $value ): string {
+		if ( '' === $value ) {
+			return $value;
+		}
+		if ( in_array( $value[0], array( '=', '+', '-', '@', "\t", "\r" ), true ) ) {
+			return "'" . $value;
+		}
+		return $value;
+	}
+
 	public function build_csv( array $rows ): string {
 		$headers = array(
 			__( 'Subscription ID', 'freeman-core' ),
@@ -112,16 +136,19 @@ final class CSV_Exporter {
 		foreach ( $rows as $row ) {
 			fputcsv(
 				$fh,
-				array(
-					(string) ( $row->id ?? '' ),
-					(string) ( $row->product_id ?? '' ),
-					(string) ( $row->variation_id ?? '' ),
-					(string) ( $row->customer_name ?? '' ),
-					(string) ( $row->customer_email ?? '' ),
-					(string) ( $row->status ?? '' ),
-					(string) ( $row->created_at ?? '' ),
-					(string) ( $row->notified_at ?? '' ),
-					(string) ( $row->unsubscribe_token ?? '' ),
+				array_map(
+					array( self::class, 'escape_csv_field' ),
+					array(
+						(string) ( $row->id ?? '' ),
+						(string) ( $row->product_id ?? '' ),
+						(string) ( $row->variation_id ?? '' ),
+						(string) ( $row->customer_name ?? '' ),
+						(string) ( $row->customer_email ?? '' ),
+						(string) ( $row->status ?? '' ),
+						(string) ( $row->created_at ?? '' ),
+						(string) ( $row->notified_at ?? '' ),
+						(string) ( $row->unsubscribe_token ?? '' ),
+					)
 				)
 			);
 		}

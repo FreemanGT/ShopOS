@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.25] — 2026-07-05
+
+- RestockNotify CSV export: neutralize spreadsheet formula injection (leading = + - @ tab CR prefixed with apostrophe) in subscriber-supplied fields
+
 ## [1.21.24] — 2026-07-02
 
 - Shop Filters perf: 5-minute facet-response cache keyed by browse state + index revision, invalidated on every index write

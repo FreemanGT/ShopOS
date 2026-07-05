@@ -176,6 +176,60 @@ final class RestockNotifyCsvExporterTest extends TestCase {
 		$this->assertStringContainsString( ',,', $line, 'empty notified_at cell collapses to ,,' );
 	}
 
+	/**
+	 * @dataProvider provide_formula_prefixed_fields
+	 */
+	public function test_escape_csv_field_neutralizes_formula_prefixes( string $raw ): void {
+		$this->assertSame( "'" . $raw, CSV_Exporter::escape_csv_field( $raw ) );
+	}
+
+	public static function provide_formula_prefixed_fields(): array {
+		return array(
+			'equals'      => array( '=HYPERLINK("http://evil.test","x")' ),
+			'plus'        => array( '+1+2' ),
+			'minus'       => array( '-1-2' ),
+			'at'          => array( '@SUM(A1)' ),
+			'tab'         => array( "\t=1+1" ),
+			'carriage_cr' => array( "\r=1+1" ),
+		);
+	}
+
+	/**
+	 * @dataProvider provide_benign_fields
+	 */
+	public function test_escape_csv_field_leaves_benign_values_byte_identical( string $raw ): void {
+		$this->assertSame( $raw, CSV_Exporter::escape_csv_field( $raw ) );
+	}
+
+	public static function provide_benign_fields(): array {
+		return array(
+			'name'          => array( 'Alice' ),
+			'email'         => array( 'a@x.test' ), // @ is only dangerous as the FIRST char.
+			'empty'         => array( '' ),
+			'numeric_id'    => array( '42' ),
+			'timestamp'     => array( '2026-05-01 10:00:00' ),
+			'hebrew_name'   => array( 'אליס כהן' ),
+			'inner_equals'  => array( 'a=b' ),
+		);
+	}
+
+	public function test_build_csv_neutralizes_formula_injection_in_subscriber_fields(): void {
+		$row = (object) array(
+			'id' => 1, 'product_id' => 100, 'variation_id' => 0,
+			'customer_name' => '=HYPERLINK("http://evil.test","click")',
+			'customer_email' => '@evil.test',
+			'status' => 'waiting', 'created_at' => '2026-05-01 10:00:00',
+			'notified_at' => null, 'unsubscribe_token' => 'tok-a',
+		);
+
+		$csv  = ( new CSV_Exporter() )->build_csv( array( $row ) );
+		$line = preg_split( '/\r?\n/', rtrim( substr( $csv, 3 ), "\r\n" ) )[1];
+
+		$this->assertStringContainsString( "'=HYPERLINK", $line, 'formula name neutralized with leading apostrophe' );
+		$this->assertStringContainsString( "'@evil.test", $line, 'formula email neutralized with leading apostrophe' );
+		$this->assertStringNotContainsString( ',=', str_replace( '"', '', $line ), 'no cell starts with a bare =' );
+	}
+
 	public function test_subscribers_all_returns_all_rows_regardless_of_status(): void {
 		$this->seed_row( array( 'status' => 'waiting' ) );
 		$this->seed_row( array( 'status' => 'notified' ) );
