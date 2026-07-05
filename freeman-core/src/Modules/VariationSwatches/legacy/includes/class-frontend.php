@@ -270,13 +270,7 @@ class Etucart_VS_Frontend {
 
 		wp_localize_script( 'freeman-core', 'EtucartVS', [
 			'checkoutUrl' => esc_url_raw( $checkout_url ),
-			'i18n' => [
-				'choose'       => \Freeman\Core\Modules\VariationSwatches\Labels::get( 'choose_option' ),
-				'notAvailable' => \Freeman\Core\Modules\VariationSwatches\Labels::get( 'not_available' ),
-				'addedToCart'  => \Freeman\Core\Modules\VariationSwatches\Labels::get( 'added_to_cart' ),
-				'addToCart'    => \Freeman\Core\Modules\VariationSwatches\Labels::get( 'add_to_cart' ),
-				'oos'          => \Freeman\Core\Modules\VariationSwatches\Labels::get( 'out_of_stock' ),
-			],
+			'i18n'        => self::i18n_payload(),
 		] );
 
 		// Always enqueue on the frontend. This matters for quick-view modals
@@ -302,6 +296,28 @@ class Etucart_VS_Frontend {
 			wp_enqueue_style( 'freeman-core' );
 			wp_enqueue_script( 'freeman-core' );
 		}
+	}
+
+	/**
+	 * The locale-aware i18n strings handed to the swatches JS via
+	 * `EtucartVS.i18n`. Pure (no WP state) so it is unit-testable; the
+	 * wording is resolved through {@see Labels} — Hebrew on a Hebrew site,
+	 * English elsewhere — so the buy-box + swatch-tooltip strings follow the
+	 * site language rather than being hard-coded Hebrew in the bundle.
+	 *
+	 * @return array<string,string>
+	 */
+	public static function i18n_payload(): array {
+		$labels = '\\Freeman\\Core\\Modules\\VariationSwatches\\Labels';
+
+		return [
+			'choose'       => $labels::get( 'choose_option' ),
+			'notAvailable' => $labels::get( 'not_available' ),
+			'addedToCart'  => $labels::get( 'added_to_cart' ),
+			'addToCart'    => $labels::get( 'add_to_cart' ),
+			'oos'          => $labels::get( 'out_of_stock' ),
+			'unavailable'  => $labels::get( 'unavailable' ),
+		];
 	}
 
 	/**

@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.35] — 2026-07-05
+
+- VariationSwatches swatch-tooltip out-of-stock and unavailable strings resolve through the locale-aware EtucartVS i18n Labels payload instead of hard-coded Hebrew literals
+
 ## [1.21.34] — 2026-07-05
 
 - ShopFilters indexer lighter variation reads (remediation PR-11, audit B2): reindex_product reads per-variation stock via get_available_variations('objects') instead of building the full frontend payload per variation. Parity-preserved (same WC availability filtering, same three fields), no flag.

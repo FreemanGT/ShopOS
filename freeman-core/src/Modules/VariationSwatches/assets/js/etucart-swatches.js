@@ -216,7 +216,12 @@
 					if (!$btn.attr('data-etucart-oos-title')) {
 						$btn.attr('data-etucart-oos-title', '1');
 						var existing = $btn.attr('title') || '';
-						var msg = outOfStock ? 'אזל מהמלאי' : 'לא זמין';
+						// Locale-aware wording from the EtucartVS.i18n payload
+						// (Hebrew on a Hebrew site, English elsewhere — Labels
+						// resolver). The Hebrew literals are a defensive fallback
+						// if the localized global is missing.
+						var i18n = (window.EtucartVS && window.EtucartVS.i18n) || {};
+						var msg = outOfStock ? (i18n.oos || 'אזל מהמלאי') : (i18n.unavailable || 'לא זמין');
 						$btn.attr('title', existing ? existing + ' — ' + msg : msg);
 					}
 				} else {
