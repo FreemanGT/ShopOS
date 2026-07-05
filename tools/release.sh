@@ -33,7 +33,11 @@ fi
 bump_theme() {
     local style="${ROOT}/freeman-theme/style.css"
     sed -i.bak -E "s/^([[:space:]]*Version:[[:space:]]*).*/\1${VERSION}/" "${style}" && rm "${style}.bak"
-    echo "freeman-theme/style.css → Version: ${VERSION}"
+    # FREEMAN_THEME_VERSION cache-busts every enqueued theme asset; it must
+    # move in lockstep with the style.css header or stale CSS/JS keeps serving.
+    local funcs="${ROOT}/freeman-theme/functions.php"
+    sed -i.bak -E "s/(define\([[:space:]]*'FREEMAN_THEME_VERSION',[[:space:]]*')[^']+('[[:space:]]*\))/\1${VERSION}\2/" "${funcs}" && rm "${funcs}.bak"
+    echo "freeman-theme: style.css Version + FREEMAN_THEME_VERSION → ${VERSION}"
 }
 
 bump_core() {
@@ -47,7 +51,12 @@ bump_core() {
     if [[ -f "${plugin_cls}" ]]; then
         sed -i.bak -E "s/(const VERSION[[:space:]]*=[[:space:]]*')[^']+(';)/\1${VERSION}\2/" "${plugin_cls}" && rm "${plugin_cls}.bak"
     fi
-    echo "freeman-core: header + FREEMAN_CORE_VERSION + Plugin::VERSION → ${VERSION}"
+    # 4. readme.txt Stable tag.
+    local readme="${ROOT}/freeman-core/readme.txt"
+    if [[ -f "${readme}" ]]; then
+        sed -i.bak -E "s/^(Stable tag:[[:space:]]*).*/\1${VERSION}/" "${readme}" && rm "${readme}.bak"
+    fi
+    echo "freeman-core: header + FREEMAN_CORE_VERSION + Plugin::VERSION + Stable tag → ${VERSION}"
 }
 
 # --- changelog prepender ----------------------------------------------------

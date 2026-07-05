@@ -1,5 +1,9 @@
 # Freeman Theme — Changelog
 
+## [1.11.27] — 2026-07-05
+
+- Release tooling truth fixes: FREEMAN_THEME_VERSION now bumped in lockstep with style.css (cache-bust fix), core Stable tag stamped on release
+
 ## [1.11.26] — 2026-06-11
 
 - Exclude Freeman slider/grid widget containers (.cs-track/.cs-grid) from the mobile-columns Customizer override — the forced grid broke the slider track and overrode the widget's mobile column control on product archives (grid parity audit G2)

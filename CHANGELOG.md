@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.11.27] — 2026-07-05
+
+- Release tooling truth fixes: FREEMAN_THEME_VERSION now bumped in lockstep with style.css (cache-bust fix), core Stable tag stamped on release
+
 ## [1.21.24] — 2026-07-02
 
 - Shop Filters perf: 5-minute facet-response cache keyed by browse state + index revision, invalidated on every index write
