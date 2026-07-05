@@ -173,3 +173,16 @@ Roadmap #14 / audit item A2 (Quick View) was dropped per §4.1. The first revisi
 - **§6.7 VariationSwatches coupling.** The drawer renders the standard single-product summary so VariationSwatches' existing hooks light up unaided, and fires a `freeman_core_quick_view_loaded` DOM event after injecting content. The only cross-module edit is **additive**: the Freeman event name joins the third-party quick-view event list (`woosq_loaded`, `yith_quick_view_loaded`, …) that `etucart-swatches.js` already listens to. No PHP cross-module calls (§4.6 / §5.7 stance unchanged).
 
 Scoped to Wave 7; changes nothing about prior decisions. §4.1's "internal-only" stance stands — this ships because the owner asked, not for competitor parity.
+
+## §7 Product Page module (added 2026-07-06)
+
+Owner request: a new module that replaces the current WooCommerce/Elementor single-product page with a fully designed, responsive PDP and productizes two functions.php snippets (coupon-discount price notice, variation stock-scarcity badge) as configurable toggles. Decisions taken at planning time, all owner-confirmed:
+
+- **§7.1 One wave / one PR.** The owner explicitly chose a single wave over the proposed 9.1/9.2/9.3 split, overriding the 12-file per-PR ceiling for this PR (precedent: the 1.21.39/1.21.40 owner-approved ceiling overrides). Sub-features remain independently flagged, so the blast radius stays per-feature despite the single PR.
+- **§7.2 Delivery = full PHP template takeover (Option A).** `template_include` at priority 9999 wins over Elementor Pro's Theme Builder single-product location; the takeover template renders the standard WC hook stacks so existing modules light up unaided. Rejected Option B (restyling the Elementor widgets in place) as fragile against widget markup and capped by the existing template structure. Rollback is the layout flag — off restores the Elementor page byte-identically.
+- **§7.3 Coupon notice is manual but validated.** The advertised code + percent are owner settings (no auto-derivation from the coupon object), but the notice renders only while a live WC coupon with that exact code exists and hasn't expired — owner chose "validate; if not, hide" over silent manual display.
+- **§7.4 Strings via Labels.** All storefront wording is per-string settings with blank-falls-back-to-English defaults (§4.2 / ShopFilters-QuickView-Search precedent); the owner types the Hebrew. The urgency badge's hardcoded font-family is stripped (inherits the page font) per owner request.
+- **§7.5 Legacy shortcode aliases.** `[discounted_price]` and `[stock_urgency]` (the snippet tags) are registered as aliases of the namespaced `[freeman_discounted_price]` / `[freeman_stock_urgency]` so existing Elementor placements keep working when the snippets are removed. These aliases are part of the public surface (Hard Rule #2 applies from 1.22.0 on).
+- **§7.6 Design authority = DESIGN.md.** The PDP is styled to the documented "Quiet Boutique" system (ink-first, hairlines, tonal ramp, RTL-first, Hebrew flat tracking) through the `--fm-*` tokens with literal fallbacks. One deliberate deviation from the snippets: the urgency badge uses the warning-amber semantic (DESIGN.md assigns low-stock to warning), not the snippets' red.
+
+Scoped to Wave 9; changes nothing about prior decisions.
