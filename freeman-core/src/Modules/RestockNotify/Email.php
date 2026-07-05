@@ -167,6 +167,27 @@ final class Email {
 	}
 
 	/**
+	 * Resolve the email-shell language + text-direction attributes.
+	 *
+	 * The shell strings already switch by locale (via {@see Module::defaults()}),
+	 * but the surrounding HTML shell previously hard-coded `lang="he" dir="rtl"`,
+	 * so an English-locale site rendered English copy inside an RTL Hebrew shell.
+	 * This derives the `<html lang>`/`dir` + inline `direction`/`text-align`
+	 * from the site locale + direction. Pure (no WP state) so it is unit-testable.
+	 *
+	 * @param string $locale Site locale (e.g. 'he_IL', 'en_US').
+	 * @param bool   $is_rtl Whether the site direction is right-to-left.
+	 * @return array{lang:string,dir:string,align:string}
+	 */
+	public static function html_dir_attrs( $locale, $is_rtl ) {
+		return array(
+			'lang'  => str_replace( '_', '-', (string) $locale ),
+			'dir'   => $is_rtl ? 'rtl' : 'ltr',
+			'align' => $is_rtl ? 'right' : 'left',
+		);
+	}
+
+	/**
 	 * Render the email HTML.
 	 *
 	 * Locale-aware: greeting line, unsubscribe link text, and unsubscribe
@@ -180,6 +201,7 @@ final class Email {
 	 */
 	private static function build_html( $a, $subscriber, $kind ) {
 		$shell = Module::defaults();
+		$d     = self::html_dir_attrs( get_locale(), (bool) is_rtl() );
 
 		$a = wp_parse_args(
 			$a,
@@ -229,9 +251,9 @@ final class Email {
 		// translators: %s = customer name (passed into the locale-defined greeting template).
 		$greeting = esc_html( sprintf( $greeting_template, $a['customer_name'] ) );
 
-		return '<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#f7f7f7;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Arial,sans-serif;direction:rtl;text-align:right;">
-<div style="max-width:560px;margin:40px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);direction:rtl;text-align:right;">
+		return '<!DOCTYPE html><html lang="' . esc_attr( $d['lang'] ) . '" dir="' . esc_attr( $d['dir'] ) . '"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f7f7f7;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Arial,sans-serif;direction:' . $d['dir'] . ';text-align:' . $d['align'] . ';">
+<div style="max-width:560px;margin:40px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);direction:' . $d['dir'] . ';text-align:' . $d['align'] . ';">
 <div style="padding:36px 40px 0;text-align:center;">
 <div style="display:inline-block;width:48px;height:48px;background:#000;border-radius:50%;text-align:center;line-height:48px;margin-bottom:20px;"><span style="color:#fff;font-size:20px;">&#128276;</span></div>
 <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111;">' . wp_kses_post( $a['heading'] ) . '</h1>

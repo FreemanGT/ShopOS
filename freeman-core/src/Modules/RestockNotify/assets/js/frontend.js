@@ -69,7 +69,7 @@
 
         // Ensure rsn_ajax is available.
         if (typeof rsn_ajax === 'undefined') {
-            showError($card, 'שגיאה: הסקריפט לא נטען כראוי. רענן את הדף.');
+            showError($card, t('scriptError', 'שגיאה: הסקריפט לא נטען כראוי. רענן את הדף.'));
             $btn.removeClass('rsn-loading');
             return;
         }

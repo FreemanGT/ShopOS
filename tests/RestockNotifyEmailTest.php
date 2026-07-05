@@ -182,4 +182,18 @@ final class RestockNotifyEmailTest extends TestCase {
 		}
 		$this->assertStringContainsString( 'admin@example.test', $from_line );
 	}
+
+	public function test_html_dir_attrs_are_rtl_and_hebrew_lang_on_hebrew_locale(): void {
+		$this->assertSame(
+			array( 'lang' => 'he-IL', 'dir' => 'rtl', 'align' => 'right' ),
+			Email::html_dir_attrs( 'he_IL', true )
+		);
+	}
+
+	public function test_html_dir_attrs_are_ltr_and_english_lang_on_english_locale(): void {
+		$this->assertSame(
+			array( 'lang' => 'en-US', 'dir' => 'ltr', 'align' => 'left' ),
+			Email::html_dir_attrs( 'en_US', false )
+		);
+	}
 }

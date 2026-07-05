@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.36] — 2026-07-05
+
+- RestockNotify email shell derives lang from get_locale and direction from is_rtl instead of hard-coded Hebrew RTL, and the script-not-loaded JS error routes through the t() locale helper
+
 ## [1.21.35] — 2026-07-05
 
 - VariationSwatches swatch-tooltip out-of-stock and unavailable strings resolve through the locale-aware EtucartVS i18n Labels payload instead of hard-coded Hebrew literals

@@ -382,6 +382,18 @@ if ( ! function_exists( 'get_locale' ) ) {
 	}
 }
 
+// Smart is_rtl: derives direction from the driven $GLOBALS['fr_locale'] so
+// locale-dependent shell code (e.g. RestockNotify\Email::build_html) reflects
+// the same locale tests set. RTL when the primary subtag is a known RTL
+// language (he/ar/fa/ur/yi/dv/ps/sd). Defaults to LTR.
+if ( ! function_exists( 'is_rtl' ) ) {
+	function is_rtl() {
+		$locale  = (string) ( $GLOBALS['fr_locale'] ?? 'en_US' );
+		$primary = strtolower( substr( $locale, 0, 2 ) );
+		return in_array( $primary, array( 'he', 'ar', 'fa', 'ur', 'yi', 'dv', 'ps', 'sd' ), true );
+	}
+}
+
 // Smart wp_localize_script: captures the localize payload into
 // $GLOBALS['fr_localize_calls'] keyed by $object_name so tests can assert
 // the JS-side data (handle, object name, payload). Doesn't render anything.
@@ -687,7 +699,9 @@ $stubs = array(
 	// can verify scheduling behavior. Keep them out of this null-return list.
 	'wp_upload_dir', 'wp_mkdir_p',
 	'load_plugin_textdomain', 'load_child_theme_textdomain',
-	'is_admin', 'is_rtl', 'current_user_can',
+	// is_rtl is promoted to a smart stub above (reads $GLOBALS['fr_locale'])
+	// so shell code renders the correct direction for the driven locale.
+	'is_admin', 'current_user_can',
 	'wp_verify_nonce', 'check_admin_referer', 'check_ajax_referer', 'wp_create_nonce', 'wp_nonce_field',
 	'esc_url_raw',
 	'deactivate_plugins', 'delete_plugins',

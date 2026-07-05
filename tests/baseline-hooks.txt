@@ -27,8 +27,8 @@ freeman-core/src/Modules/ProductSlider/Widget.php:899:		$args = (array) apply_fi
 freeman-core/src/Modules/QuickView/Ajax.php:78:		$html = (string) apply_filters( 'freeman_core/quick_view/drawer_html', $html, $product_id );
 freeman-core/src/Modules/QuickView/Frontend.php:142:		if ( ! apply_filters( 'freeman_core/quick_view/show_trigger', true, $product ) ) {
 freeman-core/src/Modules/QuickView/templates/drawer-content.php:55:		do_action( 'woocommerce_single_product_summary' );
-freeman-core/src/Modules/RestockNotify/Email.php:209:		$a = (array) apply_filters( 'freeman_core/restock_notify/email_args', $a, $subscriber, $kind );
-freeman-core/src/Modules/RestockNotify/Email.php:292:		do_action( 'freeman_core/restock_notify/before_send', $to, $subject, $html, $subscriber );
+freeman-core/src/Modules/RestockNotify/Email.php:231:		$a = (array) apply_filters( 'freeman_core/restock_notify/email_args', $a, $subscriber, $kind );
+freeman-core/src/Modules/RestockNotify/Email.php:314:		do_action( 'freeman_core/restock_notify/before_send', $to, $subject, $html, $subscriber );
 freeman-core/src/Modules/RestockNotify/Frontend.php:360:		if ( ! apply_filters( 'freeman_core/restock_notify/should_inject', true, $product, $context ) ) {
 freeman-core/src/Modules/RestockNotify/Frontend.php:92:		$should = (bool) apply_filters( 'rsn_should_enqueue', $should );
 freeman-core/src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php:75:        $should = (bool) apply_filters( 'rsn_should_enqueue', $should );
