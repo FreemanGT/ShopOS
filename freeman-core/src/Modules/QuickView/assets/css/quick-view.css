@@ -68,7 +68,10 @@
 .fc-quick-view {
 	position: fixed;
 	inset: 0;
-	z-index: 100000;
+	/* Sits above --fm-z-max drawers (e.g. Shop Filters). On theme sites the token
+	   flattens this and Shop Filters to 99999; QuickView renders at wp_footer so its
+	   later DOM position wins the tie. Off-theme, the 100000 fallback keeps it on top. */
+	z-index: var(--fm-z-max, 100000);
 	pointer-events: none;
 	visibility: hidden;
 }

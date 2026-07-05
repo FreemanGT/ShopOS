@@ -862,7 +862,7 @@ body:has(.etucart-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produ
 		left: 0 !important;
 		right: 0 !important;
 		bottom: 0 !important;
-		z-index: 9999 !important;
+		z-index: var(--fm-z-modal, 9999) !important;
 		background: #ffffff !important;
 		border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
 		box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08) !important;
@@ -1118,7 +1118,7 @@ body:has(.etucart-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produ
 	position: fixed;
 	bottom: 24px;
 	left: 24px;                           /* RTL: bottom-left visually = far side */
-	z-index: 10000;
+	z-index: var(--fm-z-toast, 10000);
 	min-width: 220px;
 	max-width: 90vw;
 	padding: 12px 18px;

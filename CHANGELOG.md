@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.38] — 2026-07-05
+
+- VariationSwatches, ShopFilters and QuickView high z-indexes route through the theme --fm-z-* tokens with the current literals kept as fallbacks, so theme sites share one z-index ladder while non-theme sites stay byte-identical
+
 ## [1.21.37] — 2026-07-05
 
 - VariationSwatches CSS routes swatch typography through the --fm-font-body design token instead of referencing the Elementor Style Kits sk_type_12 variable directly (keeps the inherit fallback for non-theme installs)
