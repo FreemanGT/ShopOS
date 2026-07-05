@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.34] — 2026-07-05
+
+- ShopFilters indexer lighter variation reads (remediation PR-11, audit B2): reindex_product reads per-variation stock via get_available_variations('objects') instead of building the full frontend payload per variation. Parity-preserved (same WC availability filtering, same three fields), no flag.
+
 ## [1.21.33] — 2026-07-05
 
 - ShopFilters grid per-page source of truth (remediation PR-12): the filtered-grid page slice and the advisory panel count now follow the WooCommerce shop grid size (loop_shop_per_page) instead of the blog posts_per_page, so stores where the two differ paginate correctly. Byte-identical where they agree; no flag.

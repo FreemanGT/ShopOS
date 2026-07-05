@@ -371,7 +371,7 @@ final class Indexer {
 			'any'    => array(),
 		);
 		if ( $is_variable ) {
-			$stock_map = Term_Helpers::in_stock_values_by_attribute( $product->get_available_variations() );
+			$stock_map = Term_Helpers::in_stock_values_by_attribute( $this->variation_stock_payload( $product ) );
 		}
 
 		foreach ( $attributes as $attribute ) {
@@ -403,6 +403,38 @@ final class Indexer {
 		}
 
 		return $rows;
+	}
+
+	/**
+	 * Minimal per-variation stock payload for in_stock_values_by_attribute(),
+	 * without the ~10+-queries-per-variation frontend payload of the array-mode
+	 * get_available_variations() (audit B2). The 'objects' mode runs WooCommerce's
+	 * identical availability filtering (exists / hide-out-of-stock / hide-invisible
+	 * + variation_is_visible) and returns the same variation set — only the heavy
+	 * per-variation get_available_variation() assembly (image srcset, price_html,
+	 * availability_html) is skipped. The three fields we read are sourced the same
+	 * way WC's array payload sources them (is_in_stock(), is_purchasable(),
+	 * get_variation_attributes()), so the resulting stock map is identical.
+	 *
+	 * @param \WC_Product $product Variable product.
+	 * @return array Variation payloads in the shape in_stock_values_by_attribute() consumes.
+	 */
+	private function variation_stock_payload( $product ) {
+		$variations = $product->get_available_variations( 'objects' );
+		$payload    = array();
+		foreach ( (array) $variations as $variation ) {
+			if ( ! $variation instanceof \WC_Product_Variation ) {
+				// WooCommerce < 3.4 ignored the 'objects' argument and returned the
+				// full array payloads — already the shape we need, so use as-is.
+				return (array) $variations;
+			}
+			$payload[] = array(
+				'is_in_stock'    => $variation->is_in_stock(),
+				'is_purchasable' => $variation->is_purchasable(),
+				'attributes'     => $variation->get_variation_attributes(),
+			);
+		}
+		return $payload;
 	}
 
 	/**
