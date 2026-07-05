@@ -38,7 +38,7 @@
 	   (e.g. WooSQ's `.woosq-sidebar`), and the variable cascades through that
 	   while `inherit` would pick up the modal's font. Descendants below just
 	   `inherit` from here. */
-	font-family: var(--e-global-typography-sk_type_12-font-family, inherit) !important;
+	font-family: var(--fm-font-body, inherit) !important;
 	color: var(--eshop-text) !important;
 	display: flex !important;
 	flex-direction: column !important;
@@ -665,7 +665,7 @@
 	width: min(360px, calc(100% - 24px));
 	pointer-events: none;
 	direction: rtl;
-	font-family: var(--e-global-typography-sk_type_12-font-family, inherit);
+	font-family: var(--fm-font-body, inherit);
 }
 
 .etucart-shop-toast {

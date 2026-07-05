@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.37] — 2026-07-05
+
+- VariationSwatches CSS routes swatch typography through the --fm-font-body design token instead of referencing the Elementor Style Kits sk_type_12 variable directly (keeps the inherit fallback for non-theme installs)
+
 ## [1.21.36] — 2026-07-05
 
 - RestockNotify email shell derives lang from get_locale and direction from is_rtl instead of hard-coded Hebrew RTL, and the script-not-loaded JS error routes through the t() locale helper

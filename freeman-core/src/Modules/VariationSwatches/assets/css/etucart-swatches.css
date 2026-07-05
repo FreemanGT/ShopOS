@@ -53,7 +53,7 @@
 	   wrapper sets its own `font-family` (e.g. WooSQ's `.woosq-sidebar` →
 	   "Open Sans"). The variable cascades through such wrappers untouched;
 	   `inherit` falls back to the surrounding font when no Style Kits. */
-	font-family: var(--e-global-typography-sk_type_12-font-family, inherit) !important;
+	font-family: var(--fm-font-body, inherit) !important;
 }
 
 .etucart-pdp-price[data-pdp-price] .etucart-pdp-price__prefix,
@@ -211,7 +211,7 @@ body:has(.etucart-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produ
 	   (e.g. WooSQ's `.woosq-sidebar`), and the variable cascades through that
 	   while `inherit` would pick up the modal's font. Descendants below just
 	   `inherit` from here. */
-	font-family: var(--e-global-typography-sk_type_12-font-family, inherit) !important;
+	font-family: var(--fm-font-body, inherit) !important;
 	color: var(--etucart-text) !important;
 	max-width: 640px;
 	width: 100% !important;
@@ -1125,7 +1125,7 @@ body:has(.etucart-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produ
 	background: #111111;
 	color: #ffffff;
 	border-radius: 14px;
-	font-family: var(--e-global-typography-sk_type_12-font-family, inherit);
+	font-family: var(--fm-font-body, inherit);
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1.3;
