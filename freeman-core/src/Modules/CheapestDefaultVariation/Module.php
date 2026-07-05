@@ -81,7 +81,7 @@ final class Module extends Module_Base {
 			'strategy'                => array(
 				'label'       => __( 'Default selection strategy', 'freeman-core' ),
 				'type'        => 'select',
-				'options'     => array(
+				'choices'     => array(
 					'cheapest'       => __( 'Cheapest in-stock variation', 'freeman-core' ),
 					'first_in_stock' => __( 'First in-stock variation (in WooCommerce order)', 'freeman-core' ),
 				),

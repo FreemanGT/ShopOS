@@ -319,6 +319,47 @@ final class CheapestVariationHooksTest extends TestCase {
 
 		$this->assertSame( 'red', $result['pa_color'] );
 	}
+
+	public function test_settings_schema_strategy_select_uses_choices_key(): void {
+		$schema = ( new Module() )->settings_schema();
+
+		$this->assertArrayHasKey( 'strategy', $schema );
+		$this->assertSame( 'select', $schema['strategy']['type'] );
+		$this->assertSame( 'cheapest', $schema['strategy']['default'] );
+		// Settings_Hub renders select options from the `choices` key — the
+		// schema shipped with `options` since Wave 3.3, so the strategy
+		// dropdown rendered empty (same bug class as HoverSwap 1.16.1).
+		$this->assertArrayHasKey( 'choices', $schema['strategy'], 'select must use the choices key Settings_Hub renders' );
+		foreach ( array( 'cheapest', 'first_in_stock' ) as $value ) {
+			$this->assertArrayHasKey( $value, $schema['strategy']['choices'] );
+		}
+	}
+
+	/**
+	 * Invariant guard: every select in every module's settings schema must
+	 * use the `choices` key Settings_Hub renders. Third occurrence of this
+	 * bug class (HoverSwap 1.16.1, this module 1.21.26) — a select declared
+	 * with `options` renders an empty dropdown and fails silently.
+	 */
+	public function test_every_module_select_schema_uses_choices_not_options(): void {
+		$modules = array(
+			Module::class,
+			\Freeman\Core\Modules\HoverSwap\Module::class,
+			\Freeman\Core\Modules\InfiniteScroll\Module::class,
+			\Freeman\Core\Modules\ShopFilters\Module::class,
+		);
+
+		foreach ( $modules as $class ) {
+			$schema = ( new $class() )->settings_schema();
+			foreach ( $schema as $key => $def ) {
+				if ( 'select' !== ( $def['type'] ?? '' ) ) {
+					continue;
+				}
+				$this->assertArrayHasKey( 'choices', $def, "$class $key: select without a choices key renders empty" );
+				$this->assertArrayNotHasKey( 'options', $def, "$class $key: options is not a key Settings_Hub reads" );
+			}
+		}
+	}
 }
 
 // phpcs:ignore Generic.Files.OneObjectStructurePerFile.MultipleFound

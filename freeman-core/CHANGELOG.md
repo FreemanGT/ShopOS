@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.21.26] — 2026-07-05
+
+- CheapestDefaultVariation strategy select: schema key options renamed to choices so the dropdown renders (Settings_Hub reads choices); plus a repo-wide select-schema invariant test
+
 ## [1.21.25] — 2026-07-05
 
 - RestockNotify CSV export: neutralize spreadsheet formula injection (leading = + - @ tab CR prefixed with apostrophe) in subscriber-supplied fields
