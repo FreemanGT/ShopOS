@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across both packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.21.29] — 2026-07-05
+
+- ShopFilters skips the dead native product-search WP_Query on search-results facet builds via a new pre_search_product_ids pre-filter that the Search engine feeds when its index has data
+
 ## [1.21.28] — 2026-07-05
 
 - ProductSlider popularity/rating/price orderby reads the sort column from wc_product_meta_lookup in one indexed query instead of priming whole-catalog postmeta every pageview (audit C1); price sorts on canonical min_price

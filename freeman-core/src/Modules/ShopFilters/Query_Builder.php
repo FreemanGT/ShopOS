@@ -660,27 +660,46 @@ final class Query_Builder {
 
 	/**
 	 * Product ids matching a search term — the base universe on a search-results
-	 * page. Runs an unpaginated product search so the facets cover the whole
-	 * result set, not just the current page. (A search plugin that filters generic
-	 * product-search WP_Query runs will refine these; otherwise it's WooCommerce's
-	 * native title/content search.)
+	 * page. A pre-filter listener may supply the ids directly (the Search engine
+	 * does when its index has data); otherwise this runs an unpaginated native
+	 * product search so the facets cover the whole result set, not just the
+	 * current page. (A search plugin that filters generic product-search WP_Query
+	 * runs will refine those native ids.)
 	 *
 	 * @param string $term Search term.
 	 * @return int[]
 	 */
 	private function search_product_ids( $term ) {
-		$query = new \WP_Query(
-			array(
-				'post_type'           => 'product',
-				'post_status'         => 'publish',
-				's'                   => (string) $term,
-				'fields'              => 'ids',
-				'posts_per_page'      => -1,
-				'no_found_rows'       => true,
-				'ignore_sticky_posts' => true,
-			)
-		);
-		$ids = array_map( 'intval', (array) $query->posts );
+		/**
+		 * Short-circuit pre-filter: a listener may supply the product ids up
+		 * front so the native product-search WP_Query below never runs. Return
+		 * null (the default) to fall through to WooCommerce's native
+		 * title/content search. The Search module supplies its engine-ranked ids
+		 * here whenever its index has data, making the native query dead weight
+		 * on every search-facet build.
+		 *
+		 * @since 1.21.29
+		 *
+		 * @param int[]|null $pre  Pre-supplied ids, or null to run native search.
+		 * @param string     $term Search term.
+		 */
+		$pre = apply_filters( 'freeman_core/shop_filters/pre_search_product_ids', null, (string) $term );
+		if ( null !== $pre ) {
+			$ids = array_map( 'intval', (array) $pre );
+		} else {
+			$query = new \WP_Query(
+				array(
+					'post_type'           => 'product',
+					'post_status'         => 'publish',
+					's'                   => (string) $term,
+					'fields'              => 'ids',
+					'posts_per_page'      => -1,
+					'no_found_rows'       => true,
+					'ignore_sticky_posts' => true,
+				)
+			);
+			$ids = array_map( 'intval', (array) $query->posts );
+		}
 
 		/**
 		 * Filters the product ids a search term resolves to before they seed the

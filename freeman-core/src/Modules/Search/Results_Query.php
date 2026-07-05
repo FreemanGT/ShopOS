@@ -66,6 +66,7 @@ final class Results_Query {
 		add_filter( 'posts_search', array( $this, 'neutralize_search' ), 10, 2 );
 		add_filter( 'freeman_core/product_slider/query_args', array( $this, 'constrain_slider_query' ), 10, 2 );
 		add_filter( 'freeman_core/product_slider/grid_max_pages', array( $this, 'grid_max_pages' ), 10, 2 );
+		add_filter( 'freeman_core/shop_filters/pre_search_product_ids', array( $this, 'pre_supply_engine_ids' ), 10, 2 );
 		add_filter( 'freeman_core/shop_filters/search_product_ids', array( $this, 'supply_engine_ids' ), 10, 2 );
 	}
 
@@ -317,6 +318,27 @@ final class Results_Query {
 			return '';
 		}
 		return $search;
+	}
+
+	/**
+	 * Pre-filter: supply the engine's ranked ids to Shop Filters up front so the
+	 * now-dead native product-search WP_Query never runs. Returns null to fall
+	 * through to native search when the index has no data (or a prior listener
+	 * already supplied a value). Mirrors supply_engine_ids()'s has_data() gate;
+	 * the repeated repo->search() read is request-memoized (1.21.19).
+	 *
+	 * @param int[]|null $pre  Short-circuit value (null = run native search).
+	 * @param string     $term Search term.
+	 * @return int[]|null
+	 */
+	public function pre_supply_engine_ids( $pre, $term ) {
+		if ( null !== $pre ) {
+			return $pre;
+		}
+		if ( ! $this->repo->has_data() ) {
+			return null;
+		}
+		return $this->repo->search( (string) $term, -1, true );
 	}
 
 	/**

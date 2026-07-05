@@ -112,4 +112,13 @@ final class SearchResultsQueryTest extends TestCase {
 
 		$this->assertSame( ' AND x', $rq->neutralize_search( ' AND x', null ) );
 	}
+
+	public function test_pre_supply_engine_ids_respects_prior_listener(): void {
+		// A non-null $pre means another listener already supplied ids — return it
+		// untouched without consulting the (final, unstubbable) repo. The
+		// has_data()/engine branches are integration / live QA, like supply_engine_ids().
+		$rq = new Results_Query();
+
+		$this->assertSame( array( 5, 6 ), $rq->pre_supply_engine_ids( array( 5, 6 ), 'hoodie' ) );
+	}
 }

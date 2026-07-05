@@ -46,9 +46,11 @@ final class SearchModuleTest extends TestCase {
 		$this->assertArrayHasKey( 'wp_enqueue_scripts', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'wp_ajax_freeman_core_search_query', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'wp_ajax_nopriv_freeman_core_search_query', $GLOBALS['fr_hooks'] );
-		// Engine-driven results page + Shop Filters facet feed.
+		// Engine-driven results page + Shop Filters facet feed (pre-filter
+		// short-circuits the native search WP_Query; post-filter kept for back-compat).
 		$this->assertArrayHasKey( 'pre_get_posts', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'posts_search', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'freeman_core/shop_filters/pre_search_product_ids', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'freeman_core/shop_filters/search_product_ids', $GLOBALS['fr_hooks'] );
 	}
 
