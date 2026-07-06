@@ -1,21 +1,25 @@
 <?php
 /**
- * Variation Swatches settings — legacy WooCommerce → Settings → Products tab.
+ * Variation Swatches settings — option-key registry + static read helpers.
  *
- * As of Wave 2.2 / 4g (freeman-core 1.11.45) the editable settings UI has
- * moved to **Freeman → Variation Swatches** (the Settings_Hub page, stored
- * under `freeman_core_variation_swatches_*` and read via {@see
- * \Freeman\Core\Modules\VariationSwatches\Settings_Reader}). This class no
- * longer renders the form. Per Hard Rule #2 the WooCommerce sub-section
- * (`?section=etucart_vs_shop_pick`) is **not** removed — it stays registered
- * so the URL keeps resolving — but `add_settings()` now returns only a short
- * "moved" notice. The `OPT_*` constants and the static read helpers (`bool`,
- * `max_visible`, `excluded_category_ids`, `should_apply_on_current_archive`)
- * are unchanged; they delegate reads to `Settings_Reader`.
+ * As of Wave 2.2 / 4g (freeman-core 1.11.45) the editable settings UI moved
+ * to **Freeman → Variation Swatches** (the Settings_Hub page, stored under
+ * `freeman_core_variation_swatches_*` and read via {@see
+ * \Freeman\Core\Modules\VariationSwatches\Settings_Reader}). Through 1.23.1 a
+ * vestigial WooCommerce → Settings → Products → "Shop swatches" sub-section
+ * was still registered (rendering only a "settings have moved" notice) so the
+ * old `?section=etucart_vs_shop_pick` URL kept resolving.
  *
- * Hard Rule #3: this `legacy/` edit was approved for Wave 4g (see the
- * roadmap Wave 2.2 / 4g entry). The historic `etucart_vs_*` option keys are
- * never deleted (§4.5 zero-downtime decision).
+ * As of 1.23.2 that sub-section is removed entirely — `register()` no longer
+ * hooks the WooCommerce settings filters, so the "Shop swatches" tab and its
+ * moved notice no longer appear. This is an owner-approved override of Hard
+ * Rule #2 (removing an admin section URL); no data is affected — the `OPT_*`
+ * constants and the static read helpers (`bool`, `max_visible`,
+ * `excluded_category_ids`, `should_apply_on_current_archive`) are unchanged
+ * and still delegate reads to `Settings_Reader`, and the historic
+ * `etucart_vs_*` option keys are never deleted (§4.5 zero-downtime decision).
+ *
+ * Hard Rule #3: this `legacy/` edit was owner-approved.
  *
  * @package EtucartVariationSwatches
  */
@@ -27,9 +31,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'Etucart_VS_Settings' ) ) :
 
 class Etucart_VS_Settings {
-
-	/** Settings sub-section slug inside WC Settings → Products. */
-	public const SECTION_ID = 'etucart_vs_shop_pick';
 
 	/** Individual option keys, one per field. */
 	public const OPT_ENABLED             = 'etucart_vs_shop_enabled';
@@ -60,9 +61,15 @@ class Etucart_VS_Settings {
 	/** Archive / shop-grid: show name + price only, no buy UI (1.23.2). */
 	public const OPT_SHOP_NAMES_PRICE_ONLY = 'etucart_vs_shop_names_price_only';
 
+	/**
+	 * Boot hook, called from Etucart_VS_Plugin. As of 1.23.2 the WooCommerce
+	 * → Settings → Products → "Shop swatches" sub-section is no longer
+	 * registered (removed — owner-approved Hard Rule #2 override), so there is
+	 * nothing to wire here. Kept as a no-op because the plugin bootstrap still
+	 * calls it and the OPT_* constants / static read helpers below remain the
+	 * module's option contract.
+	 */
 	public function register(): void {
-		add_filter( 'woocommerce_get_sections_products', [ $this, 'add_section' ] );
-		add_filter( 'woocommerce_get_settings_products', [ $this, 'add_settings' ], 10, 2 );
 	}
 
 	public static function bool( string $option_key, string $default = 'yes' ): bool {
@@ -127,37 +134,6 @@ class Etucart_VS_Settings {
 		return true;
 	}
 
-	public function add_section( array $sections ): array {
-		$sections[ self::SECTION_ID ] = __( 'Shop swatches', 'freeman-core' );
-		return $sections;
-	}
-
-	/**
-	 * Wave 2.2 / 4g: the editable form moved to Freeman → Variation Swatches.
-	 * The sub-section stays registered (Hard Rule #2 — the URL must keep
-	 * resolving) but renders only a short "moved" notice. WooCommerce's save
-	 * pipeline has nothing to write here now, so the legacy `etucart_vs_*`
-	 * option keys stop being written from this screen (they remain readable
-	 * forever via Settings_Reader's legacy fallback — §4.5).
-	 */
-	public function add_settings( array $settings, string $current_section ): array {
-		if ( self::SECTION_ID !== $current_section ) {
-			return $settings;
-		}
-
-		return [
-			[
-				'title' => __( 'Variation Swatches settings have moved', 'freeman-core' ),
-				'type'  => 'title',
-				'desc'  => __( 'These settings are now under Freeman → Variation Swatches.', 'freeman-core' ),
-				'id'    => 'etucart_vs_shop_pick_moved',
-			],
-			[
-				'type' => 'sectionend',
-				'id'   => 'etucart_vs_shop_pick_moved',
-			],
-		];
-	}
 }
 
 endif; // class_exists Etucart_VS_Settings

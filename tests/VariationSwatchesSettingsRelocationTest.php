@@ -20,8 +20,6 @@ require_once dirname( __DIR__ ) . '/freeman-core/src/Modules/VariationSwatches/l
  */
 final class VariationSwatchesSettingsRelocationTest extends TestCase {
 
-	private const WC_SECTION = 'etucart_vs_shop_pick';
-
 	protected function setUp(): void {
 		parent::setUp();
 		$GLOBALS['fr_opts']  = array();
@@ -69,28 +67,24 @@ final class VariationSwatchesSettingsRelocationTest extends TestCase {
 		$this->assertSame( 5, $schema['shop_max_visible']['default'] );
 	}
 
-	/* ---- legacy WooCommerce → Products section is now a "moved" notice ----- */
+	/* ---- legacy WooCommerce → Products section removed (1.23.2) ------------ */
 
-	public function test_wc_section_renders_only_a_moved_notice(): void {
-		$rows = ( new \Etucart_VS_Settings() )->add_settings( array(), self::WC_SECTION );
+	public function test_register_adds_no_woocommerce_settings_section_filters(): void {
+		$GLOBALS['fr_hooks'] = array();
 
-		$this->assertCount( 2, $rows );
-		$this->assertSame( 'title', $rows[0]['type'] );
-		$this->assertSame( 'sectionend', $rows[1]['type'] );
+		( new \Etucart_VS_Settings() )->register();
 
-		$ids = array_column( $rows, 'id' );
-		$this->assertNotContains( 'etucart_vs_shop_enabled', $ids );
-		$this->assertNotContains( 'etucart_vs_shop_max_visible', $ids );
+		// The "Shop swatches" sub-section (and its "settings have moved"
+		// notice) was removed in 1.23.2 — register() must no longer hook either
+		// WooCommerce settings filter, so neither the section nor its
+		// ?section=etucart_vs_shop_pick URL appears any more.
+		$this->assertArrayNotHasKey( 'woocommerce_get_sections_products', $GLOBALS['fr_hooks'] );
+		$this->assertArrayNotHasKey( 'woocommerce_get_settings_products', $GLOBALS['fr_hooks'] );
 	}
 
-	public function test_wc_section_left_untouched_for_other_sections(): void {
-		$incoming = array( array( 'id' => 'something' ) );
-		$this->assertSame( $incoming, ( new \Etucart_VS_Settings() )->add_settings( $incoming, 'general' ) );
-	}
-
-	public function test_wc_section_is_still_registered_so_the_url_resolves(): void {
-		$sections = ( new \Etucart_VS_Settings() )->add_section( array() );
-		$this->assertArrayHasKey( self::WC_SECTION, $sections );
+	public function test_section_render_methods_are_gone(): void {
+		$this->assertFalse( method_exists( \Etucart_VS_Settings::class, 'add_section' ) );
+		$this->assertFalse( method_exists( \Etucart_VS_Settings::class, 'add_settings' ) );
 	}
 
 	/* ---- settings_hub flag is retired ------------------------------------- */
