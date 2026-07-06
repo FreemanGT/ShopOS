@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.23.0] — 2026-07-06
+
+- Flag graduation sweep - 9 feature flags removed and their surfaces now always-on: Settings import, Sliders advanced controls, Cheapest Variation strategy, Infinite Scroll trigger modes, Restock Notify CSV export, Quick View storefront, and all three Product Page surfaces. Module enable toggles remain the kill-switches.
+
 ## [1.22.1] — 2026-07-06
 
 - PDP critique follow-up: editorial gallery (stacked/2-up desktop, scroll-snap strip + dots mobile, no flexslider chrome), VariationSwatches buy-box reconciliation via its own CSS variables + sticky-bar defer guard, trust line under the CTA (settings-editable, empty = hidden), accordion + image-swap motion, sticky-bar price sync, related-grid image sharpness
