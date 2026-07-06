@@ -86,12 +86,10 @@
 
 /* ---------- Gallery (editorial — no slider chrome) ------------------------ */
 
-/* The layout deliberately skips the wc-product-gallery-slider support, so
-   the images render as one plain stacked wrapper. Desktop keeps the first
-   image as a full-width hero and flows the rest as a thumbnail row, 4–5 per
-   row wrapping to the next (owner request, Wave 9.3); clicking a thumbnail
-   swaps it into the hero (product-page.js). Mobile is one swipeable image at
-   a time — a scroll-snap strip with a progress bar. Zoom stays per-image.
+/* One swipeable image at a time at every breakpoint — a scroll-snap strip
+   with a progress bar below it (owner request, Wave 9.3: same gallery on
+   desktop as mobile, no thumbnail row). On desktop, where there's no touch
+   swipe, product-page.js adds click-drag-to-scroll. Zoom stays per-image.
 
    WC's template inline-styles the gallery to opacity:0 as a FOUC-hider that
    flexslider's init undoes — with no slider, undo it here. */
@@ -106,22 +104,24 @@
 }
 
 .fm-pdp__gallery .woocommerce-product-gallery__wrapper {
-	display: grid;
-	/* Thumbnail row under the hero. auto-FIT (not auto-fill) so the tiles
-	   stretch to fill the row instead of leaving phantom empty tracks — that
-	   emptiness was the "small and far apart" bug. ~4 per row, wrapping; a
-	   short last row stretches to fill rather than sitting tiny on the left. */
-	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	display: flex;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
 	gap: var(--fm-space-sm, 8px);
 	margin: 0;
+	-webkit-overflow-scrolling: touch;
 }
 
-/* First image = full-width hero above the thumbnail row. */
-.fm-pdp__gallery .woocommerce-product-gallery__image:first-child {
-	grid-column: 1 / -1;
+.fm-pdp__gallery .woocommerce-product-gallery__wrapper::-webkit-scrollbar {
+	display: none;
 }
 
 .fm-pdp__gallery .woocommerce-product-gallery__image {
+	flex: 0 0 100%;
+	/* start (not center): full-width slides carrying an inter-slide gap
+	   mis-seat when centre-snapped — the first slide never rests cleanly. */
+	scroll-snap-align: start;
 	background: var(--fm-color-paper-dim, #f1efea);
 	border-radius: 1rem;
 	overflow: hidden;
@@ -131,24 +131,27 @@
 	width: 100%;
 	height: auto;
 	display: block;
+	/* Suppress the browser's native image drag-ghost so a mouse drag scrolls
+	   the strip (desktop navigation) instead of picking up the image. */
+	-webkit-user-drag: none;
+	user-select: none;
 }
 
-/* Thumbnails get a tidy uniform tile so the row stays even regardless of the
-   source aspect ratios; the hero keeps its natural height. Clicking one swaps
-   it into the hero (product-page.js) — hence the pointer + hover cue. */
-.fm-pdp__gallery .woocommerce-product-gallery__image:not(:first-child) {
-	aspect-ratio: var(--fm-card-aspect, 4 / 5);
-	cursor: pointer;
-	transition: opacity var(--fm-motion-fast, 180ms) var(--fm-ease, cubic-bezier(0.2, 0, 0, 1));
-}
+/* Desktop: no touch, so the strip is dragged with the mouse (product-page.js
+   toggles .is-grabbing while a drag is in flight). */
+@media (min-width: 1024px) {
+	.fm-pdp__gallery .woocommerce-product-gallery__wrapper {
+		cursor: grab;
+	}
 
-.fm-pdp__gallery .woocommerce-product-gallery__image:not(:first-child):hover {
-	opacity: 0.82;
-}
+	.fm-pdp__gallery .woocommerce-product-gallery__wrapper.is-grabbing {
+		cursor: grabbing;
+		scroll-snap-type: none;
+	}
 
-.fm-pdp__gallery .woocommerce-product-gallery__image:not(:first-child) img {
-	height: 100%;
-	object-fit: contain;
+	.fm-pdp__gallery .woocommerce-product-gallery__wrapper.is-grabbing img {
+		pointer-events: none;
+	}
 }
 
 /* Variation-image swap feedback: product-page.js drops this class on the
@@ -166,54 +169,17 @@
 	}
 }
 
-/* Mobile: one image at a time — a swipeable scroll-snap strip. Every image
-   (hero included) becomes a full-width slide. */
-@media (max-width: 1023.98px) {
-	.fm-pdp__gallery .woocommerce-product-gallery__wrapper {
-		display: flex;
-		overflow-x: auto;
-		scroll-snap-type: x mandatory;
-		scrollbar-width: none;
-		gap: var(--fm-space-sm, 8px);
-		-webkit-overflow-scrolling: touch;
-	}
-
-	.fm-pdp__gallery .woocommerce-product-gallery__wrapper::-webkit-scrollbar {
-		display: none;
-	}
-
-	.fm-pdp__gallery .woocommerce-product-gallery__image,
-	.fm-pdp__gallery .woocommerce-product-gallery__image:first-child,
-	.fm-pdp__gallery .woocommerce-product-gallery__image:not(:first-child) {
-		flex: 0 0 100%;
-		/* start (not center): full-width slides carrying an inter-slide gap
-		   mis-seat when centre-snapped — the first slide never rests cleanly. */
-		scroll-snap-align: start;
-		aspect-ratio: auto;
-		cursor: default;
-	}
-
-	.fm-pdp__gallery .woocommerce-product-gallery__image:not(:first-child) img {
-		height: auto;
-	}
-}
-
-/* Scroll-progress bar (built by product-page.js only when the strip scrolls),
-   mobile only — its fill width tracks the strip's horizontal scroll position.
-   Scroll-driven (no transition), so it needs no reduced-motion handling; the
-   fill grows from the inline-start edge, so it reads correctly in RTL. */
+/* Scroll-progress bar (built by product-page.js when the strip has >1 image),
+   at every breakpoint — its fill width tracks the strip's horizontal scroll
+   position. Scroll-driven (no transition), so it needs no reduced-motion
+   handling; the fill grows from the inline-start edge, so it reads correctly
+   in RTL. */
 .fm-pdp__gallery-progress {
 	block-size: 3px;
 	margin-top: var(--fm-space-md, 16px);
 	border-radius: var(--fm-radius-pill, 999px);
 	background: var(--fm-color-hairline, #e6e6e2);
 	overflow: hidden;
-}
-
-@media (min-width: 1024px) {
-	.fm-pdp__gallery-progress {
-		display: none;
-	}
 }
 
 .fm-pdp__gallery-progress__fill {

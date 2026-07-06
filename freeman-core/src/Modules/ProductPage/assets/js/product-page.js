@@ -12,14 +12,12 @@
  *    body.fm-pdp-sticky-active so the CSS reserves bottom space for it.
  * 2. Sticky-bar price sync — follows the picked variation via WooCommerce's
  *    found_variation / reset_data events.
- * 3. Gallery scroll-progress bar (mobile) — the gallery is a swipeable
- *    scroll-snap strip; a slim fill tracks its horizontal scroll position.
- * 4. Gallery interaction — one capture-phase click handler that kills any
+ * 3. Gallery scroll-progress bar — the gallery is a swipeable scroll-snap
+ *    strip at every breakpoint; a slim fill tracks its scroll position.
+ * 4. Gallery interaction — a capture-phase click handler that kills any
  *    lightbox (WC PhotoSwipe / theme / Elementor) and the raw-image
- *    navigation, then on desktop swaps the clicked thumbnail into the hero
- *    (first) slot. The swap moves attributes, not nodes, so WC's variation
- *    image update (which always targets the FIRST gallery image's
- *    .wp-post-image) keeps working. Inert on mobile (swipe is the gesture).
+ *    navigation (the carousel is swipe/drag-only, a click opens nothing),
+ *    plus mouse click-drag-to-scroll on desktop (which has no touch swipe).
  * 5. Variation image-swap feedback — a quick fade on the main gallery image
  *    when WC swaps its source (reduced-motion collapses it in CSS).
  */
@@ -140,88 +138,66 @@
 		if ( ! wrapper ) {
 			return;
 		}
-		var desktop = window.matchMedia ? window.matchMedia( '(min-width: 1024px)' ) : null;
 
-		// One CAPTURE-phase handler owns every gallery-image click. Capture +
-		// stopPropagation runs before — and prevents — any lightbox handler
-		// (WC PhotoSwipe, the theme's, Elementor's), whichever is bound and
-		// wherever it bubbles from; preventDefault also blocks the raw
-		// <a href="full.jpg"> navigation. On desktop the click then swaps the
-		// clicked thumbnail into the hero (first) slot; on mobile it's inert
-		// (the swipe carousel is the interaction). Hover-magnify (jquery.zoom)
-		// binds mousemove, not click, so it's untouched.
+		// Capture-phase click kill: runs before — and prevents — any lightbox
+		// handler (WC PhotoSwipe, the theme's, Elementor's), whichever is bound
+		// and wherever it bubbles from, plus the raw <a href="full.jpg">
+		// navigation. The gallery is a swipe/drag carousel, so a click never
+		// opens anything. Hover-magnify (jquery.zoom) binds mousemove, not
+		// click, so it's untouched.
 		wrapper.addEventListener(
 			'click',
 			function ( e ) {
-				var tile = e.target && e.target.closest
-					? e.target.closest( '.woocommerce-product-gallery__image' )
-					: null;
-				if ( ! tile ) {
-					return;
-				}
-				e.preventDefault();
-				e.stopPropagation();
-
-				if ( ! desktop || ! desktop.matches ) {
-					return;
-				}
-				var hero = wrapper.querySelector( '.woocommerce-product-gallery__image' );
-				if ( ! hero || hero === tile ) {
-					return;
-				}
-
-				swapAttributes( hero.querySelector( 'img' ), tile.querySelector( 'img' ) );
-				swapAttributes( hero.querySelector( 'a' ), tile.querySelector( 'a' ) );
-				// The wrapper divs keep their DOM placement (so the hero stays
-				// :first-child); only the thumb pointer WC reads for variation
-				// resets travels with the image.
-				swapAttributes( hero, tile );
-
-				[ hero, tile ].forEach( function ( el ) {
-					el.classList.remove( 'fm-img-swap' );
-					void el.offsetWidth;
-					el.classList.add( 'fm-img-swap' );
-				} );
-
-				// The hover-zoom clone caches the pre-swap source — rebuild it.
-				if ( typeof jQuery !== 'undefined' ) {
-					jQuery( '.woocommerce-product-gallery' ).trigger( 'woocommerce_gallery_init_zoom' );
+				if ( e.target && e.target.closest && e.target.closest( '.woocommerce-product-gallery__image' ) ) {
+					e.preventDefault();
+					e.stopPropagation();
 				}
 			},
 			true
 		);
-	}
 
-	// Trade every attribute except `class` between two elements. Keeping the
-	// classes in place preserves .wp-post-image on the main slot — the marker
-	// WC's wc_variations_image_update targets — while src/srcset/data-* travel.
-	function swapAttributes( a, b ) {
-		if ( ! a || ! b ) {
+		// Desktop has no touch swipe, so drag the strip with the mouse.
+		var desktop = window.matchMedia ? window.matchMedia( '(min-width: 1024px)' ) : null;
+		if ( ! desktop || ! desktop.matches || ! ( 'PointerEvent' in window ) ) {
 			return;
 		}
-		var snapshot = function ( el ) {
-			var out = {};
-			Array.prototype.forEach.call( el.attributes, function ( attr ) {
-				if ( 'class' !== attr.name ) {
-					out[ attr.name ] = attr.value;
-				}
-			} );
-			return out;
-		};
-		var attrsA = snapshot( a );
-		var attrsB = snapshot( b );
-		Object.keys( attrsA ).forEach( function ( name ) {
-			a.removeAttribute( name );
+
+		var down = false;
+		var startX = 0;
+		var startScroll = 0;
+
+		wrapper.addEventListener( 'pointerdown', function ( e ) {
+			if ( 'touch' === e.pointerType ) {
+				return; // native touch scroll already handles it
+			}
+			down = true;
+			startX = e.clientX;
+			startScroll = wrapper.scrollLeft;
+			wrapper.classList.add( 'is-grabbing' );
+			try {
+				wrapper.setPointerCapture( e.pointerId );
+			} catch ( err ) {}
 		} );
-		Object.keys( attrsB ).forEach( function ( name ) {
-			b.removeAttribute( name );
+
+		wrapper.addEventListener( 'pointermove', function ( e ) {
+			if ( ! down ) {
+				return;
+			}
+			// scrollLeft = startScroll − delta makes the strip follow the
+			// pointer in both LTR and RTL (scrollLeft is a viewport offset, so
+			// the sign convention is direction-agnostic here).
+			wrapper.scrollLeft = startScroll - ( e.clientX - startX );
 		} );
-		Object.keys( attrsB ).forEach( function ( name ) {
-			a.setAttribute( name, attrsB[ name ] );
-		} );
-		Object.keys( attrsA ).forEach( function ( name ) {
-			b.setAttribute( name, attrsA[ name ] );
-		} );
+
+		function endDrag() {
+			if ( ! down ) {
+				return;
+			}
+			down = false;
+			wrapper.classList.remove( 'is-grabbing' ); // re-engages scroll-snap → settles on the nearest slide
+		}
+		wrapper.addEventListener( 'pointerup', endDrag );
+		wrapper.addEventListener( 'pointercancel', endDrag );
 	}
 
 	function initImageSwapFeedback() {

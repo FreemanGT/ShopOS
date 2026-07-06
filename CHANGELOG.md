@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.24.3] — 2026-07-06
+
+- Wave 9.3 gallery - unify desktop with mobile (owner request): the desktop thumbnail row is removed; the gallery is now one swipeable image at a time with the same scroll-progress bar at every breakpoint. Desktop, which has no touch swipe, gets mouse click-drag-to-scroll (grab cursor). The lightbox stays disabled - clicking opens nothing.
+
 ## [1.24.2] — 2026-07-06
 
 - Wave 9.3 gallery refinements (owner follow-up): desktop thumbnails now stretch to fill the row (auto-fit) instead of sitting small with empty gaps; clicking a gallery image reliably changes the main image with no lightbox - a capture-phase click handler blocks WC PhotoSwipe / theme / Elementor lightboxes and the raw-image link, and the dead expand trigger is hidden; the mobile swipe progress bar starts with a small resting fill so it reads as an indicator before scrolling.
