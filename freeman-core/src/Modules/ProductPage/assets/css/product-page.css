@@ -87,10 +87,11 @@
 /* ---------- Gallery (editorial — no slider chrome) ------------------------ */
 
 /* The layout deliberately skips the wc-product-gallery-slider support, so
-   the images render as one plain stacked wrapper. Desktop lays them out
-   editorially (first image full-width, the rest 2-up) beside the sticky
-   summary; mobile stacks every image full-width in gallery order (owner
-   request, Wave 9.3 — replaced the scroll-snap strip). Zoom stays per-image.
+   the images render as one plain stacked wrapper. Desktop keeps the first
+   image as a full-width hero and flows the rest as a thumbnail row, 4–5 per
+   row wrapping to the next (owner request, Wave 9.3); clicking a thumbnail
+   swaps it into the hero (product-page.js). Mobile is one swipeable image at
+   a time — a scroll-snap strip with a progress bar. Zoom stays per-image.
 
    WC's template inline-styles the gallery to opacity:0 as a FOUC-hider that
    flexslider's init undoes — with no slider, undo it here. */
@@ -106,14 +107,15 @@
 
 .fm-pdp__gallery .woocommerce-product-gallery__wrapper {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	/* Independent spacing: more room under the full-width main image (row),
-	   tighter between the 2-up gallery pair (column). */
+	/* Thumbnail row: as many ~150px tiles as fit (≈4–5 in the gallery
+	   column), wrapping to the next row. The hero below spans them all. */
+	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 	column-gap: var(--fm-space-sm, 8px);
 	row-gap: var(--fm-space-md, 16px);
 	margin: 0;
 }
 
+/* First image = full-width hero above the thumbnail row. */
 .fm-pdp__gallery .woocommerce-product-gallery__image:first-child {
 	grid-column: 1 / -1;
 }
@@ -128,6 +130,18 @@
 	width: 100%;
 	height: auto;
 	display: block;
+}
+
+/* Thumbnails get a tidy uniform tile so the row stays even regardless of the
+   source aspect ratios; the hero keeps its natural height. */
+.fm-pdp__gallery .woocommerce-product-gallery__image:not(:first-child) {
+	aspect-ratio: var(--fm-card-aspect, 4 / 5);
+	cursor: pointer;
+}
+
+.fm-pdp__gallery .woocommerce-product-gallery__image:not(:first-child) img {
+	height: 100%;
+	object-fit: contain;
 }
 
 /* Variation-image swap feedback: product-page.js drops this class on the
@@ -145,11 +159,61 @@
 	}
 }
 
-/* Mobile: single column — every image a full-width row, in gallery order. */
+/* Mobile: one image at a time — a swipeable scroll-snap strip. Every image
+   (hero included) becomes a full-width slide. */
 @media (max-width: 1023.98px) {
 	.fm-pdp__gallery .woocommerce-product-gallery__wrapper {
-		grid-template-columns: minmax(0, 1fr);
+		display: flex;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scrollbar-width: none;
+		gap: var(--fm-space-sm, 8px);
+		-webkit-overflow-scrolling: touch;
 	}
+
+	.fm-pdp__gallery .woocommerce-product-gallery__wrapper::-webkit-scrollbar {
+		display: none;
+	}
+
+	.fm-pdp__gallery .woocommerce-product-gallery__image,
+	.fm-pdp__gallery .woocommerce-product-gallery__image:first-child,
+	.fm-pdp__gallery .woocommerce-product-gallery__image:not(:first-child) {
+		flex: 0 0 100%;
+		/* start (not center): full-width slides carrying an inter-slide gap
+		   mis-seat when centre-snapped — the first slide never rests cleanly. */
+		scroll-snap-align: start;
+		aspect-ratio: auto;
+		cursor: default;
+	}
+
+	.fm-pdp__gallery .woocommerce-product-gallery__image:not(:first-child) img {
+		height: auto;
+	}
+}
+
+/* Scroll-progress bar (built by product-page.js only when the strip scrolls),
+   mobile only — its fill width tracks the strip's horizontal scroll position.
+   Scroll-driven (no transition), so it needs no reduced-motion handling; the
+   fill grows from the inline-start edge, so it reads correctly in RTL. */
+.fm-pdp__gallery-progress {
+	block-size: 3px;
+	margin-top: var(--fm-space-md, 16px);
+	border-radius: var(--fm-radius-pill, 999px);
+	background: var(--fm-color-hairline, #e6e6e2);
+	overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+	.fm-pdp__gallery-progress {
+		display: none;
+	}
+}
+
+.fm-pdp__gallery-progress__fill {
+	block-size: 100%;
+	inline-size: 0;
+	background: var(--fm-color-ink, #1b1b1b);
+	border-radius: inherit;
 }
 
 /* Zoom / lightbox trigger — a quiet paper circle over the image corner. */
@@ -999,5 +1063,9 @@
 	.fm-pdp__gallery .fm-img-swap,
 	.fm-pdp__acc-item[open] > .fm-pdp__acc-body {
 		animation: none;
+	}
+
+	.fm-pdp__gallery .woocommerce-product-gallery__wrapper {
+		scroll-behavior: auto;
 	}
 }

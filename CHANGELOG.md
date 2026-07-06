@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.24.1] — 2026-07-06
+
+- Wave 9.3 gallery layout correction (owner follow-up): desktop keeps the full-width hero image and flows the remaining images as a thumbnail row (4-5 per row, wrapping) instead of two columns; clicking a thumbnail swaps it into the hero. Mobile is a single swipeable image (scroll-snap carousel) with a progress bar, restoring the strip the 1.24.0 build had replaced with a one-column stack.
+
 ## [1.24.0] — 2026-07-06
 
 - Wave 9.3 - PDP live-QA round 2 + perf: gallery image-size root-cause fix (non-main images were dropping to 100px thumbs) + mobile gallery stacked full-width in order, desktop click-to-swap main image, related-grid 3+1/mobile fix, Additional information as a collapsed details tab, coupon notice moved under the buy box as a visible white card, buy-box full-width pin (kills the 50%-left layout + paint flash), title text-wrap fix, and a shared per-request variations memo so the coupon + urgency widgets enumerate variations once per product view.
