@@ -7,9 +7,9 @@
  * keyboard/ARIA, server-rendered price HTML.
  *
  * The `[freeman_search]` shortcode form (`.fc-search-form`) is upgraded further:
- * its visible box is replaced by a search icon that, on click, expands a
- * full-width bar below the header with the results beneath it. Any other matched
- * field keeps the classic anchored dropdown.
+ * its visible box is replaced by a search icon that, on click, opens a centered
+ * command palette over a dimmed scrim with the results beneath the field. Any
+ * other matched field keeps the classic anchored dropdown.
  */
 (function () {
 	'use strict';
@@ -238,6 +238,20 @@
 			modal.appendChild(scrim);
 			modal.appendChild(palettePanel);
 			document.body.appendChild(modal);
+
+			// Mirror the visual viewport into CSS vars so the mobile palette
+			// centers in the area *above* the software keyboard (the CSS only
+			// consumes these on small screens; desktop ignores them).
+			if (window.visualViewport) {
+				var vv = window.visualViewport;
+				var syncViewport = function () {
+					modal.style.setProperty('--fc-vvh', vv.height + 'px');
+					modal.style.setProperty('--fc-vvt', vv.offsetTop + 'px');
+				};
+				vv.addEventListener('resize', syncViewport);
+				vv.addEventListener('scroll', syncViewport);
+				syncViewport();
+			}
 
 			trigger.addEventListener('click', openOverlay);
 			closeBtn.addEventListener('click', closeOverlay);

@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.24.4] — 2026-07-06
+
+- Search mobile UX: the search palette now floats centered mid-screen on mobile (keyboard-aware via visualViewport) instead of a full-screen top-pinned takeover; scrim + rounded card kept, visible Search button kept
+
 ## [1.24.3] — 2026-07-06
 
 - Wave 9.3 gallery - unify desktop with mobile (owner request): the desktop thumbnail row is removed; the gallery is now one swipeable image at a time with the same scroll-progress bar at every breakpoint. Desktop, which has no touch swipe, gets mouse click-drag-to-scroll (grab cursor). The lightbox stays disabled - clicking opens nothing.

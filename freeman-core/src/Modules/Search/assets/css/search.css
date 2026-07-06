@@ -4,8 +4,8 @@
  * Two presentations share the result-item styles below:
  *  - Anchored: body-appended panel, JS-positioned under a matched field.
  *  - Palette:  the [freeman_search] icon opens a centered command palette over a
- *              dimmed backdrop with the field + live results; full-screen on
- *              mobile with a visible Search button.
+ *              dimmed backdrop with the field + live results; on mobile the card
+ *              floats mid-screen (keyboard-aware) with a visible Search button.
  *
  * Every value reads from the --fm-* token layer with a theme-independent
  * fallback. Interactive controls reset aggressively (the trigger lives in the
@@ -378,22 +378,27 @@ body.fc-search-open {
 	}
 }
 
-/* --- Mobile: full-screen takeover with a visible Search button ----------- */
+/* --- Mobile: centered floating palette with a visible Search button ------ */
+/*
+ * The card floats mid-screen over the scrim instead of taking the screen over.
+ * "Middle" means the middle of the *visible* viewport: search.js mirrors
+ * window.visualViewport into --fc-vvh/--fc-vvt so the card stays centered in
+ * the area above the software keyboard rather than hiding behind it. The
+ * plain vh lines are the no-visualViewport fallback.
+ */
 @media (max-width: 768px) {
 	.fc-search-modal {
-		padding: 0;
-	}
-
-	.fc-search-modal__scrim {
-		display: none;
+		align-items: center;
+		bottom: auto;
+		top: var(--fc-vvt, 0px);
+		height: 100vh;
+		height: 100dvh;
+		height: var(--fc-vvh, 100vh);
+		padding: var(--fm-space-md, 16px);
 	}
 
 	.fc-search-modal__panel {
-		max-width: none;
-		max-height: none;
-		height: 100%;
-		border: 0;
-		border-radius: 0;
+		max-height: 100%;
 	}
 
 	.fc-search-modal .fc-search-submit {
