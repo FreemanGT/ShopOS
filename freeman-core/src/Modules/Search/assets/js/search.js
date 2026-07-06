@@ -240,7 +240,7 @@
 			document.body.appendChild(modal);
 
 			// Mirror the visual viewport into CSS vars so the mobile palette
-			// centers in the area *above* the software keyboard (the CSS only
+			// anchors in the area *above* the software keyboard (the CSS only
 			// consumes these on small screens; desktop ignores them).
 			if (window.visualViewport) {
 				var vv = window.visualViewport;

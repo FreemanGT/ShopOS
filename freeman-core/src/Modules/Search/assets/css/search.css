@@ -378,27 +378,31 @@ body.fc-search-open {
 	}
 }
 
-/* --- Mobile: centered floating palette with a visible Search button ------ */
+/* --- Mobile: floating palette with a visible Search button --------------- */
 /*
- * The card floats mid-screen over the scrim instead of taking the screen over.
- * "Middle" means the middle of the *visible* viewport: search.js mirrors
- * window.visualViewport into --fc-vvh/--fc-vvt so the card stays centered in
- * the area above the software keyboard rather than hiding behind it. The
- * plain vh lines are the no-visualViewport fallback.
+ * The card floats over the scrim instead of taking the screen over, anchored
+ * at a fixed offset from the top of the *visible* viewport (search.js mirrors
+ * window.visualViewport into --fc-vvh/--fc-vvt so the card sits above the
+ * software keyboard rather than behind it; the plain vh lines are the
+ * no-visualViewport fallback). Top-anchoring — not centering — keeps the
+ * field at the exact same height before and after results render, so the
+ * card never jumps as the list grows downward.
  */
 @media (max-width: 768px) {
 	.fc-search-modal {
-		align-items: center;
+		--fc-top-offset: calc(var(--fc-vvh, 100vh) * 0.1);
+		align-items: flex-start;
 		bottom: auto;
 		top: var(--fc-vvt, 0px);
 		height: 100vh;
 		height: 100dvh;
 		height: var(--fc-vvh, 100vh);
-		padding: var(--fm-space-md, 16px);
+		padding: var(--fc-top-offset) var(--fm-space-md, 16px) var(--fm-space-md, 16px);
 	}
 
+	/* Box-sizing-independent cap: visible height minus the two paddings. */
 	.fc-search-modal__panel {
-		max-height: 100%;
+		max-height: calc(var(--fc-vvh, 100vh) - var(--fc-top-offset) - var(--fm-space-md, 16px));
 	}
 
 	.fc-search-modal .fc-search-submit {
