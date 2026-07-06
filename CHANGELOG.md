@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.24.2] — 2026-07-06
+
+- Wave 9.3 gallery refinements (owner follow-up): desktop thumbnails now stretch to fill the row (auto-fit) instead of sitting small with empty gaps; clicking a gallery image reliably changes the main image with no lightbox - a capture-phase click handler blocks WC PhotoSwipe / theme / Elementor lightboxes and the raw-image link, and the dead expand trigger is hidden; the mobile swipe progress bar starts with a small resting fill so it reads as an indicator before scrolling.
+
 ## [1.24.1] — 2026-07-06
 
 - Wave 9.3 gallery layout correction (owner follow-up): desktop keeps the full-width hero image and flows the remaining images as a thumbnail row (4-5 per row, wrapping) instead of two columns; clicking a thumbnail swaps it into the hero. Mobile is a single swipeable image (scroll-snap carousel) with a progress bar, restoring the strip the 1.24.0 build had replaced with a one-column stack.

@@ -107,11 +107,12 @@
 
 .fm-pdp__gallery .woocommerce-product-gallery__wrapper {
 	display: grid;
-	/* Thumbnail row: as many ~150px tiles as fit (≈4–5 in the gallery
-	   column), wrapping to the next row. The hero below spans them all. */
-	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-	column-gap: var(--fm-space-sm, 8px);
-	row-gap: var(--fm-space-md, 16px);
+	/* Thumbnail row under the hero. auto-FIT (not auto-fill) so the tiles
+	   stretch to fill the row instead of leaving phantom empty tracks — that
+	   emptiness was the "small and far apart" bug. ~4 per row, wrapping; a
+	   short last row stretches to fill rather than sitting tiny on the left. */
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: var(--fm-space-sm, 8px);
 	margin: 0;
 }
 
@@ -133,10 +134,16 @@
 }
 
 /* Thumbnails get a tidy uniform tile so the row stays even regardless of the
-   source aspect ratios; the hero keeps its natural height. */
+   source aspect ratios; the hero keeps its natural height. Clicking one swaps
+   it into the hero (product-page.js) — hence the pointer + hover cue. */
 .fm-pdp__gallery .woocommerce-product-gallery__image:not(:first-child) {
 	aspect-ratio: var(--fm-card-aspect, 4 / 5);
 	cursor: pointer;
+	transition: opacity var(--fm-motion-fast, 180ms) var(--fm-ease, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.fm-pdp__gallery .woocommerce-product-gallery__image:not(:first-child):hover {
+	opacity: 0.82;
 }
 
 .fm-pdp__gallery .woocommerce-product-gallery__image:not(:first-child) img {
@@ -212,21 +219,19 @@
 .fm-pdp__gallery-progress__fill {
 	block-size: 100%;
 	inline-size: 0;
+	/* Never fully empty — a small resting fill signals "swipe for more"
+	   before the shopper scrolls (owner request). JS floors it too, so the
+	   bar animates from this point rather than snapping off it. */
+	min-inline-size: 14%;
 	background: var(--fm-color-ink, #1b1b1b);
 	border-radius: inherit;
 }
 
-/* Zoom / lightbox trigger — a quiet paper circle over the image corner. */
-.fm-pdp__gallery .woocommerce-product-gallery__trigger {
-	position: absolute;
-	top: var(--fm-space-md, 16px);
-	inset-inline-end: var(--fm-space-md, 16px);
-	z-index: var(--fm-z-card, 1);
-	width: 40px;
-	height: 40px;
-	border-radius: var(--fm-radius-round, 50%);
-	background: var(--fm-color-paper, #ffffff);
-	box-shadow: var(--fm-shadow-inset, inset 0 0 0 1px #e6e6e2), var(--fm-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.06));
+/* WC's lightbox/expand trigger (the corner button) is hidden — there is no
+   lightbox on this page (owner: clicking an image should change the main
+   image, not open a modal). The hover-magnify zoom stays on the image. */
+.fm-pdp .woocommerce-product-gallery__trigger {
+	display: none !important;
 }
 
 /* Sale flash — one quiet ink badge, Label voice (no discount-bin shouting). */

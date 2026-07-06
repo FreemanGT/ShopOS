@@ -14,14 +14,13 @@
  *    found_variation / reset_data events.
  * 3. Gallery scroll-progress bar (mobile) — the gallery is a swipeable
  *    scroll-snap strip; a slim fill tracks its horizontal scroll position.
- * 4. Gallery click guard — the lightbox is disabled, so block the raw-image
- *    navigation on gallery image links; hover-zoom stays the interaction.
- * 5. Gallery click-to-swap (desktop thumbnail row only) — clicking a
- *    thumbnail trades places with the hero (first) slot (Wave 9.3 owner
- *    request). The swap moves attributes, not nodes, so WC's variation image
- *    update (which always targets the FIRST gallery image's .wp-post-image)
- *    keeps working.
- * 6. Variation image-swap feedback — a quick fade on the main gallery image
+ * 4. Gallery interaction — one capture-phase click handler that kills any
+ *    lightbox (WC PhotoSwipe / theme / Elementor) and the raw-image
+ *    navigation, then on desktop swaps the clicked thumbnail into the hero
+ *    (first) slot. The swap moves attributes, not nodes, so WC's variation
+ *    image update (which always targets the FIRST gallery image's
+ *    .wp-post-image) keeps working. Inert on mobile (swipe is the gesture).
+ * 5. Variation image-swap feedback — a quick fade on the main gallery image
  *    when WC swaps its source (reduced-motion collapses it in CSS).
  */
 ( function () {
@@ -112,6 +111,9 @@
 			// and Math.abs(scrollLeft) keeps it correct under RTL's negative scroll.
 			var max = strip.scrollWidth - strip.clientWidth;
 			var fraction = max > 0 ? Math.min( Math.abs( strip.scrollLeft ) / max, 1 ) : 0;
+			// Floor at a small resting fill so the bar reads as a progress
+			// indicator before the shopper scrolls (owner request).
+			fraction = Math.max( fraction, 0.14 );
 			fill.style.inlineSize = ( fraction * 100 ) + '%';
 		}
 		update();
@@ -133,23 +135,61 @@
 		);
 	}
 
-	function initGalleryClickGuard() {
-		var gallery = document.querySelector( '.fm-pdp__gallery' );
-		if ( ! gallery ) {
+	function initGalleryInteraction() {
+		var wrapper = document.querySelector( '.fm-pdp__gallery .woocommerce-product-gallery__wrapper' );
+		if ( ! wrapper ) {
 			return;
 		}
-		// The lightbox theme support is removed, so WC's PhotoSwipe init — the
-		// only place it preventDefault()s the gallery <a href="full.jpg"> — never
-		// runs. Without this a click would navigate to the raw image file; block
-		// it so the hover-magnify (jquery.zoom) is the interaction.
-		gallery.addEventListener( 'click', function ( e ) {
-			var link = e.target && e.target.closest
-				? e.target.closest( '.woocommerce-product-gallery__image a' )
-				: null;
-			if ( link ) {
+		var desktop = window.matchMedia ? window.matchMedia( '(min-width: 1024px)' ) : null;
+
+		// One CAPTURE-phase handler owns every gallery-image click. Capture +
+		// stopPropagation runs before — and prevents — any lightbox handler
+		// (WC PhotoSwipe, the theme's, Elementor's), whichever is bound and
+		// wherever it bubbles from; preventDefault also blocks the raw
+		// <a href="full.jpg"> navigation. On desktop the click then swaps the
+		// clicked thumbnail into the hero (first) slot; on mobile it's inert
+		// (the swipe carousel is the interaction). Hover-magnify (jquery.zoom)
+		// binds mousemove, not click, so it's untouched.
+		wrapper.addEventListener(
+			'click',
+			function ( e ) {
+				var tile = e.target && e.target.closest
+					? e.target.closest( '.woocommerce-product-gallery__image' )
+					: null;
+				if ( ! tile ) {
+					return;
+				}
 				e.preventDefault();
-			}
-		} );
+				e.stopPropagation();
+
+				if ( ! desktop || ! desktop.matches ) {
+					return;
+				}
+				var hero = wrapper.querySelector( '.woocommerce-product-gallery__image' );
+				if ( ! hero || hero === tile ) {
+					return;
+				}
+
+				swapAttributes( hero.querySelector( 'img' ), tile.querySelector( 'img' ) );
+				swapAttributes( hero.querySelector( 'a' ), tile.querySelector( 'a' ) );
+				// The wrapper divs keep their DOM placement (so the hero stays
+				// :first-child); only the thumb pointer WC reads for variation
+				// resets travels with the image.
+				swapAttributes( hero, tile );
+
+				[ hero, tile ].forEach( function ( el ) {
+					el.classList.remove( 'fm-img-swap' );
+					void el.offsetWidth;
+					el.classList.add( 'fm-img-swap' );
+				} );
+
+				// The hover-zoom clone caches the pre-swap source — rebuild it.
+				if ( typeof jQuery !== 'undefined' ) {
+					jQuery( '.woocommerce-product-gallery' ).trigger( 'woocommerce_gallery_init_zoom' );
+				}
+			},
+			true
+		);
 	}
 
 	// Trade every attribute except `class` between two elements. Keeping the
@@ -184,45 +224,6 @@
 		} );
 	}
 
-	function initGalleryClickSwap() {
-		var wrapper = document.querySelector( '.fm-pdp__gallery .woocommerce-product-gallery__wrapper' );
-		if ( ! wrapper || ! window.matchMedia ) {
-			return;
-		}
-		var desktop = window.matchMedia( '(min-width: 1024px)' );
-
-		wrapper.addEventListener( 'click', function ( e ) {
-			// Mobile is a swipe carousel (one image at a time) — a
-			// tap-teleport would only disorient; the swap is a desktop
-			// thumbnail-row affordance (click a thumb → it becomes the hero).
-			if ( ! desktop.matches || ! e.target || ! e.target.closest ) {
-				return;
-			}
-			var clicked = e.target.closest( '.woocommerce-product-gallery__image' );
-			var main = wrapper.querySelector( '.woocommerce-product-gallery__image' );
-			if ( ! clicked || ! main || clicked === main ) {
-				return;
-			}
-
-			swapAttributes( main.querySelector( 'img' ), clicked.querySelector( 'img' ) );
-			swapAttributes( main.querySelector( 'a' ), clicked.querySelector( 'a' ) );
-			// The wrapper divs keep their placement; only the thumb pointer
-			// (WC reads it for variation resets) travels with the image.
-			swapAttributes( main, clicked );
-
-			[ main, clicked ].forEach( function ( el ) {
-				el.classList.remove( 'fm-img-swap' );
-				void el.offsetWidth;
-				el.classList.add( 'fm-img-swap' );
-			} );
-
-			// The hover-zoom clone caches the pre-swap source — rebuild it.
-			if ( typeof jQuery !== 'undefined' ) {
-				jQuery( '.woocommerce-product-gallery' ).trigger( 'woocommerce_gallery_init_zoom' );
-			}
-		} );
-	}
-
 	function initImageSwapFeedback() {
 		if ( typeof jQuery === 'undefined' ) {
 			return;
@@ -245,8 +246,7 @@
 	function init() {
 		initStickyBar();
 		initGalleryProgress();
-		initGalleryClickGuard();
-		initGalleryClickSwap();
+		initGalleryInteraction();
 		initImageSwapFeedback();
 	}
 
