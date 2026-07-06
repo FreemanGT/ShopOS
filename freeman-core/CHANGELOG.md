@@ -1,5 +1,10 @@
 # Freeman Core — Changelog
 
+## [1.23.2] — 2026-07-06
+
+- VariationSwatches: new opt-in "Shop: show name & price only" setting (default off). When on, shop / archive cards hide the whole buy UI — no swatch picker, no add-to-cart, no "Choose options" link — leaving just the product name and price; customers click the card through to the product page to buy. Applies to variable and simple products.
+- VariationSwatches: removed the retired WooCommerce → Settings → Products → "Shop swatches" section (it only showed a "settings have moved" notice). Settings live under Freeman → Variation Swatches; no data affected.
+
 ## [1.23.1] — 2026-07-06
 
 - Wave 9.2 — Product Page live-QA follow-up: gallery flexslider-blank fix + lightbox to in-image zoom, VariationSwatches buy box reverted to native with a button-colour setting, inline coupon price, trust + additional information under the buy box, subtle summary panel + 1rem image radii, VS price forced ink, mobile gallery progress bar + sticky-bar space.
