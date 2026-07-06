@@ -6,10 +6,10 @@ use Freeman\Core\Modules\ProductPage\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Product Page module metadata, settings schema, and the per-flag boot
- * contract: with all three `freeman_core_product_page_*_enabled` flags
- * unset/off, boot() must register nothing — no hooks, no shortcodes, no
- * template override.
+ * Product Page module metadata, settings schema, and the boot contract.
+ * All three surfaces (coupon notice / stock urgency / designed layout) are
+ * always-on since 1.23.0 (their feature flags graduated); boot() wires them
+ * unconditionally and the module-enable toggle is the kill-switch.
  *
  * @covers \Freeman\Core\Modules\ProductPage\Module
  */
@@ -52,47 +52,21 @@ final class ProductPageModuleTest extends TestCase {
 		}
 	}
 
-	public function test_boot_registers_nothing_when_all_flags_are_off(): void {
+	public function test_boot_wires_all_surfaces(): void {
 		( new Module() )->boot();
 
-		$this->assertSame( array(), $GLOBALS['fr_hooks'], 'flag-off boot must register zero hooks' );
-		$this->assertSame( array(), $GLOBALS['fr_shortcodes'], 'flag-off boot must register zero shortcodes' );
-	}
-
-	public function test_coupon_notice_flag_wires_render_hook_and_shortcodes(): void {
-		$GLOBALS['fr_opts']['freeman_core_product_page_coupon_notice_enabled'] = '1';
-
-		( new Module() )->boot();
-
+		// Coupon notice + stock urgency render hooks and shortcodes.
 		$this->assertArrayHasKey( 'wp_enqueue_scripts', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'woocommerce_single_product_summary', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'freeman_discounted_price', $GLOBALS['fr_shortcodes'] );
 		$this->assertArrayHasKey( 'discounted_price', $GLOBALS['fr_shortcodes'], 'legacy alias must stay registered' );
-		$this->assertArrayNotHasKey( 'template_include', $GLOBALS['fr_hooks'], 'coupon flag must not take over the template' );
-	}
-
-	public function test_stock_urgency_flag_wires_render_hook_and_shortcodes(): void {
-		$GLOBALS['fr_opts']['freeman_core_product_page_stock_urgency_enabled'] = '1';
-
-		( new Module() )->boot();
-
-		$this->assertArrayHasKey( 'wp_enqueue_scripts', $GLOBALS['fr_hooks'] );
-		$this->assertArrayHasKey( 'woocommerce_single_product_summary', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'freeman_stock_urgency', $GLOBALS['fr_shortcodes'] );
 		$this->assertArrayHasKey( 'stock_urgency', $GLOBALS['fr_shortcodes'], 'legacy alias must stay registered' );
-		$this->assertArrayNotHasKey( 'template_include', $GLOBALS['fr_hooks'], 'urgency flag must not take over the template' );
-	}
 
-	public function test_layout_flag_wires_template_takeover(): void {
-		$GLOBALS['fr_opts']['freeman_core_product_page_layout_enabled'] = '1';
-
-		( new Module() )->boot();
-
+		// Designed-layout template takeover.
 		$this->assertArrayHasKey( 'template_include', $GLOBALS['fr_hooks'] );
-		$this->assertArrayHasKey( 'wp_enqueue_scripts', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'body_class', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'after_setup_theme', $GLOBALS['fr_hooks'], 'gallery theme-supports must attach after theme setup' );
-		$this->assertSame( array(), $GLOBALS['fr_shortcodes'], 'layout flag alone registers no shortcodes' );
 	}
 
 	public function test_assets_exist_on_disk(): void {

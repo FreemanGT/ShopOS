@@ -11,10 +11,12 @@
 </form>
 
 <h3 style="margin-top:24px;">Import</h3>
-	<p>
-		<em>Settings import is disabled. Enable with:</em>
-		<code>wp option update freeman_core_tools_settings_import_enabled 1</code>
-	</p>
+<p>Upload a previously-exported JSON envelope. Only version 1 envelopes are accepted. A backup of current state is created automatically before any write.</p>
+<form method="post" action="https://example.test/wp-admin/admin-post.php" enctype="multipart/form-data">
+		<input type="hidden" name="action" value="freeman_settings_import"/>
+	<input type="file" name="envelope" accept="application/json" required/>
+	<button type="submit" class="button button-primary">Import settings JSON</button>
+</form>
 
 <h3 style="margin-top:24px;">Backups</h3>
 <p>Auto-backups created before each import. The five most recent are kept. A restore itself creates a backup, so any restore is also undoable.</p>

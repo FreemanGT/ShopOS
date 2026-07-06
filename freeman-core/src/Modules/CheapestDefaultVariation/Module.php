@@ -12,7 +12,6 @@
 
 namespace Freeman\Core\Modules\CheapestDefaultVariation;
 
-use Freeman\Core\Core\Feature_Flags;
 use Freeman\Core\Core\Logger;
 use Freeman\Core\Core\Module_Base;
 
@@ -86,7 +85,7 @@ final class Module extends Module_Base {
 					'first_in_stock' => __( 'First in-stock variation (in WooCommerce order)', 'freeman-core' ),
 				),
 				'default'     => 'cheapest',
-				'description' => __( 'Which variation gets pre-selected. "Cheapest" scans display_price; "First in-stock" returns the first variation WooCommerce returns that is in stock and purchasable. Only takes effect when the strategy selector feature flag is on.', 'freeman-core' ),
+				'description' => __( 'Which variation gets pre-selected. "Cheapest" scans display_price; "First in-stock" returns the first variation WooCommerce returns that is in stock and purchasable.', 'freeman-core' ),
 			),
 		);
 	}
@@ -160,19 +159,15 @@ final class Module extends Module_Base {
 			return $default_attributes;
 		}
 
-		// Flag gate: with the strategy selector OFF (default), run the legacy
-		// cheapest-only path. WC core's add-to-cart-variation.js reads the
-		// resolved default off the DOM after PHP runs and the data shape is
-		// unchanged across strategies, so no front-end JS coordination is
-		// needed when the dispatcher routes to first_in_stock.
-		if ( ! Feature_Flags::is_enabled( 'cheapest_variation', 'strategy' ) ) {
-			$cheapest = $this->pick_cheapest( $variations );
-		} else {
-			$strategy = $this->dispatch_strategy( $product );
-			$cheapest = ( 'first_in_stock' === $strategy )
-				? $this->pick_first_in_stock( $variations )
-				: $this->pick_cheapest( $variations );
-		}
+		// Strategy selector always-on since 1.23.0 (flag graduated; default
+		// setting = the legacy cheapest path). WC core's add-to-cart-variation.js
+		// reads the resolved default off the DOM after PHP runs and the data
+		// shape is unchanged across strategies, so no front-end JS coordination
+		// is needed when the dispatcher routes to first_in_stock.
+		$strategy = $this->dispatch_strategy( $product );
+		$cheapest = ( 'first_in_stock' === $strategy )
+			? $this->pick_first_in_stock( $variations )
+			: $this->pick_cheapest( $variations );
 
 		/**
 		 * Filter the variation chosen as the default. Receives the variation

@@ -12,7 +12,6 @@
 
 namespace Freeman\Core\Modules\InfiniteScroll;
 
-use Freeman\Core\Core\Feature_Flags;
 use Freeman\Core\Core\Module_Base;
 
 defined( 'ABSPATH' ) || exit;
@@ -94,7 +93,7 @@ final class Module extends Module_Base {
 					'hybrid' => __( 'Hybrid — auto for first N pages, then halt (button UI deferred — see roadmap)', 'freeman-core' ),
 				),
 				'default'     => 'auto',
-				'description' => __( 'Which mechanism advances pages. Only takes effect when the Trigger Modes feature flag is on. Auto is fully functional. Button halts auto-loading after the first page (functionally max_pages=1). Hybrid auto-loads up to the threshold then halts. The user-facing "Load more" button UI is deferred to a future wave.', 'freeman-core' ),
+				'description' => __( 'Which mechanism advances pages. Auto is fully functional. Button halts auto-loading after the first page (functionally max_pages=1). Hybrid auto-loads up to the threshold then halts. The user-facing "Load more" button UI is deferred to a future wave.', 'freeman-core' ),
 			),
 			'history_mode'      => array(
 				'label'       => __( 'URL update on page advance', 'freeman-core' ),
@@ -105,7 +104,7 @@ final class Module extends Module_Base {
 					'disabled'     => __( 'Disabled — leave URL unchanged on page advance', 'freeman-core' ),
 				),
 				'default'     => 'pushState',
-				'description' => __( 'How the browser URL is updated when an additional page loads. Default preserves current pushState behavior. Only takes effect when the Trigger Modes feature flag is on.', 'freeman-core' ),
+				'description' => __( 'How the browser URL is updated when an additional page loads. Default preserves current pushState behavior.', 'freeman-core' ),
 			),
 			'hybrid_threshold'  => array(
 				'label'       => __( 'Hybrid threshold (pages)', 'freeman-core' ),
@@ -157,10 +156,8 @@ final class Module extends Module_Base {
 	 */
 	public function boot() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
-		if ( Feature_Flags::is_enabled( 'infinite_scroll', 'trigger_modes' ) ) {
-			add_action( 'woocommerce_before_shop_loop', array( $this, 'render_grid_wrapper_open' ), 5 );
-			add_action( 'woocommerce_after_shop_loop', array( $this, 'render_grid_wrapper_close' ), 999 );
-		}
+		add_action( 'woocommerce_before_shop_loop', array( $this, 'render_grid_wrapper_open' ), 5 );
+		add_action( 'woocommerce_after_shop_loop', array( $this, 'render_grid_wrapper_close' ), 999 );
 	}
 
 	/**
@@ -216,7 +213,6 @@ final class Module extends Module_Base {
 	 * @return array<string,mixed>
 	 */
 	public function localized_payload() {
-		$flag_on = Feature_Flags::is_enabled( 'infinite_scroll', 'trigger_modes' );
 		return array(
 			'skeletonCount'       => (int) $this->get_option( 'skeleton_count', 6 ),
 			'maxPages'            => (int) $this->get_option( 'max_pages', 50 ),
@@ -227,29 +223,24 @@ final class Module extends Module_Base {
 			'loadMoreLabel'       => __( 'Load more', 'freeman-core' ),
 			/* translators: %d = number of products just loaded. Used for screen-reader aria-live announcement. */
 			'announceTemplate'    => __( 'Loaded %d more products.', 'freeman-core' ),
-			'triggerModesEnabled' => $flag_on,
+			// trigger_modes graduated always-on in 1.23.0; the key is kept
+			// (always true) so shipped JS reading it keeps working.
+			'triggerModesEnabled' => true,
 			'triggerMode'         => (string) $this->get_option( 'trigger_mode', 'auto' ),
 			'historyMode'         => (string) $this->get_option( 'history_mode', 'pushState' ),
 			'hybridThreshold'     => (int) $this->get_option( 'hybrid_threshold', 2 ),
-			// Wave 3.1b: containerSelector follows Mechanism A (always
-			// emitted) but the resolve only runs under flag-ON — flag-OFF
-			// returns an empty array without invoking the
-			// freeman_core/infinite_scroll/selector filter (CONTRACT 2:
-			// flag is master switch). JS-side IIFE treats empty array as
-			// "use FALLBACK", so flag-OFF behavior stays byte-identical.
-			'containerSelector'   => $flag_on ? $this->resolve_container_selector() : array(),
+			'containerSelector'   => $this->resolve_container_selector(),
 		);
 	}
 
 	/**
 	 * Wrapper-render predicate.
 	 *
-	 * Wave 3.1b. Flag is master switch — under flag-OFF returns false
-	 * without firing the filter (listeners cannot force-enable when the
-	 * flag is off). Under flag-ON, returns true on standard WC archive
-	 * contexts (shop, product taxonomy, search-as-product-archive); the
-	 * filter then runs as the final word, so listeners can force-enable
-	 * on custom contexts or force-disable on a specific archive.
+	 * Wave 3.1b; always-on since 1.23.0 (the trigger_modes flag graduated).
+	 * Returns true on standard WC archive contexts (shop, product taxonomy,
+	 * search-as-product-archive); the filter then runs as the final word,
+	 * so listeners can force-enable on custom contexts or force-disable on
+	 * a specific archive.
 	 *
 	 * Block-based standalone Product Collection / Query Loop contexts
 	 * do not fire `woocommerce_before_shop_loop`, so this predicate is
@@ -260,9 +251,6 @@ final class Module extends Module_Base {
 	 * @return bool
 	 */
 	public function should_render_wrapper() {
-		if ( ! Feature_Flags::is_enabled( 'infinite_scroll', 'trigger_modes' ) ) {
-			return false;
-		}
 		$resolved = is_shop()
 			|| is_product_taxonomy()
 			|| ( is_search() && ( 'product' === get_query_var( 'post_type' ) || is_post_type_archive( 'product' ) ) );

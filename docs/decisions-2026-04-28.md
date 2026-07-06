@@ -186,3 +186,13 @@ Owner request: a new module that replaces the current WooCommerce/Elementor sing
 - **§7.6 Design authority = DESIGN.md.** The PDP is styled to the documented "Quiet Boutique" system (ink-first, hairlines, tonal ramp, RTL-first, Hebrew flat tracking) through the `--fm-*` tokens with literal fallbacks. One deliberate deviation from the snippets: the urgency badge uses the warning-amber semantic (DESIGN.md assigns low-stock to warning), not the snippets' red.
 
 Scoped to Wave 9; changes nothing about prior decisions.
+
+## §8 Suite-wide flag graduation sweep (added 2026-07-06)
+
+Owner request (verbatim scope: "remove Settings import flag; remove and on by default: Product Page, Quick View, Restock Notify, Infinite Scroll, Cheapest Variation, Sliders"). Nine flags hard-removed in 1.23.0, extending the §5.8 (Shop Filters), HoverSwap 1.16.1 and Search 1.21.0 graduation precedent to the rest of the suite:
+
+- `tools/settings_import`, `sliders/advanced_controls`, `cheapest_variation/strategy`, `infinite_scroll/trigger_modes`, `restock_notify/csv_export`, `quick_view/frontend`, `product_page/coupon_notice`, `product_page/stock_urgency`, `product_page/layout`.
+- **Hard Rules #1/#2 owner-approved override**, same shape as §5.8: the flag option keys are no longer read; existing `wp_options` rows become inert (not deleted, no migration). The registry keeps only the five VariationSwatches flags.
+- **Kill-switch** is now per-module (the `freeman_core_modules` enable map) plus git revert. Module-enable defaults are unchanged — a disabled module (e.g. ProductPage on a fresh install) stays fully off, so graduation arms nothing by itself.
+- **Behavior at defaults**: sliders / strategy / trigger-modes settings default to the legacy behavior; the visible deltas are admin-only surfaces appearing unconditionally (Tools import form, RN Export Subscribers submenu, slider advanced controls in the Elementor editor) and two DOM deltas — the CategorySlider root now always carries `data-cs-indicator`, and the IS wrapper div renders on archives (previously flag-gated).
+- **Single oversized PR** (~25 files / 7 modules) owner-approved, mirroring the §5.8 and §7.1 ceiling overrides.

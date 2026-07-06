@@ -8,7 +8,6 @@
 defined( 'ABSPATH' ) || exit;
 
 $st              = new \Freeman\Core\Core\Settings_Tools();
-$import_enabled  = \Freeman\Core\Core\Feature_Flags::is_enabled( 'tools', 'settings_import' );
 $backups         = $st->list_backups();
 $uid             = get_current_user_id();
 $last_result     = get_transient( 'freeman_core_settings_import_result_' . $uid );
@@ -76,20 +75,13 @@ if ( $last_result ) {
 </form>
 
 <h3 style="margin-top:24px;"><?php esc_html_e( 'Import', 'freeman-core' ); ?></h3>
-<?php if ( ! $import_enabled ) : ?>
-	<p>
-		<em><?php esc_html_e( 'Settings import is disabled. Enable with:', 'freeman-core' ); ?></em>
-		<code>wp option update freeman_core_tools_settings_import_enabled 1</code>
-	</p>
-<?php else : ?>
-	<p><?php esc_html_e( 'Upload a previously-exported JSON envelope. Only version 1 envelopes are accepted. A backup of current state is created automatically before any write.', 'freeman-core' ); ?></p>
-	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data">
-		<?php wp_nonce_field( \Freeman\Core\Core\Settings_Tools::NONCE_IMPORT ); ?>
-		<input type="hidden" name="action" value="freeman_settings_import"/>
-		<input type="file" name="envelope" accept="application/json" required/>
-		<button type="submit" class="button button-primary"><?php esc_html_e( 'Import settings JSON', 'freeman-core' ); ?></button>
-	</form>
-<?php endif; ?>
+<p><?php esc_html_e( 'Upload a previously-exported JSON envelope. Only version 1 envelopes are accepted. A backup of current state is created automatically before any write.', 'freeman-core' ); ?></p>
+<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data">
+	<?php wp_nonce_field( \Freeman\Core\Core\Settings_Tools::NONCE_IMPORT ); ?>
+	<input type="hidden" name="action" value="freeman_settings_import"/>
+	<input type="file" name="envelope" accept="application/json" required/>
+	<button type="submit" class="button button-primary"><?php esc_html_e( 'Import settings JSON', 'freeman-core' ); ?></button>
+</form>
 
 <h3 style="margin-top:24px;"><?php esc_html_e( 'Backups', 'freeman-core' ); ?></h3>
 <p><?php esc_html_e( 'Auto-backups created before each import. The five most recent are kept. A restore itself creates a backup, so any restore is also undoable.', 'freeman-core' ); ?></p>

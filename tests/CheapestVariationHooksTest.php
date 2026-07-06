@@ -25,12 +25,10 @@ final class CheapestVariationHooksTest extends TestCase {
 		update_option( 'freeman_core_cheapest_default_variation_pdp_only', 0 );
 		update_option( 'freeman_core_cheapest_default_variation_respect_manual_defaults', 0 );
 
-		// Wave 3.3: enable the strategy-selector flag by default for new tests.
-		// Existing hook-tests are flag-agnostic — should_apply fires before the
-		// flag gate, and chosen converges after both branches with identical
+		// Wave 3.3 introduced the strategy selector; always-on since 1.23.0
+		// (the flag graduated). Existing hook-tests are strategy-agnostic —
+		// should_apply fires first, and chosen converges with identical
 		// payload when default setting='cheapest' and no strategy listener.
-		// The one flag-OFF test opts out via delete_option().
-		update_option( 'freeman_core_cheapest_variation_strategy_enabled', 1 );
 	}
 
 	public function test_should_apply_filter_can_skip_picker(): void {
@@ -243,17 +241,6 @@ final class CheapestVariationHooksTest extends TestCase {
 
 		// Falls back to the resolved-pre-filter value ('cheapest'), not blindly
 		// to the enum default. Cheapest in-stock here is 'blue'.
-		$this->assertSame( 'blue', $result['pa_color'] );
-	}
-
-	public function test_flag_off_runs_legacy_cheapest_path_ignoring_strategy_setting(): void {
-		delete_option( 'freeman_core_cheapest_variation_strategy_enabled' );
-		update_option( 'freeman_core_cheapest_default_variation_strategy', 'first_in_stock' );
-
-		$product = new TestCheapestVariableProduct( 37, $this->three_variations_oos_first() );
-		$result  = ( new Module() )->default_cheapest_variation( array(), $product );
-
-		// Strategy setting is ignored under flag-OFF; legacy cheapest path runs.
 		$this->assertSame( 'blue', $result['pa_color'] );
 	}
 

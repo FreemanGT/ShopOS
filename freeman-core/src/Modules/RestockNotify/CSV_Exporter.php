@@ -3,10 +3,9 @@
  * RestockNotify — CSV export of the rsn_subscribers table.
  *
  * Wave 4.1b. Pairs with `Admin_Tools` (which renders the submit form on a
- * submenu page) to deliver a downloadable subscribers CSV. Gated behind
- * `Feature_Flags::is_enabled( 'restock_notify', 'csv_export' )` — caller
- * (Module::boot) decides whether to register, so flag-OFF means neither
- * the submenu nor the `admin_post_*` listener exists.
+ * submenu page) to deliver a downloadable subscribers CSV. Always-on since
+ * 1.23.0 (the csv_export flag graduated) — capability + nonce checks in
+ * the export handler remain the gate.
  *
  * Output format (all decided 2026-05-11):
  * - UTF-8 BOM for Excel-friendliness on he_IL stacks

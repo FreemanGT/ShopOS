@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
-// Wave 3.2a — Category Slider autoplay / loop / indicator. Drives render()
-// under the `freeman_core_sliders_advanced_controls_enabled` flag and
-// asserts the emitted DOM. Mirrors the Elementor + WC stub shape used by
+// Wave 3.2a — Category Slider autoplay / loop / indicator; always-on since
+// 1.23.0 (the sliders/advanced_controls flag graduated). Drives render()
+// and asserts the emitted DOM. Mirrors the Elementor + WC stub shape used by
 // CategorySliderSnapshotTest so both files can co-exist (each `eval` /
 // `function` is `*_exists`-guarded; whichever test loads first wins).
 
@@ -85,37 +85,14 @@ final class CategorySliderAutoplayTest extends TestCase {
 		);
 	}
 
-	private function enable_flag(): void {
-		$GLOBALS['fr_opts']['freeman_core_sliders_advanced_controls_enabled'] = '1';
-	}
-
-	public function test_flag_off_omits_advanced_data_attributes_on_root(): void {
-		$html = $this->render_widget( array( 'indicator' => 'dots', 'autoplay' => 'yes', 'loop' => 'yes' ) );
-		$this->assertStringNotContainsString( 'data-cs-indicator', $html, 'flag-off must not emit data-cs-indicator regardless of saved settings' );
-		$this->assertStringNotContainsString( 'data-cs-autoplay',  $html );
-		$this->assertStringNotContainsString( 'data-cs-loop',      $html );
-		$this->assertStringNotContainsString( 'cs-dots',           $html, 'flag-off must not emit dots markup even when saved indicator=dots' );
-	}
-
-	public function test_flag_off_legacy_show_progress_drives_indicator_state(): void {
-		$on  = $this->render_widget( array( 'show_progress' => 'yes' ) );
-		$off = $this->render_widget( array( 'show_progress' => '' ) );
-		$this->assertStringContainsString( 'cs-progress', $on,  'flag-off + show_progress=yes emits legacy progress markup' );
-		$this->assertStringNotContainsString( 'cs-progress', $off, 'flag-off + show_progress=no suppresses legacy progress markup' );
-		$this->assertStringNotContainsString( 'cs-dots', $on );
-		$this->assertStringNotContainsString( 'cs-dots', $off );
-	}
-
-	public function test_flag_on_default_indicator_emits_progress_markup(): void {
-		$this->enable_flag();
+	public function test_default_indicator_emits_progress_markup(): void {
 		$html = $this->render_widget( array( 'indicator' => 'progress' ) );
 		$this->assertStringContainsString( 'data-cs-indicator="progress"', $html );
 		$this->assertStringContainsString( 'cs-progress', $html );
 		$this->assertStringNotContainsString( 'cs-dots', $html );
 	}
 
-	public function test_flag_on_indicator_dots_emits_dots_and_suppresses_progress(): void {
-		$this->enable_flag();
+	public function test_indicator_dots_emits_dots_and_suppresses_progress(): void {
 		$html = $this->render_widget( array( 'indicator' => 'dots' ) );
 		$this->assertStringContainsString( 'data-cs-indicator="dots"', $html );
 		$this->assertStringContainsString( 'cs-dots',     $html );
@@ -123,16 +100,14 @@ final class CategorySliderAutoplayTest extends TestCase {
 		$this->assertStringNotContainsString( 'cs-progress', $html, 'dots mode must not emit progress markup' );
 	}
 
-	public function test_flag_on_indicator_none_emits_neither(): void {
-		$this->enable_flag();
+	public function test_indicator_none_emits_neither(): void {
 		$html = $this->render_widget( array( 'indicator' => 'none' ) );
 		$this->assertStringContainsString( 'data-cs-indicator="none"', $html );
 		$this->assertStringNotContainsString( 'cs-progress', $html );
 		$this->assertStringNotContainsString( 'cs-dots',     $html );
 	}
 
-	public function test_flag_on_back_compat_shim_falls_back_to_show_progress_when_indicator_unset(): void {
-		$this->enable_flag();
+	public function test_back_compat_shim_falls_back_to_show_progress_when_indicator_unset(): void {
 		// `indicator` deliberately omitted to simulate a pre-3.2a-saved widget.
 		$with_progress = $this->render_widget( array( 'show_progress' => 'yes' ) );
 		$without       = $this->render_widget( array( 'show_progress' => '' ) );
@@ -143,8 +118,7 @@ final class CategorySliderAutoplayTest extends TestCase {
 		$this->assertStringNotContainsString( 'cs-dots',     $without );
 	}
 
-	public function test_flag_on_autoplay_emits_data_attrs_with_clamped_delay(): void {
-		$this->enable_flag();
+	public function test_autoplay_emits_data_attrs_with_clamped_delay(): void {
 		$over   = $this->render_widget( array( 'autoplay' => 'yes', 'autoplay_delay' => array( 'unit' => 'ms', 'size' => 99999 ) ) );
 		$under  = $this->render_widget( array( 'autoplay' => 'yes', 'autoplay_delay' => array( 'unit' => 'ms', 'size' => 200 ) ) );
 		$normal = $this->render_widget( array( 'autoplay' => 'yes', 'autoplay_delay' => array( 'unit' => 'ms', 'size' => 5000 ) ) );
@@ -156,8 +130,7 @@ final class CategorySliderAutoplayTest extends TestCase {
 		$this->assertStringNotContainsString( 'data-cs-autoplay',             $off,     'autoplay=off must not emit data-cs-autoplay' );
 	}
 
-	public function test_flag_on_loop_only_emitted_when_autoplay_yes(): void {
-		$this->enable_flag();
+	public function test_loop_only_emitted_when_autoplay_yes(): void {
 		$loop_without_autoplay = $this->render_widget( array( 'autoplay' => '',    'loop' => 'yes' ) );
 		$loop_with_autoplay    = $this->render_widget( array( 'autoplay' => 'yes', 'loop' => 'yes' ) );
 		$this->assertStringNotContainsString( 'data-cs-loop', $loop_without_autoplay, 'loop must be inert without autoplay' );

@@ -5,7 +5,7 @@ use Freeman\Core\Modules\InfiniteScroll\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Wave 3.1a — settings registration + flag-state propagation to localized
+ * Wave 3.1a — settings registration + payload propagation to localized
  * JS payload. Hook firing + render-path tests live in 3.1b.
  *
  * @covers \Freeman\Core\Modules\InfiniteScroll\Module
@@ -68,31 +68,10 @@ final class InfiniteScrollSettingsTest extends TestCase {
 		$this->assertSame( 2, $schema['hybrid_threshold']['default'] );
 	}
 
-	public function test_feature_flag_reads_correct_option_key_on_and_off(): void {
-		update_option( 'freeman_core_infinite_scroll_trigger_modes_enabled', 1 );
-		$this->assertTrue( \Freeman\Core\Core\Feature_Flags::is_enabled( 'infinite_scroll', 'trigger_modes' ) );
-
-		delete_option( 'freeman_core_infinite_scroll_trigger_modes_enabled' );
-		$this->assertFalse( \Freeman\Core\Core\Feature_Flags::is_enabled( 'infinite_scroll', 'trigger_modes' ) );
-	}
-
-	public function test_flag_off_localized_payload_signals_disabled(): void {
-		// Flag explicitly absent — Feature_Flags returns false by default.
+	public function test_localized_payload_always_signals_trigger_modes_enabled(): void {
+		// Always-on since 1.23.0 (the trigger_modes flag graduated); the key
+		// is kept true for shipped JS that still reads it.
 		$payload = ( new Module() )->localized_payload();
-		$this->assertFalse( $payload['triggerModesEnabled'] );
-	}
-
-	public function test_flag_on_default_settings_localized_payload_matches_flag_off_modulo_enabled(): void {
-		// Flag-OFF payload first.
-		$off = ( new Module() )->localized_payload();
-
-		// Flag-ON, all settings at default. The contract: only triggerModesEnabled differs.
-		update_option( 'freeman_core_infinite_scroll_trigger_modes_enabled', 1 );
-		$on = ( new Module() )->localized_payload();
-
-		$this->assertTrue( $on['triggerModesEnabled'] );
-
-		unset( $off['triggerModesEnabled'], $on['triggerModesEnabled'] );
-		$this->assertSame( $off, $on );
+		$this->assertTrue( $payload['triggerModesEnabled'] );
 	}
 }

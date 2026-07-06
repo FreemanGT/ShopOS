@@ -6,9 +6,9 @@ use Freeman\Core\Modules\QuickView\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Quick View module metadata + the flag-off boot contract: with
- * `freeman_core_quick_view_frontend_enabled` unset/off, boot() must register
- * nothing — no markup hooks, no asset hooks, no public AJAX surface.
+ * Quick View module metadata + the boot contract. The storefront + AJAX
+ * surfaces are always-on since 1.23.0 (the frontend flag graduated); the
+ * module-enable toggle is the kill-switch.
  *
  * @covers \Freeman\Core\Modules\QuickView\Module
  */
@@ -39,15 +39,7 @@ final class QuickViewModuleTest extends TestCase {
 		}
 	}
 
-	public function test_boot_registers_nothing_when_flag_is_off(): void {
-		( new Module() )->boot();
-
-		$this->assertSame( array(), $GLOBALS['fr_hooks'], 'flag-off boot must register zero hooks' );
-	}
-
-	public function test_boot_registers_frontend_and_ajax_when_flag_is_on(): void {
-		$GLOBALS['fr_opts']['freeman_core_quick_view_frontend_enabled'] = '1';
-
+	public function test_boot_registers_frontend_and_ajax(): void {
 		( new Module() )->boot();
 
 		$this->assertArrayHasKey( 'wp_enqueue_scripts', $GLOBALS['fr_hooks'] );

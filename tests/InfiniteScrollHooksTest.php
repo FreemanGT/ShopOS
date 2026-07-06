@@ -9,8 +9,9 @@ use PHPUnit\Framework\TestCase;
  *
  * Covers `should_render_wrapper()` predicate, `render_grid_wrapper_open/_close()`
  * render methods (before_render / after_render action fires + envelope markup),
- * `resolve_container_selector()` (selector filter resolution), and CONTRACT 2
- * (flag is master switch — listeners cannot force-enable when flag is off).
+ * `resolve_container_selector()` (selector filter resolution). The wrapper
+ * path is always-on since 1.23.0 (the trigger_modes flag graduated); the
+ * predicate + filter remain the render gate.
  *
  * @covers \Freeman\Core\Modules\InfiniteScroll\Module
  */
@@ -46,10 +47,6 @@ final class InfiniteScrollHooksTest extends TestCase {
 		$GLOBALS['fr_page_type']          = '';
 		$GLOBALS['fr_post_type_archive']  = '';
 		$GLOBALS['fr_query_vars']         = array();
-	}
-
-	private function flag_on(): void {
-		update_option( 'freeman_core_infinite_scroll_trigger_modes_enabled', 1 );
 	}
 
 	// -----------------------------------------------------------------
@@ -93,34 +90,17 @@ final class InfiniteScrollHooksTest extends TestCase {
 	// should_render_wrapper predicate (test #5–#8)
 	// -----------------------------------------------------------------
 
-	public function test_should_render_wrapper_returns_false_under_flag_off(): void {
-		$GLOBALS['fr_page_type'] = 'shop'; // is_shop() → true
+	public function test_should_render_wrapper_returns_false_off_archive(): void {
+		$GLOBALS['fr_page_type'] = ''; // not shop / taxonomy / product search
 		$this->assertFalse( ( new Module() )->should_render_wrapper() );
 	}
 
-	public function test_should_render_wrapper_filter_does_not_fire_under_flag_off(): void {
-		$called = 0;
-		add_filter(
-			'freeman_core/infinite_scroll/should_render_wrapper',
-			static function ( $v ) use ( &$called ) {
-				$called++;
-				return $v;
-			}
-		);
-		$GLOBALS['fr_page_type'] = 'shop';
-		( new Module() )->should_render_wrapper();
-		$this->assertSame( 0, $called, 'CONTRACT 2: filter must not fire under flag-OFF' );
-	}
-
-	public function test_should_render_wrapper_returns_true_under_flag_on_archive(): void {
-		$this->flag_on();
+	public function test_should_render_wrapper_returns_true_on_archive(): void {
 		$GLOBALS['fr_page_type'] = 'shop';
 		$this->assertTrue( ( new Module() )->should_render_wrapper() );
 	}
 
-	public function test_should_render_wrapper_filter_can_override_within_flag_on(): void {
-		$this->flag_on();
-
+	public function test_should_render_wrapper_filter_can_override(): void {
 		// Force-true on a non-archive context (custom archive use case).
 		$GLOBALS['fr_page_type'] = '';
 		add_filter(
@@ -148,7 +128,6 @@ final class InfiniteScrollHooksTest extends TestCase {
 	// -----------------------------------------------------------------
 
 	public function test_before_and_after_render_fire_when_predicate_true(): void {
-		$this->flag_on();
 		$GLOBALS['fr_page_type'] = 'shop';
 
 		$before = 0;
@@ -185,8 +164,9 @@ final class InfiniteScrollHooksTest extends TestCase {
 	}
 
 	public function test_render_methods_are_noop_when_predicate_false(): void {
-		// Flag-OFF, on a context where is_shop() would otherwise be true.
-		$GLOBALS['fr_page_type'] = 'shop';
+		// Non-archive context: the predicate resolves false, so the render
+		// bracket must emit nothing and fire no hooks.
+		$GLOBALS['fr_page_type'] = '';
 
 		$before = 0;
 		$after  = 0;
@@ -210,8 +190,8 @@ final class InfiniteScrollHooksTest extends TestCase {
 		$module->render_grid_wrapper_close();
 		$output = ob_get_clean();
 
-		$this->assertSame( '', $output, 'no output under flag-OFF' );
-		$this->assertSame( 0, $before, 'before_render does not fire under flag-OFF' );
-		$this->assertSame( 0, $after, 'after_render does not fire under flag-OFF' );
+		$this->assertSame( '', $output, 'no output when the predicate is false' );
+		$this->assertSame( 0, $before, 'before_render does not fire when the predicate is false' );
+		$this->assertSame( 0, $after, 'after_render does not fire when the predicate is false' );
 	}
 }

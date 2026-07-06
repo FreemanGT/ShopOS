@@ -7,9 +7,8 @@
  * which Hard Rule #3 forbids editing). Renders a simple form that POSTs
  * to `admin-post.php` with the action handled by `CSV_Exporter`.
  *
- * Gated by `Feature_Flags::is_enabled( 'restock_notify', 'csv_export' )` —
- * the caller (Module::boot) decides whether to register, so flag-OFF
- * means no submenu appears in the admin menu tree.
+ * Always-on since 1.23.0 (the csv_export flag graduated) — Module::boot
+ * registers it unconditionally on admin requests.
  *
  * @package FreemanCore
  */

@@ -14,16 +14,15 @@
  * renders the standard single-product summary, so VariationSwatches' PDP
  * buy-box hooks light up unaided (§6.7). Transport is admin-AJAX (§6.3).
  *
- * Everything is gated by the `freeman_core_quick_view_frontend_enabled`
- * feature flag (default off, §6.5): flag-off boots nothing — no markup, no
- * assets, no public endpoint.
+ * Always-on since 1.23.0 (the frontend feature flag graduated): the
+ * module-enable toggle is the kill-switch — module-off boots nothing, no
+ * markup, no assets, no public endpoint.
  *
  * @package FreemanCore
  */
 
 namespace Freeman\Core\Modules\QuickView;
 
-use Freeman\Core\Core\Feature_Flags;
 use Freeman\Core\Core\Module_Base;
 
 defined( 'ABSPATH' ) || exit;
@@ -90,13 +89,10 @@ final class Module extends Module_Base {
 	}
 
 	/**
-	 * Boot — everything sits behind the frontend feature flag so flag-off
-	 * leaves no storefront markup, no assets, and no public AJAX surface.
+	 * Boot — storefront + AJAX surfaces; always-on since 1.23.0 (the
+	 * frontend flag graduated; the module-enable toggle is the kill-switch).
 	 */
 	public function boot() {
-		if ( ! Feature_Flags::is_enabled( 'quick_view', 'frontend' ) ) {
-			return;
-		}
 		( new Frontend( $this ) )->register();
 		( new Ajax( $this ) )->register();
 	}

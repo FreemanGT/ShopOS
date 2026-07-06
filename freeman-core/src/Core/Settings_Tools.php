@@ -3,9 +3,9 @@
  * Settings export / import / auto-backup. The "rollback path" tool from
  * Wave 0.3 of the roadmap.
  *
- * Export and the backup list are read-only; available regardless of flag state.
- * Import writes options and is gated by Feature_Flags::is_enabled('tools',
- * 'settings_import') (default off). Every import auto-backs up current state
+ * Export and the backup list are read-only. Import writes options; always-on
+ * since 1.23.0 (the tools/settings_import flag graduated — capability + nonce
+ * remain the gate). Every import auto-backs up current state
  * AFTER validation, BEFORE first write — a failed/rejected import never
  * consumes a backup slot.
  *
@@ -305,10 +305,6 @@ final class Settings_Tools {
 	public function handle_import() {
 		Security::require_cap( Settings_Hub::CAP );
 		Security::verify_nonce( self::NONCE_IMPORT );
-
-		if ( ! Feature_Flags::is_enabled( 'tools', 'settings_import' ) ) {
-			wp_die( esc_html__( 'Settings import is disabled.', 'freeman-core' ), 403 );
-		}
 
 		$payload = '';
 		if ( ! empty( $_FILES['envelope']['tmp_name'] ) && is_uploaded_file( $_FILES['envelope']['tmp_name'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
