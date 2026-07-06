@@ -89,8 +89,8 @@
 /* The layout deliberately skips the wc-product-gallery-slider support, so
    the images render as one plain stacked wrapper. Desktop lays them out
    editorially (first image full-width, the rest 2-up) beside the sticky
-   summary; mobile turns the same markup into a scroll-snap strip with dots
-   (injected by product-page.js). Zoom + lightbox stay per-image.
+   summary; mobile stacks every image full-width in gallery order (owner
+   request, Wave 9.3 — replaced the scroll-snap strip). Zoom stays per-image.
 
    WC's template inline-styles the gallery to opacity:0 as a FOUC-hider that
    flexslider's init undoes — with no slider, undo it here. */
@@ -145,52 +145,11 @@
 	}
 }
 
-/* Mobile: the same wrapper becomes a swipeable snap strip. */
+/* Mobile: single column — every image a full-width row, in gallery order. */
 @media (max-width: 1023.98px) {
 	.fm-pdp__gallery .woocommerce-product-gallery__wrapper {
-		display: flex;
-		overflow-x: auto;
-		scroll-snap-type: x mandatory;
-		scrollbar-width: none;
-		gap: var(--fm-space-sm, 8px);
-		-webkit-overflow-scrolling: touch;
+		grid-template-columns: minmax(0, 1fr);
 	}
-
-	.fm-pdp__gallery .woocommerce-product-gallery__wrapper::-webkit-scrollbar {
-		display: none;
-	}
-
-	.fm-pdp__gallery .woocommerce-product-gallery__image {
-		flex: 0 0 100%;
-		/* start (not center): full-width slides carrying an inter-slide gap
-		   mis-seat when centre-snapped — the first slide never rests cleanly. */
-		scroll-snap-align: start;
-	}
-}
-
-/* Scroll-progress bar (built by product-page.js only when the strip scrolls),
-   mobile only — its fill width tracks the strip's horizontal scroll position.
-   Scroll-driven (no transition), so it needs no reduced-motion handling; the
-   fill grows from the inline-start edge, so it reads correctly in RTL. */
-.fm-pdp__gallery-progress {
-	block-size: 3px;
-	margin-top: var(--fm-space-md, 16px);
-	border-radius: var(--fm-radius-pill, 999px);
-	background: var(--fm-color-hairline, #e6e6e2);
-	overflow: hidden;
-}
-
-@media (min-width: 1024px) {
-	.fm-pdp__gallery-progress {
-		display: none;
-	}
-}
-
-.fm-pdp__gallery-progress__fill {
-	block-size: 100%;
-	inline-size: 0;
-	background: var(--fm-color-ink, #1b1b1b);
-	border-radius: inherit;
 }
 
 /* Zoom / lightbox trigger — a quiet paper circle over the image corner. */
@@ -240,7 +199,8 @@
 
 .fm-pdp__summary .product_title {
 	margin: 0 0 var(--fm-space-sm, 8px);
-	text-wrap: balance;
+	/* No text-wrap:balance — it equalises line lengths, so multi-line titles
+	   refused to fill the column ("titles sometimes not full width", 9.3). */
 	font-family: var(--fm-font-display, 'Assistant', 'Heebo', 'Rubik', sans-serif);
 	font-size: var(--fm-text-xxl, 2.25rem);
 	font-weight: var(--fm-weight-semi, 600);
@@ -382,9 +342,11 @@
 	color: var(--fm-color-ink, #1b1b1b);
 }
 
-/* Quantity + button row. */
+/* Quantity + button row. The :not(.etucart-buy-box) guard keeps this off
+   VariationSwatches' SIMPLE buy box, which is a form.cart without
+   .variations_form and lays out its own actions column (Wave 9.3). */
 .fm-pdp__summary .woocommerce-variation-add-to-cart,
-.fm-pdp__summary form.cart:not(.variations_form):not(.grouped_form) {
+.fm-pdp__summary form.cart:not(.variations_form):not(.grouped_form):not(.etucart-buy-box) {
 	display: flex;
 	align-items: stretch;
 	gap: var(--fm-space-sm, 8px);
@@ -472,20 +434,51 @@
 /* ---------- Additional information (surfaced under the buy box) ----------- */
 
 /* Rendered inside the summary stack at priority 38 (above meta) so the spec
-   table sits directly under the buy box instead of only in the accordion. */
-.fm-pdp__addl-info {
+   table sits directly under the buy box instead of only in the accordion.
+   A collapsed <details> since Wave 9.3 (owner: "a tab, not just open");
+   every selector is double-class so an Elementor kit's element rules
+   (`.elementor-kit-N h2 { font-size }` outranked the 9.2 single-class title
+   and rendered it huge) can never win. */
+.fm-pdp .fm-pdp__addl-info {
 	margin-top: var(--fm-space-md, 16px);
-	padding-top: var(--fm-space-md, 16px);
+	padding-top: var(--fm-space-xs, 4px);
 	border-top: 1px solid var(--fm-color-hairline, #e6e6e2);
 }
 
-.fm-pdp__addl-info-title {
-	margin: 0 0 var(--fm-space-sm, 8px);
+.fm-pdp .fm-pdp__addl-info-summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--fm-space-md, 16px);
+	padding-block: var(--fm-space-sm, 8px);
+	cursor: pointer;
+	list-style: none;
+}
+
+.fm-pdp .fm-pdp__addl-info-summary::-webkit-details-marker {
+	display: none;
+}
+
+.fm-pdp .fm-pdp__addl-info-title {
 	font-size: var(--fm-text-xs, 0.75rem);
 	font-weight: var(--fm-weight-semi, 600);
 	letter-spacing: var(--fm-tracking-wide, 0.04em);
 	text-transform: uppercase;
 	color: var(--fm-color-ink-soft, #3a3a3a);
+}
+
+.fm-pdp .fm-pdp__addl-info-chevron {
+	flex: none;
+	color: var(--fm-color-ink-muted, #6b6b6b);
+	transition: transform var(--fm-motion-fast, 180ms) var(--fm-ease, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.fm-pdp .fm-pdp__addl-info[open] > .fm-pdp__addl-info-summary .fm-pdp__addl-info-chevron {
+	transform: rotate(180deg);
+}
+
+.fm-pdp .fm-pdp__addl-info-body {
+	padding-block: var(--fm-space-xs, 4px) var(--fm-space-sm, 8px);
 }
 
 /* ---------- Meta --------------------------------------------------------- */
@@ -602,6 +595,10 @@
 	background: none;
 	text-align: start;
 	font-style: normal;
+	/* Explicit: the table text otherwise inherits whatever the site's kit
+	   puts on table cells (the "huge text" half of the Wave 9.3 report). */
+	font-size: var(--fm-text-sm, 0.875rem);
+	line-height: var(--fm-leading-base, 1.55);
 }
 
 .fm-pdp__acc-body .woocommerce-product-attributes th,
@@ -680,25 +677,43 @@
 	color: var(--fm-color-ink, #1b1b1b);
 }
 
-.fm-pdp ul.products {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+/* The grid must out-gun WooCommerce's core loop layout, whose selector
+   `.woocommerce ul.products[class*="columns-"] li.product` (0,4,2) outranks a
+   plain .fm-pdp-scoped rule — its float/percentage widths and .first{clear}
+   leaked in and wrapped the 4-up grid as 3+1 rows (Wave 9.3). Mirror the
+   attribute selector for the tie and pin the killers with !important. */
+.fm-pdp ul.products,
+.fm-pdp ul.products[class*='columns-'] {
+	display: grid !important;
+	grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
 	gap: var(--fm-space-lg, 24px);
+	width: auto;
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
 @media (min-width: 768px) {
-	.fm-pdp ul.products {
-		grid-template-columns: repeat(4, minmax(0, 1fr));
+	.fm-pdp ul.products,
+	.fm-pdp ul.products[class*='columns-'] {
+		grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
 	}
 }
 
-.fm-pdp ul.products li.product {
-	float: none;
-	width: auto;
-	margin: 0;
+/* WC's clearfix ::before/::after would render as anonymous grid ITEMS,
+   occupying cells and shoving the last product onto its own row. */
+.fm-pdp ul.products::before,
+.fm-pdp ul.products::after {
+	display: none !important;
+	content: none !important;
+}
+
+.fm-pdp ul.products li.product,
+.fm-pdp ul.products[class*='columns-'] li.product {
+	float: none !important;
+	clear: none !important;
+	width: auto !important;
+	margin: 0 !important;
 	padding: 0;
 	display: flex;
 	flex-direction: column;
@@ -913,6 +928,27 @@
 	color: var(--fm-color-ink, #1b1b1b) !important;
 }
 
+/* Full-width pin (Wave 9.3): on the live store a site-level rule written for
+   the old Elementor PDP floats/half-widths form.cart, so the buy box sat at
+   ~50% on the left and jumped there after first paint. Nothing in this repo
+   or VS sets that layout — pin it here defensively so any such rule loses.
+   Also lifts VS's own 640px cap so the box fills the summary panel. */
+.fm-pdp .fm-pdp__summary form.cart,
+.fm-pdp .etucart-buy-box {
+	float: none !important;
+	width: 100% !important;
+	max-width: none !important;
+	margin-inline: 0 !important;
+}
+
+.fm-pdp .etucart-buy-box .etucart-actions,
+.fm-pdp .etucart-buy-box .etucart-actions__row,
+.fm-pdp .etucart-buy-box .single_variation_wrap {
+	float: none !important;
+	width: 100% !important;
+	max-width: none !important;
+}
+
 /* Belt to the JS suspenders: never show two sticky bars. */
 .fm-pdp:has(.etucart-sticky-bar) .fm-pdp__sticky-bar {
 	display: none;
@@ -963,9 +999,5 @@
 	.fm-pdp__gallery .fm-img-swap,
 	.fm-pdp__acc-item[open] > .fm-pdp__acc-body {
 		animation: none;
-	}
-
-	.fm-pdp__gallery .woocommerce-product-gallery__wrapper {
-		scroll-behavior: auto;
 	}
 }

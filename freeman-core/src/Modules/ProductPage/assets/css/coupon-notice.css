@@ -12,7 +12,12 @@
 	gap: var(--fm-space-sm, 8px);
 	margin-block: var(--fm-space-md, 16px) 0;
 	padding: var(--fm-space-md, 16px);
-	background: var(--fm-color-paper-dim, #f1efea);
+	/* Paper on the paper-dim summary panel: the 9.2 panel adopted the same
+	   dim tone this notice used, turning it invisible — a white card with a
+	   hairline reads subtle on the panel AND on plain-white contexts (the
+	   shortcode placements). Wave 9.3. */
+	background: var(--fm-color-paper, #ffffff);
+	border: 1px solid var(--fm-color-hairline, #e6e6e2);
 	border-radius: var(--fm-radius-lg, 12px);
 	color: var(--fm-color-ink, #1b1b1b);
 	font-size: var(--fm-text-sm, 0.875rem);

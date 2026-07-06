@@ -12,10 +12,12 @@
  *    body.fm-pdp-sticky-active so the CSS reserves bottom space for it.
  * 2. Sticky-bar price sync — follows the picked variation via WooCommerce's
  *    found_variation / reset_data events.
- * 3. Gallery scroll-progress bar (mobile) — the editorial gallery is a
- *    scroll-snap strip; a slim fill tracks its horizontal scroll position.
- * 4. Gallery click guard — the lightbox is disabled, so block the raw-image
+ * 3. Gallery click guard — the lightbox is disabled, so block the raw-image
  *    navigation on gallery image links; hover-zoom stays the interaction.
+ * 4. Gallery click-to-swap (desktop 2-up layout only) — clicking a secondary
+ *    image trades places with the main slot (Wave 9.3 owner request). The
+ *    swap moves attributes, not nodes, so WC's variation image update (which
+ *    always targets the FIRST gallery image's .wp-post-image) keeps working.
  * 5. Variation image-swap feedback — a quick fade on the main gallery image
  *    when WC swaps its source (reduced-motion collapses it in CSS).
  */
@@ -84,50 +86,6 @@
 		}
 	}
 
-	function initGalleryProgress() {
-		var gallery = document.querySelector( '.fm-pdp__gallery' );
-		var strip = gallery && gallery.querySelector( '.woocommerce-product-gallery__wrapper' );
-		if ( ! strip ) {
-			return;
-		}
-		var slides = strip.querySelectorAll( '.woocommerce-product-gallery__image' );
-		if ( slides.length < 2 ) {
-			return;
-		}
-
-		var track = document.createElement( 'div' );
-		track.className = 'fm-pdp__gallery-progress';
-		var fill = document.createElement( 'div' );
-		fill.className = 'fm-pdp__gallery-progress__fill';
-		track.appendChild( fill );
-		strip.parentNode.insertBefore( track, strip.nextSibling );
-
-		function update() {
-			// scrollWidth − clientWidth (not clientWidth multiples) is gap-proof,
-			// and Math.abs(scrollLeft) keeps it correct under RTL's negative scroll.
-			var max = strip.scrollWidth - strip.clientWidth;
-			var fraction = max > 0 ? Math.min( Math.abs( strip.scrollLeft ) / max, 1 ) : 0;
-			fill.style.inlineSize = ( fraction * 100 ) + '%';
-		}
-		update();
-
-		var ticking = false;
-		strip.addEventListener(
-			'scroll',
-			function () {
-				if ( ticking ) {
-					return;
-				}
-				ticking = true;
-				window.requestAnimationFrame( function () {
-					ticking = false;
-					update();
-				} );
-			},
-			{ passive: true }
-		);
-	}
-
 	function initGalleryClickGuard() {
 		var gallery = document.querySelector( '.fm-pdp__gallery' );
 		if ( ! gallery ) {
@@ -143,6 +101,76 @@
 				: null;
 			if ( link ) {
 				e.preventDefault();
+			}
+		} );
+	}
+
+	// Trade every attribute except `class` between two elements. Keeping the
+	// classes in place preserves .wp-post-image on the main slot — the marker
+	// WC's wc_variations_image_update targets — while src/srcset/data-* travel.
+	function swapAttributes( a, b ) {
+		if ( ! a || ! b ) {
+			return;
+		}
+		var snapshot = function ( el ) {
+			var out = {};
+			Array.prototype.forEach.call( el.attributes, function ( attr ) {
+				if ( 'class' !== attr.name ) {
+					out[ attr.name ] = attr.value;
+				}
+			} );
+			return out;
+		};
+		var attrsA = snapshot( a );
+		var attrsB = snapshot( b );
+		Object.keys( attrsA ).forEach( function ( name ) {
+			a.removeAttribute( name );
+		} );
+		Object.keys( attrsB ).forEach( function ( name ) {
+			b.removeAttribute( name );
+		} );
+		Object.keys( attrsB ).forEach( function ( name ) {
+			a.setAttribute( name, attrsB[ name ] );
+		} );
+		Object.keys( attrsA ).forEach( function ( name ) {
+			b.setAttribute( name, attrsA[ name ] );
+		} );
+	}
+
+	function initGalleryClickSwap() {
+		var wrapper = document.querySelector( '.fm-pdp__gallery .woocommerce-product-gallery__wrapper' );
+		if ( ! wrapper || ! window.matchMedia ) {
+			return;
+		}
+		var desktop = window.matchMedia( '(min-width: 1024px)' );
+
+		wrapper.addEventListener( 'click', function ( e ) {
+			// Mobile stacks every image full-width — a tap-teleport would
+			// only disorient; the swap is a desktop 2-up affordance.
+			if ( ! desktop.matches || ! e.target || ! e.target.closest ) {
+				return;
+			}
+			var clicked = e.target.closest( '.woocommerce-product-gallery__image' );
+			var main = wrapper.querySelector( '.woocommerce-product-gallery__image' );
+			if ( ! clicked || ! main || clicked === main ) {
+				return;
+			}
+
+			swapAttributes( main.querySelector( 'img' ), clicked.querySelector( 'img' ) );
+			swapAttributes( main.querySelector( 'a' ), clicked.querySelector( 'a' ) );
+			// The wrapper divs keep their placement; only the thumb pointer
+			// (WC reads it for variation resets) travels with the image.
+			swapAttributes( main, clicked );
+
+			[ main, clicked ].forEach( function ( el ) {
+				el.classList.remove( 'fm-img-swap' );
+				void el.offsetWidth;
+				el.classList.add( 'fm-img-swap' );
+			} );
+
+			// The hover-zoom clone caches the pre-swap source — rebuild it.
+			if ( typeof jQuery !== 'undefined' ) {
+				jQuery( '.woocommerce-product-gallery' ).trigger( 'woocommerce_gallery_init_zoom' );
 			}
 		} );
 	}
@@ -168,8 +196,8 @@
 
 	function init() {
 		initStickyBar();
-		initGalleryProgress();
 		initGalleryClickGuard();
+		initGalleryClickSwap();
 		initImageSwapFeedback();
 	}
 

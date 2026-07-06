@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use Freeman\Core\Modules\ProductPage\Coupon_Notice;
 use Freeman\Core\Modules\ProductPage\Labels;
+use Freeman\Core\Modules\ProductPage\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -93,6 +94,17 @@ final class ProductPageCouponNoticeTest extends TestCase {
 
 		$this->assertStringContainsString( 'data-fm-coupon-prices=', $html );
 		$this->assertStringContainsString( 'data-fm-coupon-price>', $html, 'the price element must be JS-addressable' );
+	}
+
+	public function test_render_hooks_the_summary_below_the_buy_box(): void {
+		( new Coupon_Notice( new Module() ) )->register();
+
+		$summary = $GLOBALS['fr_hooks']['woocommerce_single_product_summary'];
+		$this->assertCount( 1, $summary );
+		// 31: directly under WC's add-to-cart / the VS buy box at 30, above
+		// urgency at 35 — the notice must always sit under the swatches
+		// (owner request, Wave 9.3; it rendered above them at the old 25).
+		$this->assertSame( 31, $summary[0]['priority'] );
 	}
 
 	public function test_labels_fall_back_to_english_defaults(): void {

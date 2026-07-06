@@ -171,18 +171,16 @@ final class Stock_Urgency {
 
 	/**
 	 * Per-variation urgency map from live variation objects. Uses the light
-	 * objects read (1.21.34 precedent). Integration — needs WC.
+	 * objects read (1.21.34 precedent) via the per-request Variations memo
+	 * shared with Coupon_Notice (one enumeration per product per pageview,
+	 * Wave 9.3). Integration — needs WC.
 	 *
 	 * @param \WC_Product $product Variable product.
 	 * @return array<int,string>
 	 */
 	private function messages_for_product( $product ) {
-		if ( ! method_exists( $product, 'get_available_variations' ) ) {
-			return array();
-		}
-
 		$rows = array();
-		foreach ( (array) $product->get_available_variations( 'objects' ) as $variation ) {
+		foreach ( Variations::objects( $product ) as $variation ) {
 			if ( ! $variation instanceof \WC_Product_Variation ) {
 				continue;
 			}

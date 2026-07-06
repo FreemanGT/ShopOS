@@ -7,9 +7,10 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Template takeover seams: the template resolution ladder (theme override →
- * module copy), the non-product pass-through, the WC-defaults detach on
- * takeover, and the body-class scope hook. The actual render (Elementor
- * precedence, gallery, sticky bar) is integration — live-QA.
+ * module copy), the non-product pass-through, the WC-defaults detach +
+ * gallery-image-size filter on takeover, the additional-information
+ * <details> markup, and the body-class scope hook. The actual render
+ * (Elementor precedence, gallery, sticky bar) is integration — live-QA.
  *
  * @covers \Freeman\Core\Modules\ProductPage\Template_Loader
  */
@@ -113,6 +114,44 @@ final class ProductPageTemplateTest extends TestCase {
 		$this->assertContains( 'wc-product-gallery-zoom', $GLOBALS['fr_theme_supports'] );
 		$this->assertNotContains( 'wc-product-gallery-slider', $GLOBALS['fr_theme_supports'] );
 		$this->assertNotContains( 'wc-product-gallery-lightbox', $GLOBALS['fr_theme_supports'] );
+	}
+
+	public function test_takeover_adds_the_gallery_image_size_filter(): void {
+		$GLOBALS['fr_page_type'] = 'product';
+
+		$loader = $this->loader();
+		$loader->maybe_takeover( '/theme/single.php' );
+
+		// With the slider support removed, WC drops non-main gallery images
+		// to the ~100px gallery_thumbnail — the filter lifts them back.
+		$this->assertArrayHasKey( 'woocommerce_gallery_image_size', $GLOBALS['fr_hooks'] );
+		$this->assertSame( 'woocommerce_single', $loader->gallery_image_size() );
+	}
+
+	public function test_takeover_off_product_pages_adds_no_gallery_size_filter(): void {
+		$this->loader()->maybe_takeover( '/theme/page.php' );
+
+		$this->assertArrayNotHasKey( 'woocommerce_gallery_image_size', $GLOBALS['fr_hooks'] );
+	}
+
+	public function test_additional_information_html_is_a_collapsed_details(): void {
+		$table = '<table class="woocommerce-product-attributes"><tr><th>צבע</th><td>שחור</td></tr></table>';
+
+		$html = Template_Loader::additional_information_html( 'Additional information', $table );
+
+		$this->assertStringStartsWith( '<details class="fm-pdp__addl-info">', $html );
+		$this->assertStringNotContainsString( '<details class="fm-pdp__addl-info" open', $html, 'collapsed by default — a tab, not just open' );
+		$this->assertStringContainsString( '<summary class="fm-pdp__addl-info-summary">', $html );
+		$this->assertStringContainsString( '<span class="fm-pdp__addl-info-title">Additional information</span>', $html );
+		$this->assertStringNotContainsString( '<h2', $html, 'no heading element — an Elementor kit h2 rule outranked the 9.2 title' );
+		$this->assertStringContainsString( 'fm-pdp__addl-info-chevron', $html );
+		$this->assertStringContainsString( '<div class="fm-pdp__addl-info-body">' . $table . '</div>', $html, 'WC table passes through unescaped' );
+	}
+
+	public function test_additional_information_html_escapes_the_heading(): void {
+		$html = Template_Loader::additional_information_html( 'Specs <b>now</b>', '<table></table>' );
+
+		$this->assertStringContainsString( 'Specs &lt;b&gt;now&lt;/b&gt;', $html );
 	}
 
 	public function test_button_color_css_is_empty_for_no_or_invalid_hex(): void {

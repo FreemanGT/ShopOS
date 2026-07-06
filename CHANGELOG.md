@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.24.0] — 2026-07-06
+
+- Wave 9.3 - PDP live-QA round 2 + perf: gallery image-size root-cause fix (non-main images were dropping to 100px thumbs) + mobile gallery stacked full-width in order, desktop click-to-swap main image, related-grid 3+1/mobile fix, Additional information as a collapsed details tab, coupon notice moved under the buy box as a visible white card, buy-box full-width pin (kills the 50%-left layout + paint flash), title text-wrap fix, and a shared per-request variations memo so the coupon + urgency widgets enumerate variations once per product view.
+
 ## [1.23.2] — 2026-07-06
 
 - freeman-core: VariationSwatches — new opt-in "Shop: show name & price only" setting (default off). When on, shop / archive cards hide the whole buy UI (no swatch picker, add-to-cart, or "Choose options" link), leaving just the product name and price; customers click through to the product page to buy. Applies to variable and simple products.

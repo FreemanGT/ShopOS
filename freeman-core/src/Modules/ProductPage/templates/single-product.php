@@ -137,14 +137,26 @@ get_header( 'shop' ); ?>
 					$fm_related_sizes = static function () {
 						return '(max-width: 767px) 45vw, (max-width: 1360px) 23vw, 320px';
 					};
+					// Pin the related loop to the 4-up grid the stylesheet
+					// draws (2-up on mobile): a site-level columns/count
+					// filter (e.g. 3 columns) would re-introduce the 3+1 row
+					// wrap the owner reported (Wave 9.3). Consumer-only,
+					// added late and removed after the loop.
+					$fm_related_args = static function ( $args ) {
+						$args['posts_per_page'] = 4;
+						$args['columns']        = 4;
+						return $args;
+					};
 					add_filter( 'single_product_archive_thumbnail_size', $fm_large_thumbs );
 					add_filter( 'wp_calculate_image_sizes', $fm_related_sizes );
+					add_filter( 'woocommerce_output_related_products_args', $fm_related_args, 9999 );
 					if ( function_exists( 'woocommerce_upsell_display' ) ) {
 						woocommerce_upsell_display();
 					}
 					if ( function_exists( 'woocommerce_output_related_products' ) ) {
 						woocommerce_output_related_products();
 					}
+					remove_filter( 'woocommerce_output_related_products_args', $fm_related_args, 9999 );
 					remove_filter( 'wp_calculate_image_sizes', $fm_related_sizes );
 					remove_filter( 'single_product_archive_thumbnail_size', $fm_large_thumbs );
 					?>

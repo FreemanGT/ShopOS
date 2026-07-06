@@ -15,8 +15,9 @@
  * `found_variation` / `reset_data` events — unlike the original snippet,
  * which froze on the minimum price.
  *
- * Renders via `woocommerce_single_product_summary` (priority 25 — between
- * WC's excerpt at 20 and add-to-cart at 30) AND the
+ * Renders via `woocommerce_single_product_summary` (priority 31 — directly
+ * under the buy box at 30, above urgency at 35; owner request, Wave 9.3:
+ * the notice must always sit under the swatches/buy box) AND the
  * `[freeman_discounted_price]` shortcode (legacy alias `[discounted_price]`),
  * because the pre-takeover Elementor-built product page renders widgets
  * directly and never fires the summary hook stack.
@@ -54,7 +55,7 @@ final class Coupon_Notice {
 	 */
 	public function register() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
-		add_action( 'woocommerce_single_product_summary', array( $this, 'render' ), 25 );
+		add_action( 'woocommerce_single_product_summary', array( $this, 'render' ), 31 );
 		add_shortcode( 'freeman_discounted_price', array( $this, 'shortcode' ) );
 		// Legacy alias: the owner's original snippet registered this tag, so an
 		// Elementor Shortcode widget already placed on the product page keeps
@@ -272,19 +273,21 @@ final class Coupon_Notice {
 	 * Per-variation discounted-price map (variation id => wc_price() HTML)
 	 * for the JS live swap. Uses the light objects read (1.21.34 precedent) —
 	 * WooCommerce's own availability filtering, none of the heavy payload
-	 * assembly. Integration — needs WC.
+	 * assembly — via the per-request Variations memo shared with
+	 * Stock_Urgency (one enumeration per product per pageview, Wave 9.3).
+	 * Integration — needs WC.
 	 *
 	 * @param \WC_Product $product Product.
 	 * @param float       $percent Discount percent.
 	 * @return array<int,string>
 	 */
 	private function variation_price_map( $product, $percent ) {
-		if ( ! $product->is_type( 'variable' ) || ! method_exists( $product, 'get_available_variations' ) ) {
+		if ( ! $product->is_type( 'variable' ) ) {
 			return array();
 		}
 
 		$map = array();
-		foreach ( (array) $product->get_available_variations( 'objects' ) as $variation ) {
+		foreach ( Variations::objects( $product ) as $variation ) {
 			if ( ! $variation instanceof \WC_Product_Variation ) {
 				continue;
 			}

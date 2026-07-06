@@ -128,9 +128,28 @@ final class Template_Loader {
 		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15 );
 		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
 
+		// With the slider support removed (add_gallery_supports), WC's
+		// wc_get_gallery_image_html() silently drops every non-main gallery
+		// image to the ~100px gallery_thumbnail size — stretched to full
+		// width in the editorial layout they render blurry (Wave 9.3 root
+		// cause). Serve the same size the main image gets.
+		add_filter( 'woocommerce_gallery_image_size', array( $this, 'gallery_image_size' ) );
+
 		self::$is_takeover = true;
 
 		return $file;
+	}
+
+	/**
+	 * Gallery image size for ALL gallery slots on the takeover page — the
+	 * main image already renders at woocommerce_single; this lifts the
+	 * secondary images to match (they'd otherwise fall back to the tiny
+	 * gallery_thumbnail once the flexslider support is gone).
+	 *
+	 * @return string
+	 */
+	public function gallery_image_size() {
+		return 'woocommerce_single';
 	}
 
 	/**
@@ -181,10 +200,30 @@ final class Template_Loader {
 			? (string) apply_filters( 'woocommerce_product_additional_information_heading', __( 'Additional information', 'freeman-core' ) )
 			: __( 'Additional information', 'freeman-core' );
 
-		echo '<section class="fm-pdp__addl-info">'
-			. '<h2 class="fm-pdp__addl-info-title">' . esc_html( $heading ) . '</h2>'
-			. $table // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WC-built attribute table.
-			. '</section>';
+		echo self::additional_information_html( $heading, $table ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- heading escaped inside; table is WC-built.
+	}
+
+	/**
+	 * The under-buy-box additional-information block: a collapsed <details>
+	 * (owner request, Wave 9.3 — "a tab, not just open") whose summary line
+	 * is a <span>, not a heading element, so an Elementor kit's global
+	 * `h2 { font-size }` rule can never outrank the scoped style (the Wave
+	 * 9.2 <h2> rendered kit-huge on the live store). Pure — unit-tested.
+	 *
+	 * @param string $heading Block heading (plain text).
+	 * @param string $table   WC-built attributes table (trusted HTML).
+	 * @return string
+	 */
+	public static function additional_information_html( $heading, $table ) {
+		return '<details class="fm-pdp__addl-info">'
+			. '<summary class="fm-pdp__addl-info-summary">'
+			. '<span class="fm-pdp__addl-info-title">' . esc_html( $heading ) . '</span>'
+			. '<svg class="fm-pdp__addl-info-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">'
+			. '<path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+			. '</svg>'
+			. '</summary>'
+			. '<div class="fm-pdp__addl-info-body">' . $table . '</div>'
+			. '</details>';
 	}
 
 	/**
