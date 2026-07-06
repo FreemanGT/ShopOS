@@ -66,7 +66,7 @@ final class Module extends Module_Base {
 	/**
 	 * Settings schema.
 	 *
-	 * The 14 options are owned by this page (Freeman → Variation Swatches);
+	 * The 15 options are owned by this page (Freeman → Variation Swatches);
 	 * they are stored under `freeman_core_variation_swatches_*` and read via
 	 * the {@see Settings_Reader} shim (new key first, legacy `etucart_vs_*`
 	 * key as fallback). The legacy WooCommerce → Settings → Products → "Shop
@@ -164,6 +164,12 @@ final class Module extends Module_Base {
 				'type'           => 'checkbox',
 				'checkbox_label' => __( 'Hide the "selected option" text row under the swatches', 'freeman-core' ),
 				'default'        => 'yes',
+			),
+			'shop_names_price_only'    => array(
+				'label'          => __( 'Shop: show name & price only', 'freeman-core' ),
+				'type'           => 'checkbox',
+				'checkbox_label' => __( 'Hide the variation picker and add-to-cart on shop / archive cards — show only the product name and price (customers click through to buy)', 'freeman-core' ),
+				'default'        => 'no',
 			),
 		);
 	}

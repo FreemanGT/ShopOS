@@ -57,6 +57,9 @@ class Etucart_VS_Settings {
 	/** Archive / shop-grid: hide the "selected option" text row (1.7.9). */
 	public const OPT_SHOP_HIDE_SELECTED    = 'etucart_vs_shop_hide_selected';
 
+	/** Archive / shop-grid: show name + price only, no buy UI (1.23.2). */
+	public const OPT_SHOP_NAMES_PRICE_ONLY = 'etucart_vs_shop_names_price_only';
+
 	public function register(): void {
 		add_filter( 'woocommerce_get_sections_products', [ $this, 'add_section' ] );
 		add_filter( 'woocommerce_get_settings_products', [ $this, 'add_settings' ], 10, 2 );

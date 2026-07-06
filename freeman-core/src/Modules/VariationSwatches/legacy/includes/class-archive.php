@@ -81,6 +81,9 @@ class Etucart_VS_Archive {
 		if ( is_admin() ) {
 			return;
 		}
+		if ( Etucart_VS_Settings::bool( Etucart_VS_Settings::OPT_SHOP_NAMES_PRICE_ONLY, 'no' ) ) {
+			return; // names + price only: the picker is suppressed, so leave WC's default loop price so cards still show a price.
+		}
 		if ( ! Etucart_VS_Settings::bool( Etucart_VS_Settings::OPT_SHOW_PRICE, 'yes' ) ) {
 			return; // shop owner explicitly disabled our price line; leave WC's intact.
 		}
@@ -154,6 +157,18 @@ class Etucart_VS_Archive {
 			if ( array_intersect( $excluded, (array) $product_cat_ids ) ) {
 				return $html;
 			}
+		}
+
+		// Names + price only (1.23.2): suppress the whole buy UI on the card —
+		// no picker, no add-to-cart, no "Choose options" link — so the grid
+		// shows just the product name and price. The card image/title stay WC's
+		// normal PDP links, so the customer still clicks through to buy. The
+		// paired price handling lives in maybe_swap_loop_price_action(), which
+		// leaves WC's default loop price in place when this is on (otherwise the
+		// card would have no price at all). Runs after the excluded-categories
+		// gate so excluded products keep their default WC card unchanged.
+		if ( Etucart_VS_Settings::bool( Etucart_VS_Settings::OPT_SHOP_NAMES_PRICE_ONLY, 'no' ) ) {
+			return '';
 		}
 
 		if ( $product->is_type( 'simple' ) ) {

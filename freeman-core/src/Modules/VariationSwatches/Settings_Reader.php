@@ -71,6 +71,7 @@ final class Settings_Reader {
 		'etucart_vs_shop_no_preselect',
 		'etucart_vs_shop_hide_attr_labels',
 		'etucart_vs_shop_hide_selected',
+		'etucart_vs_shop_names_price_only',
 	);
 
 	/**

@@ -40,9 +40,9 @@ final class VariationSwatchesSettingsRelocationTest extends TestCase {
 
 	/* ---- settings_schema is now unconditional ----------------------------- */
 
-	public function test_settings_schema_returns_fourteen_keys_with_no_flag_set(): void {
+	public function test_settings_schema_returns_fifteen_keys_with_no_flag_set(): void {
 		$schema = ( new Module() )->settings_schema();
-		$this->assertCount( 14, $schema );
+		$this->assertCount( 15, $schema );
 	}
 
 	public function test_settings_schema_key_set_is_stable(): void {
@@ -50,7 +50,7 @@ final class VariationSwatchesSettingsRelocationTest extends TestCase {
 			'shop_enabled', 'shop_max_visible', 'shop_show_price', 'shop_apply_shop',
 			'shop_apply_category', 'shop_apply_tag', 'shop_apply_search', 'shop_apply_related',
 			'shop_excluded_categories', 'pdp_hide_oos', 'shop_hide_oos', 'shop_no_preselect',
-			'shop_hide_attr_labels', 'shop_hide_selected',
+			'shop_hide_attr_labels', 'shop_hide_selected', 'shop_names_price_only',
 		);
 		$this->assertSame( $expected, array_keys( ( new Module() )->settings_schema() ) );
 	}
