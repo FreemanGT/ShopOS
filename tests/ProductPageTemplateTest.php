@@ -98,4 +98,40 @@ final class ProductPageTemplateTest extends TestCase {
 		$GLOBALS['fr_page_type'] = 'product';
 		$this->assertContains( 'fm-pdp-active', $this->loader()->body_class( array( 'a' ) ) );
 	}
+
+	public function test_gallery_supports_keeps_zoom_and_drops_slider_and_lightbox(): void {
+		// The theme declares all three; the module keeps zoom, removes the
+		// slider (flexslider fights the editorial grid) and the lightbox.
+		$GLOBALS['fr_theme_supports'] = array(
+			'wc-product-gallery-zoom',
+			'wc-product-gallery-lightbox',
+			'wc-product-gallery-slider',
+		);
+
+		$this->loader()->add_gallery_supports();
+
+		$this->assertContains( 'wc-product-gallery-zoom', $GLOBALS['fr_theme_supports'] );
+		$this->assertNotContains( 'wc-product-gallery-slider', $GLOBALS['fr_theme_supports'] );
+		$this->assertNotContains( 'wc-product-gallery-lightbox', $GLOBALS['fr_theme_supports'] );
+	}
+
+	public function test_button_color_css_is_empty_for_no_or_invalid_hex(): void {
+		$this->assertSame( '', Template_Loader::button_color_css( '' ) );
+		$this->assertSame( '', Template_Loader::button_color_css( '   ' ) );
+		$this->assertSame( '', Template_Loader::button_color_css( 'red' ) );
+		$this->assertSame( '', Template_Loader::button_color_css( '#12g' ), 'non-hex digit rejected' );
+		$this->assertSame( '', Template_Loader::button_color_css( '123456' ), 'missing # rejected' );
+	}
+
+	public function test_button_color_css_drives_vs_primary_and_sticky_override(): void {
+		$css = Template_Loader::button_color_css( '#0A7C66' );
+
+		// Drives VS's own custom property (its action buttons read it)…
+		$this->assertStringContainsString( '.fm-pdp .etucart-buy-box{--etucart-primary:#0A7C66', $css );
+		$this->assertStringContainsString( '--etucart-primary-hover:#0A7C66', $css );
+		$this->assertStringContainsString( '--etucart-primary-active:#0A7C66', $css );
+		// …plus the explicit sticky-bar override, whose red is a hardcoded
+		// literal in VS rather than the var.
+		$this->assertStringContainsString( '.etucart-sticky-bar__buy{background:#0A7C66 !important}', $css );
+	}
 }

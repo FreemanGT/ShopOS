@@ -70,9 +70,11 @@ get_header( 'shop' ); ?>
 							<?php
 							/** Title (5) / price (10) / excerpt (20) / add-to-cart (30) / meta (40) / sharing (50). Documented in woocommerce/templates/content-single-product.php */
 							do_action( 'woocommerce_single_product_summary' );
+							// Trust line (36) + additional-information (38) render
+							// inside the stack above via Template_Loader, so they
+							// sit directly under the buy box.
 							?>
 						</div>
-						<?php echo \Freeman\Core\Modules\ProductPage\Template_Loader::trust_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts; '' when both labels are empty. ?>
 					</div>
 				</div>
 
@@ -81,7 +83,12 @@ get_header( 'shop' ); ?>
 					// The product-tabs stack (description / additional information /
 					// reviews + whatever plugins add) rendered as an accordion —
 					// the same filter WC's tabs template reads.
-					$fm_tabs  = apply_filters( 'woocommerce_product_tabs', array() );
+					$fm_tabs = apply_filters( 'woocommerce_product_tabs', array() );
+					// Additional information is surfaced under the buy box
+					// (Template_Loader::render_additional_information at summary
+					// priority 38), so drop it from the accordion to avoid a
+					// duplicate; description / reviews / plugin tabs stay here.
+					unset( $fm_tabs['additional_information'] );
 					$fm_first = true;
 					if ( ! empty( $fm_tabs ) ) :
 						?>
@@ -122,13 +129,23 @@ get_header( 'shop' ); ?>
 					$fm_large_thumbs = static function () {
 						return 'large';
 					};
+					// Companion to the `large` request: emit the real card slot so
+					// the browser doesn't download the viewport-wide srcset
+					// candidate for a ~2-of-4-column tile (the ProductSlider
+					// 1.21.23 lesson). 2 cols < 768px, 4 cols above, capped by the
+					// 1360px container → ~320px per card on wide screens.
+					$fm_related_sizes = static function () {
+						return '(max-width: 767px) 45vw, (max-width: 1360px) 23vw, 320px';
+					};
 					add_filter( 'single_product_archive_thumbnail_size', $fm_large_thumbs );
+					add_filter( 'wp_calculate_image_sizes', $fm_related_sizes );
 					if ( function_exists( 'woocommerce_upsell_display' ) ) {
 						woocommerce_upsell_display();
 					}
 					if ( function_exists( 'woocommerce_output_related_products' ) ) {
 						woocommerce_output_related_products();
 					}
+					remove_filter( 'wp_calculate_image_sizes', $fm_related_sizes );
 					remove_filter( 'single_product_archive_thumbnail_size', $fm_large_thumbs );
 					?>
 				</div>

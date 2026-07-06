@@ -142,6 +142,21 @@ if ( ! function_exists( 'add_theme_support' ) ) {
 		return true;
 	}
 }
+if ( ! function_exists( 'remove_theme_support' ) ) {
+	function remove_theme_support( $feature ) {
+		if ( ! empty( $GLOBALS['fr_theme_supports'] ) ) {
+			$GLOBALS['fr_theme_supports'] = array_values(
+				array_filter(
+					$GLOBALS['fr_theme_supports'],
+					static function ( $f ) use ( $feature ) {
+						return $f !== $feature;
+					}
+				)
+			);
+		}
+		return true;
+	}
+}
 if ( ! function_exists( 'sanitize_text_field' ) ) {
 	function sanitize_text_field( $v ) { return is_scalar( $v ) ? (string) $v : ''; }
 }

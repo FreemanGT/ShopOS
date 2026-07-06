@@ -79,6 +79,7 @@ final class Module extends Module_Base {
 	public function settings_schema() {
 		$coupon_section  = __( 'Coupon notice', 'freeman-core' );
 		$urgency_section = __( 'Stock urgency', 'freeman-core' );
+		$layout_section  = __( 'Designed layout', 'freeman-core' );
 
 		$schema = array(
 			'coupon_code'    => array(
@@ -101,6 +102,13 @@ final class Module extends Module_Base {
 				'default'     => 5,
 				'section'     => $urgency_section,
 				'description' => __( 'The badge shows while the picked variation has between 1 and this many units in managed stock.', 'freeman-core' ),
+			),
+			'button_color'   => array(
+				'label'       => __( 'Buy button colour', 'freeman-core' ),
+				'type'        => 'color',
+				'default'     => '',
+				'section'     => $layout_section,
+				'description' => __( 'Optional hex colour for the buy-box action buttons (Buy now / mobile sticky bar) on the designed page. Leave empty to keep the variation-swatches plugin\'s own colour.', 'freeman-core' ),
 			),
 		);
 

@@ -235,9 +235,11 @@ final class Coupon_Notice {
 			. '<circle cx="14.5" cy="5.5" r="1.1" fill="currentColor"/>'
 			. '</svg>'
 			. '<p class="fm-coupon-notice__text">'
+			. '<span class="fm-coupon-notice__sentence">'
 			. '<span class="fm-coupon-notice__intro">' . esc_html( $intro ) . '</span> '
 			. '<strong class="fm-coupon-notice__code">' . esc_html( $code ) . '</strong> '
-			. '<span class="fm-coupon-notice__outro">' . esc_html( $outro ) . '</span> '
+			. '<span class="fm-coupon-notice__outro">' . esc_html( $outro ) . '</span>'
+			. '</span> '
 			. '<span class="fm-coupon-notice__price" data-fm-coupon-price>' . $price_html . '</span>'
 			. '</p>'
 			. '</div>';

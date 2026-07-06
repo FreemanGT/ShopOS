@@ -42,6 +42,16 @@ final class Template_Loader {
 	const HANDLE = 'freeman-core-product-page';
 
 	/**
+	 * True once maybe_takeover() has returned the designed template for this
+	 * request — the guard that keeps the summary-hook trust / additional-info
+	 * renders scoped to the full takeover page (and out of QuickView drawers,
+	 * which fire the same summary stack without going through template_include).
+	 *
+	 * @var bool
+	 */
+	private static $is_takeover = false;
+
+	/**
 	 * @var Module
 	 */
 	private $module;
@@ -61,23 +71,39 @@ final class Template_Loader {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ), 20 );
 		add_filter( 'body_class', array( $this, 'body_class' ) );
 		// Modules boot on plugins_loaded — before the theme's setup — so the
-		// gallery supports attach after the theme has declared its own.
-		add_action( 'after_setup_theme', array( $this, 'add_gallery_supports' ), 11 );
+		// gallery supports reconcile after the theme (and, at priority 99,
+		// after late adders like Elementor Pro) have declared their own.
+		add_action( 'after_setup_theme', array( $this, 'add_gallery_supports' ), 99 );
+		// Trust line (36, after urgency 35) + Additional-information block (38,
+		// before meta 40) render inside the summary stack so they sit directly
+		// under the buy box on the takeover page. Both gate on is_takeover() so
+		// they never leak into QuickView drawers or other summary contexts.
+		add_action( 'woocommerce_single_product_summary', array( $this, 'render_trust' ), 36 );
+		add_action( 'woocommerce_single_product_summary', array( $this, 'render_additional_information' ), 38 );
 	}
 
 	/**
-	 * Declare the WC product-gallery features the designed page relies on.
+	 * Reconcile the WC product-gallery theme supports for the designed page.
 	 *
-	 * Deliberately NO `wc-product-gallery-slider`: without flexslider the
-	 * gallery images render as a plain stacked wrapper, which the stylesheet
+	 * The theme (and Elementor Pro) declare `wc-product-gallery-slider`, which
+	 * boots flexslider on the gallery — its inline width/float/transform fight
+	 * the editorial `display:grid` layout and leave the selected slide blank
+	 * (Wave 9.2). So we actively REMOVE the slider here (priority 99, after the
+	 * late adders) to keep the wrapper a plain stacked container the stylesheet
 	 * lays out editorially (first image full-width + 2-up grid on desktop,
-	 * scroll-snap strip with dots on mobile) instead of the stock
-	 * main-image-plus-thumbnails chrome. Zoom + lightbox init per image
-	 * independent of the slider.
+	 * scroll-snap strip with a progress bar on mobile).
+	 *
+	 * We also remove `wc-product-gallery-lightbox` — the owner wants no
+	 * full-screen PhotoSwipe modal — and keep `wc-product-gallery-zoom` so the
+	 * jQuery hover-magnify ("zoom inside") stays. `remove_theme_support` runs
+	 * globally (is_product() is not resolvable at after_setup_theme), but the
+	 * product gallery only renders on single-product pages, which this module
+	 * takes over anyway.
 	 */
 	public function add_gallery_supports() {
 		add_theme_support( 'wc-product-gallery-zoom' );
-		add_theme_support( 'wc-product-gallery-lightbox' );
+		remove_theme_support( 'wc-product-gallery-lightbox' );
+		remove_theme_support( 'wc-product-gallery-slider' );
 	}
 
 	/**
@@ -102,7 +128,84 @@ final class Template_Loader {
 		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15 );
 		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
 
+		self::$is_takeover = true;
+
 		return $file;
+	}
+
+	/**
+	 * Whether the designed template is driving the current request — used to
+	 * scope the summary-hook trust / additional-information renders to the full
+	 * takeover page.
+	 *
+	 * @return bool
+	 */
+	public static function is_takeover() {
+		return self::$is_takeover;
+	}
+
+	/**
+	 * Trust line under the buy box (summary priority 36). Takeover-only.
+	 */
+	public function render_trust() {
+		if ( ! self::$is_takeover ) {
+			return;
+		}
+		echo self::trust_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts; '' when both labels are empty.
+	}
+
+	/**
+	 * Additional-information attribute table surfaced directly under the buy
+	 * box (summary priority 38, before meta at 40) instead of only in the
+	 * accordion below. Takeover-only, and a no-op when the product exposes no
+	 * displayable attributes so an empty block never appears.
+	 */
+	public function render_additional_information() {
+		if ( ! self::$is_takeover || ! function_exists( 'wc_display_product_attributes' ) ) {
+			return;
+		}
+
+		global $product;
+		if ( ! $product instanceof \WC_Product ) {
+			return;
+		}
+
+		ob_start();
+		wc_display_product_attributes( $product );
+		$table = trim( (string) ob_get_clean() );
+		if ( '' === $table ) {
+			return;
+		}
+
+		$heading = function_exists( 'apply_filters' )
+			? (string) apply_filters( 'woocommerce_product_additional_information_heading', __( 'Additional information', 'freeman-core' ) )
+			: __( 'Additional information', 'freeman-core' );
+
+		echo '<section class="fm-pdp__addl-info">'
+			. '<h2 class="fm-pdp__addl-info-title">' . esc_html( $heading ) . '</h2>'
+			. $table // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WC-built attribute table.
+			. '</section>';
+	}
+
+	/**
+	 * Inline CSS injecting the owner-chosen button hex into the VariationSwatches
+	 * buy box, scoped to the takeover page. Drives VS's own --etucart-primary
+	 * custom property (which its action buttons read) plus an explicit override
+	 * for the mobile sticky CTA, whose red is a hardcoded literal, not the var.
+	 * Returns '' for an empty / invalid hex (keeps VS's native red). Pure —
+	 * unit-tested.
+	 *
+	 * @param string $hex Sanitised hex colour ('' = no override).
+	 * @return string
+	 */
+	public static function button_color_css( $hex ) {
+		$hex = trim( (string) $hex );
+		if ( '' === $hex || ! preg_match( '/^#[0-9a-fA-F]{3,8}$/', $hex ) ) {
+			return '';
+		}
+
+		return '.fm-pdp .etucart-buy-box{--etucart-primary:' . $hex . ';--etucart-primary-hover:' . $hex . ';--etucart-primary-active:' . $hex . '}'
+			. '.fm-pdp .etucart-buy-box .etucart-sticky-bar__buy,.fm-pdp .etucart-sticky-bar__buy{background:' . $hex . ' !important}';
 	}
 
 	/**
@@ -179,6 +282,11 @@ final class Template_Loader {
 			array(),
 			FREEMAN_CORE_VERSION
 		);
+
+		$button_css = self::button_color_css( (string) $this->module->get_option( 'button_color', '' ) );
+		if ( '' !== $button_css ) {
+			wp_add_inline_style( self::HANDLE, $button_css );
+		}
 
 		wp_enqueue_script(
 			self::HANDLE,

@@ -98,10 +98,19 @@
 	opacity: 1 !important;
 }
 
+/* Positioned ancestor so the zoom trigger (position:absolute) anchors to the
+   gallery, not the page. */
+.fm-pdp__gallery {
+	position: relative;
+}
+
 .fm-pdp__gallery .woocommerce-product-gallery__wrapper {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: var(--fm-space-sm, 8px);
+	/* Independent spacing: more room under the full-width main image (row),
+	   tighter between the 2-up gallery pair (column). */
+	column-gap: var(--fm-space-sm, 8px);
+	row-gap: var(--fm-space-md, 16px);
 	margin: 0;
 }
 
@@ -111,7 +120,7 @@
 
 .fm-pdp__gallery .woocommerce-product-gallery__image {
 	background: var(--fm-color-paper-dim, #f1efea);
-	border-radius: var(--fm-radius-lg, 12px);
+	border-radius: 1rem;
 	overflow: hidden;
 }
 
@@ -153,37 +162,35 @@
 
 	.fm-pdp__gallery .woocommerce-product-gallery__image {
 		flex: 0 0 100%;
-		scroll-snap-align: center;
+		/* start (not center): full-width slides carrying an inter-slide gap
+		   mis-seat when centre-snapped — the first slide never rests cleanly. */
+		scroll-snap-align: start;
 	}
 }
 
-/* Dot rail (built by product-page.js only when the strip scrolls). */
-.fm-pdp__gallery-dots {
-	display: flex;
-	justify-content: center;
-	gap: var(--fm-space-sm, 8px);
+/* Scroll-progress bar (built by product-page.js only when the strip scrolls),
+   mobile only — its fill width tracks the strip's horizontal scroll position.
+   Scroll-driven (no transition), so it needs no reduced-motion handling; the
+   fill grows from the inline-start edge, so it reads correctly in RTL. */
+.fm-pdp__gallery-progress {
+	block-size: 3px;
 	margin-top: var(--fm-space-md, 16px);
+	border-radius: var(--fm-radius-pill, 999px);
+	background: var(--fm-color-hairline, #e6e6e2);
+	overflow: hidden;
 }
 
 @media (min-width: 1024px) {
-	.fm-pdp__gallery-dots {
+	.fm-pdp__gallery-progress {
 		display: none;
 	}
 }
 
-.fm-pdp__gallery-dot {
-	width: 6px;
-	height: 6px;
-	padding: 0;
-	border: 0;
-	border-radius: var(--fm-radius-round, 50%);
-	background: var(--fm-color-hairline, #e6e6e2);
-	cursor: pointer;
-	transition: background-color var(--fm-motion-fast, 180ms) var(--fm-ease, cubic-bezier(0.2, 0, 0, 1));
-}
-
-.fm-pdp__gallery-dot.is-active {
+.fm-pdp__gallery-progress__fill {
+	block-size: 100%;
+	inline-size: 0;
 	background: var(--fm-color-ink, #1b1b1b);
+	border-radius: inherit;
 }
 
 /* Zoom / lightbox trigger — a quiet paper circle over the image corner. */
@@ -220,6 +227,16 @@
 }
 
 /* ---------- Summary: type hierarchy -------------------------------------- */
+
+/* Subtle framed panel around the whole summary column (title / price / buy box
+   / description / trust / additional info / meta) — the same paper-dim tone as
+   the gallery images, so the two columns read as one system. The VS buy box is
+   transparent, so the panel shows through cleanly. */
+.fm-pdp__summary-col {
+	background: var(--fm-color-paper-dim, #f1efea);
+	border-radius: 1rem;
+	padding: var(--fm-space-lg, 24px);
+}
 
 .fm-pdp__summary .product_title {
 	margin: 0 0 var(--fm-space-sm, 8px);
@@ -452,6 +469,25 @@
 	color: var(--fm-color-ink-muted, #6b6b6b);
 }
 
+/* ---------- Additional information (surfaced under the buy box) ----------- */
+
+/* Rendered inside the summary stack at priority 38 (above meta) so the spec
+   table sits directly under the buy box instead of only in the accordion. */
+.fm-pdp__addl-info {
+	margin-top: var(--fm-space-md, 16px);
+	padding-top: var(--fm-space-md, 16px);
+	border-top: 1px solid var(--fm-color-hairline, #e6e6e2);
+}
+
+.fm-pdp__addl-info-title {
+	margin: 0 0 var(--fm-space-sm, 8px);
+	font-size: var(--fm-text-xs, 0.75rem);
+	font-weight: var(--fm-weight-semi, 600);
+	letter-spacing: var(--fm-tracking-wide, 0.04em);
+	text-transform: uppercase;
+	color: var(--fm-color-ink-soft, #3a3a3a);
+}
+
 /* ---------- Meta --------------------------------------------------------- */
 
 .fm-pdp__summary .product_meta {
@@ -548,14 +584,18 @@
 	display: none;
 }
 
-/* Additional-information attribute table. */
-.fm-pdp__acc-body .woocommerce-product-attributes {
+/* Additional-information attribute table — in the accordion AND in the
+   summary-column block surfaced under the buy box. */
+.fm-pdp__acc-body .woocommerce-product-attributes,
+.fm-pdp__addl-info .woocommerce-product-attributes {
 	width: 100%;
 	border-collapse: collapse;
 }
 
 .fm-pdp__acc-body .woocommerce-product-attributes th,
-.fm-pdp__acc-body .woocommerce-product-attributes td {
+.fm-pdp__acc-body .woocommerce-product-attributes td,
+.fm-pdp__addl-info .woocommerce-product-attributes th,
+.fm-pdp__addl-info .woocommerce-product-attributes td {
 	padding: var(--fm-space-sm, 8px) var(--fm-space-md, 16px) var(--fm-space-sm, 8px) 0;
 	border: 0;
 	border-bottom: 1px solid var(--fm-color-hairline, #e6e6e2);
@@ -564,13 +604,15 @@
 	font-style: normal;
 }
 
-.fm-pdp__acc-body .woocommerce-product-attributes th {
+.fm-pdp__acc-body .woocommerce-product-attributes th,
+.fm-pdp__addl-info .woocommerce-product-attributes th {
 	width: 30%;
 	font-weight: var(--fm-weight-semi, 600);
 	color: var(--fm-color-ink-soft, #3a3a3a);
 }
 
-.fm-pdp__acc-body .woocommerce-product-attributes p {
+.fm-pdp__acc-body .woocommerce-product-attributes p,
+.fm-pdp__addl-info .woocommerce-product-attributes p {
 	margin: 0;
 }
 
@@ -770,6 +812,17 @@
 	transform: none;
 }
 
+/* Reserve space so the fixed bar never covers the last content. Added by
+   product-page.js in lockstep with the bar, and ONLY when the Freeman bar is
+   the active one — on VS products the JS defers, so VS's own
+   body.etucart-sticky-active reservation is the single source and there is no
+   double padding. */
+@media (max-width: 1023.98px) {
+	body.fm-pdp-sticky-active {
+		padding-block-end: calc(64px + env(safe-area-inset-bottom, 0px));
+	}
+}
+
 @media (min-width: 1024px) {
 	.fm-pdp__sticky-bar {
 		display: none;
@@ -839,48 +892,25 @@
 
 /* ---------- VariationSwatches reconciliation ------------------------------ */
 
-/* On the designed page the VS buy box (which replaces the standard cart
-   form on this store) adopts the ink system through its OWN custom
-   properties — VS declares them on .etucart-buy-box, so this
-   higher-specificity remap wins with no rule fights and zero VS edits. */
-.fm-pdp .etucart-buy-box {
-	--etucart-text: var(--fm-color-ink, #1b1b1b);
-	--etucart-muted: var(--fm-color-ink-muted, #6b6b6b);
-	--etucart-border: var(--fm-color-hairline, #e6e6e2);
-	--etucart-border-strong: var(--fm-color-ink, #1b1b1b);
-	--etucart-bg: var(--fm-color-paper, #ffffff);
-	--etucart-bg-soft: var(--fm-color-paper-dim, #f1efea);
-	--etucart-bg-soft-hover: var(--fm-palette-sand, #e9e4db);
-	--etucart-bg-soft-active: var(--fm-palette-sand, #e9e4db);
-	--etucart-accent: var(--fm-color-ink, #1b1b1b);
-	--etucart-primary: var(--fm-color-ink, #1b1b1b);
-	--etucart-primary-hover: var(--fm-color-ink-soft, #3a3a3a);
-	--etucart-primary-active: var(--fm-palette-black, #111111);
-	--etucart-radius: var(--fm-radius-sm, 4px);
-	--etucart-radius-sm: var(--fm-radius-sm, 4px);
-}
+/* The buy box keeps VariationSwatches' OWN visual style (red 999px-pill CTAs)
+   — the owner prefers it over the ink remap. The button colour is instead
+   settable from the Product Page "Button colour" setting, which injects
+   --etucart-primary inline when set (Template_Loader::button_color_css); with
+   no hex set, VS's native red stands. Only the price colour and the
+   two-sticky-bar dedup are reconciled here. */
 
-/* VS hardcodes the pill radius on its action buttons with !important, so
-   the shape needs matching force — gently squared per DESIGN.md buttons. */
-.fm-pdp .etucart-buy-box .etucart-add-to-cart,
-.fm-pdp .etucart-buy-box .etucart-buy-now,
-.fm-pdp .etucart-sticky-bar__buy {
-	border-radius: var(--fm-radius-sm, 4px) !important;
-}
-
-/* VS's live price line replaces WC's suppressed one — give it the same
-   hierarchy slot as the standard price. */
+/* VS's live price line replaces WC's suppressed one and must read ink, not the
+   theme/WooCommerce `.price{color}` it would otherwise inherit. VS's own
+   __value rule is `color: inherit !important`, so painting the parent needs
+   !important to win over the theme .price rule, and the explicit __value rule
+   (0,4,0) beats VS's own 0,3,0. */
 .fm-pdp .etucart-pdp-price[data-pdp-price] {
-	font-size: var(--fm-text-xl, 1.5rem) !important;
-	font-weight: var(--fm-weight-medium, 500);
-	color: var(--fm-color-ink, #1b1b1b);
+	color: var(--fm-color-ink, #1b1b1b) !important;
 }
 
-/* VS's own mobile sticky bar hardcodes its red CTA — align it with the
-   primary-button ink (it is THE mobile buy bar on VS products; ours defers,
-   see below + product-page.js). */
-.fm-pdp .etucart-sticky-bar__buy {
-	background: var(--fm-color-ink, #1b1b1b) !important;
+.fm-pdp .etucart-pdp-price[data-pdp-price] .etucart-pdp-price__value,
+.fm-pdp .etucart-pdp-price[data-pdp-price] .etucart-pdp-price__value * {
+	color: var(--fm-color-ink, #1b1b1b) !important;
 }
 
 /* Belt to the JS suspenders: never show two sticky bars. */
@@ -921,7 +951,6 @@
 @media (prefers-reduced-motion: reduce) {
 	.fm-pdp__sticky-bar,
 	.fm-pdp__acc-chevron,
-	.fm-pdp__gallery-dot,
 	.fm-pdp__summary form.cart .single_add_to_cart_button,
 	.fm-pdp ul.products li.product a img {
 		transition: none;

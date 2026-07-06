@@ -1,19 +1,22 @@
 /**
  * Product Page — designed layout runtime.
  *
- * Four small jobs, all progressive enhancement (the page is fully usable
+ * Five small jobs, all progressive enhancement (the page is fully usable
  * with none of them):
  *
  * 1. Mobile sticky add-to-cart bar — slides up once the shopper scrolls
  *    past the summary; its CTA scrolls back to the real buy box. DEFERS
  *    entirely when VariationSwatches' own sticky bar is in the DOM
  *    (.etucart-sticky-bar) — two bars must never stack (the CSS carries a
- *    :has() belt for the same rule).
+ *    :has() belt for the same rule). While visible it toggles
+ *    body.fm-pdp-sticky-active so the CSS reserves bottom space for it.
  * 2. Sticky-bar price sync — follows the picked variation via WooCommerce's
  *    found_variation / reset_data events.
- * 3. Gallery dot rail (mobile) — the editorial gallery is a scroll-snap
- *    strip; dots reflect and drive the scroll position.
- * 4. Variation image-swap feedback — a quick fade on the main gallery image
+ * 3. Gallery scroll-progress bar (mobile) — the editorial gallery is a
+ *    scroll-snap strip; a slim fill tracks its horizontal scroll position.
+ * 4. Gallery click guard — the lightbox is disabled, so block the raw-image
+ *    navigation on gallery image links; hover-zoom stays the interaction.
+ * 5. Variation image-swap feedback — a quick fade on the main gallery image
  *    when WC swaps its source (reduced-motion collapses it in CSS).
  */
 ( function () {
@@ -47,6 +50,10 @@
 				// not while it still sits below the fold on page load.
 				var passed = ! entry.isIntersecting && entry.boundingClientRect.bottom < 0;
 				bar.classList.toggle( 'is-visible', passed );
+				// Reserve bottom space only while our bar is the active one
+				// (this whole init early-returns on VS products, so VS's own
+				// reservation stays the single source — no double padding).
+				document.body.classList.toggle( 'fm-pdp-sticky-active', passed );
 			},
 			{ threshold: 0 }
 		);
@@ -77,7 +84,7 @@
 		}
 	}
 
-	function initGalleryDots() {
+	function initGalleryProgress() {
 		var gallery = document.querySelector( '.fm-pdp__gallery' );
 		var strip = gallery && gallery.querySelector( '.woocommerce-product-gallery__wrapper' );
 		if ( ! strip ) {
@@ -88,22 +95,21 @@
 			return;
 		}
 
-		var rail = document.createElement( 'div' );
-		rail.className = 'fm-pdp__gallery-dots';
-		var dots = [];
-		Array.prototype.forEach.call( slides, function ( slide, i ) {
-			var dot = document.createElement( 'button' );
-			dot.type = 'button';
-			dot.className = 'fm-pdp__gallery-dot' + ( 0 === i ? ' is-active' : '' );
-			dot.setAttribute( 'aria-label', String( i + 1 ) + ' / ' + String( slides.length ) );
-			dot.addEventListener( 'click', function () {
-				var reduce = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
-				slide.scrollIntoView( { behavior: reduce ? 'auto' : 'smooth', block: 'nearest', inline: 'center' } );
-			} );
-			rail.appendChild( dot );
-			dots.push( dot );
-		} );
-		strip.parentNode.insertBefore( rail, strip.nextSibling );
+		var track = document.createElement( 'div' );
+		track.className = 'fm-pdp__gallery-progress';
+		var fill = document.createElement( 'div' );
+		fill.className = 'fm-pdp__gallery-progress__fill';
+		track.appendChild( fill );
+		strip.parentNode.insertBefore( track, strip.nextSibling );
+
+		function update() {
+			// scrollWidth − clientWidth (not clientWidth multiples) is gap-proof,
+			// and Math.abs(scrollLeft) keeps it correct under RTL's negative scroll.
+			var max = strip.scrollWidth - strip.clientWidth;
+			var fraction = max > 0 ? Math.min( Math.abs( strip.scrollLeft ) / max, 1 ) : 0;
+			fill.style.inlineSize = ( fraction * 100 ) + '%';
+		}
+		update();
 
 		var ticking = false;
 		strip.addEventListener(
@@ -115,15 +121,30 @@
 				ticking = true;
 				window.requestAnimationFrame( function () {
 					ticking = false;
-					var index = Math.round( Math.abs( strip.scrollLeft ) / Math.max( 1, strip.clientWidth ) );
-					index = Math.min( index, dots.length - 1 );
-					dots.forEach( function ( dot, i ) {
-						dot.classList.toggle( 'is-active', i === index );
-					} );
+					update();
 				} );
 			},
 			{ passive: true }
 		);
+	}
+
+	function initGalleryClickGuard() {
+		var gallery = document.querySelector( '.fm-pdp__gallery' );
+		if ( ! gallery ) {
+			return;
+		}
+		// The lightbox theme support is removed, so WC's PhotoSwipe init — the
+		// only place it preventDefault()s the gallery <a href="full.jpg"> — never
+		// runs. Without this a click would navigate to the raw image file; block
+		// it so the hover-magnify (jquery.zoom) is the interaction.
+		gallery.addEventListener( 'click', function ( e ) {
+			var link = e.target && e.target.closest
+				? e.target.closest( '.woocommerce-product-gallery__image a' )
+				: null;
+			if ( link ) {
+				e.preventDefault();
+			}
+		} );
 	}
 
 	function initImageSwapFeedback() {
@@ -147,7 +168,8 @@
 
 	function init() {
 		initStickyBar();
-		initGalleryDots();
+		initGalleryProgress();
+		initGalleryClickGuard();
 		initImageSwapFeedback();
 	}
 
