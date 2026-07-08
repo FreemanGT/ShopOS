@@ -75,8 +75,9 @@ final class SearchQueryEngineTest extends TestCase {
 		$this->assertStringContainsString( 'WHEN sku LIKE %s THEN 50', $sql );
 		// Infix boosts so an end/middle SKU term still ranks near the top: the sku
 		// column (simple / parent SKUs) + the blob (variation SKUs live only there).
-		$this->assertStringContainsString( 'WHEN sku LIKE %s THEN 40', $sql );
-		$this->assertStringContainsString( 'WHEN search_text LIKE %s THEN 25', $sql );
+		// Both boosts are a %d placeholder sized by term shape in search_args().
+		$this->assertStringContainsString( 'WHEN sku LIKE %s THEN %d', $sql );
+		$this->assertStringContainsString( 'WHEN search_text LIKE %s THEN %d', $sql );
 		// The LIKE substring fallback that rescues short / non-Latin tokens.
 		$this->assertStringContainsString( 'OR search_text LIKE %s', $sql );
 		$this->assertStringContainsString( 'FROM wp_freeman_search_index', $sql );
@@ -90,26 +91,62 @@ final class SearchQueryEngineTest extends TestCase {
 	}
 
 	public function test_search_args_order_and_escaping(): void {
-		// Marker esc so escaping is visible in the output.
+		// Marker esc so escaping is visible in the output. 'hoodie' is a plain word
+		// (no digit) → the gentle WORD_INFIX_BOOST.
 		$esc  = static function ( $v ) { return '[' . $v . ']'; };
 		$args = Query_Engine::search_args( 'hoodie', 8, $esc );
 
-		$this->assertCount( 11, $args );
+		$this->assertCount( 13, $args );
 		// Bare term in the three MATCH slots + the two exact-SKU slots.
 		$this->assertSame( 'hoodie', $args[0] );
 		$this->assertSame( 'hoodie', $args[1] );
 		$this->assertSame( 'hoodie', $args[2] );
-		$this->assertSame( 'hoodie', $args[6] );
-		$this->assertSame( 'hoodie', $args[7] );
+		$this->assertSame( 'hoodie', $args[8] );
+		$this->assertSame( 'hoodie', $args[9] );
 		// SKU prefix slots: escaped + trailing %.
 		$this->assertSame( '[hoodie]%', $args[3] );
-		$this->assertSame( '[hoodie]%', $args[8] );
-		// Infix slots (sku + search_text score boosts) and the WHERE substring:
-		// escaped, leading + trailing %.
+		$this->assertSame( '[hoodie]%', $args[10] );
+		// Infix pattern slots (sku + search_text score boosts) and the WHERE
+		// substring: escaped, leading + trailing %.
 		$this->assertSame( '%[hoodie]%', $args[4] );
-		$this->assertSame( '%[hoodie]%', $args[5] );
-		$this->assertSame( '%[hoodie]%', $args[9] );
+		$this->assertSame( '%[hoodie]%', $args[6] );
+		$this->assertSame( '%[hoodie]%', $args[11] );
+		// Each infix pattern is followed by its %d boost. A plain word gets the
+		// gentle boost so customer word-search relevance is undisturbed.
+		$this->assertSame( Query_Engine::WORD_INFIX_BOOST, $args[5] );
+		$this->assertSame( Query_Engine::WORD_INFIX_BOOST, $args[7] );
 		// LIMIT is an int.
-		$this->assertSame( 8, $args[10] );
+		$this->assertSame( 8, $args[12] );
+	}
+
+	public function test_search_args_boost_is_large_for_a_sku_shaped_term(): void {
+		// A SKU tail like '700-001' is what staff type; it must clear FULLTEXT's
+		// token score (the '700' / '001' word-parts), so both infix boosts jump to
+		// the strong SKU value.
+		$esc  = static function ( $v ) { return $v; };
+		$args = Query_Engine::search_args( '700-001', 8, $esc );
+
+		$this->assertSame( Query_Engine::SKU_INFIX_BOOST, $args[5] );
+		$this->assertSame( Query_Engine::SKU_INFIX_BOOST, $args[7] );
+		$this->assertGreaterThan( Query_Engine::WORD_INFIX_BOOST, Query_Engine::SKU_INFIX_BOOST );
+	}
+
+	/**
+	 * @dataProvider sku_like_terms
+	 */
+	public function test_is_sku_like( string $term, bool $expected ): void {
+		$this->assertSame( $expected, Query_Engine::is_sku_like( $term ) );
+	}
+
+	public static function sku_like_terms(): array {
+		return array(
+			'sku tail with hyphen'   => array( '700-001', true ),
+			'full sku'               => array( '1368700-001', true ),
+			'alnum model'            => array( 'FQ8374', true ),
+			'short digit run'        => array( '001', false ),   // < 4 chars.
+			'english word'           => array( 'hoodie', false ), // no digit.
+			'hebrew word'            => array( 'כחול', false ),    // no digit.
+			'blank'                  => array( '', false ),
+		);
 	}
 }

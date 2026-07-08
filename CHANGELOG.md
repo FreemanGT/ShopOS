@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.24.7] — 2026-07-08
+
+- Search: size the SKU-substring rank boost by term shape so a SKU tail beats FULLTEXT token matches (fixes variation-SKU tail ranking below unrelated products)
+
 ## [1.24.6] — 2026-07-08
 
 - Search: rank end/middle-of-SKU matches (infix) near the top so staff can search by the SKU tail

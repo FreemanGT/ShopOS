@@ -61,19 +61,26 @@ final class Query_Engine {
 	/**
 	 * The ranked search SQL, with $wpdb->prepare placeholders. Relevance score =
 	 * the broad FULLTEXT match + a 4× title-match boost + a large constant for an
-	 * exact SKU (always top) + a smaller one for a SKU prefix + infix boosts so a
-	 * term matching the *end / middle* of a SKU still ranks near the top (staff
+	 * exact SKU (always top) + a smaller one for a SKU prefix + two infix boosts so
+	 * a term matching the *end / middle* of a SKU still ranks near the top (staff
 	 * search by the SKU tail). The SKU infix covers simple / parent SKUs; the
 	 * search_text infix covers variation SKUs (which live only in the blob, not the
-	 * `sku` column) and lifts them above bare FULLTEXT token noise. The WHERE
-	 * OR-group pairs FULLTEXT with a SKU exact/prefix and a `search_text LIKE`
-	 * substring — the fallback that rescues short / non-Latin tokens FULLTEXT's
-	 * min-token-size drops, and which already returns every SKU-infix row (parent +
-	 * variation SKUs are in the blob), so the infix additions are score-only.
-	 * NATURAL LANGUAGE MODE: no operator syntax reaches the placeholder.
+	 * `sku` column). Both infix boosts are a %d placeholder so the caller can size
+	 * them by the *term shape* (see search_args() / is_sku_like()): a SKU-shaped
+	 * term (has digits) gets a boost big enough to beat FULLTEXT — a hyphenated /
+	 * numeric SKU like `700-001` is tokenised into common word-parts (`700`, `001`)
+	 * whose rare-token relevance can otherwise outrank the literal-substring match —
+	 * while a plain word (a product name, incl. Hebrew) keeps a gentle boost so
+	 * customer search relevance is undisturbed. The WHERE OR-group pairs FULLTEXT
+	 * with a SKU exact/prefix and a `search_text LIKE` substring — the fallback that
+	 * rescues short / non-Latin tokens FULLTEXT's min-token-size drops, and which
+	 * already returns every SKU-infix row (parent + variation SKUs are in the blob),
+	 * so the infix additions are score-only. NATURAL LANGUAGE MODE: no operator
+	 * syntax reaches the placeholder.
 	 *
 	 * Placeholder order (must match search_args()): term, term, term, sku-prefix,
-	 * sku-infix, text-infix, term, term, sku-prefix, text-infix, limit.
+	 * sku-infix, infix-boost, text-infix, infix-boost, term, term, sku-prefix,
+	 * text-infix, limit.
 	 *
 	 * @param string $table         Table name.
 	 * @param bool   $in_stock_only Restrict to in-stock rows.
@@ -86,8 +93,8 @@ final class Query_Engine {
 				+ 4 * MATCH(title) AGAINST (%s IN NATURAL LANGUAGE MODE)
 				+ CASE WHEN sku = %s THEN 1000 ELSE 0 END
 				+ CASE WHEN sku LIKE %s THEN 50 ELSE 0 END
-				+ CASE WHEN sku LIKE %s THEN 40 ELSE 0 END
-				+ CASE WHEN search_text LIKE %s THEN 25 ELSE 0 END
+				+ CASE WHEN sku LIKE %s THEN %d ELSE 0 END
+				+ CASE WHEN search_text LIKE %s THEN %d ELSE 0 END
 			) AS score
 			FROM {$table}
 			WHERE (
@@ -98,6 +105,33 @@ final class Query_Engine {
 			){$stock}
 			ORDER BY score DESC
 			LIMIT %d";
+	}
+
+	/**
+	 * Boost for a SKU-shaped term's literal-substring match — big enough to clear
+	 * any realistic FULLTEXT token score (which tops out in the low tens) yet below
+	 * the 1000 exact-SKU constant, so an exact SKU still wins.
+	 */
+	const SKU_INFIX_BOOST = 500;
+
+	/**
+	 * Boost for a plain-word substring match. Gentle: it only breaks ties between
+	 * FULLTEXT hits, so a description substring never leaps a real title match.
+	 */
+	const WORD_INFIX_BOOST = 25;
+
+	/**
+	 * Does the term look like a SKU fragment (vs a product-name word)? SKUs carry
+	 * digits; product-name searches — Hebrew or English — do not, so gating the
+	 * strong substring boost on "has a digit, length >= 4" targets it at SKU-tail
+	 * searches and leaves customer word-search relevance untouched.
+	 *
+	 * @param string $term Search term.
+	 * @return bool
+	 */
+	public static function is_sku_like( $term ) {
+		$term = trim( (string) $term );
+		return mb_strlen( $term ) >= 4 && 1 === preg_match( '/\d/', $term );
 	}
 
 	/**
@@ -113,6 +147,7 @@ final class Query_Engine {
 		$term   = (string) $term;
 		$prefix = call_user_func( $esc_like, $term ) . '%';
 		$like   = '%' . call_user_func( $esc_like, $term ) . '%';
+		$boost  = self::is_sku_like( $term ) ? self::SKU_INFIX_BOOST : self::WORD_INFIX_BOOST;
 
 		return array(
 			$term,        // search_text MATCH (score).
@@ -120,7 +155,9 @@ final class Query_Engine {
 			$term,        // sku exact (score).
 			$prefix,      // sku prefix (score).
 			$like,        // sku infix (score).
+			$boost,       // sku infix boost (score).
 			$like,        // search_text infix (score).
+			$boost,       // search_text infix boost (score).
 			$term,        // search_text MATCH (where).
 			$term,        // sku exact (where).
 			$prefix,      // sku prefix (where).
