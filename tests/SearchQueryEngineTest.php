@@ -73,6 +73,10 @@ final class SearchQueryEngineTest extends TestCase {
 		$this->assertStringContainsString( '4 * MATCH(title) AGAINST (%s IN NATURAL LANGUAGE MODE)', $sql );
 		$this->assertStringContainsString( 'WHEN sku = %s THEN 1000', $sql );
 		$this->assertStringContainsString( 'WHEN sku LIKE %s THEN 50', $sql );
+		// Infix boosts so an end/middle SKU term still ranks near the top: the sku
+		// column (simple / parent SKUs) + the blob (variation SKUs live only there).
+		$this->assertStringContainsString( 'WHEN sku LIKE %s THEN 40', $sql );
+		$this->assertStringContainsString( 'WHEN search_text LIKE %s THEN 25', $sql );
 		// The LIKE substring fallback that rescues short / non-Latin tokens.
 		$this->assertStringContainsString( 'OR search_text LIKE %s', $sql );
 		$this->assertStringContainsString( 'FROM wp_freeman_search_index', $sql );
@@ -90,19 +94,22 @@ final class SearchQueryEngineTest extends TestCase {
 		$esc  = static function ( $v ) { return '[' . $v . ']'; };
 		$args = Query_Engine::search_args( 'hoodie', 8, $esc );
 
-		$this->assertCount( 9, $args );
+		$this->assertCount( 11, $args );
 		// Bare term in the three MATCH slots + the two exact-SKU slots.
 		$this->assertSame( 'hoodie', $args[0] );
 		$this->assertSame( 'hoodie', $args[1] );
 		$this->assertSame( 'hoodie', $args[2] );
-		$this->assertSame( 'hoodie', $args[4] );
-		$this->assertSame( 'hoodie', $args[5] );
+		$this->assertSame( 'hoodie', $args[6] );
+		$this->assertSame( 'hoodie', $args[7] );
 		// SKU prefix slots: escaped + trailing %.
 		$this->assertSame( '[hoodie]%', $args[3] );
-		$this->assertSame( '[hoodie]%', $args[6] );
-		// search_text substring: leading + trailing %.
-		$this->assertSame( '%[hoodie]%', $args[7] );
+		$this->assertSame( '[hoodie]%', $args[8] );
+		// Infix slots (sku + search_text score boosts) and the WHERE substring:
+		// escaped, leading + trailing %.
+		$this->assertSame( '%[hoodie]%', $args[4] );
+		$this->assertSame( '%[hoodie]%', $args[5] );
+		$this->assertSame( '%[hoodie]%', $args[9] );
 		// LIMIT is an int.
-		$this->assertSame( 8, $args[8] );
+		$this->assertSame( 8, $args[10] );
 	}
 }

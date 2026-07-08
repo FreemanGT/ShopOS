@@ -61,13 +61,19 @@ final class Query_Engine {
 	/**
 	 * The ranked search SQL, with $wpdb->prepare placeholders. Relevance score =
 	 * the broad FULLTEXT match + a 4× title-match boost + a large constant for an
-	 * exact SKU (always top) + a smaller one for a SKU prefix. The WHERE OR-group
-	 * pairs FULLTEXT with a SKU exact/prefix and a `search_text LIKE` substring —
-	 * the fallback that rescues short / non-Latin tokens FULLTEXT's min-token-size
-	 * drops. NATURAL LANGUAGE MODE: no operator syntax reaches the placeholder.
+	 * exact SKU (always top) + a smaller one for a SKU prefix + infix boosts so a
+	 * term matching the *end / middle* of a SKU still ranks near the top (staff
+	 * search by the SKU tail). The SKU infix covers simple / parent SKUs; the
+	 * search_text infix covers variation SKUs (which live only in the blob, not the
+	 * `sku` column) and lifts them above bare FULLTEXT token noise. The WHERE
+	 * OR-group pairs FULLTEXT with a SKU exact/prefix and a `search_text LIKE`
+	 * substring — the fallback that rescues short / non-Latin tokens FULLTEXT's
+	 * min-token-size drops, and which already returns every SKU-infix row (parent +
+	 * variation SKUs are in the blob), so the infix additions are score-only.
+	 * NATURAL LANGUAGE MODE: no operator syntax reaches the placeholder.
 	 *
 	 * Placeholder order (must match search_args()): term, term, term, sku-prefix,
-	 * term, term, sku-prefix, text-substring, limit.
+	 * sku-infix, text-infix, term, term, sku-prefix, text-infix, limit.
 	 *
 	 * @param string $table         Table name.
 	 * @param bool   $in_stock_only Restrict to in-stock rows.
@@ -80,6 +86,8 @@ final class Query_Engine {
 				+ 4 * MATCH(title) AGAINST (%s IN NATURAL LANGUAGE MODE)
 				+ CASE WHEN sku = %s THEN 1000 ELSE 0 END
 				+ CASE WHEN sku LIKE %s THEN 50 ELSE 0 END
+				+ CASE WHEN sku LIKE %s THEN 40 ELSE 0 END
+				+ CASE WHEN search_text LIKE %s THEN 25 ELSE 0 END
 			) AS score
 			FROM {$table}
 			WHERE (
@@ -111,6 +119,8 @@ final class Query_Engine {
 			$term,        // title MATCH (score).
 			$term,        // sku exact (score).
 			$prefix,      // sku prefix (score).
+			$like,        // sku infix (score).
+			$like,        // search_text infix (score).
 			$term,        // search_text MATCH (where).
 			$term,        // sku exact (where).
 			$prefix,      // sku prefix (where).

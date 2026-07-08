@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.24.6] — 2026-07-08
+
+- Search: rank end/middle-of-SKU matches (infix) near the top so staff can search by the SKU tail
+
 ## [1.24.5] — 2026-07-06
 
 - Search mobile palette position: card is now top-anchored at 10 percent of the visible viewport instead of vertically centered, so the field sits at the same height before and after results render (no jump as the list grows)
