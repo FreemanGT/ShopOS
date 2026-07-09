@@ -145,8 +145,10 @@
      * restored DOM by init()'s normal seeding, so the snapshot only
      * needs the markup and the offset.
      * --------------------------------------------------------------- */
-    var RESTORE_KEY = 'freemanISRestore';
+    var RESTORE_PREFIX = 'freemanISRestore:';
     var RESTORE_TTL_MS = 30 * 60 * 1000;
+    var RESTORE_MAX_KEYS = 5;
+    var RESTORE_STRAND_MS = 3000;
 
     // Canonical archive key — independent of the pushState'd /page/N/ and
     // the paged param, so a Back-to-/page/M/ matches the save.
@@ -166,9 +168,15 @@
         } catch (e) { return false; }
     }
 
+    // Snapshots are stored one-per-archive (key = RESTORE_PREFIX + pageKey())
+    // so a shop → category → product back-chain restores at every level —
+    // the old single-slot key meant each archive's pagehide overwrote the
+    // previous one and backing up two levels found nothing.
+    function storageKey() { return RESTORE_PREFIX + pageKey(); }
+
     function readSnapshot() {
         try {
-            var raw = sessionStorage.getItem(RESTORE_KEY);
+            var raw = sessionStorage.getItem(storageKey());
             if (!raw) return null;
             var snap = JSON.parse(raw);
             if (!snap || snap.key !== pageKey()) return null;
@@ -177,23 +185,88 @@
         } catch (e) { return null; }
     }
 
+    // Drop expired snapshots and cap the per-archive set at RESTORE_MAX_KEYS
+    // (oldest first) so long browse sessions can't accumulate stale grids.
+    function pruneSnapshots(keepKey) {
+        try {
+            var entries = [];
+            for (var i = 0; i < sessionStorage.length; i++) {
+                var k = sessionStorage.key(i);
+                if (!k || k.indexOf(RESTORE_PREFIX) !== 0) continue;
+                var t = 0;
+                try { t = (JSON.parse(sessionStorage.getItem(k)) || {}).t || 0; } catch (e2) {}
+                entries.push({ k: k, t: t });
+            }
+            var now = Date.now();
+            var live = [];
+            entries.forEach(function (e) {
+                if (!e.t || (now - e.t) > RESTORE_TTL_MS) { sessionStorage.removeItem(e.k); return; }
+                live.push(e);
+            });
+            live.sort(function (a, b) { return a.t - b.t; });
+            while (live.length > RESTORE_MAX_KEYS) {
+                var victim = live.shift();
+                if (victim.k !== keepKey) sessionStorage.removeItem(victim.k);
+            }
+        } catch (e) { /* storage unavailable — nothing to prune */ }
+    }
+
+    // The topmost card still (partly) in the viewport, as {id, top}. Restoring
+    // by anchoring to a card is immune to layout-height drift from late image
+    // loads, which makes a raw scrollY land short of the real spot.
+    function captureAnchor() {
+        if (!state.container || !state.itemSelector) return null;
+        var items = state.container.querySelectorAll(state.itemSelector);
+        for (var i = 0; i < items.length; i++) {
+            var rect = items[i].getBoundingClientRect();
+            if (rect.bottom > 0 && rect.height > 0) {
+                var id = getProductId(items[i]);
+                return id ? { id: id, top: rect.top } : null;
+            }
+        }
+        return null;
+    }
+
     function saveSnapshot() {
         if (!state.container) return;
+        var snap = {
+            key: pageKey(),
+            scrollY: window.pageYOffset || document.documentElement.scrollTop || 0,
+            anchor: captureAnchor(),
+            html: state.pagesLoaded > 0 ? state.container.innerHTML : '',
+            t: Date.now()
+        };
         try {
-            sessionStorage.setItem(RESTORE_KEY, JSON.stringify({
-                key: pageKey(),
-                scrollY: window.pageYOffset || document.documentElement.scrollTop || 0,
-                html: state.pagesLoaded > 0 ? state.container.innerHTML : '',
-                t: Date.now()
-            }));
-        } catch (e) { /* quota / unavailable — degrade silently */ }
+            sessionStorage.setItem(storageKey(), JSON.stringify(snap));
+        } catch (e) {
+            // Quota — a multi-page grid's HTML can exceed it. Retry without
+            // the markup: the scroll offset (+ anchor, resolvable on page 1)
+            // still restores far better than nothing.
+            try {
+                snap.html = '';
+                sessionStorage.setItem(storageKey(), JSON.stringify(snap));
+            } catch (e2) { /* storage unavailable — degrade silently */ }
+        }
+        pruneSnapshots(storageKey());
     }
 
     // Decide synchronously (before layout) whether we'll restore, and if so
     // take manual control of scroll so the browser doesn't fight us.
     var RESTORE = isBackForward() ? readSnapshot() : null;
-    if (RESTORE && 'scrollRestoration' in history) {
-        try { history.scrollRestoration = 'manual'; } catch (e) {}
+    if (RESTORE) {
+        if ('scrollRestoration' in history) {
+            try { history.scrollRestoration = 'manual'; } catch (e) {}
+        }
+        // Never strand the visitor at the top: we may have just disabled the
+        // browser's own restore, so if the grid doesn't mount in time (late
+        // Elementor widget, no-products notice, markup change) finishRestore()
+        // would otherwise never run. After a grace period apply the raw
+        // offset — without consuming the snapshot, so a grid that mounts even
+        // later still gets the full replay + anchor restore.
+        setTimeout(function () {
+            if (state.restored || !RESTORE) return;
+            window.scrollTo(0, RESTORE.scrollY || 0);
+        }, RESTORE_STRAND_MS);
     }
     window.addEventListener('pagehide', saveSnapshot);
 
@@ -229,15 +302,38 @@
         if (itemSel) state.itemSelector = itemSel;
     }
 
-    // Restore the scroll offset once the grid is wired. Re-asserted across a
-    // frame, a short delay and load to cover late image layout.
+    // Find the saved anchor card in the current grid. Returns null when the
+    // grid (or the card) isn't there — callers fall back to raw scrollY.
+    function findAnchorEl(anchor) {
+        if (!anchor || !anchor.id || !state.container || !state.itemSelector) return null;
+        var items = state.container.querySelectorAll(state.itemSelector);
+        for (var i = 0; i < items.length; i++) {
+            if (getProductId(items[i]) === anchor.id) return items[i];
+        }
+        return null;
+    }
+
+    // Restore the scroll position once the grid is wired. Prefers anchoring
+    // to the card that was at the top of the viewport — each re-assertion
+    // recomputes from the card's live position, so late image layout can't
+    // leave the offset short. Re-asserted across a frame, a short delay and
+    // load. Falls back to the raw offset when the card can't be found.
     function finishRestore() {
         if (state.restored || !RESTORE) return;
         state.restored = true;
         var y = RESTORE.scrollY || 0;
+        var anchor = RESTORE.anchor || null;
         RESTORE = null;
-        try { sessionStorage.removeItem(RESTORE_KEY); } catch (e) {}
-        var apply = function () { window.scrollTo(0, y); };
+        try { sessionStorage.removeItem(storageKey()); } catch (e) {}
+        var apply = function () {
+            var el = findAnchorEl(anchor);
+            if (el) {
+                var rect = el.getBoundingClientRect();
+                window.scrollTo(0, Math.max(0, (window.pageYOffset || 0) + rect.top - anchor.top));
+            } else {
+                window.scrollTo(0, y);
+            }
+        };
         apply();
         (window.requestAnimationFrame || function (f) { return setTimeout(f, 16); })(apply);
         setTimeout(apply, 250);

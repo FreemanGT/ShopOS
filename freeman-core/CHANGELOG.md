@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.24.9] — 2026-07-09
+
+- InfiniteScroll: harden back-navigation scroll/grid restore - per-archive snapshot keys (last 5, was a single slot overwritten by each archive), anchor-based scroll restore keyed to the topmost visible card so late image layout cannot land the offset short, scroll-only retry when the grid HTML exceeds the sessionStorage quota, and a 3s no-grid fallback so a late-mounting Elementor grid never strands the visitor at the top after we take manual scroll control
+
 ## [1.24.8] — 2026-07-09
 
 - InfiniteScroll: default URL update on page advance to Disabled - the 1.23.0 flag graduation silently resurrected pushState-by-default, undoing the 1.21.14 clean-URLs fix; /page/N/ back-button entries reload as a single server-rendered page, losing the visitor's scroll position and grid
