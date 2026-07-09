@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.24.8] — 2026-07-09
+
+- InfiniteScroll: default URL update on page advance to Disabled - the 1.23.0 flag graduation silently resurrected pushState-by-default, undoing the 1.21.14 clean-URLs fix; /page/N/ back-button entries reload as a single server-rendered page, losing the visitor's scroll position and grid
+
 ## [1.24.7] — 2026-07-08
 
 - Search: size the SKU-substring rank boost by term shape so a SKU tail beats FULLTEXT token matches (fixes variation-SKU tail ranking below unrelated products)

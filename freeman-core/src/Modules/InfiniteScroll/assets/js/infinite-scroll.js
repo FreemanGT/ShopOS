@@ -117,7 +117,7 @@
         loadMoreLabel: CFG.loadMoreLabel || 'Load more',
         triggerModesEnabled: !!CFG.triggerModesEnabled,
         triggerMode: CFG.triggerMode || 'auto',
-        historyMode: CFG.historyMode || 'pushState',
+        historyMode: CFG.historyMode || 'disabled',
         hybridThreshold: (CFG.hybridThreshold | 0) || 2
     };
 
@@ -134,15 +134,16 @@
     /* --------------------------------------------------------------- *
      * Scroll + grid restoration across back/forward navigation.
      *
-     * As the user scrolls, IS appends pages and pushState()s the URL to
-     * /page/N/. A normal Back reload then renders only that one page at
-     * the top — the earlier-loaded products and the scroll offset are
-     * gone, and native scroll restoration can't anchor to a DOM that no
-     * longer matches. We snapshot the grid HTML + scrollY on pagehide
-     * and replay it when the user returns to the same archive via
-     * back/forward. The IS state (seen ids, next url, pagination) is
-     * re-derived from the restored DOM by init()'s normal seeding, so
-     * the snapshot only needs the markup and the offset.
+     * As the user scrolls, IS appends pages the server only knows as
+     * /page/N/. A normal Back reload renders just page 1 (or page N,
+     * when a non-default history_mode rewrote the URL) — the earlier-
+     * loaded products and the scroll offset are gone, and native scroll
+     * restoration can't anchor to a DOM that no longer matches. We
+     * snapshot the grid HTML + scrollY on pagehide and replay it when
+     * the user returns to the same archive via back/forward. The IS
+     * state (seen ids, next url, pagination) is re-derived from the
+     * restored DOM by init()'s normal seeding, so the snapshot only
+     * needs the markup and the offset.
      * --------------------------------------------------------------- */
     var RESTORE_KEY = 'freemanISRestore';
     var RESTORE_TTL_MS = 30 * 60 * 1000;
@@ -604,22 +605,21 @@
     }
 
     function applyHistoryMode(url) {
-        // Wave 3.1a: wrapper around the History API call site that used to
-        // be inline. Flag-OFF preserves today's pushState behavior verbatim;
-        // flag-ON branches on historyMode setting (pushState | replaceState
-        // | disabled). Default is pushState — flag-ON-with-defaults is
-        // byte-identical to flag-OFF.
+        // Branches on the history_mode setting (pushState | replaceState |
+        // disabled). Default is 'disabled' (1.24.8): the URL stays on the
+        // base archive as pages auto-load, so Back from a product returns to
+        // a URL the server renders in full and a copied URL never reads
+        // /page/N/ ("only a few results" when shared). This restores the
+        // 1.21.14 clean-URLs intent, which lived in the branch below and
+        // went dead when the trigger_modes flag graduated always-on in
+        // 1.23.0 (triggerModesEnabled is hardcoded true since) — that
+        // silently resurrected pushState-by-default.
         if (!OPTS.triggerModesEnabled) {
-            // Clean-URLs default: do NOT push /page/N/ into the address bar as
-            // pages auto-load. A URL copied while scrolled to page N would
-            // otherwise read /page/N/ and, when shared, render only page N
-            // onward on a fresh load — "only a few results". Leaving the URL on
-            // the base archive keeps shared links pointing at page 1 / the full
-            // result set. The trigger_modes branch below still honours an
-            // explicit history_mode choice for sites that opt back into it.
+            // Unreachable since 1.23.0; kept as a safe no-op for any stale
+            // cached payload that still sends false.
             return;
         }
-        var mode = OPTS.historyMode || 'pushState';
+        var mode = OPTS.historyMode || 'disabled';
         if (mode === 'disabled') return;
         try {
             var u = new URL(url);

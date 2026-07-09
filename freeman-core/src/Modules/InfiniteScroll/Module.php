@@ -99,12 +99,12 @@ final class Module extends Module_Base {
 				'label'       => __( 'URL update on page advance', 'freeman-core' ),
 				'type'        => 'select',
 				'choices'     => array(
-					'pushState'    => __( 'pushState — update URL and create back-button entries (current behavior)', 'freeman-core' ),
+					'pushState'    => __( 'pushState — update URL and create back-button entries', 'freeman-core' ),
 					'replaceState' => __( 'replaceState — update URL without back-button entries', 'freeman-core' ),
-					'disabled'     => __( 'Disabled — leave URL unchanged on page advance', 'freeman-core' ),
+					'disabled'     => __( 'Disabled — leave URL unchanged on page advance (default)', 'freeman-core' ),
 				),
-				'default'     => 'pushState',
-				'description' => __( 'How the browser URL is updated when an additional page loads. Default preserves current pushState behavior.', 'freeman-core' ),
+				'default'     => 'disabled',
+				'description' => __( 'How the browser URL is updated when an additional page loads. Disabled (default) keeps the URL on the archive, so Back from a product and shared links return to the full grid.', 'freeman-core' ),
 			),
 			'hybrid_threshold'  => array(
 				'label'       => __( 'Hybrid threshold (pages)', 'freeman-core' ),
@@ -227,7 +227,7 @@ final class Module extends Module_Base {
 			// (always true) so shipped JS reading it keeps working.
 			'triggerModesEnabled' => true,
 			'triggerMode'         => (string) $this->get_option( 'trigger_mode', 'auto' ),
-			'historyMode'         => (string) $this->get_option( 'history_mode', 'pushState' ),
+			'historyMode'         => (string) $this->get_option( 'history_mode', 'disabled' ),
 			'hybridThreshold'     => (int) $this->get_option( 'hybrid_threshold', 2 ),
 			'containerSelector'   => $this->resolve_container_selector(),
 		);

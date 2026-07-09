@@ -29,9 +29,13 @@ final class InfiniteScrollSettingsTest extends TestCase {
 		);
 	}
 
-	public function test_history_mode_setting_registers_with_default_pushState(): void {
+	public function test_history_mode_setting_registers_with_default_disabled(): void {
+		// Default flipped pushState → disabled in 1.24.8: the 1.23.0 flag
+		// graduation had silently resurrected pushState-by-default, undoing
+		// the 1.21.14 clean-URLs fix and breaking back-navigation scroll
+		// restore (Back landed on a /page/N/ URL the server renders alone).
 		$schema = ( new Module() )->settings_schema();
-		$this->assertSame( 'pushState', $schema['history_mode']['default'] );
+		$this->assertSame( 'disabled', $schema['history_mode']['default'] );
 		$this->assertSame( 'select', $schema['history_mode']['type'] );
 		$this->assertArrayHasKey( 'choices', $schema['history_mode'] );
 		$this->assertSame(
@@ -59,7 +63,7 @@ final class InfiniteScrollSettingsTest extends TestCase {
 	public function test_get_option_falls_back_to_schema_defaults_for_new_settings(): void {
 		$module = new Module();
 		$this->assertSame( 'auto', $module->get_option( 'trigger_mode' ) );
-		$this->assertSame( 'pushState', $module->get_option( 'history_mode' ) );
+		$this->assertSame( 'disabled', $module->get_option( 'history_mode' ) );
 		$this->assertSame( 2, $module->get_option( 'hybrid_threshold' ) );
 	}
 
