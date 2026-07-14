@@ -35,21 +35,21 @@
         '.shopos-sf a[href]'
     ].join(', ');
 
-    var SEARCH_FORM_SELECTOR = 'form.fc-search-form, form[role="search"]';
+    var SEARCH_FORM_SELECTOR = 'form.shopos-search-form, form[role="search"]';
 
     var overlay = null;
     var hideTimer = 0;
 
     function buildOverlay() {
         var el = document.createElement('div');
-        el.className = 'fpt-overlay';
+        el.className = 'shopos-pt-overlay';
         el.setAttribute('aria-hidden', 'true');
         var box = document.createElement('div');
-        box.className = 'fpt-box';
+        box.className = 'shopos-pt-box';
         var spinner = document.createElement('div');
-        spinner.className = 'fpt-spinner';
+        spinner.className = 'shopos-pt-spinner';
         var label = document.createElement('div');
-        label.className = 'fpt-label';
+        label.className = 'shopos-pt-label';
         label.textContent = CFG.label || 'Loading…';
         box.appendChild(spinner);
         box.appendChild(label);
@@ -64,7 +64,7 @@
         // scrim fades in instead of popping.
         requestAnimationFrame(function () {
             requestAnimationFrame(function () {
-                if (overlay) { overlay.classList.add('fpt-overlay--on'); }
+                if (overlay) { overlay.classList.add('shopos-pt-overlay--on'); }
             });
         });
         clearTimeout(hideTimer);
@@ -74,7 +74,7 @@
     function hide() {
         clearTimeout(hideTimer);
         if (overlay && overlay.parentNode) { overlay.parentNode.removeChild(overlay); }
-        if (overlay) { overlay.classList.remove('fpt-overlay--on'); }
+        if (overlay) { overlay.classList.remove('shopos-pt-overlay--on'); }
     }
 
     // True only for a plain left-click that will actually navigate this tab.

@@ -10,14 +10,14 @@
  * `.cs-card.product` both render through content-product.php).
  */
 
-.fc-card-slider.fc-card-slider {
+.shopos-card-slider.shopos-card-slider {
 	position: relative;
 	overflow: hidden;
 	line-height: 0;
 	border-radius: 1rem;
 }
 
-.fc-card-slider__viewport.fc-card-slider__viewport {
+.shopos-card-slider__viewport.shopos-card-slider__viewport {
 	display: flex;
 	overflow-x: auto;
 	scroll-snap-type: x mandatory;
@@ -26,18 +26,18 @@
 	-ms-overflow-style: none; /* old Edge */
 }
 
-.fc-card-slider__viewport.fc-card-slider__viewport::-webkit-scrollbar {
+.shopos-card-slider__viewport.shopos-card-slider__viewport::-webkit-scrollbar {
 	display: none;
 }
 
-.fc-card-slider__slide.fc-card-slider__slide {
+.shopos-card-slider__slide.shopos-card-slider__slide {
 	flex: 0 0 100%;
 	max-inline-size: 100%;
 	scroll-snap-align: start;
 	scroll-snap-stop: always;
 }
 
-.fc-card-slider__img.fc-card-slider__img {
+.shopos-card-slider__img.shopos-card-slider__img {
 	display: block;
 	inline-size: 100%;
 	block-size: auto;
@@ -45,7 +45,7 @@
 }
 
 /* Arrows — hidden until hover, placed on the inline edges (RTL-correct). */
-.fc-card-slider__arrow.fc-card-slider__arrow {
+.shopos-card-slider__arrow.shopos-card-slider__arrow {
 	position: absolute;
 	inset-block-start: 50%;
 	transform: translateY(-50%);
@@ -66,32 +66,32 @@
 	z-index: 2;
 }
 
-.fc-card-slider__arrow--prev.fc-card-slider__arrow--prev {
+.shopos-card-slider__arrow--prev.shopos-card-slider__arrow--prev {
 	inset-inline-start: 6px;
 }
 
-.fc-card-slider__arrow--next.fc-card-slider__arrow--next {
+.shopos-card-slider__arrow--next.shopos-card-slider__arrow--next {
 	inset-inline-end: 6px;
 }
 
 /* The next-arrow chevron points along the inline-end direction; flip it in RTL
    so both arrows read correctly. */
-[dir="rtl"] .fc-card-slider__arrow.fc-card-slider__arrow svg {
+[dir="rtl"] .shopos-card-slider__arrow.shopos-card-slider__arrow svg {
 	transform: scaleX(-1);
 }
 
 @media (hover: hover) and (pointer: fine) {
-	.fc-card-slider.fc-card-slider:hover .fc-card-slider__arrow.fc-card-slider__arrow {
+	.shopos-card-slider.shopos-card-slider:hover .shopos-card-slider__arrow.shopos-card-slider__arrow {
 		opacity: 1;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.fc-card-slider__viewport.fc-card-slider__viewport {
+	.shopos-card-slider__viewport.shopos-card-slider__viewport {
 		scroll-behavior: auto;
 	}
 
-	.fc-card-slider__arrow.fc-card-slider__arrow {
+	.shopos-card-slider__arrow.shopos-card-slider__arrow {
 		transition: none;
 	}
 }

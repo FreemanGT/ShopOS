@@ -107,7 +107,7 @@ final class Module extends Module_Base {
 		if ( is_admin() || is_feed() ) {
 			return;
 		}
-		echo '<link rel="expect" href="#fpt-ready" blocking="render">' . "\n";
+		echo '<link rel="expect" href="#shopos-pt-ready" blocking="render">' . "\n";
 	}
 
 	/**
@@ -119,7 +119,7 @@ final class Module extends Module_Base {
 		if ( is_admin() || is_feed() ) {
 			return;
 		}
-		echo '<div id="fpt-ready" hidden></div>' . "\n";
+		echo '<div id="shopos-pt-ready" hidden></div>' . "\n";
 	}
 
 	/**

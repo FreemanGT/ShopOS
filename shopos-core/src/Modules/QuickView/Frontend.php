@@ -155,7 +155,7 @@ final class Frontend {
 	 */
 	public function trigger_html( $product_id ) {
 		$label = Labels::get( 'trigger' );
-		return '<button type="button" class="fc-qv-trigger" data-fc-qv="' . (int) $product_id . '"'
+		return '<button type="button" class="shopos-qv-trigger" data-shopos-qv="' . (int) $product_id . '"'
 			. ' aria-label="' . esc_attr( $label ) . '" title="' . esc_attr( $label ) . '">'
 			. '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">'
 			. '<circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.3"/>'
@@ -179,7 +179,7 @@ final class Frontend {
 	/**
 	 * Drawer shell markup. Pure — unit-tested.
 	 *
-	 * `fc-quick-view` deliberately contains "quick-view": VariationSwatches'
+	 * `shopos-quick-view` deliberately contains "quick-view": VariationSwatches'
 	 * `isInsideModal()` heuristic matches `[class*="quick-view"]`, which
 	 * suppresses its viewport-fixed sticky bar inside the drawer.
 	 *
@@ -189,16 +189,16 @@ final class Frontend {
 		$title = Labels::get( 'drawer_title' );
 		$close = Labels::get( 'close' );
 
-		return '<div class="fc-quick-view" id="fc-quick-view" aria-hidden="true">'
-			. '<div class="fc-quick-view__overlay" data-fc-qv-close></div>'
-			. '<aside class="fc-quick-view__panel" role="dialog" aria-modal="true" aria-label="' . esc_attr( $title ) . '" tabindex="-1">'
-			. '<header class="fc-quick-view__head">'
-			. '<h2 class="fc-quick-view__title">' . esc_html( $title ) . '</h2>'
-			. '<button type="button" class="fc-quick-view__close" data-fc-qv-close aria-label="' . esc_attr( $close ) . '">'
+		return '<div class="shopos-quick-view" id="shopos-quick-view" aria-hidden="true">'
+			. '<div class="shopos-quick-view__overlay" data-shopos-qv-close></div>'
+			. '<aside class="shopos-quick-view__panel" role="dialog" aria-modal="true" aria-label="' . esc_attr( $title ) . '" tabindex="-1">'
+			. '<header class="shopos-quick-view__head">'
+			. '<h2 class="shopos-quick-view__title">' . esc_html( $title ) . '</h2>'
+			. '<button type="button" class="shopos-quick-view__close" data-shopos-qv-close aria-label="' . esc_attr( $close ) . '">'
 			. '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 2L12 12M12 2L2 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>'
 			. '</button>'
 			. '</header>'
-			. '<div class="fc-quick-view__body woocommerce" data-fc-qv-content aria-live="polite"></div>'
+			. '<div class="shopos-quick-view__body woocommerce" data-shopos-qv-content aria-live="polite"></div>'
 			. '</aside>'
 			. '</div>';
 	}

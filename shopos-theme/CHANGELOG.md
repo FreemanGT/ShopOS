@@ -18,7 +18,7 @@
 
 ## [1.11.23] — 2026-05-11
 
-- Typography: `--fm-font-body` and `--fm-font-display` now resolve from Elementor's global typography (`var(--e-global-typography-sk_type_12-font-family, …)` / `…sk_type_2…`, which the Style Kits for Elementor addon writes), with the previous hardcoded `'Heebo'` / `'Assistant'` stacks as fallback. The theme no longer overrides Style Kits' fonts; `--fm-font-mono` (used for `<code>` / `<pre>`) is unchanged. Since `shopos.css`'s `body` / heading rules read those tokens — and `shopos-core`'s My Account reads `--fm-font-body` — they all follow automatically.
+- Typography: `--shopos-ui-font-body` and `--shopos-ui-font-display` now resolve from Elementor's global typography (`var(--e-global-typography-sk_type_12-font-family, …)` / `…sk_type_2…`, which the Style Kits for Elementor addon writes), with the previous hardcoded `'Heebo'` / `'Assistant'` stacks as fallback. The theme no longer overrides Style Kits' fonts; `--shopos-ui-font-mono` (used for `<code>` / `<pre>`) is unchanged. Since `shopos.css`'s `body` / heading rules read those tokens — and `shopos-core`'s My Account reads `--shopos-ui-font-body` — they all follow automatically.
 - Bumped `SHOPOS_THEME_VERSION` 1.0.3 → 1.11.23 so it matches `style.css` and the theme's CSS asset URLs cache-bust on this change (`wp_enqueue_style` uses that constant, not `style.css`'s `Version:`, which `tools/release.sh` bumps separately).
 
 ## [1.11.22] — 2026-05-03
@@ -35,7 +35,7 @@
 
 ## [1.0.2] — 2026-04-27
 
-- Removed the global `.shopos-theme a:hover { opacity: 0.75 }` rule entirely. The 1.0.1 attempt to scope it via `:has(img|...)` was in the built CSS but the dim was still showing in QA — most likely a browser cache or downstream selector winning. Killing the rule outright eliminates the failure mode. Components that genuinely want a text-link dim can opt in via the new `.fm-link--dim` class.
+- Removed the global `.shopos-theme a:hover { opacity: 0.75 }` rule entirely. The 1.0.1 attempt to scope it via `:has(img|...)` was in the built CSS but the dim was still showing in QA — most likely a browser cache or downstream selector winning. Killing the rule outright eliminates the failure mode. Components that genuinely want a text-link dim can opt in via the new `.shopos-ui-link--dim` class.
 
 ## [1.0.1] — 2026-04-26
 

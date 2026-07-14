@@ -35,7 +35,7 @@ $sf_current_sort = '' !== (string) $orderby ? (string) $orderby : (string) get_o
 $sf_style = ( 'refined' === get_option( 'shopos_core_shop_filters_filter_style', 'classic' ) ) ? ' shopos-sf--refined' : '';
 ?>
 <div class="shopos-sf<?php echo esc_attr( $sf_style ); ?>" data-shopos-sf>
-	<button type="button" class="shopos-sf__toggle fm-btn fm-btn--ghost fm-btn--block" data-shopos-sf-toggle aria-expanded="false" aria-controls="shopos-sf-panel">
+	<button type="button" class="shopos-sf__toggle shopos-ui-btn shopos-ui-btn--ghost shopos-ui-btn--block" data-shopos-sf-toggle aria-expanded="false" aria-controls="shopos-sf-panel">
 		<?php echo esc_html( Labels::get( 'toggle' ) ); ?>
 	</button>
 
@@ -71,7 +71,7 @@ $sf_style = ( 'refined' === get_option( 'shopos_core_shop_filters_filter_style',
 				><?php echo esc_html( $sf_chip['label'] ); ?> <span class="shopos-sf__chip-x" aria-hidden="true">&times;</span></button>
 			<?php endforeach; ?>
 			<?php if ( ! empty( $sf_chips ) ) : ?>
-				<button type="button" class="shopos-sf__clear fm-btn fm-btn--link" data-shopos-sf-clear><?php echo esc_html( Labels::get( 'clear_all' ) ); ?></button>
+				<button type="button" class="shopos-sf__clear shopos-ui-btn shopos-ui-btn--link" data-shopos-sf-clear><?php echo esc_html( Labels::get( 'clear_all' ) ); ?></button>
 			<?php endif; ?>
 		</div>
 
@@ -81,7 +81,7 @@ $sf_style = ( 'refined' === get_option( 'shopos_core_shop_filters_filter_style',
 
 		<div class="shopos-sf__sort">
 			<label class="shopos-sf__sort-label" for="shopos-sf-sort"><?php echo esc_html( Labels::get( 'sort' ) ); ?></label>
-			<select id="shopos-sf-sort" class="shopos-sf__sort-select fm-select" data-shopos-sf-sort>
+			<select id="shopos-sf-sort" class="shopos-sf__sort-select shopos-ui-select" data-shopos-sf-sort>
 				<?php foreach ( Url_State::orderby_whitelist() as $sf_orderby ) : ?>
 					<option value="<?php echo esc_attr( $sf_orderby ); ?>" <?php selected( $sf_current_sort, $sf_orderby ); ?>><?php echo esc_html( Module::orderby_label( $sf_orderby ) ); ?></option>
 				<?php endforeach; ?>
@@ -107,8 +107,8 @@ $sf_style = ( 'refined' === get_option( 'shopos_core_shop_filters_filter_style',
 		</form>
 
 		<div class="shopos-sf__actions">
-			<button type="button" class="shopos-sf__apply fm-btn" data-shopos-sf-apply><?php echo esc_html( Labels::get( 'apply' ) ); ?></button>
-			<button type="button" class="shopos-sf__clear-mobile fm-btn fm-btn--ghost" data-shopos-sf-clear-mobile><?php echo esc_html( Labels::get( 'clear' ) ); ?></button>
+			<button type="button" class="shopos-sf__apply shopos-ui-btn" data-shopos-sf-apply><?php echo esc_html( Labels::get( 'apply' ) ); ?></button>
+			<button type="button" class="shopos-sf__clear-mobile shopos-ui-btn shopos-ui-btn--ghost" data-shopos-sf-clear-mobile><?php echo esc_html( Labels::get( 'clear' ) ); ?></button>
 		</div>
 	</div>
 </div>

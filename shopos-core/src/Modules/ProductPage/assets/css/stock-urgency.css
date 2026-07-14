@@ -7,28 +7,28 @@
  * "Ploni" stack is intentionally gone (owner request).
  */
 
-.fm-stock-urgency {
+.shopos-ui-stock-urgency {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--fm-space-sm, 8px);
-	margin-block: var(--fm-space-sm, 8px) 0;
-	padding: var(--fm-space-sm, 8px) var(--fm-space-md, 16px);
+	gap: var(--shopos-ui-space-sm, 8px);
+	margin-block: var(--shopos-ui-space-sm, 8px) 0;
+	padding: var(--shopos-ui-space-sm, 8px) var(--shopos-ui-space-md, 16px);
 	/* Low-stock is a caution state — warning amber per DESIGN.md's
 	   Semantic-Only Color Rule (the original snippet's red reads as error). */
-	background: var(--fm-color-warning-soft, #fdecd0);
-	color: var(--fm-color-warning, #a8630a);
-	border-radius: var(--fm-radius-pill, 999px);
-	font-size: var(--fm-text-sm, 0.875rem);
-	font-weight: var(--fm-weight-semi, 600);
-	line-height: var(--fm-leading-snug, 1.35);
+	background: var(--shopos-ui-color-warning-soft, #fdecd0);
+	color: var(--shopos-ui-color-warning, #a8630a);
+	border-radius: var(--shopos-ui-radius-pill, 999px);
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	line-height: var(--shopos-ui-leading-snug, 1.35);
 }
 
 /* The shell prints hidden and JS reveals it per picked variation; the
    display rule above would otherwise defeat the hidden attribute. */
-.fm-stock-urgency[hidden] {
+.shopos-ui-stock-urgency[hidden] {
 	display: none;
 }
 
-.fm-stock-urgency__icon {
+.shopos-ui-stock-urgency__icon {
 	flex: none;
 }

@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Wave 4.3 — InfiniteScroll skeleton/fade tokens exposed as 5 settings,
- * emitted at runtime as `--fm-is-*` CSS custom properties on `:root` via
+ * emitted at runtime as `--shopos-ui-is-*` CSS custom properties on `:root` via
  * wp_add_inline_style. Defaults map byte-identically to the prior
  * hardcoded CSS values so flag-OFF / no-settings-saved is back-compat.
  *
@@ -70,11 +70,11 @@ final class InfiniteScrollSkeletonTokensTest extends TestCase {
 	public function test_inline_css_emits_all_5_vars_at_defaults(): void {
 		$css = ( new Module() )->inline_token_css();
 
-		$this->assertStringContainsString( '--fm-is-shimmer-base:', $css );
-		$this->assertStringContainsString( '--fm-is-shimmer-highlight:', $css );
-		$this->assertStringContainsString( '--fm-is-shimmer-duration:', $css );
-		$this->assertStringContainsString( '--fm-is-fade-duration:', $css );
-		$this->assertStringContainsString( '--fm-is-fade-transform:', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-shimmer-base:', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-shimmer-highlight:', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-shimmer-duration:', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-fade-duration:', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-fade-transform:', $css );
 	}
 
 	public function test_inline_css_default_values_match_existing_hardcoded_css_byte_for_byte(): void {
@@ -84,11 +84,11 @@ final class InfiniteScrollSkeletonTokensTest extends TestCase {
 		// / no-settings-saved is not byte-identical to prior render.
 		$css = ( new Module() )->inline_token_css();
 
-		$this->assertStringContainsString( '--fm-is-shimmer-base:#eceff3;', $css );
-		$this->assertStringContainsString( '--fm-is-shimmer-highlight:#f6f8fb;', $css );
-		$this->assertStringContainsString( '--fm-is-shimmer-duration:1400ms;', $css );
-		$this->assertStringContainsString( '--fm-is-fade-duration:550ms;', $css );
-		$this->assertStringContainsString( '--fm-is-fade-transform:translateY(18px);', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-shimmer-base:#eceff3;', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-shimmer-highlight:#f6f8fb;', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-shimmer-duration:1400ms;', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-fade-duration:550ms;', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-fade-transform:translateY(18px);', $css );
 	}
 
 	public function test_inline_css_reflects_custom_settings(): void {
@@ -100,11 +100,11 @@ final class InfiniteScrollSkeletonTokensTest extends TestCase {
 
 		$css = ( new Module() )->inline_token_css();
 
-		$this->assertStringContainsString( '--fm-is-shimmer-base:#101010;', $css );
-		$this->assertStringContainsString( '--fm-is-shimmer-highlight:#fafafa;', $css );
-		$this->assertStringContainsString( '--fm-is-shimmer-duration:2000ms;', $css );
-		$this->assertStringContainsString( '--fm-is-fade-duration:800ms;', $css );
-		$this->assertStringContainsString( '--fm-is-fade-transform:translateY(32px);', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-shimmer-base:#101010;', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-shimmer-highlight:#fafafa;', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-shimmer-duration:2000ms;', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-fade-duration:800ms;', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-fade-transform:translateY(32px);', $css );
 	}
 
 	public function test_empty_color_setting_falls_back_to_default(): void {
@@ -116,8 +116,8 @@ final class InfiniteScrollSkeletonTokensTest extends TestCase {
 
 		$css = ( new Module() )->inline_token_css();
 
-		$this->assertStringContainsString( '--fm-is-shimmer-base:#eceff3;', $css );
-		$this->assertStringContainsString( '--fm-is-shimmer-highlight:#f6f8fb;', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-shimmer-base:#eceff3;', $css );
+		$this->assertStringContainsString( '--shopos-ui-is-shimmer-highlight:#f6f8fb;', $css );
 	}
 
 	public function test_wp_add_inline_style_attaches_token_block_to_handle(): void {
@@ -126,6 +126,6 @@ final class InfiniteScrollSkeletonTokensTest extends TestCase {
 		$this->assertArrayHasKey( 'shopos-core-infinite-scroll', $GLOBALS['fr_styles_inline'] );
 		$attached = $GLOBALS['fr_styles_inline']['shopos-core-infinite-scroll'];
 		$this->assertNotEmpty( $attached, 'wp_add_inline_style was called but captured nothing' );
-		$this->assertStringContainsString( '--fm-is-shimmer-base:', $attached[0] );
+		$this->assertStringContainsString( '--shopos-ui-is-shimmer-base:', $attached[0] );
 	}
 }

@@ -330,7 +330,7 @@ final class Module extends Module_Base {
 
 	/**
 	 * Build the inline CSS that exposes Wave 4.3 skeleton/fade tokens as
-	 * `--fm-is-*` custom properties on `:root`. Always emitted from
+	 * `--shopos-ui-is-*` custom properties on `:root`. Always emitted from
 	 * `enqueue()` (uniform-shape Mechanism A from Wave 3.1b precedent).
 	 *
 	 * Settings_Hub already validates the underlying options at write-time
@@ -359,11 +359,11 @@ final class Module extends Module_Base {
 		$transform = max( 0, min( 200, (int) $transform ) );
 
 		return ':root{'
-			. '--fm-is-shimmer-base:' . $base . ';'
-			. '--fm-is-shimmer-highlight:' . $highlight . ';'
-			. '--fm-is-shimmer-duration:' . $shimmer . 'ms;'
-			. '--fm-is-fade-duration:' . $fade . 'ms;'
-			. '--fm-is-fade-transform:translateY(' . $transform . 'px);'
+			. '--shopos-ui-is-shimmer-base:' . $base . ';'
+			. '--shopos-ui-is-shimmer-highlight:' . $highlight . ';'
+			. '--shopos-ui-is-shimmer-duration:' . $shimmer . 'ms;'
+			. '--shopos-ui-is-fade-duration:' . $fade . 'ms;'
+			. '--shopos-ui-is-fade-transform:translateY(' . $transform . 'px);'
 			. '}';
 	}
 }

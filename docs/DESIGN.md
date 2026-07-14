@@ -106,7 +106,7 @@ components:
 ShopOS dresses a WooCommerce storefront the way a considered boutique dresses its
 floor: ink on paper, type carrying the hierarchy, and color held in reserve until
 it means something. The system is a single design API — a token layer
-(`--fm-*`) that every module (cards, swatches, search, filters, quick view) reads
+(`--shopos-ui-*`) that every module (cards, swatches, search, filters, quick view) reads
 from, so the whole shop moves as one. The default voice is near-monochrome: a deep
 ink (#1b1b1b) on white and warm-neutral papers, with emphasis built from weight,
 scale, and spacing rather than decoration. It is bilingual and RTL-first — Hebrew
@@ -240,7 +240,7 @@ resort for separation, not the first.
 ## 5. Components
 
 ### Buttons
-- **Shape:** Gently squared (4px radius, `--fm-button-radius`). Never pill, never
+- **Shape:** Gently squared (4px radius, `--shopos-ui-button-radius`). Never pill, never
   hard-zero. 48px tall (44–48px is the touch floor).
 - **Primary:** Ink fill (#1b1b1b) with paper text, full ink border, UPPERCASE
   Label type with 0.04em tracking, padding `0 24px`. The single confident action.
@@ -256,13 +256,13 @@ resort for separation, not the first.
 - **State:** Selected flips to ink fill / paper text (the badge--accent treatment).
 
 ### Cards (product)
-- **Corner Style:** 6px radius (`--fm-card-radius`) — softer than buttons, never lg.
+- **Corner Style:** 6px radius (`--shopos-ui-card-radius`) — softer than buttons, never lg.
 - **Background:** Paper body; media well is paper-dim (#f1efea) at a 4/5 aspect.
 - **Shadow Strategy:** sm at rest, md on hover (see Elevation). Image scales 1.03
   on hover; the card lifts −2px.
 - **Border:** Transparent at rest → 1px hairline on hover. The border *arrives*
   with the lift; it doesn't sit there.
-- **Internal Padding:** 16px (`--fm-space-md`); body is a tight 4px-gap stack.
+- **Internal Padding:** 16px (`--shopos-ui-space-md`); body is a tight 4px-gap stack.
 
 ### Inputs / Fields
 - **Style:** Paper fill, 1px hairline stroke, 4px radius, 44px tall, 16px inline pad.
@@ -273,14 +273,14 @@ resort for separation, not the first.
 ### Navigation / Links
 - **Style:** Inherit ink color; underline at 1px thickness, 3px offset. No global
   hover-opacity (it greyed out image content) — text links opt into the dim effect
-  via `.fm-link--dim`; image anchors stay crisp.
+  via `.shopos-ui-link--dim`; image anchors stay crisp.
 
 ### Signature Component — Live Search Panel
 The storefront's most distinctive pattern. A body-appended results panel
-(`.fc-search-panel`), JS-positioned under the field (anchored) or dropped as a
+(`.shopos-search-panel`), JS-positioned under the field (anchored) or dropped as a
 full-width sheet below the header (overlay; full-screen on mobile). White surface,
 1px hairline, md shadow, 0.5rem bottom radius, 70vh scroll cap. Each
-`.fc-search-item` is a 44px thumbnail + title / SKU / price row, hairline-divided,
+`.shopos-search-item` is a 44px thumbnail + title / SKU / price row, hairline-divided,
 with a paper-soft hover and `aria-selected` keyboard state — a proper combobox
 listbox. Locale-aware, server-rendered `price_html` (with `<del>` for sale-from).
 This is the bar every other module's interaction quality is measured against.
@@ -288,9 +288,9 @@ This is the bar every other module's interaction quality is measured against.
 ## 6. Do's and Don'ts
 
 ### Do:
-- **Do** consume `--fm-*` tokens. Change a value in `shopos-tokens.css` and let it
+- **Do** consume `--shopos-ui-*` tokens. Change a value in `shopos-tokens.css` and let it
   propagate; never hardcode what a token already expresses.
-- **Do** keep ink as the default accent. Reach for `--fm-color-ink` before any hue.
+- **Do** keep ink as the default accent. Reach for `--shopos-ui-color-ink` before any hue.
 - **Do** build depth from the paper ramp and hairlines first; add a shadow only as
   a response to state.
 - **Do** zero letter-spacing under `:lang(he)`; test every layout, label, and

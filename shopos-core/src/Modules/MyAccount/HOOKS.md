@@ -23,6 +23,6 @@ stylesheet uses no `!important` declarations except for the
 `prefers-reduced-motion` block, so normal cascade rules apply.
 
 ## Tokens
-Visual tokens come from the theme's `--fm-*` palette. To recolor the page
-without touching CSS rules, override the relevant `--fm-*` variable in your
+Visual tokens come from the theme's `--shopos-ui-*` palette. To recolor the page
+without touching CSS rules, override the relevant `--shopos-ui-*` variable in your
 theme's tokens file or a Customizer additional-CSS rule.

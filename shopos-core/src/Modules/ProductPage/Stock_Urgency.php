@@ -11,7 +11,7 @@
  *
  * Improvements over the snippet it productizes: CSS/JS live in enqueued
  * assets instead of inline tags, the payload travels on a data attribute via
- * wp_json_encode(), the palette routes through the `--fm-*` theme tokens,
+ * wp_json_encode(), the palette routes through the `--shopos-ui-*` theme tokens,
  * and typography inherits the page font (the hardcoded "Ploni" stack is
  * gone — owner request).
  *
@@ -250,11 +250,11 @@ final class Stock_Urgency {
 	 * @return string
 	 */
 	public static function badge_html( $messages_json ) {
-		return '<div class="fm-stock-urgency" data-fm-urgency="' . esc_attr( $messages_json ) . '" hidden>'
-			. '<svg class="fm-stock-urgency__icon" width="14" height="16" viewBox="0 0 14 16" fill="none" aria-hidden="true">'
+		return '<div class="shopos-ui-stock-urgency" data-shopos-ui-urgency="' . esc_attr( $messages_json ) . '" hidden>'
+			. '<svg class="shopos-ui-stock-urgency__icon" width="14" height="16" viewBox="0 0 14 16" fill="none" aria-hidden="true">'
 			. '<path d="M7.6.9c.3 2.3-.6 3.6-1.7 4.9C4.7 7.2 3 8.6 3 11a4.5 4.5 0 0 0 9 0c0-1.5-.6-2.8-1.4-3.9-.3.5-.8 1-1.3 1.3.2-1.9-.4-4.6-1.7-6.3A6.4 6.4 0 0 0 7.6.9Z" fill="currentColor"/>'
 			. '</svg>'
-			. '<span class="fm-stock-urgency__text" data-fm-urgency-text aria-live="polite"></span>'
+			. '<span class="shopos-ui-stock-urgency__text" data-shopos-ui-urgency-text aria-live="polite"></span>'
 			. '</div>';
 	}
 }

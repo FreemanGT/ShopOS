@@ -38,7 +38,7 @@
 	   (e.g. WooSQ's `.woosq-sidebar`), and the variable cascades through that
 	   while `inherit` would pick up the modal's font. Descendants below just
 	   `inherit` from here. */
-	font-family: var(--fm-font-body, inherit) !important;
+	font-family: var(--shopos-ui-font-body, inherit) !important;
 	color: var(--eshop-text) !important;
 	display: flex !important;
 	flex-direction: column !important;
@@ -658,14 +658,14 @@
 	position: fixed;
 	bottom: 24px;
 	left: 24px;
-	z-index: var(--fm-z-toast, 10000);
+	z-index: var(--shopos-ui-z-toast, 10000);
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 	width: min(360px, calc(100% - 24px));
 	pointer-events: none;
 	direction: rtl;
-	font-family: var(--fm-font-body, inherit);
+	font-family: var(--shopos-ui-font-body, inherit);
 }
 
 .shopos-shop-toast {

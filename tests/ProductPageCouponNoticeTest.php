@@ -72,12 +72,12 @@ final class ProductPageCouponNoticeTest extends TestCase {
 	public function test_notice_html_places_strings_and_price(): void {
 		$html = Coupon_Notice::notice_html( 'arba50', '<span class="amount">₪50</span>', 'Enter coupon code', 'and pay:', '' );
 
-		$this->assertStringContainsString( 'fm-coupon-notice', $html );
+		$this->assertStringContainsString( 'shopos-ui-coupon-notice', $html );
 		$this->assertStringContainsString( 'Enter coupon code', $html );
-		$this->assertStringContainsString( '<strong class="fm-coupon-notice__code">arba50</strong>', $html );
+		$this->assertStringContainsString( '<strong class="shopos-ui-coupon-notice__code">arba50</strong>', $html );
 		$this->assertStringContainsString( 'and pay:', $html );
 		$this->assertStringContainsString( '<span class="amount">₪50</span>', $html, 'wc_price() HTML must pass through unescaped' );
-		$this->assertStringNotContainsString( 'data-fm-coupon-prices', $html, 'no map attribute without a variation map' );
+		$this->assertStringNotContainsString( 'data-shopos-ui-coupon-prices', $html, 'no map attribute without a variation map' );
 	}
 
 	public function test_notice_html_escapes_code_and_labels(): void {
@@ -92,8 +92,8 @@ final class ProductPageCouponNoticeTest extends TestCase {
 		$json = (string) wp_json_encode( array( 101 => '₪25' ) );
 		$html = Coupon_Notice::notice_html( 'arba50', '₪50', 'in', 'out', $json );
 
-		$this->assertStringContainsString( 'data-fm-coupon-prices=', $html );
-		$this->assertStringContainsString( 'data-fm-coupon-price>', $html, 'the price element must be JS-addressable' );
+		$this->assertStringContainsString( 'data-shopos-ui-coupon-prices=', $html );
+		$this->assertStringContainsString( 'data-shopos-ui-coupon-price>', $html, 'the price element must be JS-addressable' );
 	}
 
 	public function test_render_hooks_the_summary_below_the_buy_box(): void {

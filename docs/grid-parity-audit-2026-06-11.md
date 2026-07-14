@@ -50,7 +50,7 @@ The rule is meant for the main archive grid (stock WC or `elementor-grid`), not 
 | D3 | **Empty query renders nothing on the storefront** (editor-only notice). | Matches Elementor Pro's Products widget, which also renders nothing when the query is empty. Parity OK. |
 | D4 | **Sale flash restyled** as an accent pill (top-left, RTL-flipped) vs WC's green circle. | Design language; Elementor Pro stores restyle the flash too. The `show_sale_badge` toggle removes WC's hook per-instance, which third-party flash plugins respect. |
 | D5 | **Hover ring + image scale** vs Elementor Pro's unstyled hover. | Design language, hover-capability-gated. |
-| D6 | **Gap from `--cs-gap` control** (default 20px) vs the theme's `--fm-card-gap` token on the archive grid. | Per-instance control wins at higher specificity by design; an editor can match the token value manually. |
+| D6 | **Gap from `--cs-gap` control** (default 20px) vs the theme's `--shopos-ui-card-gap` token on the archive grid. | Per-instance control wins at higher specificity by design; an editor can match the token value manually. |
 
 ## Deferred / watch list
 

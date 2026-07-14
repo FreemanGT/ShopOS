@@ -19,13 +19,13 @@
 
 ### Design principles (the "why")
 - **Serve the decision, not the page.** Every surface (search, filters, card, quick view, swatches, buy box) exists to move the shopper toward a confident purchase. Reduce friction; remove anything that doesn't help the decision.
-- **Tokens are the single source of truth.** Modules consume `--fm-*` design tokens; visual change happens in the token layer so the whole suite stays coherent. Never hardcode what a token already expresses.
+- **Tokens are the single source of truth.** Modules consume `--shopos-ui-*` design tokens; visual change happens in the token layer so the whole suite stays coherent. Never hardcode what a token already expresses.
 - **RTL & bilingual are first-class.** Hebrew is primary; every layout, label, price, and animation must be correct mirrored, locale-aware on both He and En sides.
 - **Truthful state over optimistic state.** Stock, availability, price, and facet counts reflect **real per-variation truth** — a sold-out size drops out, a no-match search shows an honest empty result. Never show a product the shopper can't actually buy.
 - **Restraint is the brand.** Type, weight, and space before color or ornament. When in doubt, remove.
 
 ### Named rules (the "what")
-- **The Ink-First Rule.** The primary accent is ink, not a hue. Reach for `--fm-color-ink` before any color. Gold/forest are per-site opt-in themes (`.is-accent-*`) — color on demand, never by default.
+- **The Ink-First Rule.** The primary accent is ink, not a hue. Reach for `--shopos-ui-color-ink` before any color. Gold/forest are per-site opt-in themes (`.is-accent-*`) — color on demand, never by default.
 - **The Semantic-Only Color Rule.** Green/red/amber/blue appear **only** to report state (in-stock, error, caution, info). Forbidden as decoration. If a color isn't telling the shopper something true, it doesn't belong on the page.
 - **The Hebrew Flat-Tracking Rule.** Letter-spacing is zeroed under `:lang(he)`. Latin gets the −0.01em display tightening and the 0.04em label spacing; Hebrew gets neither. Never ship a tracked Hebrew heading.
 - **The One Uppercase Voice Rule.** Uppercase is reserved for the **Label** role (buttons, badges, H6 eyebrow, filter chips). Headings and body are never uppercased. No tracked all-caps eyebrow above every section.
@@ -36,7 +36,7 @@
 - **Type:** Assistant (display/headings), Heebo (body/labels) — Hebrew-native humanist sans, Rubik → system fallback. Roles: **Display** 600 / clamp 2.5→4rem · **Headline** 600 / 1.9→2.75rem · **Title** 500 / 1.1→1.25rem · **Body** 400 / ~16px / line-height 1.55 (measure ≤65–75ch) · **Label** 600 / ~12px / 0.04em / UPPERCASE.
 - **Color:** Ink `#1b1b1b` / Ink-soft `#3a3a3a` / Ink-muted `#6b6b6b` (text floor on paper) · Paper `#ffffff` → Paper-soft `#faf9f7` → Paper-dim `#f1efea` → Sand `#e9e4db` (depth ramp) · Hairline `#e6e6e2` · opt-in Gold `#b68a3a`. Semantic: Success `#0e7c66` · Danger `#b11226` · Warning `#a8630a` · Info `#225e8f`.
 - **Depth:** tonal first (three paper steps + hairlines), shadow second — `sm` at rest on cards, `md` on hover/panels, `lg` on drawers/modals, `xl` on full-screen overlays.
-- **Radius:** buttons 4px (`--fm-button-radius`), cards 6px (`--fm-card-radius`), pills 999px.
+- **Radius:** buttons 4px (`--shopos-ui-button-radius`), cards 6px (`--shopos-ui-card-radius`), pills 999px.
 
 ### Accessibility & motion (always on)
 - Target **WCAG 2.1 AA**: body ≥4.5:1, large text ≥3:1; visible focus on every interactive control (filters, search combobox, quick-view drawer, swatches); keyboard-operable throughout; full RTL correctness.
@@ -130,12 +130,12 @@ Option names: `shopos_core_{module}_{feature}_enabled`, strict-boolean parsed (`
 | Reindex tool (`shopos_core/module_page/search`) | button + progress | "Reindex all products" / "Stop"; batches of 50; live "Indexed: N · auto-reindex scheduled" status | — |
 
 **Front-facing — what the shopper sees**
-- Two presentations, one row style (`search.css`): an **anchored dropdown** (`.fc-search-panel`, body-appended, JS-positioned under any matched `input[type="search"], input[name="s"]`) and, for the shortcode, a **centered command palette** (`.fc-search-modal`) over a dimmed scrim.
-- The shortcode renders a magnifier-icon button (`.fc-search-trigger`); clicking opens the modal (max-width 600px, rounded, slides down + scales in) with the field, a circular close "X", and live results.
-- Each result row (`.fc-search-item`): optional 52×52 rounded thumbnail, bold single-line title (ellipsis), price (struck-through `del` on sale), optional muted SKU. Hover and keyboard focus both paint `--fm-color-paper-soft` via `[aria-selected="true"]`.
+- Two presentations, one row style (`search.css`): an **anchored dropdown** (`.shopos-search-panel`, body-appended, JS-positioned under any matched `input[type="search"], input[name="s"]`) and, for the shortcode, a **centered command palette** (`.shopos-search-modal`) over a dimmed scrim.
+- The shortcode renders a magnifier-icon button (`.shopos-search-trigger`); clicking opens the modal (max-width 600px, rounded, slides down + scales in) with the field, a circular close "X", and live results.
+- Each result row (`.shopos-search-item`): optional 52×52 rounded thumbnail, bold single-line title (ellipsis), price (struck-through `del` on sale), optional muted SKU. Hover and keyboard focus both paint `--shopos-ui-color-paper-soft` via `[aria-selected="true"]`.
 - Footer "See all results" (uppercase, tracked); empty state a centered muted "No products found".
 - **Interaction:** debounced fetch past the min-char threshold, `AbortController`-cancelled; combobox ARIA with ↑/↓ navigation, Enter opens/submits, Esc closes; a visually-hidden `aria-live` region announces the result count.
-- **Mobile (≤768px):** a brand-primary "Search" button appears and the palette floats above the software keyboard (mirrors `window.visualViewport` into `--fc-vvh/--fc-vvt`). Desktop hides the button (Enter carries it).
+- **Mobile (≤768px):** a brand-primary "Search" button appears and the palette floats above the software keyboard (mirrors `window.visualViewport` into `--shopos-vvh/--shopos-vvt`). Desktop hides the button (Enter carries it).
 - RTL: price sits inside the body stack so it right-aligns; all wording overridable; a `<noscript>` FOUC guard keeps the native form visible if JS is off.
 
 ### ShopFilters — `src/Modules/ShopFilters/`
@@ -273,8 +273,8 @@ Option names: `shopos_core_{module}_{feature}_enabled`, strict-boolean parsed (`
 **Front-facing — what the shopper sees**
 - **`none`:** unchanged WC thumbnail.
 - **`hover_swap`:** an overlay `<img>` (the product's first gallery image) injected as a sibling of the primary thumbnail; hover cross-fades it in over 0.35s and out on leave. No gallery image → renders nothing. Pure CSS — infinite-scroll-loaded cards work with no JS.
-- **`gallery_slider`:** WC's single thumbnail becomes `.fc-card-slider` — a horizontal viewport of all images (primary first, deduped), each slide `flex: 0 0 100%` with `scroll-snap-align: start / stop: always`. Single-image products fall back to a plain image, no chrome.
-- Swipe is native CSS scroll-snap (touch + trackpad, RTL-correct without JS); `card-slider.js` adds progressive-enhancement mouse drag + optional circular prev/next arrows (`.fc-card-slider__arrow`, 26px white, hidden until card hover, next-chevron mirrored in RTL). Slider corners `border-radius: 1rem`.
+- **`gallery_slider`:** WC's single thumbnail becomes `.shopos-card-slider` — a horizontal viewport of all images (primary first, deduped), each slide `flex: 0 0 100%` with `scroll-snap-align: start / stop: always`. Single-image products fall back to a plain image, no chrome.
+- Swipe is native CSS scroll-snap (touch + trackpad, RTL-correct without JS); `card-slider.js` adds progressive-enhancement mouse drag + optional circular prev/next arrows (`.shopos-card-slider__arrow`, 26px white, hidden until card hover, next-chevron mirrored in RTL). Slider corners `border-radius: 1rem`.
 - Hover reveal is gated to `(hover: hover) and (pointer: fine)` so a tap never sticks the overlay/arrows; both modes honor reduced-motion. Assets: `hover-swap.css`, `card-slider.css/js`.
 
 ## 3.2 Product & Conversion
@@ -295,15 +295,15 @@ Option names: `shopos_core_{module}_{feature}_enabled`, strict-boolean parsed (`
 | **Editable labels** (`label_*`, He/En, blank = En) | text | `coupon_intro` "Enter coupon code" · `coupon_outro` "and the product will cost you:" · `urgency_last_unit` "Last one in stock" · `urgency_units_left` "Only {count} left in stock" · `trust_shipping` (blank → item hidden) · `trust_returns` (blank → item hidden) | as noted |
 
 **Front-facing — what the shopper sees**
-- An editorial **gallery** (`.fm-pdp__gallery`) — one image at a time, a horizontal scroll-snap strip at every breakpoint (swipe on mobile, mouse click-drag on desktop `.is-grabbing`), with a slim scroll-progress bar below that never fully empties. **No lightbox** (the corner expand trigger is `display:none`; hover-magnify zoom kept); a quiet ink `span.onsale` pill in the corner.
-- A framed, paper-dim **sticky summary column** (`.fm-pdp__summary-col`, sticky ≥1024px) holding title / rating / price / buy box; sale prices show a red `<del>` from-price.
+- An editorial **gallery** (`.shopos-ui-pdp__gallery`) — one image at a time, a horizontal scroll-snap strip at every breakpoint (swipe on mobile, mouse click-drag on desktop `.is-grabbing`), with a slim scroll-progress bar below that never fully empties. **No lightbox** (the corner expand trigger is `display:none`; hover-magnify zoom kept); a quiet ink `span.onsale` pill in the corner.
+- A framed, paper-dim **sticky summary column** (`.shopos-ui-pdp__summary-col`, sticky ≥1024px) holding title / rating / price / buy box; sale prices show a red `<del>` from-price.
 - The **buy box** renders the standard WC add-to-cart stack, so VariationSwatches' own buy box lights up unaided (red pill CTAs unless a Buy button colour is set); variation selects restyled full-width; a variation image-swap fades the main gallery image.
-- A **coupon-notice card** (`.fm-coupon-notice`) under the buy box: white card, dashed-border code chip, and a bold red discounted price that live-swaps per picked variation (JS reads a `data-fm-coupon-prices` map on `found_variation`/`reset_data`).
-- A **stock-urgency badge** (`.fm-stock-urgency`) — amber warning-tone pill with a flame icon — revealed only when the picked variation is inside the 1..N band ("Last one in stock" / "Only 3 left in stock").
-- A **trust line** (`.fm-pdp__trust`, truck + returns icons), a collapsed **additional-information** `<details>` (attribute table), then product meta.
-- Below: an **accordion** of description/reviews/plugin tabs (`.fm-pdp__accordion`, rotating chevron), then restyled **upsells/related** as a 2-up (mobile) / 4-up (desktop) grid.
-- A **mobile sticky add-to-cart bar** (`.fm-pdp__sticky-bar`, hidden ≥1024px) that slides up once the summary scrolls out of view (IntersectionObserver); thumb + title + price + CTA that scrolls back to the buy box, deferring entirely if VS's own sticky bar is present.
-- Fully RTL-first (CSS logical properties), Hebrew flat-tracking on titles/buttons, tokenized via `--fm-*`. Assets: `product-page.css/js`, `coupon-notice.css/js`, `stock-urgency.css/js`.
+- A **coupon-notice card** (`.shopos-ui-coupon-notice`) under the buy box: white card, dashed-border code chip, and a bold red discounted price that live-swaps per picked variation (JS reads a `data-shopos-ui-coupon-prices` map on `found_variation`/`reset_data`).
+- A **stock-urgency badge** (`.shopos-ui-stock-urgency`) — amber warning-tone pill with a flame icon — revealed only when the picked variation is inside the 1..N band ("Last one in stock" / "Only 3 left in stock").
+- A **trust line** (`.shopos-ui-pdp__trust`, truck + returns icons), a collapsed **additional-information** `<details>` (attribute table), then product meta.
+- Below: an **accordion** of description/reviews/plugin tabs (`.shopos-ui-pdp__accordion`, rotating chevron), then restyled **upsells/related** as a 2-up (mobile) / 4-up (desktop) grid.
+- A **mobile sticky add-to-cart bar** (`.shopos-ui-pdp__sticky-bar`, hidden ≥1024px) that slides up once the summary scrolls out of view (IntersectionObserver); thumb + title + price + CTA that scrolls back to the buy box, deferring entirely if VS's own sticky bar is present.
+- Fully RTL-first (CSS logical properties), Hebrew flat-tracking on titles/buttons, tokenized via `--shopos-ui-*`. Assets: `product-page.css/js`, `coupon-notice.css/js`, `stock-urgency.css/js`.
 
 ### QuickView — `src/Modules/QuickView/`
 **Purpose:** Puts a magnifier icon on every product-loop card that opens a slide-in drawer previewing the product (gallery, price, description, add-to-cart) without leaving the listing.
@@ -320,10 +320,10 @@ Option names: `shopos_core_{module}_{feature}_enabled`, strict-boolean parsed (`
 | Loading / Error message | text | "Loading…" / "Could not load this product. Please try again." |
 
 **Front-facing — what the shopper sees**
-- A small circular **trigger** (`.fc-qv-trigger`) — black magnifier glyph on a white circle with a soft shadow — pinned to the top **physical-right** corner of every card (opposite the sale flash; deliberately `right`, not logical), on Elementor archive grids and ProductSlider cards. Hover is a subtle `scale(1.12)`.
-- Clicking fetches drawer content over admin-AJAX and slides in a **side drawer** (`.fc-quick-view__panel`, `width: min(480px, 94vw)`, full-height, anchored to the inline-end edge — the **left** edge on the RTL store) with a dark overlay fade and a `translateX + scale(.98)` slide (RTL flips direction). *Note: one edge-anchored drawer at all breakpoints — not a centered desktop modal / bottom mobile sheet.*
+- A small circular **trigger** (`.shopos-qv-trigger`) — black magnifier glyph on a white circle with a soft shadow — pinned to the top **physical-right** corner of every card (opposite the sale flash; deliberately `right`, not logical), on Elementor archive grids and ProductSlider cards. Hover is a subtle `scale(1.12)`.
+- Clicking fetches drawer content over admin-AJAX and slides in a **side drawer** (`.shopos-quick-view__panel`, `width: min(480px, 94vw)`, full-height, anchored to the inline-end edge — the **left** edge on the RTL store) with a dark overlay fade and a `translateX + scale(.98)` slide (RTL flips direction). *Note: one edge-anchored drawer at all breakpoints — not a centered desktop modal / bottom mobile sheet.*
 - The body renders the **standard single-product summary** stack (title / rating / price / short description / add-to-cart / meta), rendered in the **site locale** so VS's buy box swaps in and the price de-dupes exactly as on the PDP.
-- The gallery **reuses the HoverSwap card-slider verbatim** (`.fc-card-slider` — arrows, snap, drag, loop) when ≥2 images; a single featured image otherwise (same `card-slider.css/js` handle).
+- The gallery **reuses the HoverSwap card-slider verbatim** (`.shopos-card-slider` — arrows, snap, drag, loop) when ≥2 images; a single featured image otherwise (same `card-slider.css/js` handle).
 - A bottom "View full details" link deep-links to the real PDP. Opening locks body scroll, focuses + traps Tab in the panel; Esc / overlay / close-X closes and returns focus to the trigger. `aria-modal`, `aria-live`, reduced-motion-safe. Assets: `quick-view.css/js` (+ shared card-slider).
 
 ### VariationSwatches — `src/Modules/VariationSwatches/`
@@ -416,7 +416,7 @@ Editable copy (en_US default; `he_IL.php` supplies Hebrew; never overwritten on 
 - **Orders / Downloads / Payment tables:** hairline-bordered, rounded, **mono uppercase column headers**, tabular-nums, subtle striped header. Order **status** → a hairline pill with a small dot. Row actions → mono-uppercase **ghost buttons**. Empty state = an accented info callout.
 - **Addresses & View-Order:** billing/shipping reflow into a responsive card grid (`auto-fit minmax(280px,1fr)`), each a rounded bordered card with a **mono uppercase eyebrow title** + an "Edit" pill on the trailing edge.
 - **Forms** (edit account/address, login, lost password): mono uppercase labels, full-width hairline inputs with an ink-colored focus border (no glow), two-up first/last-name rows.
-- Resolves through `--fm-*` tokens (system-font fallbacks), so it inherits the store palette; RTL-aware via logical properties. **Mobile:** ≤880px the sidebar becomes a horizontally-scrolling pill row with an edge-fade mask; ≤640px tables restack as per-row cards.
+- Resolves through `--shopos-ui-*` tokens (system-font fallbacks), so it inherits the store palette; RTL-aware via logical properties. **Mobile:** ≤880px the sidebar becomes a horizontally-scrolling pill row with an edge-fade mask; ≤640px tables restack as per-row cards.
 
 ## 3.4 Merchandising & Ops
 
@@ -469,27 +469,27 @@ The module page also has a **Bulk audit** tool: a "Dry run (report only)" checkb
 *One text field — no overlay color/duration or separate on/off (the module toggle is the only switch).*
 
 **Front-facing — what the shopper sees** *(two composable layers, front-end only)*
-- **Loading overlay (JS+CSS).** On a qualifying navigation, `page-transitions.js` appends a fixed full-viewport scrim (`.fpt-overlay`, `rgba(15,18,26,.35)` + `backdrop-filter: blur(1.5px)`, `z-index: var(--fm-z-max,100000)`) that fades in over two rAFs, centering a rounded white card (`.fpt-box`) with a spinning ring (`.fpt-spinner`) + the localized label. **Triggers:** pagination clicks (ShopOS `.cs-pagination`, WooCommerce/Elementor/block/`page-numbers`, ShopFilters panel links `.shopos-sf a`), product-search submits (`form.fc-search-form, form[role="search"]`), and any caller of `window.ShopOSPageTransitions.show()` (ShopFilters' `navigate()` calls it as a soft dependency). Only plain same-origin left-clicks trigger it. A `pageshow` bfcache restore + an 8s timeout tear the overlay down so an aborted navigation can't strand a dead scrim.
-- **Cross-document fade (pure CSS).** `@view-transition { navigation: auto }` cross-fades old→new (0.18s) on same-origin navigations (Chrome/Edge/Safari; Firefox ignores). To avoid landing on a half-rendered white frame, the module prints a render-blocking `<link rel="expect" href="#fpt-ready" blocking="render">` in `<head>` + a matching end-of-body `<div id="fpt-ready" hidden>` marker, so first paint waits for real content.
+- **Loading overlay (JS+CSS).** On a qualifying navigation, `page-transitions.js` appends a fixed full-viewport scrim (`.shopos-pt-overlay`, `rgba(15,18,26,.35)` + `backdrop-filter: blur(1.5px)`, `z-index: var(--shopos-ui-z-max,100000)`) that fades in over two rAFs, centering a rounded white card (`.shopos-pt-box`) with a spinning ring (`.shopos-pt-spinner`) + the localized label. **Triggers:** pagination clicks (ShopOS `.cs-pagination`, WooCommerce/Elementor/block/`page-numbers`, ShopFilters panel links `.shopos-sf a`), product-search submits (`form.shopos-search-form, form[role="search"]`), and any caller of `window.ShopOSPageTransitions.show()` (ShopFilters' `navigate()` calls it as a soft dependency). Only plain same-origin left-clicks trigger it. A `pageshow` bfcache restore + an 8s timeout tear the overlay down so an aborted navigation can't strand a dead scrim.
+- **Cross-document fade (pure CSS).** `@view-transition { navigation: auto }` cross-fades old→new (0.18s) on same-origin navigations (Chrome/Edge/Safari; Firefox ignores). To avoid landing on a half-rendered white frame, the module prints a render-blocking `<link rel="expect" href="#shopos-pt-ready" blocking="render">` in `<head>` + a matching end-of-body `<div id="shopos-pt-ready" hidden>` marker, so first paint waits for real content.
 - **Reduced motion:** `@view-transition { navigation: none }` (fade off) + a frozen static ring, but keeps the overlay (it's feedback, not decoration). **Back/forward:** `pageswap`/`pagereveal` call `skipTransition()` on `traverse`/`back_forward` so the fade doesn't freeze while scroll/grid state restores — only fresh navigations animate. Assets: `page-transitions.css/js`.
 
 ---
 
-## 4. Design token reference (`--fm-*`)
+## 4. Design token reference (`--shopos-ui-*`)
 
 The theme (`shopos-theme/assets/css/shopos-tokens.css`) exposes one token layer every module reads. Change a value here and it propagates suite-wide — never hardcode what a token expresses.
 
 | Group | Tokens |
 |---|---|
-| **Color** | `--fm-color-ink` · `-ink-soft` · `-ink-muted` · `-paper` · `-paper-soft` · `-paper-dim` · `-hairline` · `-accent` (+ `-soft`/`-text`) · `-success`/`-danger`/`-warning`/`-info` (+ `-soft`). Raw palette under `--fm-palette-*` (ink, sand, gold, green, red, amber, info…). |
-| **Type** | `--fm-font-display` · `-body` · `-mono`; leading `--fm-leading-tight/snug/base/loose`; button `--fm-button-font-weight` / `-tracking`. |
-| **Card** | `--fm-card-bg` · `-border` · `-border-hover` · `-radius` · `-aspect` · `-gap` · `-shadow` · `-shadow-hover` · `-hover-shift`. |
-| **Button** | `--fm-button-height` (+ `-sm`) · `-radius` · `-padding-x`. |
-| **Input** | `--fm-input-bg` · `-border` · `-border-hover` · `-focus-ring` · `-radius` · `-height` (+ `-sm`) · `-padding-x`. |
-| **Badge** | `--fm-badge-font` · `-height` · `-padding` · `-radius`. |
-| **Motion** | `--fm-motion-instant/fast/base/slow` · easing `--fm-ease` / `-in` / `-out` / `-bounce` (all collapse under reduced-motion). |
-| **Layout** | `--fm-container-max` · `-container-pad` · radius `--fm-radius-md/lg/pill`. |
-| **Z-index ladder** | `--fm-z-*` (…`-modal`, `-toast`, `-max`) — the shared stacking order for swatch sticky bars, filter drawers, QuickView, and the PageTransitions overlay. |
+| **Color** | `--shopos-ui-color-ink` · `-ink-soft` · `-ink-muted` · `-paper` · `-paper-soft` · `-paper-dim` · `-hairline` · `-accent` (+ `-soft`/`-text`) · `-success`/`-danger`/`-warning`/`-info` (+ `-soft`). Raw palette under `--shopos-ui-palette-*` (ink, sand, gold, green, red, amber, info…). |
+| **Type** | `--shopos-ui-font-display` · `-body` · `-mono`; leading `--shopos-ui-leading-tight/snug/base/loose`; button `--shopos-ui-button-font-weight` / `-tracking`. |
+| **Card** | `--shopos-ui-card-bg` · `-border` · `-border-hover` · `-radius` · `-aspect` · `-gap` · `-shadow` · `-shadow-hover` · `-hover-shift`. |
+| **Button** | `--shopos-ui-button-height` (+ `-sm`) · `-radius` · `-padding-x`. |
+| **Input** | `--shopos-ui-input-bg` · `-border` · `-border-hover` · `-focus-ring` · `-radius` · `-height` (+ `-sm`) · `-padding-x`. |
+| **Badge** | `--shopos-ui-badge-font` · `-height` · `-padding` · `-radius`. |
+| **Motion** | `--shopos-ui-motion-instant/fast/base/slow` · easing `--shopos-ui-ease` / `-in` / `-out` / `-bounce` (all collapse under reduced-motion). |
+| **Layout** | `--shopos-ui-container-max` · `-container-pad` · radius `--shopos-ui-radius-md/lg/pill`. |
+| **Z-index ladder** | `--shopos-ui-z-*` (…`-modal`, `-toast`, `-max`) — the shared stacking order for swatch sticky bars, filter drawers, QuickView, and the PageTransitions overlay. |
 
 ---
 

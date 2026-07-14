@@ -90,7 +90,7 @@ final class Module extends Module_Base {
 	 * @param \Elementor\Widgets_Manager $widgets_manager
 	 */
 	public function register_widget( $widgets_manager ) {
-		$widgets_manager->register( new Widget( array(), array( 'fc_module' => $this ) ) );
+		$widgets_manager->register( new Widget( array(), array( 'shopos_module' => $this ) ) );
 	}
 
 	/**

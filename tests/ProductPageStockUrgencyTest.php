@@ -79,10 +79,10 @@ final class ProductPageStockUrgencyTest extends TestCase {
 		$json = (string) wp_json_encode( array( 11 => 'Last one' ) );
 		$html = Stock_Urgency::badge_html( $json );
 
-		$this->assertStringContainsString( 'fm-stock-urgency', $html );
+		$this->assertStringContainsString( 'shopos-ui-stock-urgency', $html );
 		$this->assertStringContainsString( ' hidden>', $html, 'shell must print hidden until a variation is picked' );
-		$this->assertStringContainsString( 'data-fm-urgency=', $html );
-		$this->assertStringContainsString( 'data-fm-urgency-text', $html, 'the text element must be JS-addressable' );
+		$this->assertStringContainsString( 'data-shopos-ui-urgency=', $html );
+		$this->assertStringContainsString( 'data-shopos-ui-urgency-text', $html, 'the text element must be JS-addressable' );
 	}
 
 	public function test_max_units_defaults_and_clamps(): void {

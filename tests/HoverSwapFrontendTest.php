@@ -70,7 +70,7 @@ final class HoverSwapFrontendTest extends TestCase {
 		$html = $this->frontend()->overlay_html( $product );
 
 		$this->assertStringContainsString( 'data-id="88"', $html );
-		$this->assertStringContainsString( 'fc-hover-swap__img', $html );
+		$this->assertStringContainsString( 'shopos-hover-swap__img', $html );
 	}
 
 	public function test_overlay_html_empty_when_no_gallery_image(): void {
@@ -99,6 +99,6 @@ final class HoverSwapFrontendTest extends TestCase {
 		$out = (string) ob_get_clean();
 
 		$this->assertStringContainsString( 'data-id="88"', $out );
-		$this->assertStringContainsString( 'fc-hover-swap__img', $out );
+		$this->assertStringContainsString( 'shopos-hover-swap__img', $out );
 	}
 }

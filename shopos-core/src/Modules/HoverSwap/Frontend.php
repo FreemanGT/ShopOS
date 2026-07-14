@@ -119,7 +119,7 @@ final class Frontend {
 			'woocommerce_thumbnail',
 			false,
 			array(
-				'class'       => 'fc-hover-swap__img',
+				'class'       => 'shopos-hover-swap__img',
 				'loading'     => 'lazy',
 				'aria-hidden' => 'true',
 			)

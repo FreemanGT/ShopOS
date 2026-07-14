@@ -1,7 +1,7 @@
 /*
  * ShopOS Page Transitions — loading overlay (A) + cross-document fade (B).
  *
- * A: `.fpt-overlay` is appended to <body> by page-transitions.js the moment
+ * A: `.shopos-pt-overlay` is appended to <body> by page-transitions.js the moment
  *    a filter / search / pagination interaction starts a navigation, and
  *    stays up until the browser swaps documents (a bfcache restore or the
  *    JS safety timeout removes it).
@@ -32,12 +32,12 @@
 
 /* ── A: loading overlay ────────────────────────────── */
 
-.fpt-overlay {
+.shopos-pt-overlay {
 	position: fixed;
 	inset: 0;
 	/* Same ceiling as the QuickView / ShopFilters drawers; being appended
 	   last at show() time wins the DOM-order tie over everything else. */
-	z-index: var(--fm-z-max, 100000);
+	z-index: var(--shopos-ui-z-max, 100000);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -48,48 +48,48 @@
 	transition: opacity 0.15s ease;
 }
 
-.fpt-overlay.fpt-overlay--on {
+.shopos-pt-overlay.shopos-pt-overlay--on {
 	opacity: 1;
 }
 
-.fpt-overlay .fpt-box {
+.shopos-pt-overlay .shopos-pt-box {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 12px;
-	background: var(--fm-color-paper, #fff);
-	color: var(--fm-color-ink, #1c2230);
+	background: var(--shopos-ui-color-paper, #fff);
+	color: var(--shopos-ui-color-ink, #1c2230);
 	border-radius: 1rem;
 	padding: 22px 34px;
 	box-shadow: 0 8px 30px rgba(15, 18, 26, 0.18);
 }
 
-.fpt-spinner {
+.shopos-pt-spinner {
 	width: 30px;
 	height: 30px;
 	border-radius: 50%;
 	border: 3px solid rgba(15, 18, 26, 0.14);
-	border-top-color: var(--fm-color-ink, #1c2230);
-	animation: fpt-spin 0.7s linear infinite;
+	border-top-color: var(--shopos-ui-color-ink, #1c2230);
+	animation: shopos-pt-spin 0.7s linear infinite;
 }
 
-.fpt-label {
+.shopos-pt-label {
 	font-size: 13.5px;
 	font-weight: 600;
 	line-height: 1.4;
 }
 
-@keyframes fpt-spin {
+@keyframes shopos-pt-spin {
 	to { transform: rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.fpt-overlay {
+	.shopos-pt-overlay {
 		transition: none;
 	}
 	/* Keep the overlay itself — it's feedback, not decoration — but stop
 	   the motion: a static ring instead of a spinner. */
-	.fpt-spinner {
+	.shopos-pt-spinner {
 		animation: none;
 		border-top-color: rgba(15, 18, 26, 0.14);
 	}

@@ -78,15 +78,15 @@ final class Frontend {
 		// runs. The <noscript> block restores the native bar when JS is unavailable.
 		$icon = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
-		return '<div class="fc-search-shortcode">'
-			. '<button type="button" class="fc-search-trigger" aria-haspopup="dialog" aria-expanded="false" aria-label="' . esc_attr( $atts['placeholder'] ) . '">' . $icon . '</button>'
-			. '<form role="search" method="get" class="fc-search-form" action="' . esc_url( home_url( '/' ) ) . '">'
-			. '<input type="search" class="fc-search-field" name="s" value="' . esc_attr( get_search_query() ) . '"'
+		return '<div class="shopos-search-shortcode">'
+			. '<button type="button" class="shopos-search-trigger" aria-haspopup="dialog" aria-expanded="false" aria-label="' . esc_attr( $atts['placeholder'] ) . '">' . $icon . '</button>'
+			. '<form role="search" method="get" class="shopos-search-form" action="' . esc_url( home_url( '/' ) ) . '">'
+			. '<input type="search" class="shopos-search-field" name="s" value="' . esc_attr( get_search_query() ) . '"'
 			. ' placeholder="' . esc_attr( $atts['placeholder'] ) . '" aria-label="' . esc_attr( $atts['placeholder'] ) . '" autocomplete="off" />'
 			. '<input type="hidden" name="post_type" value="product" />'
-			. '<button type="submit" class="fc-search-submit">' . esc_html( $atts['button'] ) . '</button>'
+			. '<button type="submit" class="shopos-search-submit">' . esc_html( $atts['button'] ) . '</button>'
 			. '</form>'
-			. '<noscript><style>.fc-search-shortcode .fc-search-trigger{display:none}.fc-search-shortcode .fc-search-form{display:flex}</style></noscript>'
+			. '<noscript><style>.shopos-search-shortcode .shopos-search-trigger{display:none}.shopos-search-shortcode .shopos-search-form{display:flex}</style></noscript>'
 			. '</div>';
 	}
 

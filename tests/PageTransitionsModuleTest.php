@@ -63,8 +63,8 @@ final class PageTransitionsModuleTest extends TestCase {
 
 		$this->assertStringContainsString( 'rel="expect"', $link );
 		$this->assertStringContainsString( 'blocking="render"', $link );
-		$this->assertStringContainsString( 'href="#fpt-ready"', $link );
-		$this->assertStringContainsString( 'id="fpt-ready"', $marker );
+		$this->assertStringContainsString( 'href="#shopos-pt-ready"', $link );
+		$this->assertStringContainsString( 'id="shopos-pt-ready"', $marker );
 		$this->assertStringContainsString( 'hidden', $marker );
 	}
 

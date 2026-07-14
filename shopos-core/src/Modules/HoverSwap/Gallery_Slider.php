@@ -130,20 +130,20 @@ final class Gallery_Slider {
 				'woocommerce_thumbnail',
 				false,
 				array(
-					'class'   => 'fc-card-slider__img',
+					'class'   => 'shopos-card-slider__img',
 					'loading' => 0 === $i ? 'eager' : 'lazy',
 				)
 			);
-			$slides .= '<div class="fc-card-slider__slide">' . ( is_string( $img ) ? $img : '' ) . '</div>';
+			$slides .= '<div class="shopos-card-slider__slide">' . ( is_string( $img ) ? $img : '' ) . '</div>';
 		}
 
 		// Single image — a plain thumbnail, no slider chrome.
 		if ( count( $ids ) < 2 ) {
-			return '<div class="fc-card-slider fc-card-slider--single"><div class="fc-card-slider__viewport">' . $slides . '</div></div>';
+			return '<div class="shopos-card-slider shopos-card-slider--single"><div class="shopos-card-slider__viewport">' . $slides . '</div></div>';
 		}
 
-		return '<div class="fc-card-slider" data-fc-card-slider>'
-			. '<div class="fc-card-slider__viewport">' . $slides . '</div>'
+		return '<div class="shopos-card-slider" data-shopos-card-slider>'
+			. '<div class="shopos-card-slider__viewport">' . $slides . '</div>'
 			. $this->arrows_html()
 			. '</div>';
 	}
@@ -161,10 +161,10 @@ final class Gallery_Slider {
 		$prev = esc_attr__( 'Previous image', 'shopos-core' );
 		$next = esc_attr__( 'Next image', 'shopos-core' );
 
-		return '<button type="button" class="fc-card-slider__arrow fc-card-slider__arrow--prev" data-fc-slider-prev aria-label="' . $prev . '">'
+		return '<button type="button" class="shopos-card-slider__arrow shopos-card-slider__arrow--prev" data-shopos-slider-prev aria-label="' . $prev . '">'
 			. '<svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M7 1.5L3 5.5l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 			. '</button>'
-			. '<button type="button" class="fc-card-slider__arrow fc-card-slider__arrow--next" data-fc-slider-next aria-label="' . $next . '">'
+			. '<button type="button" class="shopos-card-slider__arrow shopos-card-slider__arrow--next" data-shopos-slider-next aria-label="' . $next . '">'
 			. '<svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M4 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 			. '</button>';
 	}

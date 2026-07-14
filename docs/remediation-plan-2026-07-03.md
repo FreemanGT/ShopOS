@@ -104,8 +104,8 @@ Mirrored change across the twin indexers (Search + ShopFilters — 2 modules, st
 - Tests: email-shell seam (locale → lang/dir attrs) if extractable; JS is live-QA. `.pot` unchanged (locale files, not gettext). Legacy email twin untouched (see B-1).
 
 ### PR-15 · Font-token routing (kill `sk_type_*` in plugin CSS) — `fix(shopos-core)` + `fix(shopos-theme)` — size S
-- `shopos-theme/assets/css/shopos-tokens.css`: `--fm-font-body`/`--fm-font-heading` wrap the kit variables (single mapping point — already partially true).
-- `VariationSwatches/assets/css/shopos-*.css` (5 sites): `var(--e-global-typography-sk_type_12-…)` → `var(--fm-font-body, inherit)`.
+- `shopos-theme/assets/css/shopos-tokens.css`: `--shopos-ui-font-body`/`--shopos-ui-font-heading` wrap the kit variables (single mapping point — already partially true).
+- `VariationSwatches/assets/css/shopos-*.css` (5 sites): `var(--e-global-typography-sk_type_12-…)` → `var(--shopos-ui-font-body, inherit)`.
 - Theme touched → bump `SHOPOS_THEME_VERSION` (PR-1's fixed tooling handles it). Live QA: typography unchanged on arba4.
 
 ---
@@ -113,7 +113,7 @@ Mirrored change across the twin indexers (Search + ShopFilters — 2 modules, st
 ## Phase 4 — Consistency & hardening
 
 ### PR-16 · Z-index token adoption — `fix(shopos-core)` — size S — CSS-only
-- Migrate VariationSwatches (`9999!important`, `10000`), ShopFilters (`99998/99999`), QuickView (`100000`) to `var(--fm-z-modal/--fm-z-max, <current-literal>)` fallback form (Search is the template). Fallback values = current literals, so non-theme sites are byte-equivalent.
+- Migrate VariationSwatches (`9999!important`, `10000`), ShopFilters (`99998/99999`), QuickView (`100000`) to `var(--shopos-ui-z-modal/--shopos-ui-z-max, <current-literal>)` fallback form (Search is the template). Fallback values = current literals, so non-theme sites are byte-equivalent.
 - Live QA: QuickView drawer over ShopFilters drawer over sticky header on arba4, mobile + desktop.
 
 ### PR-17 · Guard & comment sweep — `chore(shopos-core)` — size XS — no behavior

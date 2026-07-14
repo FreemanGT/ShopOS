@@ -53,7 +53,7 @@
 	   wrapper sets its own `font-family` (e.g. WooSQ's `.woosq-sidebar` →
 	   "Open Sans"). The variable cascades through such wrappers untouched;
 	   `inherit` falls back to the surrounding font when no Style Kits. */
-	font-family: var(--fm-font-body, inherit) !important;
+	font-family: var(--shopos-ui-font-body, inherit) !important;
 }
 
 .shopos-pdp-price[data-pdp-price] .shopos-pdp-price__prefix,
@@ -211,7 +211,7 @@ body:has(.shopos-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produc
 	   (e.g. WooSQ's `.woosq-sidebar`), and the variable cascades through that
 	   while `inherit` would pick up the modal's font. Descendants below just
 	   `inherit` from here. */
-	font-family: var(--fm-font-body, inherit) !important;
+	font-family: var(--shopos-ui-font-body, inherit) !important;
 	color: var(--shopos-text) !important;
 	max-width: 640px;
 	width: 100% !important;
@@ -862,7 +862,7 @@ body:has(.shopos-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produc
 		left: 0 !important;
 		right: 0 !important;
 		bottom: 0 !important;
-		z-index: var(--fm-z-modal, 9999) !important;
+		z-index: var(--shopos-ui-z-modal, 9999) !important;
 		background: #ffffff !important;
 		border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
 		box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08) !important;
@@ -1118,14 +1118,14 @@ body:has(.shopos-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produc
 	position: fixed;
 	bottom: 24px;
 	left: 24px;                           /* RTL: bottom-left visually = far side */
-	z-index: var(--fm-z-toast, 10000);
+	z-index: var(--shopos-ui-z-toast, 10000);
 	min-width: 220px;
 	max-width: 90vw;
 	padding: 12px 18px;
 	background: #111111;
 	color: #ffffff;
 	border-radius: 14px;
-	font-family: var(--fm-font-body, inherit);
+	font-family: var(--shopos-ui-font-body, inherit);
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1.3;

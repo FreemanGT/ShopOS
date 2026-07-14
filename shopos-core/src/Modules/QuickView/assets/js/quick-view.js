@@ -1,7 +1,7 @@
 /**
  * ShopOS Quick View — trigger + slide-in drawer controller.
  *
- * Click a `.fc-qv-trigger` on any product card → fetch the drawer content
+ * Click a `.shopos-qv-trigger` on any product card → fetch the drawer content
  * from admin-AJAX → inject into the footer drawer shell → slide it in from
  * the inline-end edge (left on RTL). Fires `shopos_core_quick_view_loaded`
  * (jQuery + native CustomEvent) after injecting, so VariationSwatches and
@@ -15,9 +15,9 @@
 
 	var CFG = window.ShopOSQuickView || {};
 
-	var root = null;       // .fc-quick-view
-	var panel = null;      // .fc-quick-view__panel
-	var content = null;    // [data-fc-qv-content]
+	var root = null;       // .shopos-quick-view
+	var panel = null;      // .shopos-quick-view__panel
+	var content = null;    // [data-shopos-qv-content]
 	var lastTrigger = null;
 	var cache = {};        // product id -> html
 
@@ -42,7 +42,7 @@
 
 	// Inject drawer HTML and re-wire dependent UI: VariationSwatches re-binds
 	// the buy box on the announce event, and card-slider.js auto-inits the
-	// drawer gallery (the .fc-card-slider) via its MutationObserver.
+	// drawer gallery (the .shopos-card-slider) via its MutationObserver.
 	function inject(html) {
 		setContent(html);
 		announceLoaded();
@@ -50,7 +50,7 @@
 
 	function showMessage(text) {
 		var p = document.createElement('p');
-		p.className = 'fc-quick-view__message';
+		p.className = 'shopos-quick-view__message';
 		p.textContent = text || '';
 		content.innerHTML = '';
 		content.appendChild(p);
@@ -62,7 +62,7 @@
 
 		root.classList.add('is-open');
 		root.setAttribute('aria-hidden', 'false');
-		document.documentElement.classList.add('fc-qv-lock');
+		document.documentElement.classList.add('shopos-qv-lock');
 		panel.focus();
 
 		if (cache[productId]) {
@@ -102,7 +102,7 @@
 		if (!root || !root.classList.contains('is-open')) { return; }
 		root.classList.remove('is-open');
 		root.setAttribute('aria-hidden', 'true');
-		document.documentElement.classList.remove('fc-qv-lock');
+		document.documentElement.classList.remove('shopos-qv-lock');
 		if (lastTrigger && typeof lastTrigger.focus === 'function') {
 			lastTrigger.focus();
 		}
@@ -126,23 +126,23 @@
 	}
 
 	ready(function () {
-		root = document.getElementById('fc-quick-view');
+		root = document.getElementById('shopos-quick-view');
 		if (!root) { return; }
-		panel = root.querySelector('.fc-quick-view__panel');
-		content = root.querySelector('[data-fc-qv-content]');
+		panel = root.querySelector('.shopos-quick-view__panel');
+		content = root.querySelector('[data-shopos-qv-content]');
 		if (!panel || !content) { return; }
 
 		// Delegated — triggers may arrive later (Infinite Scroll pages,
 		// AJAX-filtered grids).
 		document.addEventListener('click', function (e) {
-			var trigger = e.target.closest ? e.target.closest('.fc-qv-trigger') : null;
+			var trigger = e.target.closest ? e.target.closest('.shopos-qv-trigger') : null;
 			if (trigger) {
 				e.preventDefault();
 				e.stopPropagation();
-				open(parseInt(trigger.getAttribute('data-fc-qv') || '0', 10), trigger);
+				open(parseInt(trigger.getAttribute('data-shopos-qv') || '0', 10), trigger);
 				return;
 			}
-			if (e.target.closest && e.target.closest('[data-fc-qv-close]')) {
+			if (e.target.closest && e.target.closest('[data-shopos-qv-close]')) {
 				close();
 			}
 		});

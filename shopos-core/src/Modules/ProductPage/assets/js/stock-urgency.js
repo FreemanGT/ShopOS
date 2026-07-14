@@ -2,7 +2,7 @@
  * Product Page — low-stock urgency badge: per-variation reveal.
  *
  * The badge shell ships hidden with a variation-id => message map on
- * data-fm-urgency. On WooCommerce's `found_variation` the badge shows the
+ * data-shopos-ui-urgency. On WooCommerce's `found_variation` the badge shows the
  * picked variation's message (or hides when it has none); `reset_data`
  * hides it — the original snippet's behaviour, minus the inline tags.
  */
@@ -13,19 +13,19 @@
 		if ( typeof jQuery === 'undefined' ) {
 			return;
 		}
-		var boxes = document.querySelectorAll( '.fm-stock-urgency[data-fm-urgency]' );
+		var boxes = document.querySelectorAll( '.shopos-ui-stock-urgency[data-shopos-ui-urgency]' );
 		if ( ! boxes.length ) {
 			return;
 		}
 
 		Array.prototype.forEach.call( boxes, function ( box ) {
-			var textEl = box.querySelector( '[data-fm-urgency-text]' );
+			var textEl = box.querySelector( '[data-shopos-ui-urgency-text]' );
 			if ( ! textEl ) {
 				return;
 			}
 			var map;
 			try {
-				map = JSON.parse( box.getAttribute( 'data-fm-urgency' ) || '{}' );
+				map = JSON.parse( box.getAttribute( 'data-shopos-ui-urgency' ) || '{}' );
 			} catch ( e ) {
 				return;
 			}

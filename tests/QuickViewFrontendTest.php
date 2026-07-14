@@ -32,8 +32,8 @@ final class QuickViewFrontendTest extends TestCase {
 	public function test_trigger_html_shape(): void {
 		$html = $this->frontend()->trigger_html( 42 );
 
-		$this->assertStringContainsString( 'class="fc-qv-trigger"', $html );
-		$this->assertStringContainsString( 'data-fc-qv="42"', $html );
+		$this->assertStringContainsString( 'class="shopos-qv-trigger"', $html );
+		$this->assertStringContainsString( 'data-shopos-qv="42"', $html );
 		$this->assertStringContainsString( 'type="button"', $html );
 		$this->assertStringContainsString( 'aria-label="Quick view"', $html );
 	}
@@ -49,11 +49,11 @@ final class QuickViewFrontendTest extends TestCase {
 	public function test_drawer_shell_shape(): void {
 		$html = $this->frontend()->drawer_shell_html();
 
-		$this->assertStringContainsString( 'id="fc-quick-view"', $html );
+		$this->assertStringContainsString( 'id="shopos-quick-view"', $html );
 		$this->assertStringContainsString( 'aria-hidden="true"', $html );
 		$this->assertStringContainsString( 'role="dialog"', $html );
-		$this->assertStringContainsString( 'data-fc-qv-content', $html );
-		$this->assertStringContainsString( 'data-fc-qv-close', $html );
+		$this->assertStringContainsString( 'data-shopos-qv-content', $html );
+		$this->assertStringContainsString( 'data-shopos-qv-close', $html );
 		// VariationSwatches' isInsideModal() heuristic matches
 		// [class*="quick-view"] — the wrapper class must keep the substring.
 		$this->assertStringContainsString( 'quick-view', $html );
@@ -70,11 +70,11 @@ final class QuickViewFrontendTest extends TestCase {
 		ob_start();
 		$frontend->render_trigger();
 		$trigger = ob_get_clean();
-		$this->assertStringContainsString( 'data-fc-qv="42"', $trigger );
+		$this->assertStringContainsString( 'data-shopos-qv="42"', $trigger );
 
 		ob_start();
 		$frontend->render_drawer_shell();
-		$this->assertStringContainsString( 'id="fc-quick-view"', ob_get_clean() );
+		$this->assertStringContainsString( 'id="shopos-quick-view"', ob_get_clean() );
 	}
 
 	public function test_render_trigger_skips_without_a_loop_product(): void {

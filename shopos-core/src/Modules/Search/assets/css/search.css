@@ -7,55 +7,55 @@
  *              dimmed backdrop with the field + live results; on mobile the card
  *              floats mid-screen (keyboard-aware) with a visible Search button.
  *
- * Every value reads from the --fm-* token layer with a theme-independent
+ * Every value reads from the --shopos-ui-* token layer with a theme-independent
  * fallback. Interactive controls reset aggressively (the trigger lives in the
  * Elementor header, so it carries !important resets to survive theme button
  * styling; modal-internal controls are body-appended and clear of widget scope).
  */
 
 /* --- Result list + rows (shared by both presentations) ------------------- */
-.fc-search-panel {
-	z-index: var(--fm-z-overlay, 5000);
+.shopos-search-panel {
+	z-index: var(--shopos-ui-z-overlay, 5000);
 	max-height: 70vh;
 	overflow-y: auto;
-	background: var(--fm-color-paper, #fff);
-	border: 1px solid var(--fm-color-hairline, #e6e6e2);
-	border-radius: var(--fm-radius-md, 6px);
-	box-shadow: var(--fm-shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
-	font-size: var(--fm-text-sm, 0.9rem);
-	color: var(--fm-color-ink, #1b1b1b);
+	background: var(--shopos-ui-color-paper, #fff);
+	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	border-radius: var(--shopos-ui-radius-md, 6px);
+	box-shadow: var(--shopos-ui-shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
+	font-size: var(--shopos-ui-text-sm, 0.9rem);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 }
 
-.fc-search-item {
+.shopos-search-item {
 	display: flex;
 	align-items: center;
-	gap: var(--fm-space-md, 16px);
-	padding: var(--fm-space-sm, 8px) var(--fm-space-md, 16px);
+	gap: var(--shopos-ui-space-md, 16px);
+	padding: var(--shopos-ui-space-sm, 8px) var(--shopos-ui-space-md, 16px);
 	color: inherit;
 	text-decoration: none;
-	border-bottom: 1px solid var(--fm-color-hairline, #e6e6e2);
-	transition: background-color var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease);
+	border-bottom: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	transition: background-color var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease-out, ease);
 }
 
-.fc-search-item:last-child {
+.shopos-search-item:last-child {
 	border-bottom: 0;
 }
 
-.fc-search-item:hover,
-.fc-search-item[aria-selected="true"] {
-	background: var(--fm-color-paper-soft, #faf9f7);
+.shopos-search-item:hover,
+.shopos-search-item[aria-selected="true"] {
+	background: var(--shopos-ui-color-paper-soft, #faf9f7);
 }
 
-.fc-search-item__img {
+.shopos-search-item__img {
 	width: 52px;
 	height: 52px;
 	object-fit: cover;
-	border-radius: var(--fm-radius-md, 6px);
-	background: var(--fm-color-paper-dim, #f1efea);
+	border-radius: var(--shopos-ui-radius-md, 6px);
+	background: var(--shopos-ui-color-paper-dim, #f1efea);
 	flex: 0 0 auto;
 }
 
-.fc-search-item__body {
+.shopos-search-item__body {
 	display: flex;
 	flex-direction: column;
 	gap: 3px;
@@ -63,18 +63,18 @@
 	flex: 1 1 auto;
 }
 
-.fc-search-item__title {
-	font-weight: var(--fm-weight-medium, 500);
+.shopos-search-item__title {
+	font-weight: var(--shopos-ui-weight-medium, 500);
 	line-height: 1.3;
-	color: var(--fm-color-ink, #1b1b1b);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.fc-search-item__sku {
-	color: var(--fm-color-ink-muted, #6b6b6b);
-	font-size: var(--fm-text-xs, 0.75rem);
+.shopos-search-item__sku {
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -83,55 +83,55 @@
 /* Price lives inside the body stack so it tracks the title's alignment —
  * right-aligned under RTL, left-aligned under LTR — instead of floating to the
  * opposite edge of the row. */
-.fc-search-item__price {
-	font-weight: var(--fm-weight-semi, 600);
-	color: var(--fm-color-ink, #1b1b1b);
+.shopos-search-item__price {
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 	white-space: nowrap;
 }
 
-.fc-search-item__price del {
-	color: var(--fm-color-ink-muted, #6b6b6b);
-	font-weight: var(--fm-weight-regular, 400);
+.shopos-search-item__price del {
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
+	font-weight: var(--shopos-ui-weight-regular, 400);
 	margin-inline-end: 0.4em;
 }
 
-.fc-search-empty {
-	padding: var(--fm-space-xl, 40px) var(--fm-space-md, 16px);
+.shopos-search-empty {
+	padding: var(--shopos-ui-space-xl, 40px) var(--shopos-ui-space-md, 16px);
 	text-align: center;
-	color: var(--fm-color-ink-muted, #6b6b6b);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 }
 
-.fc-search-more {
+.shopos-search-more {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 0.4em;
-	padding: var(--fm-space-md, 16px);
+	padding: var(--shopos-ui-space-md, 16px);
 	text-align: center;
-	font-weight: var(--fm-weight-semi, 600);
-	font-size: var(--fm-text-xs, 0.75rem);
-	letter-spacing: var(--fm-tracking-wide, 0.04em);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 	text-transform: uppercase;
-	color: var(--fm-color-ink, #1b1b1b);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 	text-decoration: none;
-	border-top: 1px solid var(--fm-color-hairline, #e6e6e2);
-	transition: background-color var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease);
+	border-top: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	transition: background-color var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease-out, ease);
 }
 
-.fc-search-more:hover,
-.fc-search-more:focus-visible {
-	background: var(--fm-color-paper-soft, #faf9f7);
+.shopos-search-more:hover,
+.shopos-search-more:focus-visible {
+	background: var(--shopos-ui-color-paper-soft, #faf9f7);
 	outline: 0;
 }
 
 /* [shopos_search] native (no-JS) box — layout only; theme styles the field. */
-.fc-search-form {
+.shopos-search-form {
 	display: flex;
-	gap: var(--fm-space-sm, 8px);
+	gap: var(--shopos-ui-space-sm, 8px);
 	align-items: center;
 }
 
-.fc-search-form .fc-search-field {
+.shopos-search-form .shopos-search-field {
 	flex: 1 1 auto;
 	min-width: 0;
 }
@@ -142,78 +142,78 @@
  * the command palette (at which point this wrapper-scoped rule stops matching).
  * The shortcode's <noscript> block reverses this when JS is unavailable.
  */
-.fc-search-shortcode {
+.shopos-search-shortcode {
 	display: inline-flex;
 	align-items: center;
 }
 
-.fc-search-shortcode .fc-search-form {
+.shopos-search-shortcode .shopos-search-form {
 	display: none;
 }
 
 /* --- Icon trigger (lives in the header — must beat Elementor buttons) ----- */
-.fc-search-trigger {
+.shopos-search-trigger {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	width: auto;
-	padding: var(--fm-space-sm, 8px);
+	padding: var(--shopos-ui-space-sm, 8px);
 	margin: 0;
 	background: transparent !important;
 	border: 0 !important;
 	box-shadow: none !important;
 	-webkit-appearance: none;
 	appearance: none;
-	color: var(--fm-color-ink, #1b1b1b) !important;
+	color: var(--shopos-ui-color-ink, #1b1b1b) !important;
 	line-height: 0;
 	cursor: pointer;
-	border-radius: var(--fm-radius-round, 50%);
-	transition: opacity var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease),
-		transform var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease);
+	border-radius: var(--shopos-ui-radius-round, 50%);
+	transition: opacity var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease-out, ease),
+		transform var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease-out, ease);
 }
 
-.fc-search-trigger:hover {
+.shopos-search-trigger:hover {
 	opacity: 0.65;
 }
 
-.fc-search-trigger:focus-visible {
+.shopos-search-trigger:focus-visible {
 	outline: 2px solid currentColor;
 	outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-	.fc-search-trigger:active {
+	.shopos-search-trigger:active {
 		transform: scale(0.92);
 	}
 }
 
 /* --- Centered command palette -------------------------------------------- */
-.fc-search-modal {
+.shopos-search-modal {
 	position: fixed;
 	inset: 0;
-	z-index: var(--fm-z-modal, 10000);
+	z-index: var(--shopos-ui-z-modal, 10000);
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
-	padding: 12vh var(--fm-space-md, 16px) var(--fm-space-md, 16px);
+	padding: 12vh var(--shopos-ui-space-md, 16px) var(--shopos-ui-space-md, 16px);
 	opacity: 0;
 	visibility: hidden;
 	pointer-events: none;
 }
 
-.fc-search-modal.is-open {
+.shopos-search-modal.is-open {
 	opacity: 1;
 	visibility: visible;
 	pointer-events: auto;
 }
 
-.fc-search-modal__scrim {
+.shopos-search-modal__scrim {
 	position: fixed;
 	inset: 0;
 	background: rgba(17, 17, 17, 0.5);
 }
 
-.fc-search-modal__panel {
+.shopos-search-modal__panel {
 	position: relative;
 	z-index: 1;
 	display: flex;
@@ -222,25 +222,25 @@
 	min-width: 0;
 	max-width: 600px;
 	max-height: 76vh;
-	background: var(--fm-color-paper, #fff);
-	border: 1px solid var(--fm-color-hairline, #e6e6e2);
-	border-radius: var(--fm-radius-lg, 12px);
-	box-shadow: var(--fm-shadow-xl, 0 40px 80px rgba(0, 0, 0, 0.18));
+	background: var(--shopos-ui-color-paper, #fff);
+	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	border-radius: var(--shopos-ui-radius-lg, 12px);
+	box-shadow: var(--shopos-ui-shadow-xl, 0 40px 80px rgba(0, 0, 0, 0.18));
 	overflow: hidden;
 }
 
-.fc-search-modal__header {
+.shopos-search-modal__header {
 	display: flex;
 	align-items: center;
-	gap: var(--fm-space-md, 16px);
-	padding: var(--fm-space-md, 16px);
-	border-bottom: 1px solid var(--fm-color-hairline, #e6e6e2);
+	gap: var(--shopos-ui-space-md, 16px);
+	padding: var(--shopos-ui-space-md, 16px);
+	border-bottom: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
 }
 
-.fc-search-modal .fc-search-form {
+.shopos-search-modal .shopos-search-form {
 	flex: 1 1 auto;
 	min-width: 0;
-	gap: var(--fm-space-sm, 8px);
+	gap: var(--shopos-ui-space-sm, 8px);
 }
 
 /*
@@ -249,17 +249,17 @@
  * (a grey fill, square corners, or a heavy black focus border otherwise leak
  * through). Focus is a subtle ink-soft border — no ring, no slab.
  */
-.fc-search-modal .fc-search-field {
+.shopos-search-modal .shopos-search-field {
 	flex: 1 1 auto;
 	width: 100%;
 	min-width: 0;
 	height: 3rem;
-	padding: 0 var(--fm-space-md, 16px) !important;
-	border: 1px solid var(--fm-color-hairline, #e6e6e2) !important;
-	border-radius: var(--fm-radius-lg, 12px) !important;
-	background: var(--fm-color-paper, #fff) !important;
-	color: var(--fm-color-ink, #1b1b1b) !important;
-	font-size: var(--fm-text-md, 1rem);
+	padding: 0 var(--shopos-ui-space-md, 16px) !important;
+	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2) !important;
+	border-radius: var(--shopos-ui-radius-lg, 12px) !important;
+	background: var(--shopos-ui-color-paper, #fff) !important;
+	color: var(--shopos-ui-color-ink, #1b1b1b) !important;
+	font-size: var(--shopos-ui-text-md, 1rem);
 	font-family: inherit;
 	outline: none !important;
 	box-shadow: none !important;
@@ -267,21 +267,21 @@
 	appearance: none;
 }
 
-.fc-search-modal .fc-search-field:focus,
-.fc-search-modal .fc-search-field:focus-visible {
-	border-color: var(--fm-color-ink-soft, #3a3a3a) !important;
+.shopos-search-modal .shopos-search-field:focus,
+.shopos-search-modal .shopos-search-field:focus-visible {
+	border-color: var(--shopos-ui-color-ink-soft, #3a3a3a) !important;
 	outline: none !important;
 	box-shadow: none !important;
 }
 
-.fc-search-modal .fc-search-field::placeholder {
-	color: var(--fm-color-ink-muted, #6b6b6b);
+.shopos-search-modal .shopos-search-field::placeholder {
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 	opacity: 1;
 }
 
 /* Hide the dated native search clear "x". */
-.fc-search-modal .fc-search-field::-webkit-search-cancel-button,
-.fc-search-modal .fc-search-field::-webkit-search-decoration {
+.shopos-search-modal .shopos-search-field::-webkit-search-cancel-button,
+.shopos-search-modal .shopos-search-field::-webkit-search-decoration {
 	-webkit-appearance: none;
 	appearance: none;
 	display: none;
@@ -292,7 +292,7 @@
  * reach it, so the visual resets carry !important too. A clean icon-only target
  * with a soft circular hover.
  */
-.fc-search-modal__close {
+.shopos-search-modal__close {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -306,39 +306,39 @@
 	box-shadow: none !important;
 	-webkit-appearance: none;
 	appearance: none;
-	color: var(--fm-color-ink, #1b1b1b) !important;
+	color: var(--shopos-ui-color-ink, #1b1b1b) !important;
 	line-height: 0;
 	cursor: pointer;
-	border-radius: var(--fm-radius-round, 50%);
-	transition: background-color var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease);
+	border-radius: var(--shopos-ui-radius-round, 50%);
+	transition: background-color var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease-out, ease);
 }
 
-.fc-search-modal__close:hover {
-	background: var(--fm-color-paper-dim, #f1efea) !important;
+.shopos-search-modal__close:hover {
+	background: var(--shopos-ui-color-paper-dim, #f1efea) !important;
 }
 
-.fc-search-modal__close:focus-visible {
-	outline: 2px solid var(--fm-color-ink, #1b1b1b);
+.shopos-search-modal__close:focus-visible {
+	outline: 2px solid var(--shopos-ui-color-ink, #1b1b1b);
 	outline-offset: 2px;
 }
 
 /* Submit — brand primary; hidden on desktop (Enter / "see all" carries it). */
-.fc-search-modal .fc-search-submit {
+.shopos-search-modal .shopos-search-submit {
 	display: none;
 	flex: 0 0 auto;
 	align-items: center;
 	justify-content: center;
 	height: 3rem;
-	padding: 0 var(--fm-space-lg, 24px) !important;
-	background: var(--fm-color-accent, #1b1b1b) !important;
-	color: var(--fm-color-accent-text, #fff) !important;
+	padding: 0 var(--shopos-ui-space-lg, 24px) !important;
+	background: var(--shopos-ui-color-accent, #1b1b1b) !important;
+	color: var(--shopos-ui-color-accent-text, #fff) !important;
 	border: 0 !important;
-	border-radius: var(--fm-radius-lg, 12px) !important;
+	border-radius: var(--shopos-ui-radius-lg, 12px) !important;
 	box-shadow: none !important;
 	font-family: inherit;
-	font-size: var(--fm-text-xs, 0.75rem);
-	font-weight: var(--fm-weight-semi, 600);
-	letter-spacing: var(--fm-tracking-wide, 0.04em);
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 	text-transform: uppercase;
 	cursor: pointer;
 	-webkit-appearance: none;
@@ -346,7 +346,7 @@
 }
 
 /* Results fill the panel and scroll; the panel supplies the frame. */
-.fc-search-panel--palette {
+.shopos-search-panel--palette {
 	flex: 1 1 auto;
 	min-width: 0;
 	border: 0;
@@ -354,26 +354,26 @@
 	box-shadow: none;
 	max-height: none;
 	overflow-x: hidden;
-	font-size: var(--fm-text-sm, 0.9rem);
+	font-size: var(--shopos-ui-text-sm, 0.9rem);
 }
 
-body.fc-search-open {
+body.shopos-search-open {
 	overflow: hidden;
 }
 
 /* Motion only when the user hasn't asked to reduce it. */
 @media (prefers-reduced-motion: no-preference) {
-	.fc-search-modal {
-		transition: opacity var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease),
-			visibility var(--fm-motion-fast, 180ms) var(--fm-ease-out, ease);
+	.shopos-search-modal {
+		transition: opacity var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease-out, ease),
+			visibility var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease-out, ease);
 	}
 
-	.fc-search-modal__panel {
+	.shopos-search-modal__panel {
 		transform: translateY(-8px) scale(0.98);
-		transition: transform var(--fm-motion-base, 280ms) var(--fm-ease-out, ease);
+		transition: transform var(--shopos-ui-motion-base, 280ms) var(--shopos-ui-ease-out, ease);
 	}
 
-	.fc-search-modal.is-open .fc-search-modal__panel {
+	.shopos-search-modal.is-open .shopos-search-modal__panel {
 		transform: none;
 	}
 }
@@ -382,30 +382,30 @@ body.fc-search-open {
 /*
  * The card floats over the scrim instead of taking the screen over, anchored
  * at a fixed offset from the top of the *visible* viewport (search.js mirrors
- * window.visualViewport into --fc-vvh/--fc-vvt so the card sits above the
+ * window.visualViewport into --shopos-vvh/--shopos-vvt so the card sits above the
  * software keyboard rather than behind it; the plain vh lines are the
  * no-visualViewport fallback). Top-anchoring — not centering — keeps the
  * field at the exact same height before and after results render, so the
  * card never jumps as the list grows downward.
  */
 @media (max-width: 768px) {
-	.fc-search-modal {
-		--fc-top-offset: calc(var(--fc-vvh, 100vh) * 0.1);
+	.shopos-search-modal {
+		--shopos-top-offset: calc(var(--shopos-vvh, 100vh) * 0.1);
 		align-items: flex-start;
 		bottom: auto;
-		top: var(--fc-vvt, 0px);
+		top: var(--shopos-vvt, 0px);
 		height: 100vh;
 		height: 100dvh;
-		height: var(--fc-vvh, 100vh);
-		padding: var(--fc-top-offset) var(--fm-space-md, 16px) var(--fm-space-md, 16px);
+		height: var(--shopos-vvh, 100vh);
+		padding: var(--shopos-top-offset) var(--shopos-ui-space-md, 16px) var(--shopos-ui-space-md, 16px);
 	}
 
 	/* Box-sizing-independent cap: visible height minus the two paddings. */
-	.fc-search-modal__panel {
-		max-height: calc(var(--fc-vvh, 100vh) - var(--fc-top-offset) - var(--fm-space-md, 16px));
+	.shopos-search-modal__panel {
+		max-height: calc(var(--shopos-vvh, 100vh) - var(--shopos-top-offset) - var(--shopos-ui-space-md, 16px));
 	}
 
-	.fc-search-modal .fc-search-submit {
+	.shopos-search-modal .shopos-search-submit {
 		display: inline-flex;
 	}
 }

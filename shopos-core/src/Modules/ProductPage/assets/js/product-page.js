@@ -9,7 +9,7 @@
  *    entirely when VariationSwatches' own sticky bar is in the DOM
  *    (.shopos-sticky-bar) — two bars must never stack (the CSS carries a
  *    :has() belt for the same rule). While visible it toggles
- *    body.fm-pdp-sticky-active so the CSS reserves bottom space for it.
+ *    body.shopos-ui-pdp-sticky-active so the CSS reserves bottom space for it.
  * 2. Sticky-bar price sync — follows the picked variation via WooCommerce's
  *    found_variation / reset_data events.
  * 3. Gallery scroll-progress bar — the gallery is a swipeable scroll-snap
@@ -25,7 +25,7 @@
 	'use strict';
 
 	function initStickyBar() {
-		var bar = document.querySelector( '[data-fm-sticky-bar]' );
+		var bar = document.querySelector( '[data-shopos-ui-sticky-bar]' );
 		if ( ! bar ) {
 			return;
 		}
@@ -35,7 +35,7 @@
 			return;
 		}
 
-		var summary = document.querySelector( '.fm-pdp__summary' );
+		var summary = document.querySelector( '.shopos-ui-pdp__summary' );
 		if ( ! summary || ! ( 'IntersectionObserver' in window ) ) {
 			return;
 		}
@@ -55,13 +55,13 @@
 				// Reserve bottom space only while our bar is the active one
 				// (this whole init early-returns on VS products, so VS's own
 				// reservation stays the single source — no double padding).
-				document.body.classList.toggle( 'fm-pdp-sticky-active', passed );
+				document.body.classList.toggle( 'shopos-ui-pdp-sticky-active', passed );
 			},
 			{ threshold: 0 }
 		);
 		observer.observe( summary );
 
-		var cta = bar.querySelector( '[data-fm-sticky-cta]' );
+		var cta = bar.querySelector( '[data-shopos-ui-sticky-cta]' );
 		if ( cta ) {
 			cta.addEventListener( 'click', function () {
 				var reduce = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
@@ -71,7 +71,7 @@
 
 		// Price follows the picked variation (server-rendered price_html in
 		// WC's found_variation payload).
-		var priceEl = bar.querySelector( '.fm-pdp__sticky-price' );
+		var priceEl = bar.querySelector( '.shopos-ui-pdp__sticky-price' );
 		if ( priceEl && typeof jQuery !== 'undefined' ) {
 			var baseHtml = priceEl.innerHTML;
 			jQuery( document.body )
@@ -87,7 +87,7 @@
 	}
 
 	function initGalleryProgress() {
-		var gallery = document.querySelector( '.fm-pdp__gallery' );
+		var gallery = document.querySelector( '.shopos-ui-pdp__gallery' );
 		var strip = gallery && gallery.querySelector( '.woocommerce-product-gallery__wrapper' );
 		if ( ! strip ) {
 			return;
@@ -98,9 +98,9 @@
 		}
 
 		var track = document.createElement( 'div' );
-		track.className = 'fm-pdp__gallery-progress';
+		track.className = 'shopos-ui-pdp__gallery-progress';
 		var fill = document.createElement( 'div' );
-		fill.className = 'fm-pdp__gallery-progress__fill';
+		fill.className = 'shopos-ui-pdp__gallery-progress__fill';
 		track.appendChild( fill );
 		strip.parentNode.insertBefore( track, strip.nextSibling );
 
@@ -134,7 +134,7 @@
 	}
 
 	function initGalleryInteraction() {
-		var wrapper = document.querySelector( '.fm-pdp__gallery .woocommerce-product-gallery__wrapper' );
+		var wrapper = document.querySelector( '.shopos-ui-pdp__gallery .woocommerce-product-gallery__wrapper' );
 		if ( ! wrapper ) {
 			return;
 		}
@@ -204,18 +204,18 @@
 		if ( typeof jQuery === 'undefined' ) {
 			return;
 		}
-		var main = document.querySelector( '.fm-pdp__gallery .woocommerce-product-gallery__image' );
+		var main = document.querySelector( '.shopos-ui-pdp__gallery .woocommerce-product-gallery__image' );
 		if ( ! main ) {
 			return;
 		}
 		jQuery( document.body ).on( 'found_variation reset_data', function () {
-			main.classList.remove( 'fm-img-swap' );
+			main.classList.remove( 'shopos-ui-img-swap' );
 			// Force a restart so consecutive picks re-fire the animation.
 			void main.offsetWidth;
-			main.classList.add( 'fm-img-swap' );
+			main.classList.add( 'shopos-ui-img-swap' );
 		} );
 		main.addEventListener( 'animationend', function () {
-			main.classList.remove( 'fm-img-swap' );
+			main.classList.remove( 'shopos-ui-img-swap' );
 		} );
 	}
 

@@ -6,34 +6,34 @@
  * Typography inherits the page font — no font-family on purpose.
  */
 
-.fm-coupon-notice {
+.shopos-ui-coupon-notice {
 	display: flex;
 	align-items: flex-start;
-	gap: var(--fm-space-sm, 8px);
-	margin-block: var(--fm-space-md, 16px) 0;
-	padding: var(--fm-space-md, 16px);
+	gap: var(--shopos-ui-space-sm, 8px);
+	margin-block: var(--shopos-ui-space-md, 16px) 0;
+	padding: var(--shopos-ui-space-md, 16px);
 	/* Paper on the paper-dim summary panel: the 9.2 panel adopted the same
 	   dim tone this notice used, turning it invisible — a white card with a
 	   hairline reads subtle on the panel AND on plain-white contexts (the
 	   shortcode placements). Wave 9.3. */
-	background: var(--fm-color-paper, #ffffff);
-	border: 1px solid var(--fm-color-hairline, #e6e6e2);
-	border-radius: var(--fm-radius-lg, 12px);
-	color: var(--fm-color-ink, #1b1b1b);
-	font-size: var(--fm-text-sm, 0.875rem);
-	line-height: var(--fm-leading-base, 1.55);
+	background: var(--shopos-ui-color-paper, #ffffff);
+	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	border-radius: var(--shopos-ui-radius-lg, 12px);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	line-height: var(--shopos-ui-leading-base, 1.55);
 }
 
-.fm-coupon-notice__icon {
+.shopos-ui-coupon-notice__icon {
 	flex: none;
 	margin-block-start: 3px;
-	color: var(--fm-color-ink-soft, #3a3a3a);
+	color: var(--shopos-ui-color-ink-soft, #3a3a3a);
 }
 
 /* Baseline flex row: the sentence takes the available width and wraps inside
    its own box, while the price stays pinned beside it (flex:0 0 auto) instead
    of dropping to a line of its own. */
-.fm-coupon-notice__text {
+.shopos-ui-coupon-notice__text {
 	margin: 0;
 	display: flex;
 	flex-wrap: wrap;
@@ -41,27 +41,27 @@
 	column-gap: 0.4em;
 }
 
-.fm-coupon-notice__sentence {
+.shopos-ui-coupon-notice__sentence {
 	flex: 1 1 auto;
 }
 
-.fm-coupon-notice__code {
+.shopos-ui-coupon-notice__code {
 	display: inline-block;
-	padding: 0 var(--fm-space-sm, 8px);
-	background: var(--fm-color-paper, #ffffff);
-	border: 1px dashed var(--fm-color-ink-soft, #3a3a3a);
-	border-radius: var(--fm-radius-sm, 4px);
-	font-weight: var(--fm-weight-bold, 700);
-	letter-spacing: var(--fm-tracking-wide, 0.04em);
+	padding: 0 var(--shopos-ui-space-sm, 8px);
+	background: var(--shopos-ui-color-paper, #ffffff);
+	border: 1px dashed var(--shopos-ui-color-ink-soft, #3a3a3a);
+	border-radius: var(--shopos-ui-radius-sm, 4px);
+	font-weight: var(--shopos-ui-weight-bold, 700);
+	letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 }
 
-.fm-coupon-notice__price {
-	color: var(--fm-color-danger, #b11226);
-	font-weight: var(--fm-weight-bold, 700);
+.shopos-ui-coupon-notice__price {
+	color: var(--shopos-ui-color-danger, #b11226);
+	font-weight: var(--shopos-ui-weight-bold, 700);
 	white-space: nowrap;
 }
 
 /* wc_price() output inside the notice — keep del/ins neutral. */
-.fm-coupon-notice__price .woocommerce-Price-amount {
+.shopos-ui-coupon-notice__price .woocommerce-Price-amount {
 	color: inherit;
 }

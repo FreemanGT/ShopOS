@@ -78,9 +78,9 @@ final class ProductPageTemplateTest extends TestCase {
 
 		$html = Template_Loader::trust_html();
 
-		$this->assertStringContainsString( 'fm-pdp__trust', $html );
+		$this->assertStringContainsString( 'shopos-ui-pdp__trust', $html );
 		$this->assertStringContainsString( 'משלוח מהיר עד 3 ימי עסקים', $html );
-		$this->assertSame( 1, substr_count( $html, 'fm-pdp__trust-item' ), 'the blank returns item is skipped' );
+		$this->assertSame( 1, substr_count( $html, 'shopos-ui-pdp__trust-item' ), 'the blank returns item is skipped' );
 	}
 
 	public function test_trust_html_renders_both_items_and_escapes(): void {
@@ -89,7 +89,7 @@ final class ProductPageTemplateTest extends TestCase {
 
 		$html = Template_Loader::trust_html();
 
-		$this->assertSame( 2, substr_count( $html, 'fm-pdp__trust-item' ) );
+		$this->assertSame( 2, substr_count( $html, 'shopos-ui-pdp__trust-item' ) );
 		$this->assertStringContainsString( 'Returns &lt;b&gt;30&lt;/b&gt; days', $html );
 	}
 
@@ -97,7 +97,7 @@ final class ProductPageTemplateTest extends TestCase {
 		$this->assertSame( array( 'a' ), $this->loader()->body_class( array( 'a' ) ) );
 
 		$GLOBALS['fr_page_type'] = 'product';
-		$this->assertContains( 'fm-pdp-active', $this->loader()->body_class( array( 'a' ) ) );
+		$this->assertContains( 'shopos-ui-pdp-active', $this->loader()->body_class( array( 'a' ) ) );
 	}
 
 	public function test_gallery_supports_keeps_zoom_and_drops_slider_and_lightbox(): void {
@@ -139,13 +139,13 @@ final class ProductPageTemplateTest extends TestCase {
 
 		$html = Template_Loader::additional_information_html( 'Additional information', $table );
 
-		$this->assertStringStartsWith( '<details class="fm-pdp__addl-info">', $html );
-		$this->assertStringNotContainsString( '<details class="fm-pdp__addl-info" open', $html, 'collapsed by default — a tab, not just open' );
-		$this->assertStringContainsString( '<summary class="fm-pdp__addl-info-summary">', $html );
-		$this->assertStringContainsString( '<span class="fm-pdp__addl-info-title">Additional information</span>', $html );
+		$this->assertStringStartsWith( '<details class="shopos-ui-pdp__addl-info">', $html );
+		$this->assertStringNotContainsString( '<details class="shopos-ui-pdp__addl-info" open', $html, 'collapsed by default — a tab, not just open' );
+		$this->assertStringContainsString( '<summary class="shopos-ui-pdp__addl-info-summary">', $html );
+		$this->assertStringContainsString( '<span class="shopos-ui-pdp__addl-info-title">Additional information</span>', $html );
 		$this->assertStringNotContainsString( '<h2', $html, 'no heading element — an Elementor kit h2 rule outranked the 9.2 title' );
-		$this->assertStringContainsString( 'fm-pdp__addl-info-chevron', $html );
-		$this->assertStringContainsString( '<div class="fm-pdp__addl-info-body">' . $table . '</div>', $html, 'WC table passes through unescaped' );
+		$this->assertStringContainsString( 'shopos-ui-pdp__addl-info-chevron', $html );
+		$this->assertStringContainsString( '<div class="shopos-ui-pdp__addl-info-body">' . $table . '</div>', $html, 'WC table passes through unescaped' );
 	}
 
 	public function test_additional_information_html_escapes_the_heading(): void {
@@ -166,7 +166,7 @@ final class ProductPageTemplateTest extends TestCase {
 		$css = Template_Loader::button_color_css( '#0A7C66' );
 
 		// Drives VS's own custom property (its action buttons read it)…
-		$this->assertStringContainsString( '.fm-pdp .shopos-buy-box{--shopos-primary:#0A7C66', $css );
+		$this->assertStringContainsString( '.shopos-ui-pdp .shopos-buy-box{--shopos-primary:#0A7C66', $css );
 		$this->assertStringContainsString( '--shopos-primary-hover:#0A7C66', $css );
 		$this->assertStringContainsString( '--shopos-primary-active:#0A7C66', $css );
 		// …plus the explicit sticky-bar override, whose red is a hardcoded

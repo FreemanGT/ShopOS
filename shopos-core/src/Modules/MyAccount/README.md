@@ -22,6 +22,6 @@ All selectors are scoped under `body.woocommerce-account` so styles never
 leak to the rest of the storefront.
 
 ## Tokens
-The stylesheet consumes the theme's `--fm-*` design tokens (palette, type
+The stylesheet consumes the theme's `--shopos-ui-*` design tokens (palette, type
 scale, radii, motion). Override tokens at the theme level to recolor or
 reshape this page along with everything else.

@@ -907,8 +907,8 @@
     var MAX_TAP_MS = 700;      // longer presses are not taps
     var CARD = 'li.product, .cs-card.product, .type-product, li.wc-block-grid__product';
     var EXCLUDE = 'button, .button, input, select, textarea, label,' +
-        '.fc-qv-trigger, [data-fc-qv], [data-fc-qv-close],' +
-        '.shopos-shop-pick, [data-fc-card-slider], .fc-card-slider, .add_to_cart_button';
+        '.shopos-qv-trigger, [data-shopos-qv], [data-shopos-qv-close],' +
+        '.shopos-shop-pick, [data-shopos-card-slider], .shopos-card-slider, .add_to_cart_button';
 
     var sx = 0, sy = 0, st = 0, armed = false;
 

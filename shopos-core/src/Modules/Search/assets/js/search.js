@@ -6,7 +6,7 @@
  * native form submits unchanged. Debounced fetch + AbortController, combobox
  * keyboard/ARIA, server-rendered price HTML.
  *
- * The `[shopos_search]` shortcode form (`.fc-search-form`) is upgraded further:
+ * The `[shopos_search]` shortcode form (`.shopos-search-form`) is upgraded further:
  * its visible box is replaced by a search icon that, on click, opens a centered
  * command palette over a dimmed scrim with the results beneath the field. Any
  * other matched field keeps the classic anchored dropdown.
@@ -40,13 +40,13 @@
 		if (input.dataset.fcSearchBound) { return; }
 		input.dataset.fcSearchBound = '1';
 
-		var listId = 'fc-search-list-' + (++idSeq);
-		var panel = el('div', 'fc-search-panel');
+		var listId = 'shopos-search-list-' + (++idSeq);
+		var panel = el('div', 'shopos-search-panel');
 		panel.id = listId;
 		panel.setAttribute('role', 'listbox');
 		panel.hidden = true;
 
-		var live = el('div', 'fc-search-live');
+		var live = el('div', 'shopos-search-live');
 		live.setAttribute('aria-live', 'polite');
 		live.style.position = 'absolute';
 		live.style.width = '1px';
@@ -68,7 +68,7 @@
 
 		// The shortcode form gets the icon → command-palette treatment; everything
 		// else keeps the classic anchored dropdown (unchanged behaviour).
-		var form = input.closest('form.fc-search-form');
+		var form = input.closest('form.shopos-search-form');
 		var overlayMode = !!form;
 
 		var trigger, modal;
@@ -103,7 +103,7 @@
 			items = (data && data.items) || [];
 
 			if (!items.length) {
-				var empty = el('div', 'fc-search-empty');
+				var empty = el('div', 'shopos-search-empty');
 				empty.textContent = cfg.labels.noResults;
 				panel.appendChild(empty);
 				live.textContent = cfg.labels.noResults;
@@ -112,30 +112,30 @@
 			}
 
 			items.forEach(function (it, i) {
-				var a = el('a', 'fc-search-item');
+				var a = el('a', 'shopos-search-item');
 				a.id = listId + '-opt-' + i;
 				a.setAttribute('role', 'option');
 				a.setAttribute('aria-selected', 'false');
 				a.href = it.url;
 
 				if (show.image && it.image) {
-					var img = el('img', 'fc-search-item__img');
+					var img = el('img', 'shopos-search-item__img');
 					img.src = it.image;
 					img.alt = '';
 					img.loading = 'lazy';
 					a.appendChild(img);
 				}
-				var body = el('span', 'fc-search-item__body');
-				var title = el('span', 'fc-search-item__title');
+				var body = el('span', 'shopos-search-item__body');
+				var title = el('span', 'shopos-search-item__title');
 				title.textContent = it.title;
 				body.appendChild(title);
 				if (show.price) {
-					var price = el('span', 'fc-search-item__price');
+					var price = el('span', 'shopos-search-item__price');
 					price.innerHTML = it.price_html || '';
 					body.appendChild(price);
 				}
 				if (show.sku && it.sku) {
-					var sku = el('span', 'fc-search-item__sku');
+					var sku = el('span', 'shopos-search-item__sku');
 					sku.textContent = it.sku;
 					body.appendChild(sku);
 				}
@@ -144,7 +144,7 @@
 			});
 
 			if (data.more_url) {
-				var more = el('a', 'fc-search-more');
+				var more = el('a', 'shopos-search-more');
 				more.href = data.more_url;
 				more.textContent = cfg.labels.seeAll;
 				panel.appendChild(more);
@@ -202,9 +202,9 @@
 		function setupOverlay() {
 			// Prefer the server-rendered trigger (it paints immediately, so the
 			// native bar never flashes); only synthesise one if it's absent.
-			trigger = form.parentNode.querySelector('.fc-search-trigger');
+			trigger = form.parentNode.querySelector('.shopos-search-trigger');
 			if (!trigger) {
-				trigger = el('button', 'fc-search-trigger');
+				trigger = el('button', 'shopos-search-trigger');
 				trigger.type = 'button';
 				trigger.setAttribute('aria-label', cfg.labels.toggle);
 				trigger.setAttribute('aria-expanded', 'false');
@@ -213,26 +213,26 @@
 				form.parentNode.insertBefore(trigger, form);
 			}
 
-			modal = el('div', 'fc-search-modal');
+			modal = el('div', 'shopos-search-modal');
 			modal.setAttribute('role', 'dialog');
 			modal.setAttribute('aria-modal', 'true');
 			modal.setAttribute('aria-label', cfg.labels.toggle);
 
-			var scrim = el('div', 'fc-search-modal__scrim');
-			var palettePanel = el('div', 'fc-search-modal__panel');
-			var header = el('div', 'fc-search-modal__header');
+			var scrim = el('div', 'shopos-search-modal__scrim');
+			var palettePanel = el('div', 'shopos-search-modal__panel');
+			var header = el('div', 'shopos-search-modal__header');
 
-			var closeBtn = el('button', 'fc-search-modal__close');
+			var closeBtn = el('button', 'shopos-search-modal__close');
 			closeBtn.type = 'button';
 			closeBtn.setAttribute('aria-label', cfg.labels.close);
 			closeBtn.innerHTML = CLOSE_ICON;
 
 			// Move the form into the palette header (this lifts it out of the
-			// .fc-search-shortcode wrapper, so its hidden-by-default rule stops
+			// .shopos-search-shortcode wrapper, so its hidden-by-default rule stops
 			// applying); its native GET submit + mobile Search button are preserved.
 			header.appendChild(form);
 			header.appendChild(closeBtn);
-			panel.classList.add('fc-search-panel--palette');
+			panel.classList.add('shopos-search-panel--palette');
 			palettePanel.appendChild(header);
 			palettePanel.appendChild(panel);
 			modal.appendChild(scrim);
@@ -245,8 +245,8 @@
 			if (window.visualViewport) {
 				var vv = window.visualViewport;
 				var syncViewport = function () {
-					modal.style.setProperty('--fc-vvh', vv.height + 'px');
-					modal.style.setProperty('--fc-vvt', vv.offsetTop + 'px');
+					modal.style.setProperty('--shopos-vvh', vv.height + 'px');
+					modal.style.setProperty('--shopos-vvt', vv.offsetTop + 'px');
 				};
 				vv.addEventListener('resize', syncViewport);
 				vv.addEventListener('scroll', syncViewport);
@@ -260,7 +260,7 @@
 
 		function openOverlay() {
 			modal.classList.add('is-open');
-			document.body.classList.add('fc-search-open');
+			document.body.classList.add('shopos-search-open');
 			trigger.setAttribute('aria-expanded', 'true');
 			input.focus();
 			if (input.value.trim().length >= cfg.minChars && items.length) { open(); }
@@ -269,7 +269,7 @@
 		function closeOverlay() {
 			close();
 			modal.classList.remove('is-open');
-			document.body.classList.remove('fc-search-open');
+			document.body.classList.remove('shopos-search-open');
 			trigger.setAttribute('aria-expanded', 'false');
 			trigger.focus();
 		}

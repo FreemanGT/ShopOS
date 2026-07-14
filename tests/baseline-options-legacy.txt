@@ -128,6 +128,7 @@ shopos_dismiss_onboarding_notice
 shopos_legacy_delete
 shopos_legacy_import
 shopos_mark_onboarded
+shopos_module
 shopos_product_slider
 shopos_productfeed
 shopos_productfeed_async

@@ -17,7 +17,7 @@
 	display: block;
 }
 
-.fc-hover-swap__img.fc-hover-swap__img {
+.shopos-hover-swap__img.shopos-hover-swap__img {
 	position: absolute;
 	inset-block-start: 0;
 	inset-inline-start: 0;
@@ -34,15 +34,15 @@
    screen never sticks the overlay on. Covers both card roots + the link
    itself, all markup-independent. */
 @media (hover: hover) and (pointer: fine) {
-	li.product:hover .fc-hover-swap__img.fc-hover-swap__img,
-	.cs-card:hover .fc-hover-swap__img.fc-hover-swap__img,
-	.woocommerce-LoopProduct-link:hover .fc-hover-swap__img.fc-hover-swap__img {
+	li.product:hover .shopos-hover-swap__img.shopos-hover-swap__img,
+	.cs-card:hover .shopos-hover-swap__img.shopos-hover-swap__img,
+	.woocommerce-LoopProduct-link:hover .shopos-hover-swap__img.shopos-hover-swap__img {
 		opacity: 1;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.fc-hover-swap__img.fc-hover-swap__img {
+	.shopos-hover-swap__img.shopos-hover-swap__img {
 		transition: none;
 	}
 }

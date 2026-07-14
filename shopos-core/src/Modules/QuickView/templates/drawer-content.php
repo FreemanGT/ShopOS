@@ -23,25 +23,25 @@ defined( 'ABSPATH' ) || exit;
 
 $gallery_ids = isset( $gallery_ids ) ? (array) $gallery_ids : array();
 ?>
-<div <?php wc_product_class( 'fc-quick-view__product', $product ); ?>>
-	<div class="fc-quick-view__media">
+<div <?php wc_product_class( 'shopos-quick-view__product', $product ); ?>>
+	<div class="shopos-quick-view__media">
 		<?php if ( count( $gallery_ids ) >= 2 ) : ?>
 			<?php // Reuses the HoverSwap card-slider markup/CSS/JS verbatim so the
 				  // drawer gallery is the exact same component (arrows + scroll-snap
 				  // + drag + loop). card-slider.js auto-inits it via its
 				  // MutationObserver once this content is injected into the drawer. ?>
-			<div class="fc-card-slider" data-fc-card-slider>
-				<div class="fc-card-slider__viewport">
+			<div class="shopos-card-slider" data-shopos-card-slider>
+				<div class="shopos-card-slider__viewport">
 					<?php foreach ( $gallery_ids as $gid ) : ?>
-						<div class="fc-card-slider__slide">
-							<?php echo wp_get_attachment_image( (int) $gid, 'woocommerce_single', false, array( 'class' => 'fc-card-slider__img' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WP-built img tag. ?>
+						<div class="shopos-card-slider__slide">
+							<?php echo wp_get_attachment_image( (int) $gid, 'woocommerce_single', false, array( 'class' => 'shopos-card-slider__img' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WP-built img tag. ?>
 						</div>
 					<?php endforeach; ?>
 				</div>
-				<button type="button" class="fc-card-slider__arrow fc-card-slider__arrow--prev" data-fc-slider-prev aria-label="<?php echo esc_attr__( 'Previous image', 'shopos-core' ); ?>">
+				<button type="button" class="shopos-card-slider__arrow shopos-card-slider__arrow--prev" data-shopos-slider-prev aria-label="<?php echo esc_attr__( 'Previous image', 'shopos-core' ); ?>">
 					<svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M7 1.5L3 5.5l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
 				</button>
-				<button type="button" class="fc-card-slider__arrow fc-card-slider__arrow--next" data-fc-slider-next aria-label="<?php echo esc_attr__( 'Next image', 'shopos-core' ); ?>">
+				<button type="button" class="shopos-card-slider__arrow shopos-card-slider__arrow--next" data-shopos-slider-next aria-label="<?php echo esc_attr__( 'Next image', 'shopos-core' ); ?>">
 					<svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M4 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
 				</button>
 			</div>
@@ -49,14 +49,14 @@ $gallery_ids = isset( $gallery_ids ) ? (array) $gallery_ids : array();
 			<?php echo $product->get_image( 'woocommerce_single' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WC-built img tag. ?>
 		<?php endif; ?>
 	</div>
-	<div class="fc-quick-view__summary summary entry-summary">
+	<div class="shopos-quick-view__summary summary entry-summary">
 		<?php
 		/** This action is documented in woocommerce/templates/content-single-product.php */
 		do_action( 'woocommerce_single_product_summary' );
 		?>
 	</div>
-	<p class="fc-quick-view__details">
-		<a class="fc-quick-view__details-link" href="<?php echo esc_url( get_permalink( $product->get_id() ) ); ?>">
+	<p class="shopos-quick-view__details">
+		<a class="shopos-quick-view__details-link" href="<?php echo esc_url( get_permalink( $product->get_id() ) ); ?>">
 			<?php echo esc_html( Labels::get( 'details' ) ); ?>
 		</a>
 	</p>

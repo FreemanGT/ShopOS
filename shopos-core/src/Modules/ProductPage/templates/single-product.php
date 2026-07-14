@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
 
 get_header( 'shop' ); ?>
 
-<main id="fm-pdp-main" class="fm-pdp">
+<main id="shopos-ui-pdp-main" class="shopos-ui-pdp">
 	<?php
 	while ( have_posts() ) :
 		the_post();
@@ -34,15 +34,15 @@ get_header( 'shop' ); ?>
 			continue;
 		}
 		?>
-		<div class="fm-pdp__container">
+		<div class="shopos-ui-pdp__container">
 
 			<?php if ( function_exists( 'woocommerce_breadcrumb' ) ) : ?>
-				<nav class="fm-pdp__breadcrumb" aria-label="<?php echo esc_attr__( 'Breadcrumb', 'shopos-core' ); ?>">
+				<nav class="shopos-ui-pdp__breadcrumb" aria-label="<?php echo esc_attr__( 'Breadcrumb', 'shopos-core' ); ?>">
 					<?php
 					woocommerce_breadcrumb(
 						array(
-							'delimiter'   => '<span class="fm-pdp__crumb-sep" aria-hidden="true">/</span>',
-							'wrap_before' => '<div class="fm-pdp__crumbs">',
+							'delimiter'   => '<span class="shopos-ui-pdp__crumb-sep" aria-hidden="true">/</span>',
+							'wrap_before' => '<div class="shopos-ui-pdp__crumbs">',
 							'wrap_after'  => '</div>',
 						)
 					);
@@ -55,18 +55,18 @@ get_header( 'shop' ); ?>
 			do_action( 'woocommerce_before_single_product' );
 			?>
 
-			<div id="product-<?php the_ID(); ?>" <?php wc_product_class( 'fm-pdp__product', $product ); ?>>
+			<div id="product-<?php the_ID(); ?>" <?php wc_product_class( 'shopos-ui-pdp__product', $product ); ?>>
 
-				<div class="fm-pdp__layout">
-					<div class="fm-pdp__gallery">
+				<div class="shopos-ui-pdp__layout">
+					<div class="shopos-ui-pdp__gallery">
 						<?php
 						/** Sale flash (10) + product gallery (20). Documented in woocommerce/templates/content-single-product.php */
 						do_action( 'woocommerce_before_single_product_summary' );
 						?>
 					</div>
 
-					<div class="fm-pdp__summary-col">
-						<div class="fm-pdp__summary summary entry-summary">
+					<div class="shopos-ui-pdp__summary-col">
+						<div class="shopos-ui-pdp__summary summary entry-summary">
 							<?php
 							/** Title (5) / price (10) / excerpt (20) / add-to-cart (30) / meta (40) / sharing (50). Documented in woocommerce/templates/content-single-product.php */
 							do_action( 'woocommerce_single_product_summary' );
@@ -78,41 +78,41 @@ get_header( 'shop' ); ?>
 					</div>
 				</div>
 
-				<div class="fm-pdp__sections">
+				<div class="shopos-ui-pdp__sections">
 					<?php
 					// The product-tabs stack (description / additional information /
 					// reviews + whatever plugins add) rendered as an accordion —
 					// the same filter WC's tabs template reads.
-					$fm_tabs = apply_filters( 'woocommerce_product_tabs', array() );
+					$shopos_tabs = apply_filters( 'woocommerce_product_tabs', array() );
 					// Additional information is surfaced under the buy box
 					// (Template_Loader::render_additional_information at summary
 					// priority 38), so drop it from the accordion to avoid a
 					// duplicate; description / reviews / plugin tabs stay here.
-					unset( $fm_tabs['additional_information'] );
-					$fm_first = true;
-					if ( ! empty( $fm_tabs ) ) :
+					unset( $shopos_tabs['additional_information'] );
+					$shopos_first = true;
+					if ( ! empty( $shopos_tabs ) ) :
 						?>
-						<section class="fm-pdp__accordion">
-							<?php foreach ( $fm_tabs as $fm_key => $fm_tab ) : ?>
-								<details class="fm-pdp__acc-item" <?php echo $fm_first ? 'open' : ''; ?>>
-									<summary class="fm-pdp__acc-summary">
-										<span class="fm-pdp__acc-title">
-											<?php echo wp_kses_post( apply_filters( 'woocommerce_product_' . $fm_key . '_tab_title', $fm_tab['title'], $fm_key ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment -- WC's own tab-title filter, documented in woocommerce/templates/single-product/tabs/tabs.php ?>
+						<section class="shopos-ui-pdp__accordion">
+							<?php foreach ( $shopos_tabs as $shopos_key => $shopos_tab ) : ?>
+								<details class="shopos-ui-pdp__acc-item" <?php echo $shopos_first ? 'open' : ''; ?>>
+									<summary class="shopos-ui-pdp__acc-summary">
+										<span class="shopos-ui-pdp__acc-title">
+											<?php echo wp_kses_post( apply_filters( 'woocommerce_product_' . $shopos_key . '_tab_title', $shopos_tab['title'], $shopos_key ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment -- WC's own tab-title filter, documented in woocommerce/templates/single-product/tabs/tabs.php ?>
 										</span>
-										<svg class="fm-pdp__acc-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+										<svg class="shopos-ui-pdp__acc-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
 											<path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 										</svg>
 									</summary>
-									<div class="fm-pdp__acc-body">
+									<div class="shopos-ui-pdp__acc-body">
 										<?php
-										if ( isset( $fm_tab['callback'] ) ) {
-											call_user_func( $fm_tab['callback'], $fm_key, $fm_tab );
+										if ( isset( $shopos_tab['callback'] ) ) {
+											call_user_func( $shopos_tab['callback'], $shopos_key, $shopos_tab );
 										}
 										?>
 									</div>
 								</details>
 								<?php
-								$fm_first = false;
+								$shopos_first = false;
 							endforeach;
 							?>
 						</section>
@@ -126,7 +126,7 @@ get_header( 'shop' ); ?>
 					// woocommerce_thumbnail (~324px) upscales blurry in this grid
 					// on hi-DPI (the ProductSlider 1.21.18 lesson). Consumer-only
 					// filter use — added and removed around the two loops.
-					$fm_large_thumbs = static function () {
+					$shopos_large_thumbs = static function () {
 						return 'large';
 					};
 					// Companion to the `large` request: emit the real card slot so
@@ -134,7 +134,7 @@ get_header( 'shop' ); ?>
 					// candidate for a ~2-of-4-column tile (the ProductSlider
 					// 1.21.23 lesson). 2 cols < 768px, 4 cols above, capped by the
 					// 1360px container → ~320px per card on wide screens.
-					$fm_related_sizes = static function () {
+					$shopos_related_sizes = static function () {
 						return '(max-width: 767px) 45vw, (max-width: 1360px) 23vw, 320px';
 					};
 					// Pin the related loop to the 4-up grid the stylesheet
@@ -142,23 +142,23 @@ get_header( 'shop' ); ?>
 					// filter (e.g. 3 columns) would re-introduce the 3+1 row
 					// wrap the owner reported (Wave 9.3). Consumer-only,
 					// added late and removed after the loop.
-					$fm_related_args = static function ( $args ) {
+					$shopos_related_args = static function ( $args ) {
 						$args['posts_per_page'] = 4;
 						$args['columns']        = 4;
 						return $args;
 					};
-					add_filter( 'single_product_archive_thumbnail_size', $fm_large_thumbs );
-					add_filter( 'wp_calculate_image_sizes', $fm_related_sizes );
-					add_filter( 'woocommerce_output_related_products_args', $fm_related_args, 9999 );
+					add_filter( 'single_product_archive_thumbnail_size', $shopos_large_thumbs );
+					add_filter( 'wp_calculate_image_sizes', $shopos_related_sizes );
+					add_filter( 'woocommerce_output_related_products_args', $shopos_related_args, 9999 );
 					if ( function_exists( 'woocommerce_upsell_display' ) ) {
 						woocommerce_upsell_display();
 					}
 					if ( function_exists( 'woocommerce_output_related_products' ) ) {
 						woocommerce_output_related_products();
 					}
-					remove_filter( 'woocommerce_output_related_products_args', $fm_related_args, 9999 );
-					remove_filter( 'wp_calculate_image_sizes', $fm_related_sizes );
-					remove_filter( 'single_product_archive_thumbnail_size', $fm_large_thumbs );
+					remove_filter( 'woocommerce_output_related_products_args', $shopos_related_args, 9999 );
+					remove_filter( 'wp_calculate_image_sizes', $shopos_related_sizes );
+					remove_filter( 'single_product_archive_thumbnail_size', $shopos_large_thumbs );
 					?>
 				</div>
 
@@ -171,15 +171,15 @@ get_header( 'shop' ); ?>
 
 		</div>
 
-		<div class="fm-pdp__sticky-bar" data-fm-sticky-bar hidden>
-			<div class="fm-pdp__sticky-info">
-				<?php echo $product->get_image( 'woocommerce_gallery_thumbnail', array( 'class' => 'fm-pdp__sticky-thumb' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WC-built img tag. ?>
-				<div class="fm-pdp__sticky-text">
-					<span class="fm-pdp__sticky-title"><?php echo esc_html( get_the_title() ); ?></span>
-					<span class="fm-pdp__sticky-price"><?php echo $product->get_price_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WC-built price HTML. ?></span>
+		<div class="shopos-ui-pdp__sticky-bar" data-shopos-ui-sticky-bar hidden>
+			<div class="shopos-ui-pdp__sticky-info">
+				<?php echo $product->get_image( 'woocommerce_gallery_thumbnail', array( 'class' => 'shopos-ui-pdp__sticky-thumb' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WC-built img tag. ?>
+				<div class="shopos-ui-pdp__sticky-text">
+					<span class="shopos-ui-pdp__sticky-title"><?php echo esc_html( get_the_title() ); ?></span>
+					<span class="shopos-ui-pdp__sticky-price"><?php echo $product->get_price_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WC-built price HTML. ?></span>
 				</div>
 			</div>
-			<button type="button" class="fm-pdp__sticky-cta" data-fm-sticky-cta>
+			<button type="button" class="shopos-ui-pdp__sticky-cta" data-shopos-ui-sticky-cta>
 				<?php echo esc_html( $product->single_add_to_cart_text() ); ?>
 			</button>
 		</div>

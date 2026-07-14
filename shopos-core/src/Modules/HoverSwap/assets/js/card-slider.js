@@ -79,12 +79,12 @@
 	}
 
 	function init(slider) {
-		if (slider.getAttribute('data-fc-init')) {
+		if (slider.getAttribute('data-shopos-init')) {
 			return;
 		}
-		slider.setAttribute('data-fc-init', '1');
+		slider.setAttribute('data-shopos-init', '1');
 
-		var vp = slider.querySelector('.fc-card-slider__viewport');
+		var vp = slider.querySelector('.shopos-card-slider__viewport');
 		var real = vp ? slice(vp.children) : [];
 		if (!vp || real.length < 2) {
 			return;
@@ -96,7 +96,7 @@
 		var tailClone = real[real.length - 1].cloneNode(true);
 		[headClone, tailClone].forEach(function (c) {
 			c.setAttribute('aria-hidden', 'true');
-			c.setAttribute('data-fc-clone', '1');
+			c.setAttribute('data-shopos-clone', '1');
 		});
 		vp.insertBefore(tailClone, real[0]); // tail clone before the first real
 		vp.appendChild(headClone);           // head clone after the last real
@@ -109,8 +109,8 @@
 		snapInstant(vp, slides[FIRST]);
 
 		// Arrows — step ±1 from the current centred slide, animated.
-		var prev = slider.querySelector('[data-fc-slider-prev]');
-		var next = slider.querySelector('[data-fc-slider-next]');
+		var prev = slider.querySelector('[data-shopos-slider-prev]');
+		var next = slider.querySelector('[data-shopos-slider-next]');
 		if (prev) {
 			prev.addEventListener('click', function (e) {
 				stop(e);
@@ -181,7 +181,7 @@
 
 	function boot(root) {
 		var scope = root && root.querySelectorAll ? root : document;
-		var sliders = scope.querySelectorAll('[data-fc-card-slider]:not([data-fc-init])');
+		var sliders = scope.querySelectorAll('[data-shopos-card-slider]:not([data-shopos-init])');
 		Array.prototype.forEach.call(sliders, init);
 	}
 

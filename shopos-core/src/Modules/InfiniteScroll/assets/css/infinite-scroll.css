@@ -22,13 +22,13 @@
 .shopos-skel-line {
     background: linear-gradient(
         90deg,
-        var(--fm-is-shimmer-base, #eceff3) 0%,
-        var(--fm-is-shimmer-highlight, #f6f8fb) 50%,
-        var(--fm-is-shimmer-base, #eceff3) 100%
+        var(--shopos-ui-is-shimmer-base, #eceff3) 0%,
+        var(--shopos-ui-is-shimmer-highlight, #f6f8fb) 50%,
+        var(--shopos-ui-is-shimmer-base, #eceff3) 100%
     );
     background-size: 200% 100%;
-    animation: shopos-shimmer var(--fm-is-shimmer-duration, 1.4s) linear infinite;
-    border-radius: var(--fm-radius-md, 6px);
+    animation: shopos-shimmer var(--shopos-ui-is-shimmer-duration, 1.4s) linear infinite;
+    border-radius: var(--shopos-ui-radius-md, 6px);
     display: block;
 }
 
@@ -54,12 +54,12 @@
 
 .shopos-new-product {
     opacity: 0;
-    animation: shopos-fade-in var(--fm-is-fade-duration, .55s) cubic-bezier(.2,.7,.3,1) forwards;
+    animation: shopos-fade-in var(--shopos-ui-is-fade-duration, .55s) cubic-bezier(.2,.7,.3,1) forwards;
     will-change: opacity, transform;
 }
 
 @keyframes shopos-fade-in {
-    from { opacity: 0; transform: var(--fm-is-fade-transform, translateY(18px)); }
+    from { opacity: 0; transform: var(--shopos-ui-is-fade-transform, translateY(18px)); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -89,7 +89,7 @@
     border: 1px solid currentColor;
     color: inherit;
     padding: 4px 12px;
-    border-radius: var(--fm-radius-sm, 4px);
+    border-radius: var(--shopos-ui-radius-sm, 4px);
     cursor: pointer;
     font: inherit;
 }

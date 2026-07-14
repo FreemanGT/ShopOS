@@ -228,20 +228,20 @@ final class Coupon_Notice {
 	 * @return string
 	 */
 	public static function notice_html( $code, $price_html, $intro, $outro, $prices_json = '' ) {
-		$map_attr = '' !== $prices_json ? ' data-fm-coupon-prices="' . esc_attr( $prices_json ) . '"' : '';
+		$map_attr = '' !== $prices_json ? ' data-shopos-ui-coupon-prices="' . esc_attr( $prices_json ) . '"' : '';
 
-		return '<div class="fm-coupon-notice"' . $map_attr . '>'
-			. '<svg class="fm-coupon-notice__icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">'
+		return '<div class="shopos-ui-coupon-notice"' . $map_attr . '>'
+			. '<svg class="shopos-ui-coupon-notice__icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">'
 			. '<path d="M10.6 2.6a2 2 0 0 1 1.4-.6h4a2 2 0 0 1 2 2v4a2 2 0 0 1-.6 1.4l-7.8 7.8a2 2 0 0 1-2.8 0l-4-4a2 2 0 0 1 0-2.8l7.8-7.8Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>'
 			. '<circle cx="14.5" cy="5.5" r="1.1" fill="currentColor"/>'
 			. '</svg>'
-			. '<p class="fm-coupon-notice__text">'
-			. '<span class="fm-coupon-notice__sentence">'
-			. '<span class="fm-coupon-notice__intro">' . esc_html( $intro ) . '</span> '
-			. '<strong class="fm-coupon-notice__code">' . esc_html( $code ) . '</strong> '
-			. '<span class="fm-coupon-notice__outro">' . esc_html( $outro ) . '</span>'
+			. '<p class="shopos-ui-coupon-notice__text">'
+			. '<span class="shopos-ui-coupon-notice__sentence">'
+			. '<span class="shopos-ui-coupon-notice__intro">' . esc_html( $intro ) . '</span> '
+			. '<strong class="shopos-ui-coupon-notice__code">' . esc_html( $code ) . '</strong> '
+			. '<span class="shopos-ui-coupon-notice__outro">' . esc_html( $outro ) . '</span>'
 			. '</span> '
-			. '<span class="fm-coupon-notice__price" data-fm-coupon-price>' . $price_html . '</span>'
+			. '<span class="shopos-ui-coupon-notice__price" data-shopos-ui-coupon-price>' . $price_html . '</span>'
 			. '</p>'
 			. '</div>';
 	}

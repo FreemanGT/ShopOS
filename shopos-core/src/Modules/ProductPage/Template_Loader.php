@@ -215,14 +215,14 @@ final class Template_Loader {
 	 * @return string
 	 */
 	public static function additional_information_html( $heading, $table ) {
-		return '<details class="fm-pdp__addl-info">'
-			. '<summary class="fm-pdp__addl-info-summary">'
-			. '<span class="fm-pdp__addl-info-title">' . esc_html( $heading ) . '</span>'
-			. '<svg class="fm-pdp__addl-info-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">'
+		return '<details class="shopos-ui-pdp__addl-info">'
+			. '<summary class="shopos-ui-pdp__addl-info-summary">'
+			. '<span class="shopos-ui-pdp__addl-info-title">' . esc_html( $heading ) . '</span>'
+			. '<svg class="shopos-ui-pdp__addl-info-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">'
 			. '<path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
 			. '</svg>'
 			. '</summary>'
-			. '<div class="fm-pdp__addl-info-body">' . $table . '</div>'
+			. '<div class="shopos-ui-pdp__addl-info-body">' . $table . '</div>'
 			. '</details>';
 	}
 
@@ -243,8 +243,8 @@ final class Template_Loader {
 			return '';
 		}
 
-		return '.fm-pdp .shopos-buy-box{--shopos-primary:' . $hex . ';--shopos-primary-hover:' . $hex . ';--shopos-primary-active:' . $hex . '}'
-			. '.fm-pdp .shopos-buy-box .shopos-sticky-bar__buy,.fm-pdp .shopos-sticky-bar__buy{background:' . $hex . ' !important}';
+		return '.shopos-ui-pdp .shopos-buy-box{--shopos-primary:' . $hex . ';--shopos-primary-hover:' . $hex . ';--shopos-primary-active:' . $hex . '}'
+			. '.shopos-ui-pdp .shopos-buy-box .shopos-sticky-bar__buy,.shopos-ui-pdp .shopos-sticky-bar__buy{background:' . $hex . ' !important}';
 	}
 
 	/**
@@ -283,7 +283,7 @@ final class Template_Loader {
 			if ( '' === trim( $text ) ) {
 				continue;
 			}
-			$items .= '<span class="fm-pdp__trust-item">' . $icon
+			$items .= '<span class="shopos-ui-pdp__trust-item">' . $icon
 				. '<span>' . esc_html( $text ) . '</span></span>';
 		}
 
@@ -291,7 +291,7 @@ final class Template_Loader {
 			return '';
 		}
 
-		return '<div class="fm-pdp__trust">' . $items . '</div>';
+		return '<div class="shopos-ui-pdp__trust">' . $items . '</div>';
 	}
 
 	/**
@@ -302,7 +302,7 @@ final class Template_Loader {
 	 */
 	public function body_class( $classes ) {
 		if ( function_exists( 'is_product' ) && is_product() && '' !== $this->template_file() ) {
-			$classes[] = 'fm-pdp-active';
+			$classes[] = 'shopos-ui-pdp-active';
 		}
 		return $classes;
 	}

@@ -36,11 +36,11 @@ body {
  * ------------------------------------------------------------------------- */
 
 .shopos-theme {
-    font-family: var(--fm-font-body);
-    font-size: var(--fm-text-md);
-    line-height: var(--fm-leading-base);
-    color: var(--fm-color-ink);
-    background-color: var(--fm-color-paper);
+    font-family: var(--shopos-ui-font-body);
+    font-size: var(--shopos-ui-text-md);
+    line-height: var(--shopos-ui-leading-base);
+    color: var(--shopos-ui-color-ink);
+    background-color: var(--shopos-ui-color-paper);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -52,34 +52,34 @@ body {
 .shopos-theme h4,
 .shopos-theme h5,
 .shopos-theme h6 {
-    font-family: var(--fm-font-display);
-    line-height: var(--fm-leading-tight);
-    font-weight: var(--fm-weight-semi);
-    letter-spacing: var(--fm-tracking-tight);
-    margin: 0 0 var(--fm-space-md);
-    color: var(--fm-color-ink);
+    font-family: var(--shopos-ui-font-display);
+    line-height: var(--shopos-ui-leading-tight);
+    font-weight: var(--shopos-ui-weight-semi);
+    letter-spacing: var(--shopos-ui-tracking-tight);
+    margin: 0 0 var(--shopos-ui-space-md);
+    color: var(--shopos-ui-color-ink);
 }
 
-.shopos-theme h1 { font-size: var(--fm-text-hero); }
-.shopos-theme h2 { font-size: var(--fm-text-xxl); }
-.shopos-theme h3 { font-size: var(--fm-text-xl); }
-.shopos-theme h4 { font-size: var(--fm-text-lg); }
-.shopos-theme h5 { font-size: var(--fm-text-md); font-weight: var(--fm-weight-bold); }
-.shopos-theme h6 { font-size: var(--fm-text-sm); font-weight: var(--fm-weight-bold); text-transform: uppercase; letter-spacing: var(--fm-tracking-wide); }
+.shopos-theme h1 { font-size: var(--shopos-ui-text-hero); }
+.shopos-theme h2 { font-size: var(--shopos-ui-text-xxl); }
+.shopos-theme h3 { font-size: var(--shopos-ui-text-xl); }
+.shopos-theme h4 { font-size: var(--shopos-ui-text-lg); }
+.shopos-theme h5 { font-size: var(--shopos-ui-text-md); font-weight: var(--shopos-ui-weight-bold); }
+.shopos-theme h6 { font-size: var(--shopos-ui-text-sm); font-weight: var(--shopos-ui-weight-bold); text-transform: uppercase; letter-spacing: var(--shopos-ui-tracking-wide); }
 
 .shopos-theme p {
-    margin: 0 0 var(--fm-space-md);
+    margin: 0 0 var(--shopos-ui-space-md);
 }
 
 .shopos-theme small,
-.shopos-theme .fm-text-sm { font-size: var(--fm-text-sm); }
-.shopos-theme .fm-text-xs { font-size: var(--fm-text-xs); }
-.shopos-theme .fm-text-muted { color: var(--fm-color-ink-muted); }
+.shopos-theme .shopos-ui-text-sm { font-size: var(--shopos-ui-text-sm); }
+.shopos-theme .shopos-ui-text-xs { font-size: var(--shopos-ui-text-xs); }
+.shopos-theme .shopos-ui-text-muted { color: var(--shopos-ui-color-ink-muted); }
 
 .shopos-theme code,
 .shopos-theme pre,
 .shopos-theme kbd {
-    font-family: var(--fm-font-mono);
+    font-family: var(--shopos-ui-font-mono);
     font-size: 0.95em;
 }
 
@@ -91,60 +91,60 @@ body {
     color: inherit;
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
-    transition: color var(--fm-motion-fast) var(--fm-ease);
+    transition: color var(--shopos-ui-motion-fast) var(--shopos-ui-ease);
 }
 
 /* No global hover-opacity. The previous `a:hover { opacity: 0.75 }`
    rule (and even a `:has()`-based override that exempted image
    anchors) read as a grey wash over product cards / category cards
    / gallery thumbs / slider cards. Components that genuinely want a
-   text-link hover effect now opt in via `.fm-link--dim` or their own
+   text-link hover effect now opt in via `.shopos-ui-link--dim` or their own
    class — keeps the default crisp for image content. */
-.shopos-theme a.fm-link--dim {
-    transition: opacity var(--fm-motion-fast) var(--fm-ease),
-                color var(--fm-motion-fast) var(--fm-ease);
+.shopos-theme a.shopos-ui-link--dim {
+    transition: opacity var(--shopos-ui-motion-fast) var(--shopos-ui-ease),
+                color var(--shopos-ui-motion-fast) var(--shopos-ui-ease);
 }
-.shopos-theme a.fm-link--dim:hover {
+.shopos-theme a.shopos-ui-link--dim:hover {
     opacity: 0.75;
 }
 
 .shopos-theme :where(a, button, input, select, textarea, [tabindex]):focus-visible {
-    outline: 2px solid var(--fm-color-accent);
+    outline: 2px solid var(--shopos-ui-color-accent);
     outline-offset: 2px;
-    border-radius: var(--fm-radius-sm);
+    border-radius: var(--shopos-ui-radius-sm);
 }
 
 /* -------------------------------------------------------------------------
  * 3. Layout helpers
  * ------------------------------------------------------------------------- */
 
-.shopos-theme .fm-container {
-    max-width: var(--fm-container-max);
+.shopos-theme .shopos-ui-container {
+    max-width: var(--shopos-ui-container-max);
     margin-inline: auto;
-    padding-inline: var(--fm-container-pad);
+    padding-inline: var(--shopos-ui-container-pad);
 }
 
-.shopos-theme .fm-stack > * + * {
-    margin-top: var(--fm-space-md);
+.shopos-theme .shopos-ui-stack > * + * {
+    margin-top: var(--shopos-ui-space-md);
 }
-.shopos-theme .fm-stack-lg > * + * {
-    margin-top: var(--fm-space-lg);
+.shopos-theme .shopos-ui-stack-lg > * + * {
+    margin-top: var(--shopos-ui-space-lg);
 }
-.shopos-theme .fm-stack-xl > * + * {
-    margin-top: var(--fm-space-xl);
+.shopos-theme .shopos-ui-stack-xl > * + * {
+    margin-top: var(--shopos-ui-space-xl);
 }
 
-.shopos-theme .fm-cluster {
+.shopos-theme .shopos-ui-cluster {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--fm-space-sm);
+    gap: var(--shopos-ui-space-sm);
     align-items: center;
 }
 
 /* WooCommerce / Elementor grid gutters share the card gap token. */
 .shopos-theme .elementor-products,
 .shopos-theme .woocommerce ul.products {
-    gap: var(--fm-card-gap);
+    gap: var(--shopos-ui-card-gap);
 }
 
 /* Elementor's `.elementor-grid` archive grid declares
@@ -170,236 +170,236 @@ body {
 }
 
 /* -------------------------------------------------------------------------
- * 4. Button primitive (.fm-btn)
+ * 4. Button primitive (.shopos-ui-btn)
  * ------------------------------------------------------------------------- */
 
-.shopos-theme .fm-btn {
+.shopos-theme .shopos-ui-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--fm-space-sm);
-    min-height: var(--fm-button-height);
-    padding: 0 var(--fm-button-padding-x);
-    border-radius: var(--fm-button-radius);
-    background: var(--fm-color-accent);
-    color: var(--fm-color-accent-text);
-    border: 1px solid var(--fm-color-accent);
+    gap: var(--shopos-ui-space-sm);
+    min-height: var(--shopos-ui-button-height);
+    padding: 0 var(--shopos-ui-button-padding-x);
+    border-radius: var(--shopos-ui-button-radius);
+    background: var(--shopos-ui-color-accent);
+    color: var(--shopos-ui-color-accent-text);
+    border: 1px solid var(--shopos-ui-color-accent);
     font-family: inherit;
-    font-size: var(--fm-text-sm);
-    font-weight: var(--fm-button-font-weight);
-    letter-spacing: var(--fm-button-tracking);
+    font-size: var(--shopos-ui-text-sm);
+    font-weight: var(--shopos-ui-button-font-weight);
+    letter-spacing: var(--shopos-ui-button-tracking);
     text-transform: uppercase;
     text-decoration: none;
     cursor: pointer;
     transition:
-        background var(--fm-motion-fast) var(--fm-ease),
-        color var(--fm-motion-fast) var(--fm-ease),
-        transform var(--fm-motion-fast) var(--fm-ease);
+        background var(--shopos-ui-motion-fast) var(--shopos-ui-ease),
+        color var(--shopos-ui-motion-fast) var(--shopos-ui-ease),
+        transform var(--shopos-ui-motion-fast) var(--shopos-ui-ease);
 }
 
-.shopos-theme .fm-btn:hover {
+.shopos-theme .shopos-ui-btn:hover {
     transform: translateY(-1px);
     opacity: 1;
 }
 
-.shopos-theme .fm-btn:disabled,
-.shopos-theme .fm-btn[aria-disabled="true"] {
+.shopos-theme .shopos-ui-btn:disabled,
+.shopos-theme .shopos-ui-btn[aria-disabled="true"] {
     opacity: 0.4;
     cursor: not-allowed;
     transform: none;
 }
 
-.shopos-theme .fm-btn--ghost {
+.shopos-theme .shopos-ui-btn--ghost {
     background: transparent;
-    color: var(--fm-color-ink);
-    border-color: var(--fm-color-hairline);
+    color: var(--shopos-ui-color-ink);
+    border-color: var(--shopos-ui-color-hairline);
 }
 
-.shopos-theme .fm-btn--ghost:hover {
-    border-color: var(--fm-color-ink);
-    background: var(--fm-color-paper-soft);
+.shopos-theme .shopos-ui-btn--ghost:hover {
+    border-color: var(--shopos-ui-color-ink);
+    background: var(--shopos-ui-color-paper-soft);
 }
 
-.shopos-theme .fm-btn--link {
+.shopos-theme .shopos-ui-btn--link {
     background: transparent;
     border: none;
-    color: var(--fm-color-ink);
+    color: var(--shopos-ui-color-ink);
     min-height: 0;
     padding: 0;
     text-transform: none;
-    letter-spacing: var(--fm-tracking-normal);
+    letter-spacing: var(--shopos-ui-tracking-normal);
     text-decoration: underline;
 }
 
-.shopos-theme .fm-btn--sm {
-    min-height: var(--fm-button-height-sm);
-    padding: 0 var(--fm-space-md);
-    font-size: var(--fm-text-xs);
+.shopos-theme .shopos-ui-btn--sm {
+    min-height: var(--shopos-ui-button-height-sm);
+    padding: 0 var(--shopos-ui-space-md);
+    font-size: var(--shopos-ui-text-xs);
 }
 
-.shopos-theme .fm-btn--block {
+.shopos-theme .shopos-ui-btn--block {
     display: flex;
     width: 100%;
 }
 
 /* -------------------------------------------------------------------------
- * 5. Input primitive (.fm-input, .fm-select, .fm-textarea)
+ * 5. Input primitive (.shopos-ui-input, .shopos-ui-select, .shopos-ui-textarea)
  * ------------------------------------------------------------------------- */
 
-.shopos-theme .fm-input,
-.shopos-theme .fm-select,
-.shopos-theme .fm-textarea {
+.shopos-theme .shopos-ui-input,
+.shopos-theme .shopos-ui-select,
+.shopos-theme .shopos-ui-textarea {
     display: block;
     width: 100%;
-    min-height: var(--fm-input-height);
-    padding: 0 var(--fm-input-padding-x);
-    border: var(--fm-input-border);
-    border-radius: var(--fm-input-radius);
-    background: var(--fm-input-bg);
-    color: var(--fm-color-ink);
+    min-height: var(--shopos-ui-input-height);
+    padding: 0 var(--shopos-ui-input-padding-x);
+    border: var(--shopos-ui-input-border);
+    border-radius: var(--shopos-ui-input-radius);
+    background: var(--shopos-ui-input-bg);
+    color: var(--shopos-ui-color-ink);
     font: inherit;
     transition:
-        border-color var(--fm-motion-fast) var(--fm-ease),
-        box-shadow var(--fm-motion-fast) var(--fm-ease);
+        border-color var(--shopos-ui-motion-fast) var(--shopos-ui-ease),
+        box-shadow var(--shopos-ui-motion-fast) var(--shopos-ui-ease);
 }
 
-.shopos-theme .fm-textarea {
-    min-height: calc(var(--fm-input-height) * 2.5);
-    padding: var(--fm-space-sm) var(--fm-input-padding-x);
+.shopos-theme .shopos-ui-textarea {
+    min-height: calc(var(--shopos-ui-input-height) * 2.5);
+    padding: var(--shopos-ui-space-sm) var(--shopos-ui-input-padding-x);
     resize: vertical;
 }
 
-.shopos-theme .fm-input:hover,
-.shopos-theme .fm-select:hover,
-.shopos-theme .fm-textarea:hover {
-    border: var(--fm-input-border-hover);
+.shopos-theme .shopos-ui-input:hover,
+.shopos-theme .shopos-ui-select:hover,
+.shopos-theme .shopos-ui-textarea:hover {
+    border: var(--shopos-ui-input-border-hover);
 }
 
-.shopos-theme .fm-input:focus,
-.shopos-theme .fm-select:focus,
-.shopos-theme .fm-textarea:focus {
+.shopos-theme .shopos-ui-input:focus,
+.shopos-theme .shopos-ui-select:focus,
+.shopos-theme .shopos-ui-textarea:focus {
     outline: none;
-    border-color: var(--fm-color-accent);
-    box-shadow: var(--fm-input-focus-ring);
+    border-color: var(--shopos-ui-color-accent);
+    box-shadow: var(--shopos-ui-input-focus-ring);
 }
 
-.shopos-theme .fm-input[aria-invalid="true"],
-.shopos-theme .fm-input.is-error {
-    border-color: var(--fm-color-danger);
+.shopos-theme .shopos-ui-input[aria-invalid="true"],
+.shopos-theme .shopos-ui-input.is-error {
+    border-color: var(--shopos-ui-color-danger);
 }
 
-.shopos-theme .fm-label {
+.shopos-theme .shopos-ui-label {
     display: inline-block;
-    font-size: var(--fm-text-sm);
-    font-weight: var(--fm-weight-medium);
-    color: var(--fm-color-ink-soft);
-    margin-bottom: var(--fm-space-xs);
+    font-size: var(--shopos-ui-text-sm);
+    font-weight: var(--shopos-ui-weight-medium);
+    color: var(--shopos-ui-color-ink-soft);
+    margin-bottom: var(--shopos-ui-space-xs);
 }
 
 /* -------------------------------------------------------------------------
- * 6. Badge primitive (.fm-badge)
+ * 6. Badge primitive (.shopos-ui-badge)
  * ------------------------------------------------------------------------- */
 
-.shopos-theme .fm-badge {
+.shopos-theme .shopos-ui-badge {
     display: inline-flex;
     align-items: center;
-    height: var(--fm-badge-height);
-    padding: var(--fm-badge-padding);
-    border-radius: var(--fm-badge-radius);
-    background: var(--fm-color-paper-soft);
-    color: var(--fm-color-ink);
-    font-size: var(--fm-badge-font);
-    font-weight: var(--fm-weight-semi);
-    letter-spacing: var(--fm-tracking-wide);
+    height: var(--shopos-ui-badge-height);
+    padding: var(--shopos-ui-badge-padding);
+    border-radius: var(--shopos-ui-badge-radius);
+    background: var(--shopos-ui-color-paper-soft);
+    color: var(--shopos-ui-color-ink);
+    font-size: var(--shopos-ui-badge-font);
+    font-weight: var(--shopos-ui-weight-semi);
+    letter-spacing: var(--shopos-ui-tracking-wide);
     text-transform: uppercase;
     white-space: nowrap;
 }
 
-.shopos-theme .fm-badge--success { background: var(--fm-color-success-soft); color: var(--fm-color-success); }
-.shopos-theme .fm-badge--danger  { background: var(--fm-color-danger-soft);  color: var(--fm-color-danger); }
-.shopos-theme .fm-badge--warning { background: var(--fm-color-warning-soft); color: var(--fm-color-warning); }
-.shopos-theme .fm-badge--info    { background: var(--fm-color-info-soft);    color: var(--fm-color-info); }
-.shopos-theme .fm-badge--accent  { background: var(--fm-color-accent);       color: var(--fm-color-accent-text); }
+.shopos-theme .shopos-ui-badge--success { background: var(--shopos-ui-color-success-soft); color: var(--shopos-ui-color-success); }
+.shopos-theme .shopos-ui-badge--danger  { background: var(--shopos-ui-color-danger-soft);  color: var(--shopos-ui-color-danger); }
+.shopos-theme .shopos-ui-badge--warning { background: var(--shopos-ui-color-warning-soft); color: var(--shopos-ui-color-warning); }
+.shopos-theme .shopos-ui-badge--info    { background: var(--shopos-ui-color-info-soft);    color: var(--shopos-ui-color-info); }
+.shopos-theme .shopos-ui-badge--accent  { background: var(--shopos-ui-color-accent);       color: var(--shopos-ui-color-accent-text); }
 
 /* -------------------------------------------------------------------------
- * 7. Card primitive (.fm-card)
+ * 7. Card primitive (.shopos-ui-card)
  * ------------------------------------------------------------------------- */
 
-.shopos-theme .fm-card {
+.shopos-theme .shopos-ui-card {
     position: relative;
     display: flex;
     flex-direction: column;
-    background: var(--fm-card-bg);
-    border: var(--fm-card-border);
-    border-radius: var(--fm-card-radius);
-    box-shadow: var(--fm-card-shadow);
+    background: var(--shopos-ui-card-bg);
+    border: var(--shopos-ui-card-border);
+    border-radius: var(--shopos-ui-card-radius);
+    box-shadow: var(--shopos-ui-card-shadow);
     overflow: hidden;
     transition:
-        transform var(--fm-motion-base) var(--fm-ease),
-        box-shadow var(--fm-motion-base) var(--fm-ease),
-        border-color var(--fm-motion-base) var(--fm-ease);
+        transform var(--shopos-ui-motion-base) var(--shopos-ui-ease),
+        box-shadow var(--shopos-ui-motion-base) var(--shopos-ui-ease),
+        border-color var(--shopos-ui-motion-base) var(--shopos-ui-ease);
 }
 
-.shopos-theme .fm-card:hover {
-    transform: translateY(var(--fm-card-hover-shift));
-    border: var(--fm-card-border-hover);
-    box-shadow: var(--fm-card-shadow-hover);
+.shopos-theme .shopos-ui-card:hover {
+    transform: translateY(var(--shopos-ui-card-hover-shift));
+    border: var(--shopos-ui-card-border-hover);
+    box-shadow: var(--shopos-ui-card-shadow-hover);
 }
 
-.shopos-theme .fm-card__media {
-    aspect-ratio: var(--fm-card-aspect);
-    background: var(--fm-color-paper-dim);
+.shopos-theme .shopos-ui-card__media {
+    aspect-ratio: var(--shopos-ui-card-aspect);
+    background: var(--shopos-ui-color-paper-dim);
     overflow: hidden;
 }
 
-.shopos-theme .fm-card__media img {
+.shopos-theme .shopos-ui-card__media img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform var(--fm-motion-slow) var(--fm-ease);
+    transition: transform var(--shopos-ui-motion-slow) var(--shopos-ui-ease);
 }
 
-.shopos-theme .fm-card:hover .fm-card__media img {
+.shopos-theme .shopos-ui-card:hover .shopos-ui-card__media img {
     transform: scale(1.03);
 }
 
-.shopos-theme .fm-card__body {
-    padding: var(--fm-space-md);
+.shopos-theme .shopos-ui-card__body {
+    padding: var(--shopos-ui-space-md);
     display: flex;
     flex-direction: column;
-    gap: var(--fm-space-xs);
+    gap: var(--shopos-ui-space-xs);
 }
 
-.shopos-theme .fm-card__title {
-    font-size: var(--fm-text-md);
-    font-weight: var(--fm-weight-medium);
-    line-height: var(--fm-leading-snug);
+.shopos-theme .shopos-ui-card__title {
+    font-size: var(--shopos-ui-text-md);
+    font-weight: var(--shopos-ui-weight-medium);
+    line-height: var(--shopos-ui-leading-snug);
     margin: 0;
 }
 
-.shopos-theme .fm-card__meta {
-    color: var(--fm-color-ink-muted);
-    font-size: var(--fm-text-sm);
+.shopos-theme .shopos-ui-card__meta {
+    color: var(--shopos-ui-color-ink-muted);
+    font-size: var(--shopos-ui-text-sm);
 }
 
 /* -------------------------------------------------------------------------
  * 8. Motion utilities
  * ------------------------------------------------------------------------- */
 
-.shopos-theme .fm-fade-in {
-    animation: fm-fade-in var(--fm-motion-base) var(--fm-ease) both;
+.shopos-theme .shopos-ui-fade-in {
+    animation: shopos-ui-fade-in var(--shopos-ui-motion-base) var(--shopos-ui-ease) both;
 }
-.shopos-theme .fm-slide-up {
-    animation: fm-slide-up var(--fm-motion-base) var(--fm-ease-out) both;
+.shopos-theme .shopos-ui-slide-up {
+    animation: shopos-ui-slide-up var(--shopos-ui-motion-base) var(--shopos-ui-ease-out) both;
 }
 
-@keyframes fm-fade-in {
+@keyframes shopos-ui-fade-in {
     from { opacity: 0; }
     to   { opacity: 1; }
 }
 
-@keyframes fm-slide-up {
+@keyframes shopos-ui-slide-up {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
 }
@@ -412,19 +412,19 @@ body {
     cursor: progress;
 }
 
-.shopos-theme .fm-skeleton {
+.shopos-theme .shopos-ui-skeleton {
     background: linear-gradient(
         90deg,
-        var(--fm-color-paper-soft) 0%,
-        var(--fm-color-paper-dim) 40%,
-        var(--fm-color-paper-soft) 80%
+        var(--shopos-ui-color-paper-soft) 0%,
+        var(--shopos-ui-color-paper-dim) 40%,
+        var(--shopos-ui-color-paper-soft) 80%
     );
     background-size: 200% 100%;
-    animation: fm-shimmer 1.4s linear infinite;
-    border-radius: var(--fm-radius-sm);
+    animation: shopos-ui-shimmer 1.4s linear infinite;
+    border-radius: var(--shopos-ui-radius-sm);
 }
 
-@keyframes fm-shimmer {
+@keyframes shopos-ui-shimmer {
     from { background-position: 200% 0; }
     to   { background-position: -200% 0; }
 }
@@ -435,14 +435,14 @@ body {
 
 :root:lang(he) .shopos-theme,
 .shopos-theme:lang(he) {
-    --fm-tracking-tight:  0;
-    --fm-tracking-normal: 0;
-    --fm-tracking-wide:   0;
+    --shopos-ui-tracking-tight:  0;
+    --shopos-ui-tracking-normal: 0;
+    --shopos-ui-tracking-wide:   0;
 }
 
 .shopos-theme:lang(he) h1,
 .shopos-theme:lang(he) h2,
 .shopos-theme:lang(he) h3,
 .shopos-theme:lang(he) h4 {
-    line-height: var(--fm-leading-snug);
+    line-height: var(--shopos-ui-leading-snug);
 }

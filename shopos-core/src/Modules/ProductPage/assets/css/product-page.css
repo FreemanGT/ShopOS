@@ -4,81 +4,81 @@
  * "The Quiet Boutique" (DESIGN.md): ink-on-paper, type-led hierarchy,
  * hairlines and the tonal paper ramp before shadows, RTL-first (logical
  * properties throughout), Hebrew flat tracking. Every value routes through
- * the `--fm-*` theme tokens with the token's own value as the literal
+ * the `--shopos-ui-*` theme tokens with the token's own value as the literal
  * fallback (1.21.38 convention) so non-theme installs stay correct.
  *
- * Scope: everything nests under .fm-pdp (the takeover template's <main>),
+ * Scope: everything nests under .shopos-ui-pdp (the takeover template's <main>),
  * so the stylesheet cannot leak into other pages even though it enqueues
  * on is_product().
  */
 
 /* ---------- Page scaffold ------------------------------------------------ */
 
-.fm-pdp {
-	color: var(--fm-color-ink, #1b1b1b);
-	font-family: var(--fm-font-body, 'Heebo', 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
-	font-size: var(--fm-text-md, 1rem);
-	line-height: var(--fm-leading-base, 1.55);
-	background: var(--fm-color-paper, #ffffff);
+.shopos-ui-pdp {
+	color: var(--shopos-ui-color-ink, #1b1b1b);
+	font-family: var(--shopos-ui-font-body, 'Heebo', 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+	font-size: var(--shopos-ui-text-md, 1rem);
+	line-height: var(--shopos-ui-leading-base, 1.55);
+	background: var(--shopos-ui-color-paper, #ffffff);
 }
 
-.fm-pdp__container {
-	max-width: var(--fm-container-max, 1360px);
+.shopos-ui-pdp__container {
+	max-width: var(--shopos-ui-container-max, 1360px);
 	margin-inline: auto;
-	padding-inline: var(--fm-container-pad, 16px);
-	padding-block: var(--fm-space-md, 16px) var(--fm-space-xxl, 64px);
+	padding-inline: var(--shopos-ui-container-pad, 16px);
+	padding-block: var(--shopos-ui-space-md, 16px) var(--shopos-ui-space-xxl, 64px);
 }
 
 /* ---------- Breadcrumb --------------------------------------------------- */
 
-.fm-pdp__breadcrumb {
-	margin-block: var(--fm-space-sm, 8px) var(--fm-space-lg, 24px);
-	font-size: var(--fm-text-xs, 0.75rem);
-	color: var(--fm-color-ink-muted, #6b6b6b);
+.shopos-ui-pdp__breadcrumb {
+	margin-block: var(--shopos-ui-space-sm, 8px) var(--shopos-ui-space-lg, 24px);
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 }
 
-.fm-pdp__breadcrumb a {
+.shopos-ui-pdp__breadcrumb a {
 	color: inherit;
 	text-decoration: none;
 }
 
-.fm-pdp__breadcrumb a:hover {
-	color: var(--fm-color-ink, #1b1b1b);
+.shopos-ui-pdp__breadcrumb a:hover {
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 	text-decoration: underline;
 	text-underline-offset: 3px;
 }
 
-.fm-pdp__crumb-sep {
-	margin-inline: var(--fm-space-sm, 8px);
-	color: var(--fm-color-hairline, #e6e6e2);
+.shopos-ui-pdp__crumb-sep {
+	margin-inline: var(--shopos-ui-space-sm, 8px);
+	color: var(--shopos-ui-color-hairline, #e6e6e2);
 }
 
 /* ---------- Two-column layout + sticky summary --------------------------- */
 
-.fm-pdp__layout {
+.shopos-ui-pdp__layout {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	gap: var(--fm-space-xl, 40px);
+	gap: var(--shopos-ui-space-xl, 40px);
 	align-items: start;
 }
 
 @media (min-width: 1024px) {
-	.fm-pdp__layout {
+	.shopos-ui-pdp__layout {
 		grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-		gap: var(--fm-space-xxl, 64px);
+		gap: var(--shopos-ui-space-xxl, 64px);
 	}
 
-	.fm-pdp__summary-col {
+	.shopos-ui-pdp__summary-col {
 		position: sticky;
-		top: calc(var(--fm-space-lg, 24px) + var(--wp-admin--admin-bar--height, 0px));
+		top: calc(var(--shopos-ui-space-lg, 24px) + var(--wp-admin--admin-bar--height, 0px));
 	}
 }
 
 /* Neutralise WooCommerce's legacy two-column float layout — the grid above
    owns the columns (QuickView 1.14.0(b) precedent). */
-.fm-pdp div.product .woocommerce-product-gallery,
-.fm-pdp div.product div.images,
-.fm-pdp div.product div.summary {
+.shopos-ui-pdp div.product .woocommerce-product-gallery,
+.shopos-ui-pdp div.product div.images,
+.shopos-ui-pdp div.product div.summary {
 	float: none;
 	width: 100%;
 	margin: 0;
@@ -93,41 +93,41 @@
 
    WC's template inline-styles the gallery to opacity:0 as a FOUC-hider that
    flexslider's init undoes — with no slider, undo it here. */
-.fm-pdp .woocommerce-product-gallery {
+.shopos-ui-pdp .woocommerce-product-gallery {
 	opacity: 1 !important;
 }
 
 /* Positioned ancestor so the zoom trigger (position:absolute) anchors to the
    gallery, not the page. */
-.fm-pdp__gallery {
+.shopos-ui-pdp__gallery {
 	position: relative;
 }
 
-.fm-pdp__gallery .woocommerce-product-gallery__wrapper {
+.shopos-ui-pdp__gallery .woocommerce-product-gallery__wrapper {
 	display: flex;
 	overflow-x: auto;
 	scroll-snap-type: x mandatory;
 	scrollbar-width: none;
-	gap: var(--fm-space-sm, 8px);
+	gap: var(--shopos-ui-space-sm, 8px);
 	margin: 0;
 	-webkit-overflow-scrolling: touch;
 }
 
-.fm-pdp__gallery .woocommerce-product-gallery__wrapper::-webkit-scrollbar {
+.shopos-ui-pdp__gallery .woocommerce-product-gallery__wrapper::-webkit-scrollbar {
 	display: none;
 }
 
-.fm-pdp__gallery .woocommerce-product-gallery__image {
+.shopos-ui-pdp__gallery .woocommerce-product-gallery__image {
 	flex: 0 0 100%;
 	/* start (not center): full-width slides carrying an inter-slide gap
 	   mis-seat when centre-snapped — the first slide never rests cleanly. */
 	scroll-snap-align: start;
-	background: var(--fm-color-paper-dim, #f1efea);
+	background: var(--shopos-ui-color-paper-dim, #f1efea);
 	border-radius: 1rem;
 	overflow: hidden;
 }
 
-.fm-pdp__gallery .woocommerce-product-gallery__image img {
+.shopos-ui-pdp__gallery .woocommerce-product-gallery__image img {
 	width: 100%;
 	height: auto;
 	display: block;
@@ -140,27 +140,27 @@
 /* Desktop: no touch, so the strip is dragged with the mouse (product-page.js
    toggles .is-grabbing while a drag is in flight). */
 @media (min-width: 1024px) {
-	.fm-pdp__gallery .woocommerce-product-gallery__wrapper {
+	.shopos-ui-pdp__gallery .woocommerce-product-gallery__wrapper {
 		cursor: grab;
 	}
 
-	.fm-pdp__gallery .woocommerce-product-gallery__wrapper.is-grabbing {
+	.shopos-ui-pdp__gallery .woocommerce-product-gallery__wrapper.is-grabbing {
 		cursor: grabbing;
 		scroll-snap-type: none;
 	}
 
-	.fm-pdp__gallery .woocommerce-product-gallery__wrapper.is-grabbing img {
+	.shopos-ui-pdp__gallery .woocommerce-product-gallery__wrapper.is-grabbing img {
 		pointer-events: none;
 	}
 }
 
 /* Variation-image swap feedback: product-page.js drops this class on the
    main image when WC swaps its source. */
-.fm-pdp__gallery .fm-img-swap {
-	animation: fm-pdp-img-swap var(--fm-motion-base, 280ms) var(--fm-ease-out, cubic-bezier(0.2, 0.8, 0.2, 1));
+.shopos-ui-pdp__gallery .shopos-ui-img-swap {
+	animation: shopos-ui-pdp-img-swap var(--shopos-ui-motion-base, 280ms) var(--shopos-ui-ease-out, cubic-bezier(0.2, 0.8, 0.2, 1));
 }
 
-@keyframes fm-pdp-img-swap {
+@keyframes shopos-ui-pdp-img-swap {
 	from {
 		opacity: 0.25;
 	}
@@ -174,49 +174,49 @@
    position. Scroll-driven (no transition), so it needs no reduced-motion
    handling; the fill grows from the inline-start edge, so it reads correctly
    in RTL. */
-.fm-pdp__gallery-progress {
+.shopos-ui-pdp__gallery-progress {
 	block-size: 3px;
-	margin-top: var(--fm-space-md, 16px);
-	border-radius: var(--fm-radius-pill, 999px);
-	background: var(--fm-color-hairline, #e6e6e2);
+	margin-top: var(--shopos-ui-space-md, 16px);
+	border-radius: var(--shopos-ui-radius-pill, 999px);
+	background: var(--shopos-ui-color-hairline, #e6e6e2);
 	overflow: hidden;
 }
 
-.fm-pdp__gallery-progress__fill {
+.shopos-ui-pdp__gallery-progress__fill {
 	block-size: 100%;
 	inline-size: 0;
 	/* Never fully empty — a small resting fill signals "swipe for more"
 	   before the shopper scrolls (owner request). JS floors it too, so the
 	   bar animates from this point rather than snapping off it. */
 	min-inline-size: 14%;
-	background: var(--fm-color-ink, #1b1b1b);
+	background: var(--shopos-ui-color-ink, #1b1b1b);
 	border-radius: inherit;
 }
 
 /* WC's lightbox/expand trigger (the corner button) is hidden — there is no
    lightbox on this page (owner: clicking an image should change the main
    image, not open a modal). The hover-magnify zoom stays on the image. */
-.fm-pdp .woocommerce-product-gallery__trigger {
+.shopos-ui-pdp .woocommerce-product-gallery__trigger {
 	display: none !important;
 }
 
 /* Sale flash — one quiet ink badge, Label voice (no discount-bin shouting). */
-.fm-pdp span.onsale {
+.shopos-ui-pdp span.onsale {
 	position: absolute;
-	top: var(--fm-space-md, 16px);
-	inset-inline-start: var(--fm-space-md, 16px);
-	z-index: var(--fm-z-card, 1);
+	top: var(--shopos-ui-space-md, 16px);
+	inset-inline-start: var(--shopos-ui-space-md, 16px);
+	z-index: var(--shopos-ui-z-card, 1);
 	min-width: 0;
 	min-height: 0;
 	margin: 0;
-	padding: var(--fm-badge-padding, 0 8px);
-	line-height: var(--fm-badge-height, 22px);
-	background: var(--fm-color-ink, #1b1b1b);
-	color: var(--fm-color-paper, #ffffff);
-	border-radius: var(--fm-badge-radius, 999px);
-	font-size: var(--fm-badge-font, 0.75rem);
-	font-weight: var(--fm-weight-semi, 600);
-	letter-spacing: var(--fm-tracking-wide, 0.04em);
+	padding: var(--shopos-ui-badge-padding, 0 8px);
+	line-height: var(--shopos-ui-badge-height, 22px);
+	background: var(--shopos-ui-color-ink, #1b1b1b);
+	color: var(--shopos-ui-color-paper, #ffffff);
+	border-radius: var(--shopos-ui-badge-radius, 999px);
+	font-size: var(--shopos-ui-badge-font, 0.75rem);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 	text-transform: uppercase;
 }
 
@@ -226,99 +226,99 @@
    / description / trust / additional info / meta) — the same paper-dim tone as
    the gallery images, so the two columns read as one system. The VS buy box is
    transparent, so the panel shows through cleanly. */
-.fm-pdp__summary-col {
-	background: var(--fm-color-paper-dim, #f1efea);
+.shopos-ui-pdp__summary-col {
+	background: var(--shopos-ui-color-paper-dim, #f1efea);
 	border-radius: 1rem;
-	padding: var(--fm-space-lg, 24px);
+	padding: var(--shopos-ui-space-lg, 24px);
 }
 
-.fm-pdp__summary .product_title {
-	margin: 0 0 var(--fm-space-sm, 8px);
+.shopos-ui-pdp__summary .product_title {
+	margin: 0 0 var(--shopos-ui-space-sm, 8px);
 	/* No text-wrap:balance — it equalises line lengths, so multi-line titles
 	   refused to fill the column ("titles sometimes not full width", 9.3). */
-	font-family: var(--fm-font-display, 'Assistant', 'Heebo', 'Rubik', sans-serif);
-	font-size: var(--fm-text-xxl, 2.25rem);
-	font-weight: var(--fm-weight-semi, 600);
-	line-height: var(--fm-leading-tight, 1.18);
-	letter-spacing: var(--fm-tracking-tight, -0.01em);
-	color: var(--fm-color-ink, #1b1b1b);
+	font-family: var(--shopos-ui-font-display, 'Assistant', 'Heebo', 'Rubik', sans-serif);
+	font-size: var(--shopos-ui-text-xxl, 2.25rem);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	line-height: var(--shopos-ui-leading-tight, 1.18);
+	letter-spacing: var(--shopos-ui-tracking-tight, -0.01em);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 }
 
-.fm-pdp__summary .woocommerce-product-rating {
+.shopos-ui-pdp__summary .woocommerce-product-rating {
 	display: flex;
 	align-items: center;
-	gap: var(--fm-space-sm, 8px);
-	margin: 0 0 var(--fm-space-sm, 8px);
-	font-size: var(--fm-text-sm, 0.875rem);
-	color: var(--fm-color-ink-muted, #6b6b6b);
+	gap: var(--shopos-ui-space-sm, 8px);
+	margin: 0 0 var(--shopos-ui-space-sm, 8px);
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 }
 
-.fm-pdp__summary .star-rating {
-	color: var(--fm-color-ink, #1b1b1b);
+.shopos-ui-pdp__summary .star-rating {
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 }
 
-.fm-pdp__summary > .price {
+.shopos-ui-pdp__summary > .price {
 	display: block;
-	margin: 0 0 var(--fm-space-md, 16px);
-	font-size: var(--fm-text-xl, 1.5rem);
-	font-weight: var(--fm-weight-medium, 500);
-	color: var(--fm-color-ink, #1b1b1b);
-	line-height: var(--fm-leading-snug, 1.35);
+	margin: 0 0 var(--shopos-ui-space-md, 16px);
+	font-size: var(--shopos-ui-text-xl, 1.5rem);
+	font-weight: var(--shopos-ui-weight-medium, 500);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
+	line-height: var(--shopos-ui-leading-snug, 1.35);
 }
 
 /* Sale pair: the from-price <del> reports the sale state (DESIGN.md danger
    role); the current price stays confident ink. */
-.fm-pdp__summary .price del {
-	color: var(--fm-color-danger, #b11226);
+.shopos-ui-pdp__summary .price del {
+	color: var(--shopos-ui-color-danger, #b11226);
 	font-size: 0.72em;
-	font-weight: var(--fm-weight-regular, 400);
-	margin-inline-end: var(--fm-space-sm, 8px);
+	font-weight: var(--shopos-ui-weight-regular, 400);
+	margin-inline-end: var(--shopos-ui-space-sm, 8px);
 }
 
-.fm-pdp__summary .price ins {
+.shopos-ui-pdp__summary .price ins {
 	text-decoration: none;
 	background: none;
 }
 
-.fm-pdp__summary .woocommerce-product-details__short-description {
+.shopos-ui-pdp__summary .woocommerce-product-details__short-description {
 	max-width: 65ch;
-	margin: 0 0 var(--fm-space-md, 16px);
-	color: var(--fm-color-ink-soft, #3a3a3a);
+	margin: 0 0 var(--shopos-ui-space-md, 16px);
+	color: var(--shopos-ui-color-ink-soft, #3a3a3a);
 }
 
-.fm-pdp__summary .woocommerce-product-details__short-description p:last-child {
+.shopos-ui-pdp__summary .woocommerce-product-details__short-description p:last-child {
 	margin-bottom: 0;
 }
 
 /* Stock line (simple products print it in the summary). */
-.fm-pdp__summary .stock {
-	font-size: var(--fm-text-sm, 0.875rem);
-	font-weight: var(--fm-weight-semi, 600);
+.shopos-ui-pdp__summary .stock {
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	font-weight: var(--shopos-ui-weight-semi, 600);
 }
 
-.fm-pdp__summary .stock.in-stock {
-	color: var(--fm-color-success, #0e7c66);
+.shopos-ui-pdp__summary .stock.in-stock {
+	color: var(--shopos-ui-color-success, #0e7c66);
 }
 
-.fm-pdp__summary .stock.out-of-stock {
-	color: var(--fm-color-danger, #b11226);
+.shopos-ui-pdp__summary .stock.out-of-stock {
+	color: var(--shopos-ui-color-danger, #b11226);
 }
 
 /* ---------- Buy box (standard WC form; VariationSwatches ships its own) --- */
 
-.fm-pdp__summary form.cart {
-	margin: var(--fm-space-lg, 24px) 0 0;
+.shopos-ui-pdp__summary form.cart {
+	margin: var(--shopos-ui-space-lg, 24px) 0 0;
 }
 
-.fm-pdp__summary form.cart table.variations {
+.shopos-ui-pdp__summary form.cart table.variations {
 	width: 100%;
-	margin: 0 0 var(--fm-space-md, 16px);
+	margin: 0 0 var(--shopos-ui-space-md, 16px);
 	border: 0;
 	border-collapse: collapse;
 }
 
-.fm-pdp__summary form.cart table.variations th,
-.fm-pdp__summary form.cart table.variations td {
+.shopos-ui-pdp__summary form.cart table.variations th,
+.shopos-ui-pdp__summary form.cart table.variations td {
 	display: block;
 	width: 100%;
 	padding: 0;
@@ -327,115 +327,115 @@
 	text-align: start;
 }
 
-.fm-pdp__summary form.cart table.variations label {
+.shopos-ui-pdp__summary form.cart table.variations label {
 	display: block;
-	margin: 0 0 var(--fm-space-xs, 4px);
-	font-size: var(--fm-text-xs, 0.75rem);
-	font-weight: var(--fm-weight-semi, 600);
-	letter-spacing: var(--fm-tracking-wide, 0.04em);
+	margin: 0 0 var(--shopos-ui-space-xs, 4px);
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 	text-transform: uppercase;
-	color: var(--fm-color-ink-soft, #3a3a3a);
+	color: var(--shopos-ui-color-ink-soft, #3a3a3a);
 }
 
-.fm-pdp__summary form.cart table.variations td {
-	margin: 0 0 var(--fm-space-md, 16px);
+.shopos-ui-pdp__summary form.cart table.variations td {
+	margin: 0 0 var(--shopos-ui-space-md, 16px);
 }
 
-.fm-pdp__summary form.cart select {
+.shopos-ui-pdp__summary form.cart select {
 	width: 100%;
-	height: var(--fm-input-height, 44px);
-	padding-inline: var(--fm-input-padding-x, 16px);
-	background: var(--fm-input-bg, #ffffff);
-	border: var(--fm-input-border, 1px solid #e6e6e2);
-	border-radius: var(--fm-input-radius, 4px);
-	color: var(--fm-color-ink, #1b1b1b);
-	font-size: var(--fm-text-md, 1rem);
+	height: var(--shopos-ui-input-height, 44px);
+	padding-inline: var(--shopos-ui-input-padding-x, 16px);
+	background: var(--shopos-ui-input-bg, #ffffff);
+	border: var(--shopos-ui-input-border, 1px solid #e6e6e2);
+	border-radius: var(--shopos-ui-input-radius, 4px);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
+	font-size: var(--shopos-ui-text-md, 1rem);
 }
 
-.fm-pdp__summary form.cart select:hover {
-	border: var(--fm-input-border-hover, 1px solid #3a3a3a);
+.shopos-ui-pdp__summary form.cart select:hover {
+	border: var(--shopos-ui-input-border-hover, 1px solid #3a3a3a);
 }
 
-.fm-pdp__summary form.cart select:focus-visible {
+.shopos-ui-pdp__summary form.cart select:focus-visible {
 	outline: none;
-	box-shadow: var(--fm-input-focus-ring, 0 0 0 2px #1b1b1b);
+	box-shadow: var(--shopos-ui-input-focus-ring, 0 0 0 2px #1b1b1b);
 }
 
-.fm-pdp__summary .reset_variations {
-	font-size: var(--fm-text-xs, 0.75rem);
-	color: var(--fm-color-ink-muted, #6b6b6b);
+.shopos-ui-pdp__summary .reset_variations {
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 }
 
 /* Selected-variation echo WC prints above the button. */
-.fm-pdp__summary .woocommerce-variation.single_variation {
-	margin: 0 0 var(--fm-space-md, 16px);
+.shopos-ui-pdp__summary .woocommerce-variation.single_variation {
+	margin: 0 0 var(--shopos-ui-space-md, 16px);
 }
 
-.fm-pdp__summary .woocommerce-variation-price .price {
-	font-size: var(--fm-text-lg, 1.25rem);
-	font-weight: var(--fm-weight-medium, 500);
-	color: var(--fm-color-ink, #1b1b1b);
+.shopos-ui-pdp__summary .woocommerce-variation-price .price {
+	font-size: var(--shopos-ui-text-lg, 1.25rem);
+	font-weight: var(--shopos-ui-weight-medium, 500);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 }
 
 /* Quantity + button row. The :not(.shopos-buy-box) guard keeps this off
    VariationSwatches' SIMPLE buy box, which is a form.cart without
    .variations_form and lays out its own actions column (Wave 9.3). */
-.fm-pdp__summary .woocommerce-variation-add-to-cart,
-.fm-pdp__summary form.cart:not(.variations_form):not(.grouped_form):not(.shopos-buy-box) {
+.shopos-ui-pdp__summary .woocommerce-variation-add-to-cart,
+.shopos-ui-pdp__summary form.cart:not(.variations_form):not(.grouped_form):not(.shopos-buy-box) {
 	display: flex;
 	align-items: stretch;
-	gap: var(--fm-space-sm, 8px);
+	gap: var(--shopos-ui-space-sm, 8px);
 }
 
-.fm-pdp__summary form.cart .quantity {
+.shopos-ui-pdp__summary form.cart .quantity {
 	flex: none;
 }
 
-.fm-pdp__summary form.cart .quantity .qty {
+.shopos-ui-pdp__summary form.cart .quantity .qty {
 	width: 76px;
-	height: var(--fm-button-height, 48px);
-	padding-inline: var(--fm-space-sm, 8px);
+	height: var(--shopos-ui-button-height, 48px);
+	padding-inline: var(--shopos-ui-space-sm, 8px);
 	text-align: center;
-	background: var(--fm-input-bg, #ffffff);
-	border: var(--fm-input-border, 1px solid #e6e6e2);
-	border-radius: var(--fm-input-radius, 4px);
-	color: var(--fm-color-ink, #1b1b1b);
-	font-size: var(--fm-text-md, 1rem);
+	background: var(--shopos-ui-input-bg, #ffffff);
+	border: var(--shopos-ui-input-border, 1px solid #e6e6e2);
+	border-radius: var(--shopos-ui-input-radius, 4px);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
+	font-size: var(--shopos-ui-text-md, 1rem);
 }
 
-.fm-pdp__summary form.cart .quantity .qty:focus-visible {
+.shopos-ui-pdp__summary form.cart .quantity .qty:focus-visible {
 	outline: none;
-	box-shadow: var(--fm-input-focus-ring, 0 0 0 2px #1b1b1b);
+	box-shadow: var(--shopos-ui-input-focus-ring, 0 0 0 2px #1b1b1b);
 }
 
 /* The single confident action — primary button per DESIGN.md. */
-.fm-pdp__summary form.cart .single_add_to_cart_button {
+.shopos-ui-pdp__summary form.cart .single_add_to_cart_button {
 	flex: 1 1 auto;
-	height: var(--fm-button-height, 48px);
-	padding-inline: var(--fm-button-padding-x, 24px);
-	background: var(--fm-color-ink, #1b1b1b);
-	color: var(--fm-color-paper, #ffffff);
-	border: 1px solid var(--fm-color-ink, #1b1b1b);
-	border-radius: var(--fm-button-radius, 4px);
-	font-size: var(--fm-text-sm, 0.875rem);
-	font-weight: var(--fm-button-font-weight, 600);
-	letter-spacing: var(--fm-button-tracking, 0.04em);
+	height: var(--shopos-ui-button-height, 48px);
+	padding-inline: var(--shopos-ui-button-padding-x, 24px);
+	background: var(--shopos-ui-color-ink, #1b1b1b);
+	color: var(--shopos-ui-color-paper, #ffffff);
+	border: 1px solid var(--shopos-ui-color-ink, #1b1b1b);
+	border-radius: var(--shopos-ui-button-radius, 4px);
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	font-weight: var(--shopos-ui-button-font-weight, 600);
+	letter-spacing: var(--shopos-ui-button-tracking, 0.04em);
 	text-transform: uppercase;
 	cursor: pointer;
-	transition: transform var(--fm-motion-fast, 180ms) var(--fm-ease, cubic-bezier(0.2, 0, 0, 1));
+	transition: transform var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease, cubic-bezier(0.2, 0, 0, 1));
 }
 
-.fm-pdp__summary form.cart .single_add_to_cart_button:hover {
+.shopos-ui-pdp__summary form.cart .single_add_to_cart_button:hover {
 	transform: translateY(-1px);
 }
 
-.fm-pdp__summary form.cart .single_add_to_cart_button:focus-visible {
-	outline: 2px solid var(--fm-color-ink, #1b1b1b);
+.shopos-ui-pdp__summary form.cart .single_add_to_cart_button:focus-visible {
+	outline: 2px solid var(--shopos-ui-color-ink, #1b1b1b);
 	outline-offset: 2px;
 }
 
-.fm-pdp__summary form.cart .single_add_to_cart_button:disabled,
-.fm-pdp__summary form.cart .single_add_to_cart_button.disabled {
+.shopos-ui-pdp__summary form.cart .single_add_to_cart_button:disabled,
+.shopos-ui-pdp__summary form.cart .single_add_to_cart_button.disabled {
 	opacity: 0.45;
 	cursor: not-allowed;
 	transform: none;
@@ -443,27 +443,27 @@
 
 /* ---------- Trust line ---------------------------------------------------- */
 
-.fm-pdp__trust {
+.shopos-ui-pdp__trust {
 	display: flex;
 	flex-wrap: wrap;
-	column-gap: var(--fm-space-lg, 24px);
-	row-gap: var(--fm-space-xs, 4px);
-	margin-top: var(--fm-space-md, 16px);
-	padding-top: var(--fm-space-md, 16px);
-	border-top: 1px solid var(--fm-color-hairline, #e6e6e2);
+	column-gap: var(--shopos-ui-space-lg, 24px);
+	row-gap: var(--shopos-ui-space-xs, 4px);
+	margin-top: var(--shopos-ui-space-md, 16px);
+	padding-top: var(--shopos-ui-space-md, 16px);
+	border-top: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
 }
 
-.fm-pdp__trust-item {
+.shopos-ui-pdp__trust-item {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--fm-space-sm, 8px);
-	font-size: var(--fm-text-sm, 0.875rem);
-	color: var(--fm-color-ink-soft, #3a3a3a);
+	gap: var(--shopos-ui-space-sm, 8px);
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	color: var(--shopos-ui-color-ink-soft, #3a3a3a);
 }
 
-.fm-pdp__trust-item svg {
+.shopos-ui-pdp__trust-item svg {
 	flex: none;
-	color: var(--fm-color-ink-muted, #6b6b6b);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 }
 
 /* ---------- Additional information (surfaced under the buy box) ----------- */
@@ -474,63 +474,63 @@
    every selector is double-class so an Elementor kit's element rules
    (`.elementor-kit-N h2 { font-size }` outranked the 9.2 single-class title
    and rendered it huge) can never win. */
-.fm-pdp .fm-pdp__addl-info {
-	margin-top: var(--fm-space-md, 16px);
-	padding-top: var(--fm-space-xs, 4px);
-	border-top: 1px solid var(--fm-color-hairline, #e6e6e2);
+.shopos-ui-pdp .shopos-ui-pdp__addl-info {
+	margin-top: var(--shopos-ui-space-md, 16px);
+	padding-top: var(--shopos-ui-space-xs, 4px);
+	border-top: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
 }
 
-.fm-pdp .fm-pdp__addl-info-summary {
+.shopos-ui-pdp .shopos-ui-pdp__addl-info-summary {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--fm-space-md, 16px);
-	padding-block: var(--fm-space-sm, 8px);
+	gap: var(--shopos-ui-space-md, 16px);
+	padding-block: var(--shopos-ui-space-sm, 8px);
 	cursor: pointer;
 	list-style: none;
 }
 
-.fm-pdp .fm-pdp__addl-info-summary::-webkit-details-marker {
+.shopos-ui-pdp .shopos-ui-pdp__addl-info-summary::-webkit-details-marker {
 	display: none;
 }
 
-.fm-pdp .fm-pdp__addl-info-title {
-	font-size: var(--fm-text-xs, 0.75rem);
-	font-weight: var(--fm-weight-semi, 600);
-	letter-spacing: var(--fm-tracking-wide, 0.04em);
+.shopos-ui-pdp .shopos-ui-pdp__addl-info-title {
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 	text-transform: uppercase;
-	color: var(--fm-color-ink-soft, #3a3a3a);
+	color: var(--shopos-ui-color-ink-soft, #3a3a3a);
 }
 
-.fm-pdp .fm-pdp__addl-info-chevron {
+.shopos-ui-pdp .shopos-ui-pdp__addl-info-chevron {
 	flex: none;
-	color: var(--fm-color-ink-muted, #6b6b6b);
-	transition: transform var(--fm-motion-fast, 180ms) var(--fm-ease, cubic-bezier(0.2, 0, 0, 1));
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
+	transition: transform var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease, cubic-bezier(0.2, 0, 0, 1));
 }
 
-.fm-pdp .fm-pdp__addl-info[open] > .fm-pdp__addl-info-summary .fm-pdp__addl-info-chevron {
+.shopos-ui-pdp .shopos-ui-pdp__addl-info[open] > .shopos-ui-pdp__addl-info-summary .shopos-ui-pdp__addl-info-chevron {
 	transform: rotate(180deg);
 }
 
-.fm-pdp .fm-pdp__addl-info-body {
-	padding-block: var(--fm-space-xs, 4px) var(--fm-space-sm, 8px);
+.shopos-ui-pdp .shopos-ui-pdp__addl-info-body {
+	padding-block: var(--shopos-ui-space-xs, 4px) var(--shopos-ui-space-sm, 8px);
 }
 
 /* ---------- Meta --------------------------------------------------------- */
 
-.fm-pdp__summary .product_meta {
+.shopos-ui-pdp__summary .product_meta {
 	display: flex;
 	flex-direction: column;
-	gap: var(--fm-space-xs, 4px);
-	margin-top: var(--fm-space-lg, 24px);
-	padding-top: var(--fm-space-md, 16px);
-	border-top: 1px solid var(--fm-color-hairline, #e6e6e2);
-	font-size: var(--fm-text-sm, 0.875rem);
-	color: var(--fm-color-ink-muted, #6b6b6b);
+	gap: var(--shopos-ui-space-xs, 4px);
+	margin-top: var(--shopos-ui-space-lg, 24px);
+	padding-top: var(--shopos-ui-space-md, 16px);
+	border-top: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 }
 
-.fm-pdp__summary .product_meta a {
-	color: var(--fm-color-ink-soft, #3a3a3a);
+.shopos-ui-pdp__summary .product_meta a {
+	color: var(--shopos-ui-color-ink-soft, #3a3a3a);
 	text-decoration: underline;
 	text-decoration-thickness: 1px;
 	text-underline-offset: 3px;
@@ -538,64 +538,64 @@
 
 /* ---------- Accordion sections ------------------------------------------- */
 
-.fm-pdp__sections {
-	margin-top: var(--fm-space-xxl, 64px);
+.shopos-ui-pdp__sections {
+	margin-top: var(--shopos-ui-space-xxl, 64px);
 }
 
-.fm-pdp__accordion {
-	border-top: 1px solid var(--fm-color-hairline, #e6e6e2);
+.shopos-ui-pdp__accordion {
+	border-top: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
 }
 
-.fm-pdp__acc-item {
-	border-bottom: 1px solid var(--fm-color-hairline, #e6e6e2);
+.shopos-ui-pdp__acc-item {
+	border-bottom: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
 }
 
-.fm-pdp__acc-summary {
+.shopos-ui-pdp__acc-summary {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--fm-space-md, 16px);
-	padding-block: var(--fm-space-md, 16px);
+	gap: var(--shopos-ui-space-md, 16px);
+	padding-block: var(--shopos-ui-space-md, 16px);
 	cursor: pointer;
 	list-style: none;
-	font-size: var(--fm-text-lg, 1.25rem);
-	font-weight: var(--fm-weight-medium, 500);
-	line-height: var(--fm-leading-snug, 1.35);
-	color: var(--fm-color-ink, #1b1b1b);
+	font-size: var(--shopos-ui-text-lg, 1.25rem);
+	font-weight: var(--shopos-ui-weight-medium, 500);
+	line-height: var(--shopos-ui-leading-snug, 1.35);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 }
 
-.fm-pdp__acc-summary::-webkit-details-marker {
+.shopos-ui-pdp__acc-summary::-webkit-details-marker {
 	display: none;
 }
 
-.fm-pdp__acc-summary:hover .fm-pdp__acc-title {
-	color: var(--fm-color-ink-soft, #3a3a3a);
+.shopos-ui-pdp__acc-summary:hover .shopos-ui-pdp__acc-title {
+	color: var(--shopos-ui-color-ink-soft, #3a3a3a);
 }
 
-.fm-pdp__acc-chevron {
+.shopos-ui-pdp__acc-chevron {
 	flex: none;
-	color: var(--fm-color-ink-muted, #6b6b6b);
-	transition: transform var(--fm-motion-fast, 180ms) var(--fm-ease, cubic-bezier(0.2, 0, 0, 1));
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
+	transition: transform var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease, cubic-bezier(0.2, 0, 0, 1));
 }
 
-.fm-pdp__acc-item[open] > .fm-pdp__acc-summary .fm-pdp__acc-chevron {
+.shopos-ui-pdp__acc-item[open] > .shopos-ui-pdp__acc-summary .shopos-ui-pdp__acc-chevron {
 	transform: rotate(180deg);
 }
 
-.fm-pdp__acc-body {
-	padding-block: 0 var(--fm-space-lg, 24px);
+.shopos-ui-pdp__acc-body {
+	padding-block: 0 var(--shopos-ui-space-lg, 24px);
 	max-width: 75ch;
-	color: var(--fm-color-ink-soft, #3a3a3a);
+	color: var(--shopos-ui-color-ink-soft, #3a3a3a);
 	text-wrap: pretty;
 }
 
 /* Opening reveal — a quiet fade/rise instead of the native content pop.
    (A height ease needs ::details-content interpolation, still too new.) */
-.fm-pdp__acc-item[open] > .fm-pdp__acc-body {
-	animation: fm-pdp-acc-in var(--fm-motion-fast, 180ms) var(--fm-ease-out, cubic-bezier(0.2, 0.8, 0.2, 1));
+.shopos-ui-pdp__acc-item[open] > .shopos-ui-pdp__acc-body {
+	animation: shopos-ui-pdp-acc-in var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease-out, cubic-bezier(0.2, 0.8, 0.2, 1));
 }
 
-@keyframes fm-pdp-acc-in {
+@keyframes shopos-ui-pdp-acc-in {
 	from {
 		opacity: 0;
 		transform: translateY(4px);
@@ -608,120 +608,120 @@
 
 /* WC's tab callbacks print their own duplicate heading — the accordion
    summary already carries it. */
-.fm-pdp__acc-body > h2:first-child {
+.shopos-ui-pdp__acc-body > h2:first-child {
 	display: none;
 }
 
 /* Additional-information attribute table — in the accordion AND in the
    summary-column block surfaced under the buy box. */
-.fm-pdp__acc-body .woocommerce-product-attributes,
-.fm-pdp__addl-info .woocommerce-product-attributes {
+.shopos-ui-pdp__acc-body .woocommerce-product-attributes,
+.shopos-ui-pdp__addl-info .woocommerce-product-attributes {
 	width: 100%;
 	border-collapse: collapse;
 }
 
-.fm-pdp__acc-body .woocommerce-product-attributes th,
-.fm-pdp__acc-body .woocommerce-product-attributes td,
-.fm-pdp__addl-info .woocommerce-product-attributes th,
-.fm-pdp__addl-info .woocommerce-product-attributes td {
-	padding: var(--fm-space-sm, 8px) var(--fm-space-md, 16px) var(--fm-space-sm, 8px) 0;
+.shopos-ui-pdp__acc-body .woocommerce-product-attributes th,
+.shopos-ui-pdp__acc-body .woocommerce-product-attributes td,
+.shopos-ui-pdp__addl-info .woocommerce-product-attributes th,
+.shopos-ui-pdp__addl-info .woocommerce-product-attributes td {
+	padding: var(--shopos-ui-space-sm, 8px) var(--shopos-ui-space-md, 16px) var(--shopos-ui-space-sm, 8px) 0;
 	border: 0;
-	border-bottom: 1px solid var(--fm-color-hairline, #e6e6e2);
+	border-bottom: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
 	background: none;
 	text-align: start;
 	font-style: normal;
 	/* Explicit: the table text otherwise inherits whatever the site's kit
 	   puts on table cells (the "huge text" half of the Wave 9.3 report). */
-	font-size: var(--fm-text-sm, 0.875rem);
-	line-height: var(--fm-leading-base, 1.55);
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	line-height: var(--shopos-ui-leading-base, 1.55);
 }
 
-.fm-pdp__acc-body .woocommerce-product-attributes th,
-.fm-pdp__addl-info .woocommerce-product-attributes th {
+.shopos-ui-pdp__acc-body .woocommerce-product-attributes th,
+.shopos-ui-pdp__addl-info .woocommerce-product-attributes th {
 	width: 30%;
-	font-weight: var(--fm-weight-semi, 600);
-	color: var(--fm-color-ink-soft, #3a3a3a);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	color: var(--shopos-ui-color-ink-soft, #3a3a3a);
 }
 
-.fm-pdp__acc-body .woocommerce-product-attributes p,
-.fm-pdp__addl-info .woocommerce-product-attributes p {
+.shopos-ui-pdp__acc-body .woocommerce-product-attributes p,
+.shopos-ui-pdp__addl-info .woocommerce-product-attributes p {
 	margin: 0;
 }
 
 /* Reviews inside the accordion — keep the WC comment stack calm. */
-.fm-pdp__acc-body .commentlist {
+.shopos-ui-pdp__acc-body .commentlist {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
-.fm-pdp__acc-body .commentlist .comment_container {
+.shopos-ui-pdp__acc-body .commentlist .comment_container {
 	display: flex;
-	gap: var(--fm-space-md, 16px);
-	padding-block: var(--fm-space-md, 16px);
-	border-bottom: 1px solid var(--fm-color-hairline, #e6e6e2);
+	gap: var(--shopos-ui-space-md, 16px);
+	padding-block: var(--shopos-ui-space-md, 16px);
+	border-bottom: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
 }
 
-.fm-pdp__acc-body .commentlist img.avatar {
+.shopos-ui-pdp__acc-body .commentlist img.avatar {
 	width: 40px;
 	height: 40px;
-	border-radius: var(--fm-radius-round, 50%);
+	border-radius: var(--shopos-ui-radius-round, 50%);
 	flex: none;
 }
 
-.fm-pdp__acc-body .comment-form input[type='text'],
-.fm-pdp__acc-body .comment-form input[type='email'],
-.fm-pdp__acc-body .comment-form textarea {
+.shopos-ui-pdp__acc-body .comment-form input[type='text'],
+.shopos-ui-pdp__acc-body .comment-form input[type='email'],
+.shopos-ui-pdp__acc-body .comment-form textarea {
 	width: 100%;
-	padding: var(--fm-space-sm, 8px) var(--fm-input-padding-x, 16px);
-	background: var(--fm-input-bg, #ffffff);
-	border: var(--fm-input-border, 1px solid #e6e6e2);
-	border-radius: var(--fm-input-radius, 4px);
-	color: var(--fm-color-ink, #1b1b1b);
+	padding: var(--shopos-ui-space-sm, 8px) var(--shopos-ui-input-padding-x, 16px);
+	background: var(--shopos-ui-input-bg, #ffffff);
+	border: var(--shopos-ui-input-border, 1px solid #e6e6e2);
+	border-radius: var(--shopos-ui-input-radius, 4px);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 }
 
-.fm-pdp__acc-body .comment-form .submit {
-	height: var(--fm-button-height-sm, 36px);
-	padding-inline: var(--fm-button-padding-x, 24px);
-	background: var(--fm-color-ink, #1b1b1b);
-	color: var(--fm-color-paper, #ffffff);
-	border: 1px solid var(--fm-color-ink, #1b1b1b);
-	border-radius: var(--fm-button-radius, 4px);
-	font-size: var(--fm-text-xs, 0.75rem);
-	font-weight: var(--fm-weight-semi, 600);
-	letter-spacing: var(--fm-tracking-wide, 0.04em);
+.shopos-ui-pdp__acc-body .comment-form .submit {
+	height: var(--shopos-ui-button-height-sm, 36px);
+	padding-inline: var(--shopos-ui-button-padding-x, 24px);
+	background: var(--shopos-ui-color-ink, #1b1b1b);
+	color: var(--shopos-ui-color-paper, #ffffff);
+	border: 1px solid var(--shopos-ui-color-ink, #1b1b1b);
+	border-radius: var(--shopos-ui-button-radius, 4px);
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 	text-transform: uppercase;
 	cursor: pointer;
 }
 
 /* ---------- Upsells / related -------------------------------------------- */
 
-.fm-pdp .up-sells,
-.fm-pdp .related {
-	margin-top: var(--fm-space-xxl, 64px);
+.shopos-ui-pdp .up-sells,
+.shopos-ui-pdp .related {
+	margin-top: var(--shopos-ui-space-xxl, 64px);
 }
 
-.fm-pdp .up-sells > h2,
-.fm-pdp .related > h2 {
-	margin: 0 0 var(--fm-space-lg, 24px);
-	font-family: var(--fm-font-display, 'Assistant', 'Heebo', 'Rubik', sans-serif);
-	font-size: var(--fm-text-xl, 1.5rem);
-	font-weight: var(--fm-weight-semi, 600);
-	line-height: var(--fm-leading-tight, 1.18);
-	letter-spacing: var(--fm-tracking-tight, -0.01em);
-	color: var(--fm-color-ink, #1b1b1b);
+.shopos-ui-pdp .up-sells > h2,
+.shopos-ui-pdp .related > h2 {
+	margin: 0 0 var(--shopos-ui-space-lg, 24px);
+	font-family: var(--shopos-ui-font-display, 'Assistant', 'Heebo', 'Rubik', sans-serif);
+	font-size: var(--shopos-ui-text-xl, 1.5rem);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	line-height: var(--shopos-ui-leading-tight, 1.18);
+	letter-spacing: var(--shopos-ui-tracking-tight, -0.01em);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 }
 
 /* The grid must out-gun WooCommerce's core loop layout, whose selector
    `.woocommerce ul.products[class*="columns-"] li.product` (0,4,2) outranks a
-   plain .fm-pdp-scoped rule — its float/percentage widths and .first{clear}
+   plain .shopos-ui-pdp-scoped rule — its float/percentage widths and .first{clear}
    leaked in and wrapped the 4-up grid as 3+1 rows (Wave 9.3). Mirror the
    attribute selector for the tie and pin the killers with !important. */
-.fm-pdp ul.products,
-.fm-pdp ul.products[class*='columns-'] {
+.shopos-ui-pdp ul.products,
+.shopos-ui-pdp ul.products[class*='columns-'] {
 	display: grid !important;
 	grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-	gap: var(--fm-space-lg, 24px);
+	gap: var(--shopos-ui-space-lg, 24px);
 	width: auto;
 	margin: 0;
 	padding: 0;
@@ -729,22 +729,22 @@
 }
 
 @media (min-width: 768px) {
-	.fm-pdp ul.products,
-	.fm-pdp ul.products[class*='columns-'] {
+	.shopos-ui-pdp ul.products,
+	.shopos-ui-pdp ul.products[class*='columns-'] {
 		grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
 	}
 }
 
 /* WC's clearfix ::before/::after would render as anonymous grid ITEMS,
    occupying cells and shoving the last product onto its own row. */
-.fm-pdp ul.products::before,
-.fm-pdp ul.products::after {
+.shopos-ui-pdp ul.products::before,
+.shopos-ui-pdp ul.products::after {
 	display: none !important;
 	content: none !important;
 }
 
-.fm-pdp ul.products li.product,
-.fm-pdp ul.products[class*='columns-'] li.product {
+.shopos-ui-pdp ul.products li.product,
+.shopos-ui-pdp ul.products[class*='columns-'] li.product {
 	float: none !important;
 	clear: none !important;
 	width: auto !important;
@@ -752,113 +752,113 @@
 	padding: 0;
 	display: flex;
 	flex-direction: column;
-	gap: var(--fm-space-xs, 4px);
+	gap: var(--shopos-ui-space-xs, 4px);
 }
 
-.fm-pdp ul.products li.product a img {
+.shopos-ui-pdp ul.products li.product a img {
 	width: 100%;
-	aspect-ratio: var(--fm-card-aspect, 4 / 5);
+	aspect-ratio: var(--shopos-ui-card-aspect, 4 / 5);
 	object-fit: contain;
-	background: var(--fm-color-paper-dim, #f1efea);
-	border-radius: var(--fm-radius-lg, 12px);
-	margin: 0 0 var(--fm-space-sm, 8px);
-	transition: transform var(--fm-motion-base, 280ms) var(--fm-ease, cubic-bezier(0.2, 0, 0, 1));
+	background: var(--shopos-ui-color-paper-dim, #f1efea);
+	border-radius: var(--shopos-ui-radius-lg, 12px);
+	margin: 0 0 var(--shopos-ui-space-sm, 8px);
+	transition: transform var(--shopos-ui-motion-base, 280ms) var(--shopos-ui-ease, cubic-bezier(0.2, 0, 0, 1));
 }
 
-.fm-pdp ul.products li.product .woocommerce-loop-product__title {
-	font-size: var(--fm-text-md, 1rem);
-	font-weight: var(--fm-weight-medium, 500);
-	line-height: var(--fm-leading-snug, 1.35);
-	color: var(--fm-color-ink, #1b1b1b);
+.shopos-ui-pdp ul.products li.product .woocommerce-loop-product__title {
+	font-size: var(--shopos-ui-text-md, 1rem);
+	font-weight: var(--shopos-ui-weight-medium, 500);
+	line-height: var(--shopos-ui-leading-snug, 1.35);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 	padding: 0;
 	margin: 0;
 }
 
-.fm-pdp ul.products li.product .price {
-	font-size: var(--fm-text-sm, 0.875rem);
-	color: var(--fm-color-ink-soft, #3a3a3a);
+.shopos-ui-pdp ul.products li.product .price {
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	color: var(--shopos-ui-color-ink-soft, #3a3a3a);
 	margin: 0;
 }
 
-.fm-pdp ul.products li.product .price del {
-	color: var(--fm-color-ink-muted, #6b6b6b);
+.shopos-ui-pdp ul.products li.product .price del {
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 }
 
-.fm-pdp ul.products li.product .price ins {
+.shopos-ui-pdp ul.products li.product .price ins {
 	text-decoration: none;
 	background: none;
 }
 
-.fm-pdp ul.products li.product .star-rating {
-	font-size: var(--fm-text-xs, 0.75rem);
-	color: var(--fm-color-ink, #1b1b1b);
+.shopos-ui-pdp ul.products li.product .star-rating {
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 }
 
 /* Loop add-to-cart — the quiet ghost variant. */
-.fm-pdp ul.products li.product .button {
+.shopos-ui-pdp ul.products li.product .button {
 	align-self: start;
-	margin-top: var(--fm-space-xs, 4px);
-	padding: var(--fm-space-xs, 4px) var(--fm-space-md, 16px);
-	background: var(--fm-color-paper, #ffffff);
-	border: 1px solid var(--fm-color-hairline, #e6e6e2);
-	border-radius: var(--fm-radius-sm, 4px);
-	color: var(--fm-color-ink, #1b1b1b);
-	font-size: var(--fm-text-xs, 0.75rem);
-	font-weight: var(--fm-weight-semi, 600);
-	letter-spacing: var(--fm-tracking-wide, 0.04em);
+	margin-top: var(--shopos-ui-space-xs, 4px);
+	padding: var(--shopos-ui-space-xs, 4px) var(--shopos-ui-space-md, 16px);
+	background: var(--shopos-ui-color-paper, #ffffff);
+	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	border-radius: var(--shopos-ui-radius-sm, 4px);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 	text-transform: uppercase;
 	text-decoration: none;
-	transition: border-color var(--fm-motion-fast, 180ms) var(--fm-ease, cubic-bezier(0.2, 0, 0, 1)),
-		background-color var(--fm-motion-fast, 180ms) var(--fm-ease, cubic-bezier(0.2, 0, 0, 1));
+	transition: border-color var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease, cubic-bezier(0.2, 0, 0, 1)),
+		background-color var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease, cubic-bezier(0.2, 0, 0, 1));
 }
 
-.fm-pdp ul.products li.product .button:hover {
-	border-color: var(--fm-color-ink, #1b1b1b);
-	background: var(--fm-color-paper-soft, #faf9f7);
+.shopos-ui-pdp ul.products li.product .button:hover {
+	border-color: var(--shopos-ui-color-ink, #1b1b1b);
+	background: var(--shopos-ui-color-paper-soft, #faf9f7);
 }
 
 /* ---------- Notices (woocommerce_before_single_product) ------------------ */
 
-.fm-pdp .woocommerce-message,
-.fm-pdp .woocommerce-info,
-.fm-pdp .woocommerce-error {
-	margin: 0 0 var(--fm-space-lg, 24px);
-	padding: var(--fm-space-md, 16px);
-	background: var(--fm-color-paper-soft, #faf9f7);
-	border: 1px solid var(--fm-color-hairline, #e6e6e2);
-	border-radius: var(--fm-radius-md, 6px);
-	color: var(--fm-color-ink, #1b1b1b);
+.shopos-ui-pdp .woocommerce-message,
+.shopos-ui-pdp .woocommerce-info,
+.shopos-ui-pdp .woocommerce-error {
+	margin: 0 0 var(--shopos-ui-space-lg, 24px);
+	padding: var(--shopos-ui-space-md, 16px);
+	background: var(--shopos-ui-color-paper-soft, #faf9f7);
+	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	border-radius: var(--shopos-ui-radius-md, 6px);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 	list-style: none;
 }
 
-.fm-pdp .woocommerce-error {
-	border-color: var(--fm-color-danger, #b11226);
+.shopos-ui-pdp .woocommerce-error {
+	border-color: var(--shopos-ui-color-danger, #b11226);
 }
 
 /* ---------- Mobile sticky add-to-cart bar -------------------------------- */
 
-.fm-pdp__sticky-bar {
+.shopos-ui-pdp__sticky-bar {
 	position: fixed;
 	inset-block-end: 0;
 	inset-inline: 0;
-	z-index: var(--fm-z-sticky, 100);
+	z-index: var(--shopos-ui-z-sticky, 100);
 	display: flex;
 	align-items: center;
-	gap: var(--fm-space-md, 16px);
-	padding: var(--fm-space-sm, 8px) var(--fm-space-md, 16px);
-	padding-block-end: calc(var(--fm-space-sm, 8px) + env(safe-area-inset-bottom, 0px));
-	background: var(--fm-color-paper, #ffffff);
-	border-top: 1px solid var(--fm-color-hairline, #e6e6e2);
-	box-shadow: var(--fm-shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
+	gap: var(--shopos-ui-space-md, 16px);
+	padding: var(--shopos-ui-space-sm, 8px) var(--shopos-ui-space-md, 16px);
+	padding-block-end: calc(var(--shopos-ui-space-sm, 8px) + env(safe-area-inset-bottom, 0px));
+	background: var(--shopos-ui-color-paper, #ffffff);
+	border-top: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	box-shadow: var(--shopos-ui-shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
 	transform: translateY(110%);
-	transition: transform var(--fm-motion-base, 280ms) var(--fm-ease, cubic-bezier(0.2, 0, 0, 1));
+	transition: transform var(--shopos-ui-motion-base, 280ms) var(--shopos-ui-ease, cubic-bezier(0.2, 0, 0, 1));
 }
 
-.fm-pdp__sticky-bar[hidden] {
+.shopos-ui-pdp__sticky-bar[hidden] {
 	display: none;
 }
 
-.fm-pdp__sticky-bar.is-visible {
+.shopos-ui-pdp__sticky-bar.is-visible {
 	transform: none;
 }
 
@@ -868,74 +868,74 @@
    body.shopos-sticky-active reservation is the single source and there is no
    double padding. */
 @media (max-width: 1023.98px) {
-	body.fm-pdp-sticky-active {
+	body.shopos-ui-pdp-sticky-active {
 		padding-block-end: calc(64px + env(safe-area-inset-bottom, 0px));
 	}
 }
 
 @media (min-width: 1024px) {
-	.fm-pdp__sticky-bar {
+	.shopos-ui-pdp__sticky-bar {
 		display: none;
 	}
 }
 
-.fm-pdp__sticky-info {
+.shopos-ui-pdp__sticky-info {
 	display: flex;
 	align-items: center;
-	gap: var(--fm-space-sm, 8px);
+	gap: var(--shopos-ui-space-sm, 8px);
 	min-width: 0;
 	flex: 1 1 auto;
 }
 
-.fm-pdp__sticky-thumb {
+.shopos-ui-pdp__sticky-thumb {
 	width: 44px;
 	height: 44px;
 	object-fit: contain;
-	background: var(--fm-color-paper-dim, #f1efea);
-	border-radius: var(--fm-radius-sm, 4px);
+	background: var(--shopos-ui-color-paper-dim, #f1efea);
+	border-radius: var(--shopos-ui-radius-sm, 4px);
 	flex: none;
 }
 
-.fm-pdp__sticky-text {
+.shopos-ui-pdp__sticky-text {
 	display: flex;
 	flex-direction: column;
 	min-width: 0;
 }
 
-.fm-pdp__sticky-title {
-	font-size: var(--fm-text-sm, 0.875rem);
-	font-weight: var(--fm-weight-medium, 500);
-	color: var(--fm-color-ink, #1b1b1b);
+.shopos-ui-pdp__sticky-title {
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	font-weight: var(--shopos-ui-weight-medium, 500);
+	color: var(--shopos-ui-color-ink, #1b1b1b);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-.fm-pdp__sticky-price {
-	font-size: var(--fm-text-xs, 0.75rem);
-	color: var(--fm-color-ink-muted, #6b6b6b);
+.shopos-ui-pdp__sticky-price {
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 }
 
-.fm-pdp__sticky-price del {
-	color: var(--fm-color-danger, #b11226);
+.shopos-ui-pdp__sticky-price del {
+	color: var(--shopos-ui-color-danger, #b11226);
 }
 
-.fm-pdp__sticky-price ins {
+.shopos-ui-pdp__sticky-price ins {
 	text-decoration: none;
 	background: none;
 }
 
-.fm-pdp__sticky-cta {
+.shopos-ui-pdp__sticky-cta {
 	flex: none;
-	height: var(--fm-input-height, 44px);
-	padding-inline: var(--fm-button-padding-x, 24px);
-	background: var(--fm-color-ink, #1b1b1b);
-	color: var(--fm-color-paper, #ffffff);
-	border: 1px solid var(--fm-color-ink, #1b1b1b);
-	border-radius: var(--fm-button-radius, 4px);
-	font-size: var(--fm-text-xs, 0.75rem);
-	font-weight: var(--fm-weight-semi, 600);
-	letter-spacing: var(--fm-tracking-wide, 0.04em);
+	height: var(--shopos-ui-input-height, 44px);
+	padding-inline: var(--shopos-ui-button-padding-x, 24px);
+	background: var(--shopos-ui-color-ink, #1b1b1b);
+	color: var(--shopos-ui-color-paper, #ffffff);
+	border: 1px solid var(--shopos-ui-color-ink, #1b1b1b);
+	border-radius: var(--shopos-ui-button-radius, 4px);
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 	text-transform: uppercase;
 	cursor: pointer;
 }
@@ -954,13 +954,13 @@
    __value rule is `color: inherit !important`, so painting the parent needs
    !important to win over the theme .price rule, and the explicit __value rule
    (0,4,0) beats VS's own 0,3,0. */
-.fm-pdp .shopos-pdp-price[data-pdp-price] {
-	color: var(--fm-color-ink, #1b1b1b) !important;
+.shopos-ui-pdp .shopos-pdp-price[data-pdp-price] {
+	color: var(--shopos-ui-color-ink, #1b1b1b) !important;
 }
 
-.fm-pdp .shopos-pdp-price[data-pdp-price] .shopos-pdp-price__value,
-.fm-pdp .shopos-pdp-price[data-pdp-price] .shopos-pdp-price__value * {
-	color: var(--fm-color-ink, #1b1b1b) !important;
+.shopos-ui-pdp .shopos-pdp-price[data-pdp-price] .shopos-pdp-price__value,
+.shopos-ui-pdp .shopos-pdp-price[data-pdp-price] .shopos-pdp-price__value * {
+	color: var(--shopos-ui-color-ink, #1b1b1b) !important;
 }
 
 /* Full-width pin (Wave 9.3): on the live store a site-level rule written for
@@ -968,75 +968,75 @@
    ~50% on the left and jumped there after first paint. Nothing in this repo
    or VS sets that layout — pin it here defensively so any such rule loses.
    Also lifts VS's own 640px cap so the box fills the summary panel. */
-.fm-pdp .fm-pdp__summary form.cart,
-.fm-pdp .shopos-buy-box {
+.shopos-ui-pdp .shopos-ui-pdp__summary form.cart,
+.shopos-ui-pdp .shopos-buy-box {
 	float: none !important;
 	width: 100% !important;
 	max-width: none !important;
 	margin-inline: 0 !important;
 }
 
-.fm-pdp .shopos-buy-box .shopos-actions,
-.fm-pdp .shopos-buy-box .shopos-actions__row,
-.fm-pdp .shopos-buy-box .single_variation_wrap {
+.shopos-ui-pdp .shopos-buy-box .shopos-actions,
+.shopos-ui-pdp .shopos-buy-box .shopos-actions__row,
+.shopos-ui-pdp .shopos-buy-box .single_variation_wrap {
 	float: none !important;
 	width: 100% !important;
 	max-width: none !important;
 }
 
 /* Belt to the JS suspenders: never show two sticky bars. */
-.fm-pdp:has(.shopos-sticky-bar) .fm-pdp__sticky-bar {
+.shopos-ui-pdp:has(.shopos-sticky-bar) .shopos-ui-pdp__sticky-bar {
 	display: none;
 }
 
 /* ---------- Focus visibility ---------------------------------------------- */
 
-.fm-pdp a:focus-visible,
-.fm-pdp .fm-pdp__acc-summary:focus-visible,
-.fm-pdp button:focus-visible {
-	outline: 2px solid var(--fm-color-ink, #1b1b1b);
+.shopos-ui-pdp a:focus-visible,
+.shopos-ui-pdp .shopos-ui-pdp__acc-summary:focus-visible,
+.shopos-ui-pdp button:focus-visible {
+	outline: 2px solid var(--shopos-ui-color-ink, #1b1b1b);
 	outline-offset: 2px;
 }
 
 /* ---------- Hebrew flat tracking (DESIGN.md rule) ------------------------- */
 
-.fm-pdp :lang(he) .product_title,
-.fm-pdp .product_title:lang(he),
-.fm-pdp :lang(he) .fm-pdp__acc-title,
-.fm-pdp :lang(he) h2,
-.fm-pdp h2:lang(he) {
+.shopos-ui-pdp :lang(he) .product_title,
+.shopos-ui-pdp .product_title:lang(he),
+.shopos-ui-pdp :lang(he) .shopos-ui-pdp__acc-title,
+.shopos-ui-pdp :lang(he) h2,
+.shopos-ui-pdp h2:lang(he) {
 	letter-spacing: 0;
 }
 
-.fm-pdp :lang(he) .single_add_to_cart_button,
-.fm-pdp .single_add_to_cart_button:lang(he),
-.fm-pdp :lang(he) .fm-pdp__sticky-cta,
-.fm-pdp :lang(he) span.onsale,
-.fm-pdp :lang(he) form.cart table.variations label,
-.fm-pdp :lang(he) ul.products li.product .button {
+.shopos-ui-pdp :lang(he) .single_add_to_cart_button,
+.shopos-ui-pdp .single_add_to_cart_button:lang(he),
+.shopos-ui-pdp :lang(he) .shopos-ui-pdp__sticky-cta,
+.shopos-ui-pdp :lang(he) span.onsale,
+.shopos-ui-pdp :lang(he) form.cart table.variations label,
+.shopos-ui-pdp :lang(he) ul.products li.product .button {
 	letter-spacing: 0;
 }
 
 /* ---------- Reduced motion ------------------------------------------------ */
 
 @media (prefers-reduced-motion: reduce) {
-	.fm-pdp__sticky-bar,
-	.fm-pdp__acc-chevron,
-	.fm-pdp__summary form.cart .single_add_to_cart_button,
-	.fm-pdp ul.products li.product a img {
+	.shopos-ui-pdp__sticky-bar,
+	.shopos-ui-pdp__acc-chevron,
+	.shopos-ui-pdp__summary form.cart .single_add_to_cart_button,
+	.shopos-ui-pdp ul.products li.product a img {
 		transition: none;
 	}
 
-	.fm-pdp__summary form.cart .single_add_to_cart_button:hover {
+	.shopos-ui-pdp__summary form.cart .single_add_to_cart_button:hover {
 		transform: none;
 	}
 
-	.fm-pdp__gallery .fm-img-swap,
-	.fm-pdp__acc-item[open] > .fm-pdp__acc-body {
+	.shopos-ui-pdp__gallery .shopos-ui-img-swap,
+	.shopos-ui-pdp__acc-item[open] > .shopos-ui-pdp__acc-body {
 		animation: none;
 	}
 
-	.fm-pdp__gallery .woocommerce-product-gallery__wrapper {
+	.shopos-ui-pdp__gallery .woocommerce-product-gallery__wrapper {
 		scroll-behavior: auto;
 	}
 }

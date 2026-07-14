@@ -93,11 +93,11 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.21.38] — 2026-07-05
 
-- VariationSwatches, ShopFilters and QuickView high z-indexes route through the theme --fm-z-* tokens with the current literals kept as fallbacks, so theme sites share one z-index ladder while non-theme sites stay byte-identical
+- VariationSwatches, ShopFilters and QuickView high z-indexes route through the theme --shopos-ui-z-* tokens with the current literals kept as fallbacks, so theme sites share one z-index ladder while non-theme sites stay byte-identical
 
 ## [1.21.37] — 2026-07-05
 
-- VariationSwatches CSS routes swatch typography through the --fm-font-body design token instead of referencing the Elementor Style Kits sk_type_12 variable directly (keeps the inherit fallback for non-theme installs)
+- VariationSwatches CSS routes swatch typography through the --shopos-ui-font-body design token instead of referencing the Elementor Style Kits sk_type_12 variable directly (keeps the inherit fallback for non-theme installs)
 
 ## [1.21.36] — 2026-07-05
 
@@ -295,7 +295,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.17.1] — 2026-06-19
 
-- QuickView gallery arrows restyled to match the ProductSlider card-slider arrows (small white circles, hover-reveal, RTL-correct chevron). Both galleries now clamp at the ends instead of wrapping, removing the jarring scroll-back-to-start. Card-slider product images now get a 1rem border-radius (applied to the .fc-card-slider container).
+- QuickView gallery arrows restyled to match the ProductSlider card-slider arrows (small white circles, hover-reveal, RTL-correct chevron). Both galleries now clamp at the ends instead of wrapping, removing the jarring scroll-back-to-start. Card-slider product images now get a 1rem border-radius (applied to the .shopos-card-slider container).
 
 ## [1.17.0] — 2026-06-19
 
@@ -387,7 +387,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.12.19] — 2026-05-20
 
-- Shop Filters fix: the mobile Filter toggle button no longer appears on desktop (the theme .fm-btn display was overriding the hide rule)
+- Shop Filters fix: the mobile Filter toggle button no longer appears on desktop (the theme .shopos-ui-btn display was overriding the hide rule)
 
 ## [1.12.18] — 2026-05-20
 
@@ -399,11 +399,11 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.12.16] — 2026-05-20
 
-- Shop Filters buttons now match the theme: the panel toggle, Apply, Clear and sort controls carry the themes own .fm-btn / .fm-select primitives so they render identically to the sites buttons (the 1.12.15 core styles were being overridden by the theme/Elementor); core styles remain as the no-theme fallback
+- Shop Filters buttons now match the theme: the panel toggle, Apply, Clear and sort controls carry the themes own .shopos-ui-btn / .shopos-ui-select primitives so they render identically to the sites buttons (the 1.12.15 core styles were being overridden by the theme/Elementor); core styles remain as the no-theme fallback
 
 ## [1.12.15] — 2026-05-20
 
-- Shop Filters UI polish: filter panel buttons (mobile toggle, chips, clear, apply, sort) are now more minimal and rounded, pulling the themes --fm-* radius/weight/tracking design tokens with fallbacks
+- Shop Filters UI polish: filter panel buttons (mobile toggle, chips, clear, apply, sort) are now more minimal and rounded, pulling the themes --shopos-ui-* radius/weight/tracking design tokens with fallbacks
 
 ## [1.12.14] — 2026-05-20
 
@@ -483,7 +483,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [shopos-theme 1.11.23] — 2026-05-11
 
-- Typography: `--fm-font-body` / `--fm-font-display` now follow Elementor's global typography (`--e-global-typography-sk_type_12/2-font-family`, written by the Style Kits for Elementor addon) with the previous hardcoded stacks as fallback — the theme no longer overrides Style Kits' fonts. `--fm-font-mono` (code/preformatted) unchanged. Also bumped `SHOPOS_THEME_VERSION` 1.0.3 → 1.11.23 so it matches `style.css` and the theme's CSS asset URLs actually cache-bust on this change (the constant, not `style.css`'s `Version:`, is what `wp_enqueue_style` uses).
+- Typography: `--shopos-ui-font-body` / `--shopos-ui-font-display` now follow Elementor's global typography (`--e-global-typography-sk_type_12/2-font-family`, written by the Style Kits for Elementor addon) with the previous hardcoded stacks as fallback — the theme no longer overrides Style Kits' fonts. `--shopos-ui-font-mono` (code/preformatted) unchanged. Also bumped `SHOPOS_THEME_VERSION` 1.0.3 → 1.11.23 so it matches `style.css` and the theme's CSS asset URLs actually cache-bust on this change (the constant, not `style.css`'s `Version:`, is what `wp_enqueue_style` uses).
 
 ## [1.11.47] — 2026-05-11
 
@@ -534,7 +534,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.11.36] — 2026-05-11
 
-- Wave 4.3 — InfiniteScroll skeleton/fade tokens exposed as 5 settings (shimmer base/highlight color, shimmer duration ms, fade duration ms, fade transform px). Emitted at runtime as --fm-is-* CSS custom properties on :root via wp_add_inline_style. Defaults map byte-identically to the prior hardcoded CSS values; flag-OFF / no-settings-saved is back-compat. Additive — no flag.
+- Wave 4.3 — InfiniteScroll skeleton/fade tokens exposed as 5 settings (shimmer base/highlight color, shimmer duration ms, fade duration ms, fade transform px). Emitted at runtime as --shopos-ui-is-* CSS custom properties on :root via wp_add_inline_style. Defaults map byte-identically to the prior hardcoded CSS values; flag-OFF / no-settings-saved is back-compat. Additive — no flag.
 
 ## [1.11.35] — 2026-05-10
 

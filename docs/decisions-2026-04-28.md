@@ -33,7 +33,7 @@ New installs ship English defaults. Hebrew is selectable via a settings toggle o
 No Gutenberg block patterns, no block-based templates, no FSE.
 
 **Implications**:
-- Drop Roadmap #7 (theme.json → `--fm-*` unification, B7). The block editor's pickers don't matter.
+- Drop Roadmap #7 (theme.json → `--shopos-ui-*` unification, B7). The block editor's pickers don't matter.
 - Drop D5 (theme.json filters). Modules don't need to contribute presets to Gutenberg.
 - Design-token work (B1–B6, B8) stays — those serve Elementor controls and CSS, not Gutenberg.
 
@@ -183,7 +183,7 @@ Owner request: a new module that replaces the current WooCommerce/Elementor sing
 - **§7.3 Coupon notice is manual but validated.** The advertised code + percent are owner settings (no auto-derivation from the coupon object), but the notice renders only while a live WC coupon with that exact code exists and hasn't expired — owner chose "validate; if not, hide" over silent manual display.
 - **§7.4 Strings via Labels.** All storefront wording is per-string settings with blank-falls-back-to-English defaults (§4.2 / ShopFilters-QuickView-Search precedent); the owner types the Hebrew. The urgency badge's hardcoded font-family is stripped (inherits the page font) per owner request.
 - **§7.5 Legacy shortcode aliases.** `[discounted_price]` and `[stock_urgency]` (the snippet tags) are registered as aliases of the namespaced `[shopos_discounted_price]` / `[shopos_stock_urgency]` so existing Elementor placements keep working when the snippets are removed. These aliases are part of the public surface (Hard Rule #2 applies from 1.22.0 on).
-- **§7.6 Design authority = DESIGN.md.** The PDP is styled to the documented "Quiet Boutique" system (ink-first, hairlines, tonal ramp, RTL-first, Hebrew flat tracking) through the `--fm-*` tokens with literal fallbacks. One deliberate deviation from the snippets: the urgency badge uses the warning-amber semantic (DESIGN.md assigns low-stock to warning), not the snippets' red.
+- **§7.6 Design authority = DESIGN.md.** The PDP is styled to the documented "Quiet Boutique" system (ink-first, hairlines, tonal ramp, RTL-first, Hebrew flat tracking) through the `--shopos-ui-*` tokens with literal fallbacks. One deliberate deviation from the snippets: the urgency badge uses the warning-amber semantic (DESIGN.md assigns low-stock to warning), not the snippets' red.
 
 Scoped to Wave 9; changes nothing about prior decisions.
 

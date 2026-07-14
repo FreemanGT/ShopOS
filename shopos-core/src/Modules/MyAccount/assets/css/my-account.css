@@ -6,53 +6,53 @@
  * My Account template is untouched.
  *
  * Scoped under body.woocommerce-account so nothing leaks to the rest of the
- * store. Uses the theme's --fm-* tokens — no new web fonts.
+ * store. Uses the theme's --shopos-ui-* tokens — no new web fonts.
  */
 
 /* ═══════════════════════════════════════════════════════════════════
-   Local tokens (resolve to --fm-* with sensible fallbacks)
+   Local tokens (resolve to --shopos-ui-* with sensible fallbacks)
    ═══════════════════════════════════════════════════════════════════ */
 body.woocommerce-account {
-    --fma-bg:        var(--fm-color-paper, #ffffff);
-    --fma-bg-alt:    var(--fm-color-paper-soft, #f6f6f6);
-    --fma-bg-dim:    var(--fm-color-paper-dim, #eeeeee);
-    --fma-ink:       var(--fm-color-ink, #0a0a0a);
-    --fma-ink-2:     var(--fm-color-ink-soft, #2a2a2a);
-    --fma-ink-3:     var(--fm-color-ink-muted, #777777);
-    --fma-line:      var(--fm-color-hairline, #e6e6e6);
-    --fma-accent:    var(--fm-color-accent, #0a0a0a);
-    --fma-accent-tx: var(--fm-color-accent-text, #ffffff);
-    --fma-radius:    var(--fm-radius-md, 8px);
-    --fma-radius-sm: var(--fm-radius-sm, 4px);
-    --fma-radius-lg: var(--fm-radius-lg, 12px);
-    --fma-pill:      var(--fm-radius-pill, 999px);
-    --fma-font:      var(--fm-font-body, system-ui, sans-serif);
-    --fma-display:   var(--fm-font-display, var(--fma-font));
-    --fma-mono:      var(--fm-font-mono, ui-monospace, monospace);
-    --fma-text-xs:   var(--fm-text-xs, 12px);
-    --fma-text-sm:   var(--fm-text-sm, 14px);
-    --fma-text-md:   var(--fm-text-md, 16px);
-    --fma-text-lg:   var(--fm-text-lg, 20px);
-    --fma-text-xl:   var(--fm-text-xl, 28px);
-    --fma-text-xxl:  var(--fm-text-xxl, clamp(28px, 3.6vw, 44px));
-    --fma-weight-regular: var(--fm-weight-regular, 400);
-    --fma-weight-medium:  var(--fm-weight-medium, 500);
-    --fma-weight-semi:    var(--fm-weight-semi, 600);
-    --fma-leading-tight: var(--fm-leading-tight, 1.18);
-    --fma-leading-snug:  var(--fm-leading-snug, 1.35);
-    --fma-leading-base:  var(--fm-leading-base, 1.55);
-    --fma-tracking-tight: var(--fm-tracking-tight, -0.01em);
-    --fma-tracking-wide:  var(--fm-tracking-wide, 0.04em);
-    --fma-space-xs:  var(--fm-space-xs, 4px);
-    --fma-space-sm:  var(--fm-space-sm, 8px);
-    --fma-space-md:  var(--fm-space-md, 16px);
-    --fma-space-lg:  var(--fm-space-lg, 24px);
-    --fma-space-xl:  var(--fm-space-xl, 40px);
-    --fma-space-xxl: var(--fm-space-xxl, 64px);
-    --fma-card-gap:  var(--fm-card-gap, 24px);
-    --fma-input-height: var(--fm-input-height, 44px);
-    --fma-button-height: var(--fm-button-height, 48px);
-    --fma-button-height-sm: var(--fm-button-height-sm, 36px);
+    --fma-bg:        var(--shopos-ui-color-paper, #ffffff);
+    --fma-bg-alt:    var(--shopos-ui-color-paper-soft, #f6f6f6);
+    --fma-bg-dim:    var(--shopos-ui-color-paper-dim, #eeeeee);
+    --fma-ink:       var(--shopos-ui-color-ink, #0a0a0a);
+    --fma-ink-2:     var(--shopos-ui-color-ink-soft, #2a2a2a);
+    --fma-ink-3:     var(--shopos-ui-color-ink-muted, #777777);
+    --fma-line:      var(--shopos-ui-color-hairline, #e6e6e6);
+    --fma-accent:    var(--shopos-ui-color-accent, #0a0a0a);
+    --fma-accent-tx: var(--shopos-ui-color-accent-text, #ffffff);
+    --fma-radius:    var(--shopos-ui-radius-md, 8px);
+    --fma-radius-sm: var(--shopos-ui-radius-sm, 4px);
+    --fma-radius-lg: var(--shopos-ui-radius-lg, 12px);
+    --fma-pill:      var(--shopos-ui-radius-pill, 999px);
+    --fma-font:      var(--shopos-ui-font-body, system-ui, sans-serif);
+    --fma-display:   var(--shopos-ui-font-display, var(--fma-font));
+    --fma-mono:      var(--shopos-ui-font-mono, ui-monospace, monospace);
+    --fma-text-xs:   var(--shopos-ui-text-xs, 12px);
+    --fma-text-sm:   var(--shopos-ui-text-sm, 14px);
+    --fma-text-md:   var(--shopos-ui-text-md, 16px);
+    --fma-text-lg:   var(--shopos-ui-text-lg, 20px);
+    --fma-text-xl:   var(--shopos-ui-text-xl, 28px);
+    --fma-text-xxl:  var(--shopos-ui-text-xxl, clamp(28px, 3.6vw, 44px));
+    --fma-weight-regular: var(--shopos-ui-weight-regular, 400);
+    --fma-weight-medium:  var(--shopos-ui-weight-medium, 500);
+    --fma-weight-semi:    var(--shopos-ui-weight-semi, 600);
+    --fma-leading-tight: var(--shopos-ui-leading-tight, 1.18);
+    --fma-leading-snug:  var(--shopos-ui-leading-snug, 1.35);
+    --fma-leading-base:  var(--shopos-ui-leading-base, 1.55);
+    --fma-tracking-tight: var(--shopos-ui-tracking-tight, -0.01em);
+    --fma-tracking-wide:  var(--shopos-ui-tracking-wide, 0.04em);
+    --fma-space-xs:  var(--shopos-ui-space-xs, 4px);
+    --fma-space-sm:  var(--shopos-ui-space-sm, 8px);
+    --fma-space-md:  var(--shopos-ui-space-md, 16px);
+    --fma-space-lg:  var(--shopos-ui-space-lg, 24px);
+    --fma-space-xl:  var(--shopos-ui-space-xl, 40px);
+    --fma-space-xxl: var(--shopos-ui-space-xxl, 64px);
+    --fma-card-gap:  var(--shopos-ui-card-gap, 24px);
+    --fma-input-height: var(--shopos-ui-input-height, 44px);
+    --fma-button-height: var(--shopos-ui-button-height, 48px);
+    --fma-button-height-sm: var(--shopos-ui-button-height-sm, 36px);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -870,7 +870,7 @@ body.woocommerce-account .woocommerce-message {
     border-inline-start: 2px solid var(--fma-ink);
 }
 body.woocommerce-account .woocommerce-error {
-    border-inline-start: 2px solid var(--fm-color-danger, #b11226);
+    border-inline-start: 2px solid var(--shopos-ui-color-danger, #b11226);
 }
 
 /* ═══════════════════════════════════════════════════════════════════

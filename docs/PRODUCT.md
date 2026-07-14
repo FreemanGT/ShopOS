@@ -64,7 +64,7 @@ noise.
   a confident purchase. Reduce friction; remove anything that doesn't help the
   decision.
 - **Tokens are the single source of truth.** Modules consume
-  `--fm-*` design tokens; visual changes happen in the token layer so the whole
+  `--shopos-ui-*` design tokens; visual changes happen in the token layer so the whole
   suite stays coherent. Don't hardcode what a token already expresses.
 - **RTL and bilingual are first-class, not an afterthought.** Hebrew is the
   primary reading direction; every layout, label, and animation must be

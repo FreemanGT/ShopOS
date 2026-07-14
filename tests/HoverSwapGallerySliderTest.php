@@ -74,19 +74,19 @@ final class HoverSwapGallerySliderTest extends TestCase {
 	public function test_single_image_has_no_slider_chrome(): void {
 		$html = $this->slider()->slider_html( new FR_CardSlider_Test_Product( 10, array() ) );
 
-		$this->assertStringContainsString( 'fc-card-slider--single', $html );
+		$this->assertStringContainsString( 'shopos-card-slider--single', $html );
 		$this->assertStringContainsString( 'data-id="10"', $html );
-		$this->assertStringNotContainsString( 'data-fc-card-slider', $html );
-		$this->assertStringNotContainsString( 'data-fc-slider-prev', $html );
+		$this->assertStringNotContainsString( 'data-shopos-card-slider', $html );
+		$this->assertStringNotContainsString( 'data-shopos-slider-prev', $html );
 	}
 
 	public function test_multi_image_default_has_viewport_and_arrows(): void {
 		$html = $this->slider()->slider_html( new FR_CardSlider_Test_Product( 10, array( 11 ) ) );
 
-		$this->assertStringContainsString( 'data-fc-card-slider', $html );
-		$this->assertStringContainsString( 'fc-card-slider__viewport', $html );
-		$this->assertStringContainsString( 'data-fc-slider-prev', $html );
-		$this->assertStringContainsString( 'data-fc-slider-next', $html );
+		$this->assertStringContainsString( 'data-shopos-card-slider', $html );
+		$this->assertStringContainsString( 'shopos-card-slider__viewport', $html );
+		$this->assertStringContainsString( 'data-shopos-slider-prev', $html );
+		$this->assertStringContainsString( 'data-shopos-slider-next', $html );
 	}
 
 	public function test_arrows_can_be_turned_off(): void {
@@ -94,7 +94,7 @@ final class HoverSwapGallerySliderTest extends TestCase {
 
 		$html = $this->slider()->slider_html( new FR_CardSlider_Test_Product( 10, array( 11 ) ) );
 
-		$this->assertStringNotContainsString( 'data-fc-slider-prev', $html );
-		$this->assertStringContainsString( 'fc-card-slider__viewport', $html, 'slider (swipe) still renders' );
+		$this->assertStringNotContainsString( 'data-shopos-slider-prev', $html );
+		$this->assertStringContainsString( 'shopos-card-slider__viewport', $html, 'slider (swipe) still renders' );
 	}
 }
