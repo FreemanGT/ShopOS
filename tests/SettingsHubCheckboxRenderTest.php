@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Core\Settings_Hub;
+use ShopOS\Core\Core\Settings_Hub;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Freeman\Core\Core\Settings_Hub
+ * @covers \ShopOS\Core\Core\Settings_Hub
  */
 final class SettingsHubCheckboxRenderTest extends TestCase {
 
@@ -16,10 +16,10 @@ final class SettingsHubCheckboxRenderTest extends TestCase {
 	}
 
 	public function test_checkbox_render_treats_yes_default_as_checked(): void {
-		$hub    = new Settings_Hub( new \Freeman\Core\Core\Module_Registry() );
+		$hub    = new Settings_Hub( new \ShopOS\Core\Core\Module_Registry() );
 		$method = ( new ReflectionClass( $hub ) )->getMethod( 'render_field' );
 		$method->setAccessible( true );
-		$module = new \Freeman\Core\Modules\VariationSwatches\Module();
+		$module = new \ShopOS\Core\Modules\VariationSwatches\Module();
 
 		ob_start();
 		$method->invoke(

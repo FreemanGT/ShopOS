@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\RestockNotify\Privacy;
-use Freeman\Core\Modules\RestockNotify\Subscribers;
+use ShopOS\Core\Modules\RestockNotify\Privacy;
+use ShopOS\Core\Modules\RestockNotify\Subscribers;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,10 +13,10 @@ use PHPUnit\Framework\TestCase;
  * the no-match paths, and the empty-string guards on the two new
  * Subscribers methods.
  *
- * @covers \Freeman\Core\Modules\RestockNotify\Privacy
- * @covers \Freeman\Core\Modules\RestockNotify\Subscribers::find_by_email
- * @covers \Freeman\Core\Modules\RestockNotify\Subscribers::erase_pii_by_email
- * @covers \Freeman\Core\Modules\RestockNotify\Module::register_persistent_hooks
+ * @covers \ShopOS\Core\Modules\RestockNotify\Privacy
+ * @covers \ShopOS\Core\Modules\RestockNotify\Subscribers::find_by_email
+ * @covers \ShopOS\Core\Modules\RestockNotify\Subscribers::erase_pii_by_email
+ * @covers \ShopOS\Core\Modules\RestockNotify\Module::register_persistent_hooks
  */
 final class RestockNotifyPrivacyTest extends TestCase {
 
@@ -132,18 +132,18 @@ final class RestockNotifyPrivacyTest extends TestCase {
 		// filters so persisted subscriber PII stays covered when the module is
 		// disabled (the bug: registration used to live in boot(), which only
 		// runs when enabled and bails when WooCommerce is absent).
-		( new \Freeman\Core\Modules\RestockNotify\Module() )->register_persistent_hooks();
+		( new \ShopOS\Core\Modules\RestockNotify\Module() )->register_persistent_hooks();
 
 		$this->assertArrayHasKey( 'wp_privacy_personal_data_exporters', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'wp_privacy_personal_data_erasers', $GLOBALS['fr_hooks'] );
 	}
 
-	public function test_exporter_registration_adds_callback_under_freeman_key(): void {
+	public function test_exporter_registration_adds_callback_under_shopos_key(): void {
 		$out = ( new Privacy() )->register_exporter( array() );
 
-		$this->assertArrayHasKey( 'freeman-core-restock-notify', $out );
-		$this->assertArrayHasKey( 'callback', $out['freeman-core-restock-notify'] );
-		$this->assertArrayHasKey( 'exporter_friendly_name', $out['freeman-core-restock-notify'] );
+		$this->assertArrayHasKey( 'shopos-core-restock-notify', $out );
+		$this->assertArrayHasKey( 'callback', $out['shopos-core-restock-notify'] );
+		$this->assertArrayHasKey( 'exporter_friendly_name', $out['shopos-core-restock-notify'] );
 	}
 
 	public function test_exporter_returns_done_true_and_one_item_per_subscription(): void {

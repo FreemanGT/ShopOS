@@ -31,32 +31,32 @@ fi
 # --- version stampers -------------------------------------------------------
 
 bump_theme() {
-    local style="${ROOT}/freeman-theme/style.css"
+    local style="${ROOT}/shopos-theme/style.css"
     sed -i.bak -E "s/^([[:space:]]*Version:[[:space:]]*).*/\1${VERSION}/" "${style}" && rm "${style}.bak"
-    # FREEMAN_THEME_VERSION cache-busts every enqueued theme asset; it must
+    # SHOPOS_THEME_VERSION cache-busts every enqueued theme asset; it must
     # move in lockstep with the style.css header or stale CSS/JS keeps serving.
-    local funcs="${ROOT}/freeman-theme/functions.php"
-    sed -i.bak -E "s/(define\([[:space:]]*'FREEMAN_THEME_VERSION',[[:space:]]*')[^']+('[[:space:]]*\))/\1${VERSION}\2/" "${funcs}" && rm "${funcs}.bak"
-    echo "freeman-theme: style.css Version + FREEMAN_THEME_VERSION → ${VERSION}"
+    local funcs="${ROOT}/shopos-theme/functions.php"
+    sed -i.bak -E "s/(define\([[:space:]]*'SHOPOS_THEME_VERSION',[[:space:]]*')[^']+('[[:space:]]*\))/\1${VERSION}\2/" "${funcs}" && rm "${funcs}.bak"
+    echo "shopos-theme: style.css Version + SHOPOS_THEME_VERSION → ${VERSION}"
 }
 
 bump_core() {
-    local main="${ROOT}/freeman-core/freeman-core.php"
+    local main="${ROOT}/shopos-core/shopos-core.php"
     # 1. Plugin header.
     sed -i.bak -E "s/^([[:space:]]*\*[[:space:]]*Version:[[:space:]]*).*/\1${VERSION}/" "${main}" && rm "${main}.bak"
-    # 2. FREEMAN_CORE_VERSION constant.
-    sed -i.bak -E "s/(define\([[:space:]]*'FREEMAN_CORE_VERSION'[[:space:]]*,[[:space:]]*')[^']+('[[:space:]]*\))/\1${VERSION}\2/" "${main}" && rm "${main}.bak"
+    # 2. SHOPOS_CORE_VERSION constant.
+    sed -i.bak -E "s/(define\([[:space:]]*'SHOPOS_CORE_VERSION'[[:space:]]*,[[:space:]]*')[^']+('[[:space:]]*\))/\1${VERSION}\2/" "${main}" && rm "${main}.bak"
     # 3. Plugin::VERSION class const.
-    local plugin_cls="${ROOT}/freeman-core/src/Core/Plugin.php"
+    local plugin_cls="${ROOT}/shopos-core/src/Core/Plugin.php"
     if [[ -f "${plugin_cls}" ]]; then
         sed -i.bak -E "s/(const VERSION[[:space:]]*=[[:space:]]*')[^']+(';)/\1${VERSION}\2/" "${plugin_cls}" && rm "${plugin_cls}.bak"
     fi
     # 4. readme.txt Stable tag.
-    local readme="${ROOT}/freeman-core/readme.txt"
+    local readme="${ROOT}/shopos-core/readme.txt"
     if [[ -f "${readme}" ]]; then
         sed -i.bak -E "s/^(Stable tag:[[:space:]]*).*/\1${VERSION}/" "${readme}" && rm "${readme}.bak"
     fi
-    echo "freeman-core: header + FREEMAN_CORE_VERSION + Plugin::VERSION + Stable tag → ${VERSION}"
+    echo "shopos-core: header + SHOPOS_CORE_VERSION + Plugin::VERSION + Stable tag → ${VERSION}"
 }
 
 # --- changelog prepender ----------------------------------------------------
@@ -105,19 +105,19 @@ prepend_changelog() {
 case "${SCOPE}" in
     theme)
         bump_theme
-        prepend_changelog "${ROOT}/freeman-theme/CHANGELOG.md" "theme"
+        prepend_changelog "${ROOT}/shopos-theme/CHANGELOG.md" "theme"
         prepend_changelog "${ROOT}/CHANGELOG.md"               "theme ${VERSION}"
         ;;
     core)
         bump_core
-        prepend_changelog "${ROOT}/freeman-core/CHANGELOG.md"  "core"
+        prepend_changelog "${ROOT}/shopos-core/CHANGELOG.md"  "core"
         prepend_changelog "${ROOT}/CHANGELOG.md"               "core ${VERSION}"
         ;;
     both)
         bump_theme
         bump_core
-        prepend_changelog "${ROOT}/freeman-theme/CHANGELOG.md" "theme"
-        prepend_changelog "${ROOT}/freeman-core/CHANGELOG.md"  "core"
+        prepend_changelog "${ROOT}/shopos-theme/CHANGELOG.md" "theme"
+        prepend_changelog "${ROOT}/shopos-core/CHANGELOG.md"  "core"
         prepend_changelog "${ROOT}/CHANGELOG.md"               "theme+core ${VERSION}"
         ;;
     *)

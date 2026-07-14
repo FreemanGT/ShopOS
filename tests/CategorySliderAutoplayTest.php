@@ -37,7 +37,7 @@ if ( ! function_exists( 'esc_attr_e' ) ) {
 	function esc_attr_e( $text, $domain = 'default' ) { echo htmlspecialchars( (string) $text, ENT_QUOTES ); }
 }
 
-use Freeman\Core\Modules\CategorySlider\Widget;
+use ShopOS\Core\Modules\CategorySlider\Widget;
 
 final class CategorySliderAutoplayTest extends TestCase {
 

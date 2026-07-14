@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ProductSlider\Module;
+use ShopOS\Core\Modules\ProductSlider\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  * CSS in the footer → the card grid painted as unstyled WooCommerce defaults
  * before snapping into the slider design on every page load.
  *
- * @covers \Freeman\Core\Modules\ProductSlider\Module
+ * @covers \ShopOS\Core\Modules\ProductSlider\Module
  */
 final class ProductSliderModuleTest extends TestCase {
 

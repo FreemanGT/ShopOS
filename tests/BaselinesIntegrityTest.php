@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Wave 0.4: regenerates the static baselines into a temp dir and asserts
  * each one matches the committed file byte-for-byte. A failing assertion
- * means the public surface of freeman-core / freeman-digital drifted
+ * means the public surface of shopos-core / shopos-digital drifted
  * without the baseline file being updated in the same PR.
  *
  * The live `baseline-options.txt` (captured via `wp option list`) is
@@ -38,7 +38,7 @@ final class BaselinesIntegrityTest extends TestCase {
 			$committed[ $name ] = file_get_contents( $path );
 		}
 
-		$tmp = sys_get_temp_dir() . '/freeman-baselines-' . bin2hex( random_bytes( 4 ) );
+		$tmp = sys_get_temp_dir() . '/shopos-baselines-' . bin2hex( random_bytes( 4 ) );
 		mkdir( $tmp, 0700, true );
 
 		try {

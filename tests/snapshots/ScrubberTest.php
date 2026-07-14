@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/Scrubber.php';
 
-use Freeman\Tests\Snapshots\Scrubber;
+use ShopOS\Tests\Snapshots\Scrubber;
 use PHPUnit\Framework\TestCase;
 
 final class ScrubberTest extends TestCase {

@@ -7,32 +7,32 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Asserts the flag-OFF / flag-ON contract for the JSON variations payload
- * built by Etucart_VS_Archive::build_variation_entry() — Wave 2.2 / 4f.
+ * built by ShopOS_VS_Archive::build_variation_entry() — Wave 2.2 / 4f.
  *
  * Flag OFF: entry shape is byte-identical to pre-1.11.23 (5 keys: id, attrs,
  * in_stock, is_purchasable, price_html). Flag ON: entry also carries
  * image_src / image_srcset / image_sizes when the variation has an `image`
- * subarray. The `freeman_core/variation_swatches/card_image_payload` filter
+ * subarray. The `shopos_core/variation_swatches/card_image_payload` filter
  * runs on the image data only.
  *
- * @covers \Etucart_VS_Archive::build_variation_entry
+ * @covers \ShopOS_VS_Archive::build_variation_entry
  */
 final class VariationSwatchesCardImagePayloadSnapshotTest extends TestCase {
 
-	private const ARCHIVE_FILE = __DIR__ . '/../freeman-core/src/Modules/VariationSwatches/legacy/includes/class-archive.php';
+	private const ARCHIVE_FILE = __DIR__ . '/../shopos-core/src/Modules/VariationSwatches/legacy/includes/class-archive.php';
 
 	public static function setUpBeforeClass(): void {
 		// Define the legacy constants the file expects, then load it. Other
 		// legacy files (class-plugin etc.) are not loaded — build_variation_entry
 		// is self-contained and only depends on apply_filters().
-		if ( ! defined( 'ETUCART_VS_VERSION' ) ) {
-			define( 'ETUCART_VS_VERSION', '1.11.23' );
+		if ( ! defined( 'SHOPOS_VS_VERSION' ) ) {
+			define( 'SHOPOS_VS_VERSION', '1.11.23' );
 		}
-		if ( ! defined( 'ETUCART_VS_DIR' ) ) {
-			define( 'ETUCART_VS_DIR', dirname( self::ARCHIVE_FILE ) . '/' );
+		if ( ! defined( 'SHOPOS_VS_DIR' ) ) {
+			define( 'SHOPOS_VS_DIR', dirname( self::ARCHIVE_FILE ) . '/' );
 		}
-		if ( ! defined( 'ETUCART_VS_URL' ) ) {
-			define( 'ETUCART_VS_URL', 'https://example.test/' );
+		if ( ! defined( 'SHOPOS_VS_URL' ) ) {
+			define( 'SHOPOS_VS_URL', 'https://example.test/' );
 		}
 		require_once self::ARCHIVE_FILE;
 	}
@@ -66,7 +66,7 @@ final class VariationSwatchesCardImagePayloadSnapshotTest extends TestCase {
 	}
 
 	private function build( array $v, bool $with_image ): array {
-		return \Etucart_VS_Archive::build_variation_entry( $v, new \WC_Product(), $with_image );
+		return \ShopOS_VS_Archive::build_variation_entry( $v, new \WC_Product(), $with_image );
 	}
 
 	public function test_flag_off_entry_has_only_five_keys(): void {
@@ -114,7 +114,7 @@ final class VariationSwatchesCardImagePayloadSnapshotTest extends TestCase {
 	public function test_card_image_payload_filter_receives_image_array_and_can_mutate(): void {
 		$captured = array();
 		add_filter(
-			'freeman_core/variation_swatches/card_image_payload',
+			'shopos_core/variation_swatches/card_image_payload',
 			static function ( $payload, $variation, $product ) use ( &$captured ) {
 				$captured                = array(
 					'payload'      => $payload,
@@ -138,7 +138,7 @@ final class VariationSwatchesCardImagePayloadSnapshotTest extends TestCase {
 	public function test_card_image_payload_filter_does_not_fire_when_flag_off(): void {
 		$fired = false;
 		add_filter(
-			'freeman_core/variation_swatches/card_image_payload',
+			'shopos_core/variation_swatches/card_image_payload',
 			static function ( $payload ) use ( &$fired ) {
 				$fired = true;
 				return $payload;

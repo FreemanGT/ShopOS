@@ -5,9 +5,9 @@ require_once __DIR__ . '/SnapshotTestCase.php';
 require_once __DIR__ . '/Scrubber.php';
 require_once __DIR__ . '/__fixtures__/wc_product_stub.php';
 
-use Freeman\Core\Modules\ProductFeed\Generator;
-use Freeman\Tests\Snapshots\Scrubber;
-use Freeman\Tests\Snapshots\SnapshotTestCase;
+use ShopOS\Core\Modules\ProductFeed\Generator;
+use ShopOS\Tests\Snapshots\Scrubber;
+use ShopOS\Tests\Snapshots\SnapshotTestCase;
 use PHPUnit\Framework\TestCase;
 
 // WP/WC stubs reached only by ProductFeed snapshot tests. Each is guarded so
@@ -72,7 +72,7 @@ final class XmlSnapshotTest extends TestCase {
 
 		// Generator::write_feed() is private; invoke via Reflection. Its only
 		// observable side effect under our stubs is the gzipped tmp file.
-		$tmp = sys_get_temp_dir() . '/freeman_xml_snapshot_' . uniqid() . '.xml.gz';
+		$tmp = sys_get_temp_dir() . '/shopos_xml_snapshot_' . uniqid() . '.xml.gz';
 		try {
 			$ref = new \ReflectionClass( $gen );
 			$m   = $ref->getMethod( 'write_feed' );

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Core\Detection_Result;
+use ShopOS\Core\Core\Detection_Result;
 use PHPUnit\Framework\TestCase;
 
 final class DetectionResultTest extends TestCase {

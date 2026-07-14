@@ -1,0 +1,56 @@
+<?php
+/**
+ * Shop Filters — category-tree facet template.
+ *
+ * Renders the pruned, count-rolled-up product_cat hierarchy (req #3) as nested
+ * lists of links. Per the locked design decision, a category is NAVIGATION: each
+ * node links to that category's archive (get_term_link), not a filter param on
+ * the current page. Expects in scope:
+ *   - array $category_tree : nested nodes from Category_Tree::build()
+ *                            (each: term_id, name, slug, count, children[]).
+ *
+ * @package ShopOSCore
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+use ShopOS\Core\Modules\ShopFilters\Labels;
+
+/** @var array $category_tree */
+if ( empty( $category_tree ) ) {
+	return;
+}
+
+// Self-referencing closure: render a level, recursing into children.
+$sf_render_cats = static function ( array $nodes ) use ( &$sf_render_cats ) {
+	echo '<ul class="shopos-sf__cat-list">';
+	foreach ( $nodes as $sf_node ) {
+		$sf_link = get_term_link( (int) $sf_node['term_id'], 'product_cat' );
+		$sf_href = is_wp_error( $sf_link ) ? '' : (string) $sf_link;
+		echo '<li class="shopos-sf__cat-item">';
+		if ( '' !== $sf_href ) {
+			printf(
+				'<a class="shopos-sf__cat-link" href="%s">%s <span class="shopos-sf__cat-count">(%d)</span></a>',
+				esc_url( $sf_href ),
+				esc_html( (string) $sf_node['name'] ),
+				(int) $sf_node['count']
+			);
+		} else {
+			printf(
+				'<span class="shopos-sf__cat-link">%s <span class="shopos-sf__cat-count">(%d)</span></span>',
+				esc_html( (string) $sf_node['name'] ),
+				(int) $sf_node['count']
+			);
+		}
+		if ( ! empty( $sf_node['children'] ) ) {
+			$sf_render_cats( $sf_node['children'] );
+		}
+		echo '</li>';
+	}
+	echo '</ul>';
+};
+?>
+<nav class="shopos-sf__categories" aria-label="<?php echo esc_attr( Labels::get( 'categories_aria' ) ); ?>">
+	<h3 class="shopos-sf__categories-title"><?php echo esc_html( Labels::get( 'categories' ) ); ?></h3>
+	<?php $sf_render_cats( $category_tree ); ?>
+</nav>

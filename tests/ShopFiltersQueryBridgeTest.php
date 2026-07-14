@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Query;
+use ShopOS\Core\Modules\ShopFilters\Query;
 use PHPUnit\Framework\TestCase;
 
 /**
  * The query bridge: pure tax_query construction (AND across facets, OR within)
  * and the flag-gated hook wiring.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Query
+ * @covers \ShopOS\Core\Modules\ShopFilters\Query
  */
 final class ShopFiltersQueryBridgeTest extends TestCase {
 
@@ -59,7 +59,7 @@ final class ShopFiltersQueryBridgeTest extends TestCase {
 
 		$this->assertNotFalse( has_filter( 'woocommerce_product_query_tax_query' ) );
 		$this->assertNotFalse( has_action( 'pre_get_posts' ) );
-		$this->assertNotFalse( has_filter( 'freeman_core/product_slider/query_args' ) );
+		$this->assertNotFalse( has_filter( 'shopos_core/product_slider/query_args' ) );
 	}
 
 	/**

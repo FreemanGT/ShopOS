@@ -1,0 +1,268 @@
+/**
+ * ShopOS Shop Filters — front-end controller (reload transport + mobile drawer).
+ *
+ * On desktop, a debounced facet change navigates to the filtered URL (existing
+ * non-filter params preserved, filter_<taxonomy>=slug,slug rewritten, paged
+ * reset). On mobile the same panel becomes an off-canvas drawer: ticking defers
+ * — the selection is collected and only "Apply" navigates once, the standard
+ * drawer pattern that avoids a reload per tick. The server-side query bridge
+ * (Query.php) applies the selection to the main product query, so the reloaded
+ * grid is genuinely filtered and the selection persists in the URL. Active-filter
+ * chips are server-rendered; category-tree links are plain navigation.
+ *
+ * Vanilla, no jQuery. Infinite Scroll is untouched and works on the reloaded page.
+ */
+(function () {
+	'use strict';
+
+	var FILTER_PREFIX = 'filter_';
+	var DEBOUNCE_MS = 400;
+	var MOBILE_QUERY = '(max-width: 768px)';
+
+	var panel = document.querySelector('[data-shopos-sf]');
+	if (!panel) { return; }
+
+	var chipsEl = panel.querySelector('[data-shopos-sf-chips]');
+	var sortSelect = panel.querySelector('[data-shopos-sf-sort]');
+	var drawer = panel.querySelector('[data-shopos-sf-panel]');
+	var toggle = panel.querySelector('[data-shopos-sf-toggle]');
+	var overlay = panel.querySelector('[data-shopos-sf-overlay]');
+	var closeBtn = panel.querySelector('[data-shopos-sf-close]');
+	var applyBtn = panel.querySelector('[data-shopos-sf-apply]');
+	var clearMobileBtn = panel.querySelector('[data-shopos-sf-clear-mobile]');
+	var mq = window.matchMedia ? window.matchMedia(MOBILE_QUERY) : { matches: false };
+	var REDUCED = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
+
+	function isMobile() { return !!mq.matches; }
+
+	function debounce(fn, ms) {
+		var t;
+		return function () {
+			var args = arguments, self = this;
+			clearTimeout(t);
+			t = setTimeout(function () { fn.apply(self, args); }, ms);
+		};
+	}
+
+	/** Current selection as { taxonomy: [slug, ...] }. Panel-wide so the price
+	 * facet (rendered above the attribute form) is included alongside attributes. */
+	function readSelection() {
+		var selection = {};
+		var boxes = panel.querySelectorAll('.shopos-sf__checkbox');
+		for (var i = 0; i < boxes.length; i++) {
+			var box = boxes[i];
+			if (!box.checked) { continue; }
+			var tax = box.getAttribute('data-shopos-sf-taxonomy');
+			if (!tax) { continue; }
+			(selection[tax] = selection[tax] || []).push(box.value);
+		}
+		return selection;
+	}
+
+	/** Filtered URL: keep non-filter params, rewrite filter_*, reset to page 1. */
+	function buildUrl(selection) {
+		var url = new URL(location.href);
+		var stale = [];
+		url.searchParams.forEach(function (value, key) {
+			if (key.indexOf(FILTER_PREFIX) === 0 || key === 'paged') { stale.push(key); }
+		});
+		stale.forEach(function (key) { url.searchParams.delete(key); });
+
+		// Reset pretty pagination (/page/N/) too — filtering can shrink the
+		// result set below the current page, which would 404.
+		url.pathname = url.pathname.replace(/\/page\/\d+\/?$/, '/');
+
+		Object.keys(selection).forEach(function (tax) {
+			var slugs = selection[tax];
+			if (slugs && slugs.length) { url.searchParams.set(FILTER_PREFIX + tax, slugs.join(',')); }
+		});
+
+		// On-sale / in-stock flags use top-level params (onsale=1, in_stock=1),
+		// not the filter_ prefix — Url_State parses them as flags, not taxonomies.
+		['onsale', 'in_stock'].forEach(function (p) { url.searchParams.delete(p); });
+		panel.querySelectorAll('.shopos-sf__flag:checked').forEach(function (box) {
+			var p = box.getAttribute('data-shopos-sf-flag');
+			if (p) { url.searchParams.set(p, '1'); }
+		});
+
+		// Sort: carry the dropdown's current value (WooCommerce honours ?orderby).
+		if (sortSelect) {
+			var ob = sortSelect.value;
+			if (ob) { url.searchParams.set('orderby', ob); } else { url.searchParams.delete('orderby'); }
+		}
+		return url.href;
+	}
+
+	function navigate() {
+		panel.classList.add('shopos-sf--loading');
+		// Soft dependency on the PageTransitions module: full-page loading
+		// overlay while the filtered reload is in flight (no-op when that
+		// module is disabled).
+		if (window.ShopOSPageTransitions) { window.ShopOSPageTransitions.show(); }
+		location.assign(buildUrl(readSelection()));
+	}
+
+	/* Mobile Apply/Clear: let the drawer's slide-down actually finish before
+	 * the reload, so the close motion isn't cut off mid-frame (the brief
+	 * "buggy" half-state). Deferring also means the --loading dim only lands
+	 * once the drawer is gone. Desktop + reduced-motion navigate immediately
+	 * (reduced-motion has no transition, so transitionend never fires). */
+	function closeThenNavigate() {
+		if (!isMobile() || REDUCED || !drawer) { navigate(); return; }
+		closeDrawer();
+		var done = false;
+		function go() {
+			if (done) { return; }
+			done = true;
+			drawer.removeEventListener('transitionend', onEnd);
+			navigate();
+		}
+		function onEnd(e) {
+			if (e.target === drawer && e.propertyName === 'transform') { go(); }
+		}
+		drawer.addEventListener('transitionend', onEnd);
+		setTimeout(go, 350);
+	}
+
+	var debouncedNavigate = debounce(navigate, DEBOUNCE_MS);
+
+	/* ---- mobile drawer: open / close + focus trap ---- */
+
+	var lastFocus = null;
+
+	function focusableIn(el) {
+		var nodes = el.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])');
+		return Array.prototype.slice.call(nodes).filter(function (n) { return n.offsetParent !== null; });
+	}
+
+	function openDrawer() {
+		if (!drawer) { return; }
+		lastFocus = document.activeElement;
+		panel.classList.add('shopos-sf--open');
+		if (toggle) { toggle.setAttribute('aria-expanded', 'true'); }
+		document.addEventListener('keydown', onKeydown);
+		var f = focusableIn(drawer);
+		if (f.length) { f[0].focus(); }
+	}
+
+	function closeDrawer() {
+		panel.classList.remove('shopos-sf--open');
+		if (toggle) { toggle.setAttribute('aria-expanded', 'false'); }
+		document.removeEventListener('keydown', onKeydown);
+		if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
+	}
+
+	function onKeydown(e) {
+		if (e.key === 'Escape' || e.key === 'Esc') { closeDrawer(); return; }
+		if (e.key !== 'Tab' || !drawer) { return; }
+		var f = focusableIn(drawer);
+		if (!f.length) { return; }
+		var first = f[0], last = f[f.length - 1];
+		if (e.shiftKey && document.activeElement === first) {
+			e.preventDefault();
+			last.focus();
+		} else if (!e.shiftKey && document.activeElement === last) {
+			e.preventDefault();
+			first.focus();
+		}
+	}
+
+	if (toggle) { toggle.addEventListener('click', openDrawer); }
+	if (closeBtn) { closeBtn.addEventListener('click', closeDrawer); }
+	if (overlay) { overlay.addEventListener('click', closeDrawer); }
+	if (applyBtn) {
+		applyBtn.addEventListener('click', function () {
+			closeThenNavigate();
+		});
+	}
+	if (clearMobileBtn) {
+		clearMobileBtn.addEventListener('click', function () {
+			panel.querySelectorAll('.shopos-sf__checkbox:checked').forEach(function (b) { b.checked = false; });
+			closeThenNavigate();
+		});
+	}
+
+	/* ---- facet / sort change: desktop auto-navigates; mobile defers to Apply ---- */
+	panel.addEventListener('change', function (e) {
+		var t = e.target;
+		if (!t || !t.classList) { return; }
+		var isBox = t.classList.contains('shopos-sf__checkbox');
+		var isSort = t.hasAttribute && t.hasAttribute('data-shopos-sf-sort');
+		if (!isBox && !isSort) { return; }
+		if (isMobile()) { return; }
+		debouncedNavigate();
+	});
+
+	/* ---- chip remove + clear-all → uncheck then navigate immediately ---- */
+	if (chipsEl) {
+		chipsEl.addEventListener('click', function (e) {
+			var clear = e.target.closest && e.target.closest('[data-shopos-sf-clear]');
+			if (clear) {
+				panel.querySelectorAll('.shopos-sf__checkbox:checked').forEach(function (b) { b.checked = false; });
+				navigate();
+				return;
+			}
+			var chip = e.target.closest && e.target.closest('.shopos-sf__chip');
+			if (chip) {
+				e.preventDefault();
+				var tax = chip.getAttribute('data-shopos-sf-taxonomy');
+				var slug = chip.getAttribute('data-shopos-sf-slug');
+				var box = panel.querySelector('.shopos-sf__checkbox[data-shopos-sf-taxonomy="' + tax + '"][value="' + slug + '"]');
+				if (box) { box.checked = false; }
+				navigate();
+			}
+		});
+	}
+
+	/* ---- refined style (opt-in): show-more toggle + collapsible facets ---- */
+	if (panel.classList.contains('shopos-sf--refined')) {
+		var SHOW_MORE_CAP = 8;
+
+		// The long-list cap is CSS (:nth-child(n+9)), so the full list never
+		// flashes before this runs. Here we only add a "+N" toggle that flips
+		// `is-sf-expanded` on the list to reveal the rest — no per-term DOM churn.
+		panel.querySelectorAll('.shopos-sf__terms').forEach(function (list) {
+			var count = 0;
+			for (var i = 0; i < list.children.length; i++) {
+				if (list.children[i].classList && list.children[i].classList.contains('shopos-sf__term')) { count++; }
+			}
+			if (count <= SHOW_MORE_CAP) { return; }
+
+			var extra = count - SHOW_MORE_CAP;
+			var more = document.createElement('button');
+			more.type = 'button';
+			more.className = 'shopos-sf__more';
+			more.setAttribute('aria-expanded', 'false');
+			more.textContent = '+' + extra;
+			more.addEventListener('click', function () {
+				var open = list.classList.toggle('is-sf-expanded');
+				more.setAttribute('aria-expanded', String(open));
+				more.textContent = open ? '−' : '+' + extra;
+			});
+			list.parentNode.insertBefore(more, list.nextSibling);
+		});
+
+		// Each facet / categories title becomes a collapse toggle. The chevron is
+		// a CSS ::after, so nothing is injected (no node popping in on reload).
+		panel.querySelectorAll('.shopos-sf__facet-title, .shopos-sf__categories-title').forEach(function (title) {
+			var box = title.closest('.shopos-sf__facet, .shopos-sf__categories');
+			if (!box) { return; }
+
+			title.setAttribute('role', 'button');
+			title.setAttribute('tabindex', '0');
+			title.setAttribute('aria-expanded', 'true');
+
+			function toggleFacet() {
+				var collapsed = box.classList.toggle('is-sf-collapsed');
+				title.setAttribute('aria-expanded', String(!collapsed));
+			}
+			title.addEventListener('click', toggleFacet);
+			title.addEventListener('keydown', function (e) {
+				if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+					e.preventDefault();
+					toggleFacet();
+				}
+			});
+		});
+	}
+})();

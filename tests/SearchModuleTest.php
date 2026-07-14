@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\Search\Module;
+use ShopOS\Core\Modules\Search\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
  * graduated in 1.21.0 (the three `search`/* flags removed), so booting the
  * module wires every surface — indexer, dropdown, results page.
  *
- * @covers \Freeman\Core\Modules\Search\Module
+ * @covers \ShopOS\Core\Modules\Search\Module
  */
 final class SearchModuleTest extends TestCase {
 
@@ -27,7 +27,7 @@ final class SearchModuleTest extends TestCase {
 		$this->assertNotEmpty( $module->label() );
 		$this->assertNotEmpty( $module->description() );
 		$this->assertSame( array( 'woocommerce' => true ), $module->dependencies() );
-		$this->assertSame( 'freeman_core_search_dirty_queue', $module->option_name( 'dirty_queue' ) );
+		$this->assertSame( 'shopos_core_search_dirty_queue', $module->option_name( 'dirty_queue' ) );
 	}
 
 	public function test_disabled_by_default(): void {
@@ -44,14 +44,14 @@ final class SearchModuleTest extends TestCase {
 		$this->assertArrayHasKey( 'cron_schedules', $GLOBALS['fr_hooks'] );
 		// Live dropdown + public endpoint.
 		$this->assertArrayHasKey( 'wp_enqueue_scripts', $GLOBALS['fr_hooks'] );
-		$this->assertArrayHasKey( 'wp_ajax_freeman_core_search_query', $GLOBALS['fr_hooks'] );
-		$this->assertArrayHasKey( 'wp_ajax_nopriv_freeman_core_search_query', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'wp_ajax_shopos_core_search_query', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'wp_ajax_nopriv_shopos_core_search_query', $GLOBALS['fr_hooks'] );
 		// Engine-driven results page + Shop Filters facet feed (pre-filter
 		// short-circuits the native search WP_Query; post-filter kept for back-compat).
 		$this->assertArrayHasKey( 'pre_get_posts', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'posts_search', $GLOBALS['fr_hooks'] );
-		$this->assertArrayHasKey( 'freeman_core/shop_filters/pre_search_product_ids', $GLOBALS['fr_hooks'] );
-		$this->assertArrayHasKey( 'freeman_core/shop_filters/search_product_ids', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'shopos_core/shop_filters/pre_search_product_ids', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'shopos_core/shop_filters/search_product_ids', $GLOBALS['fr_hooks'] );
 	}
 
 	public function test_settings_schema_has_dropdown_fields(): void {

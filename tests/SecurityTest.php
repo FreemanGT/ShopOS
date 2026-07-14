@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Core\Security;
+use ShopOS\Core\Core\Security;
 use PHPUnit\Framework\TestCase;
 
 final class SecurityTest extends TestCase {
@@ -44,7 +44,7 @@ final class SecurityTest extends TestCase {
 	public function test_rate_limit_defaults_filter_overrides_max(): void {
 		$_SERVER['REMOTE_ADDR'] = '203.0.113.9';
 		add_filter(
-			'freeman_core/rate_limit_defaults',
+			'shopos_core/rate_limit_defaults',
 			static function ( $defaults ) {
 				$defaults['max'] = 1;
 				return $defaults;
@@ -56,7 +56,7 @@ final class SecurityTest extends TestCase {
 			$this->assertTrue( Security::rate_limit( 'filtered_bucket', 5, 60 ) );
 			$this->assertFalse( Security::rate_limit( 'filtered_bucket', 5, 60 ) );
 		} finally {
-			unset( $GLOBALS['fr_hooks']['freeman_core/rate_limit_defaults'] );
+			unset( $GLOBALS['fr_hooks']['shopos_core/rate_limit_defaults'] );
 		}
 	}
 
@@ -64,7 +64,7 @@ final class SecurityTest extends TestCase {
 		$_SERVER['REMOTE_ADDR'] = '203.0.113.9';
 		$seen = null;
 		add_filter(
-			'freeman_core/rate_limit_defaults',
+			'shopos_core/rate_limit_defaults',
 			static function ( $defaults, $bucket ) use ( &$seen ) {
 				$seen = $bucket;
 				return $defaults;
@@ -76,7 +76,7 @@ final class SecurityTest extends TestCase {
 			Security::rate_limit( 'my_bucket', 5, 60 );
 			$this->assertSame( 'my_bucket', $seen );
 		} finally {
-			unset( $GLOBALS['fr_hooks']['freeman_core/rate_limit_defaults'] );
+			unset( $GLOBALS['fr_hooks']['shopos_core/rate_limit_defaults'] );
 		}
 	}
 

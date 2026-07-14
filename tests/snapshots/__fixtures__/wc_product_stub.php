@@ -32,7 +32,7 @@
  * starts failing with a "call to undefined method" fatal, add the
  * method here AND extend the comment block above.
  *
- * @package FreemanCore
+ * @package ShopOSCore
  */
 
 // phpcs:disable Generic.Classes.DuplicateClassName.Found

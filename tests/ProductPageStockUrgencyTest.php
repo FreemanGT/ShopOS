@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ProductPage\Module;
-use Freeman\Core\Modules\ProductPage\Stock_Urgency;
+use ShopOS\Core\Modules\ProductPage\Module;
+use ShopOS\Core\Modules\ProductPage\Stock_Urgency;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  * badge shell markup, and the urgency_max setting clamp. The variation
  * objects read is integration (needs WC) — live-QA.
  *
- * @covers \Freeman\Core\Modules\ProductPage\Stock_Urgency
+ * @covers \ShopOS\Core\Modules\ProductPage\Stock_Urgency
  */
 final class ProductPageStockUrgencyTest extends TestCase {
 
@@ -90,10 +90,10 @@ final class ProductPageStockUrgencyTest extends TestCase {
 
 		$this->assertSame( 5, $urgency->max_units(), 'unset option falls back to the schema default' );
 
-		$GLOBALS['fr_opts']['freeman_core_product_page_urgency_max'] = '8';
+		$GLOBALS['fr_opts']['shopos_core_product_page_urgency_max'] = '8';
 		$this->assertSame( 8, $urgency->max_units() );
 
-		$GLOBALS['fr_opts']['freeman_core_product_page_urgency_max'] = '0';
+		$GLOBALS['fr_opts']['shopos_core_product_page_urgency_max'] = '0';
 		$this->assertSame( 5, $urgency->max_units(), 'a non-positive setting falls back to the snippet default' );
 	}
 }

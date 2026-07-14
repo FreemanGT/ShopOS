@@ -1,4 +1,4 @@
-# Freeman Changelog
+# ShopOS Changelog
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
@@ -8,7 +8,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.25.0] — 2026-07-14
 
-- New Page Transitions module (default off): a loading overlay with spinner on shop-filter, search and pagination interactions plus a cross-document fade between pages in supporting browsers; enable it under Freeman - Modules
+- New Page Transitions module (default off): a loading overlay with spinner on shop-filter, search and pagination interactions plus a cross-document fade between pages in supporting browsers; enable it under ShopOS - Modules
 
 ## [1.24.12] — 2026-07-14
 
@@ -20,7 +20,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.24.10] — 2026-07-14
 
-- fix(freeman-core): Search + Shop Filters — filtered search rendered a blank grid (slice-before-intersect); widget now slices the composed id set after all constrainers, and search ordering got a deterministic tiebreak
+- fix(shopos-core): Search + Shop Filters — filtered search rendered a blank grid (slice-before-intersect); widget now slices the composed id set after all constrainers, and search ordering got a deterministic tiebreak
 
 ## [1.24.9] — 2026-07-09
 
@@ -64,8 +64,8 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.23.2] — 2026-07-06
 
-- freeman-core: VariationSwatches — new opt-in "Shop: show name & price only" setting (default off). When on, shop / archive cards hide the whole buy UI (no swatch picker, add-to-cart, or "Choose options" link), leaving just the product name and price; customers click through to the product page to buy. Applies to variable and simple products.
-- freeman-core: VariationSwatches — removed the retired WooCommerce → Settings → Products → "Shop swatches" section (which only showed a "settings have moved" notice). Settings live under Freeman → Variation Swatches; no data affected.
+- shopos-core: VariationSwatches — new opt-in "Shop: show name & price only" setting (default off). When on, shop / archive cards hide the whole buy UI (no swatch picker, add-to-cart, or "Choose options" link), leaving just the product name and price; customers click through to the product page to buy. Applies to variable and simple products.
+- shopos-core: VariationSwatches — removed the retired WooCommerce → Settings → Products → "Shop swatches" section (which only showed a "settings have moved" notice). Settings live under ShopOS → Variation Swatches; no data affected.
 
 ## [1.23.1] — 2026-07-06
 
@@ -105,7 +105,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.21.35] — 2026-07-05
 
-- VariationSwatches swatch-tooltip out-of-stock and unavailable strings resolve through the locale-aware EtucartVS i18n Labels payload instead of hard-coded Hebrew literals
+- VariationSwatches swatch-tooltip out-of-stock and unavailable strings resolve through the locale-aware ShopOSVS i18n Labels payload instead of hard-coded Hebrew literals
 
 ## [1.21.34] — 2026-07-05
 
@@ -149,7 +149,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.11.27] — 2026-07-05
 
-- Release tooling truth fixes: FREEMAN_THEME_VERSION now bumped in lockstep with style.css (cache-bust fix), core Stable tag stamped on release
+- Release tooling truth fixes: SHOPOS_THEME_VERSION now bumped in lockstep with style.css (cache-bust fix), core Stable tag stamped on release
 
 ## [1.21.24] — 2026-07-02
 
@@ -187,7 +187,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.21.16] — 2026-06-30
 
-- Search: every storefront string (field placeholder, search button, no-results / see-all / searching messages, toggle + close accessible names) is now editable in Freeman → Search settings via the Labels system; blank fields keep the English default.
+- Search: every storefront string (field placeholder, search button, no-results / see-all / searching messages, toggle + close accessible names) is now editable in ShopOS → Search settings via the Labels system; blank fields keep the English default.
 - Shop Filters: new "Filter panel style" setting. Classic (default) keeps the current checkbox layout unchanged; Refined renders attribute values as pill buttons (selected = filled), collapses each facet behind a chevron header, truncates long lists behind a show-more, uses filled chips with circular remove badges + a circular drawer-close button, and contains the panel height with its own scroll.
 
 ## [1.21.15] — 2026-06-30
@@ -233,7 +233,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.21.5] — 2026-06-22
 
-- TEMP diagnostic build: logs SEARCHDIAG lines (Freeman to Tools) to trace why the search-results ProductSlider grid is not constrained to engine matches - no behavior change, to be reverted in the fix release
+- TEMP diagnostic build: logs SEARCHDIAG lines (ShopOS to Tools) to trace why the search-results ProductSlider grid is not constrained to engine matches - no behavior change, to be reverted in the fix release
 
 ## [1.21.4] — 2026-06-22
 
@@ -245,7 +245,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.21.2] — 2026-06-22
 
-- Search 8.3b fix: constrain the Freeman ProductSlider search grid via its query_args filter (the previous the_posts net regressed to zero products because the widget renders its own query); read the term from wp_the_query to survive Elementor swap; inject engine ids via wc_get_products include. Also lower the index debounce 30s to 10s for near-live freshness.
+- Search 8.3b fix: constrain the ShopOS ProductSlider search grid via its query_args filter (the previous the_posts net regressed to zero products because the widget renders its own query); read the term from wp_the_query to survive Elementor swap; inject engine ids via wc_get_products include. Also lower the index debounce 30s to 10s for near-live freshness.
 
 ## [1.21.1] — 2026-06-22
 
@@ -257,23 +257,23 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.20.1] — 2026-06-22
 
-- Search 8.3a live-QA fixes: clamp search(term, -1) so the results page + facet feed no longer build invalid LIMIT -1 (was a blank grid + empty facets once AWS was deactivated); remove the field_selector setting (shortcode-only) in favour of a hardcoded selector the [freeman_search] field matches.
+- Search 8.3a live-QA fixes: clamp search(term, -1) so the results page + facet feed no longer build invalid LIMIT -1 (was a blank grid + empty facets once AWS was deactivated); remove the field_selector setting (shortcode-only) in favour of a hardcoded selector the [shopos_search] field matches.
 
 ## [1.20.0] — 2026-06-22
 
-- Search Wave 8.3: engine-driven product search results page. Results_Query takes over the native search grid (pre_get_posts: relevance-ordered post__in + posts_search neutralisation), falls back to native WP search when the index is empty, and coexists with Shop Filters facets (intersect-and-preserve-order) via the additive freeman_core/shop_filters/search_product_ids filter. Behind freeman_core_search_results_enabled (default off).
+- Search Wave 8.3: engine-driven product search results page. Results_Query takes over the native search grid (pre_get_posts: relevance-ordered post__in + posts_search neutralisation), falls back to native WP search when the index is empty, and coexists with Shop Filters facets (intersect-and-preserve-order) via the additive shopos_core/shop_filters/search_product_ids filter. Behind shopos_core_search_results_enabled (default off).
 
 ## [1.19.1] — 2026-06-22
 
-- Search 8.2a: add [freeman_search] shortcode — a standalone product search box (native GET form, auto-enhanced by the dropdown JS via the default selector; JS-off runs a normal product search). Gated by the existing dropdown flag.
+- Search 8.2a: add [shopos_search] shortcode — a standalone product search box (native GET form, auto-enhanced by the dropdown JS via the default selector; JS-off runs a normal product search). Gated by the existing dropdown flag.
 
 ## [1.19.0] — 2026-06-22
 
-- Search Wave 8.2: live AJAX search dropdown — ranked MATCH...AGAINST read query (FULLTEXT + title boost + exact/prefix-SKU + LIKE fallback for short/non-Latin tokens), public freeman_core_search_query endpoint, debounced combobox dropdown (image/title/price/link) with combobox a11y + progressive enhancement, behind freeman_core_search_dropdown_enabled (default off).
+- Search Wave 8.2: live AJAX search dropdown — ranked MATCH...AGAINST read query (FULLTEXT + title boost + exact/prefix-SKU + LIKE fallback for short/non-Latin tokens), public shopos_core_search_query endpoint, debounced combobox dropdown (image/title/price/link) with combobox a11y + progressive enhancement, behind shopos_core_search_dropdown_enabled (default off).
 
 ## [1.18.0] — 2026-06-22
 
-- Search Wave 8.1 foundation: in-house full-text product search index (freeman_search_index FULLTEXT table) + dirty-queue indexer + Reindex all admin tool, behind freeman_core_search_indexer_enabled (default off). Staged to replace Advanced Woo Search.
+- Search Wave 8.1 foundation: in-house full-text product search index (shopos_search_index FULLTEXT table) + dirty-queue indexer + Reindex all admin tool, behind shopos_core_search_indexer_enabled (default off). Staged to replace Advanced Woo Search.
 
 ## [1.17.5] — 2026-06-21
 
@@ -281,9 +281,9 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.17.4] — 2026-06-19
 
-- freeman-core: Mobile — tapping a product card now opens it on the first tap (bypasses the iOS "first tap = hover" delay caused by an external hover style).
-- freeman-core: Back button — returning to a shop/category/archive now lands at the exact spot you left, with all infinite-scroll-loaded products restored.
-- freeman-core: Mobile filters — the filter drawer finishes sliding closed before the filtered page loads, removing the brief "buggy" half-state on Apply/Clear.
+- shopos-core: Mobile — tapping a product card now opens it on the first tap (bypasses the iOS "first tap = hover" delay caused by an external hover style).
+- shopos-core: Back button — returning to a shop/category/archive now lands at the exact spot you left, with all infinite-scroll-loaded products restored.
+- shopos-core: Mobile filters — the filter drawer finishes sliding closed before the filtered page loads, removing the brief "buggy" half-state on Apply/Clear.
 
 ## [1.17.3] — 2026-06-19
 
@@ -307,7 +307,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [Internal] — 2026-06-18
 
-- Build/release: drop the combined theme+core bundle. `tools/build.sh all` now produces only the individual `freeman-core-*` and `freeman-theme-*` zips; removed the `bundle` target and `build_bundle` helper. Updated the release policy in `AGENTS.md` to require individual zips only. Deleted the stale `freeman-bundle-*` artifacts from `dist/`.
+- Build/release: drop the combined theme+core bundle. `tools/build.sh all` now produces only the individual `shopos-core-*` and `shopos-theme-*` zips; removed the `bundle` target and `build_bundle` helper. Updated the release policy in `AGENTS.md` to require individual zips only. Deleted the stale `shopos-bundle-*` artifacts from `dist/`.
 
 ## [1.16.1] — 2026-06-18
 
@@ -315,11 +315,11 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.16.0] — 2026-06-18
 
-- Add gallery-slider mode to the Card Image Effects module (formerly Hover Image Swap): a new Card image mode setting picks None, Hover swap, or Gallery slider. Gallery slider replaces the card image with a small swipeable scroll-snap slider of all product images, with independently toggleable arrows, dots and autoplay. Gated by the default-off freeman_core_hover_swap_gallery_slider_enabled flag.
+- Add gallery-slider mode to the Card Image Effects module (formerly Hover Image Swap): a new Card image mode setting picks None, Hover swap, or Gallery slider. Gallery slider replaces the card image with a small swipeable scroll-snap slider of all product images, with independently toggleable arrows, dots and autoplay. Gated by the default-off shopos_core_hover_swap_gallery_slider_enabled flag.
 
 ## [1.15.0] — 2026-06-18
 
-- Add Hover Image Swap module: on shop/archive cards, hovering a product cross-fades the main image to its second gallery image (pure CSS, no-op without a gallery image, mobile shows primary only). Default-off feature flag freeman_core_hover_swap_frontend_enabled.
+- Add Hover Image Swap module: on shop/archive cards, hovering a product cross-fades the main image to its second gallery image (pure CSS, no-op without a gallery image, mobile shows primary only). Default-off feature flag shopos_core_hover_swap_frontend_enabled.
 
 ## [1.14.4] — 2026-06-18
 
@@ -343,11 +343,11 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.13.0] — 2026-06-11
 
-- New QuickView module (Wave 7.2): per-card quick-view icon opening an inline-end slide-in drawer (image, price, short description, add-to-cart with VariationSwatches buy-box, meta, product-page link) behind freeman_core_quick_view_frontend_enabled (default off); additive quick-view re-init listener in VariationSwatches JS
+- New QuickView module (Wave 7.2): per-card quick-view icon opening an inline-end slide-in drawer (image, price, short description, add-to-cart with VariationSwatches buy-box, meta, product-page link) behind shopos_core_quick_view_frontend_enabled (default off); additive quick-view re-init listener in VariationSwatches JS
 
 ## [1.11.26] — 2026-06-11
 
-- Exclude Freeman slider/grid widget containers (.cs-track/.cs-grid) from the mobile-columns Customizer override — the forced grid broke the slider track and overrode the widget's mobile column control on product archives (grid parity audit G2)
+- Exclude ShopOS slider/grid widget containers (.cs-track/.cs-grid) from the mobile-columns Customizer override — the forced grid broke the slider track and overrode the widget's mobile column control on product archives (grid parity audit G2)
 
 ## [1.12.31] — 2026-06-11
 
@@ -375,11 +375,11 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.12.22] — 2026-05-20
 
-- Shop Filters 6.5a SEO policy: filtered shop/category/search URLs get noindex,follow plus a canonical to the clean archive, routed through RankMath/SEOPress/Yoast or core. New flag freeman_core_shop_filters_seo_policy_enabled (default off).
+- Shop Filters 6.5a SEO policy: filtered shop/category/search URLs get noindex,follow plus a canonical to the clean archive, routed through RankMath/SEOPress/Yoast or core. New flag shopos_core_shop_filters_seo_policy_enabled (default off).
 
 ## [1.12.21] — 2026-05-20
 
-- Shop Filters 6.4 admin facet config: per-attribute matrix (show/order/hide-on-categories) on Freeman to Shop Filters, gated by the new freeman_core_shop_filters_admin_config_enabled flag (default off; off reverts to auto-derived defaults).
+- Shop Filters 6.4 admin facet config: per-attribute matrix (show/order/hide-on-categories) on ShopOS to Shop Filters, gated by the new shopos_core_shop_filters_admin_config_enabled flag (default off; off reverts to auto-derived defaults).
 
 ## [1.12.20] — 2026-05-20
 
@@ -411,7 +411,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.12.13] — 2026-05-20
 
-- freeman-core: Shop Filters 6.5b — price-band facet + sort (built ahead of 6.4/6.5a, so it takes the next sequential version). OR-checkbox price bands on top of the panel (from a price_bands setting, or auto-derived from the catalogue), counts + grid filtering via wc_product_meta_lookup overlap; a Sort by dropdown (sets ?orderby) and a default_sort setting applied via woocommerce_default_catalog_orderby. Reuses frontend_enabled.
+- shopos-core: Shop Filters 6.5b — price-band facet + sort (built ahead of 6.4/6.5a, so it takes the next sequential version). OR-checkbox price bands on top of the panel (from a price_bands setting, or auto-derived from the catalogue), counts + grid filtering via wc_product_meta_lookup overlap; a Sort by dropdown (sets ?orderby) and a default_sort setting applied via woocommerce_default_catalog_orderby. Reuses frontend_enabled.
 
 ## [1.12.12] — 2026-05-20
 
@@ -419,7 +419,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.12.11] — 2026-05-20
 
-- freeman-core: Shop Filters 6.3b Facet UI — the deferred storefront UI. Category-tree facet on top (pruned parent-to-child hierarchy; each node navigates to its category archive), colour/image swatch facets (term meta read directly, decoupled from VariationSwatches), a stylesheet that removes the default list bullets and adds a focus-trapped mobile bottom-sheet drawer (defer-until-Apply on mobile, prefers-reduced-motion), and render hooks before_render / after_render (actions) + panel_html (filter). Reuses the frontend_enabled flag.
+- shopos-core: Shop Filters 6.3b Facet UI — the deferred storefront UI. Category-tree facet on top (pruned parent-to-child hierarchy; each node navigates to its category archive), colour/image swatch facets (term meta read directly, decoupled from VariationSwatches), a stylesheet that removes the default list bullets and adds a focus-trapped mobile bottom-sheet drawer (defer-until-Apply on mobile, prefers-reduced-motion), and render hooks before_render / after_render (actions) + panel_html (filter). Reuses the frontend_enabled flag.
 
 ## [1.12.10] — 2026-05-20
 
@@ -427,7 +427,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.12.9] — 2026-05-20
 
-- Shop Filters 6.3a.3 index diagnostic: a read-only table on the Freeman Shop Filters admin page (gated by the existing indexer flag, alongside the reindex tool) listing, per attribute term, the slug, name and indexed product / in-stock counts straight from the index. Built to debug storefront-data problems where a facet value shows a count but the filtered URL returns nothing, or picking one size returns another — surfacing scrambled term name/slug pairs, terms present in the index that no longer resolve to a live term, and values whose only products are out of stock. Filters match by slug, so the slug column is highlighted as the source of truth. Read-only, no writes, no storefront effect.
+- Shop Filters 6.3a.3 index diagnostic: a read-only table on the ShopOS Shop Filters admin page (gated by the existing indexer flag, alongside the reindex tool) listing, per attribute term, the slug, name and indexed product / in-stock counts straight from the index. Built to debug storefront-data problems where a facet value shows a count but the filtered URL returns nothing, or picking one size returns another — surfacing scrambled term name/slug pairs, terms present in the index that no longer resolve to a live term, and values whose only products are out of stock. Filters match by slug, so the slug column is highlighted as the source of truth. Read-only, no writes, no storefront effect.
 
 ## [1.12.8] — 2026-05-20
 
@@ -435,11 +435,11 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.12.7] — 2026-05-20
 
-- Shop Filters 6.3a.1 read-path fix: storefront filters now actually filter the grid. New Query bridge applies the URL filter selection (filter_pa_*) to the main WooCommerce product query via woocommerce_product_query_tax_query (shop / category / attribute archives, preserving product_visibility) plus a scoped pre_get_posts for product search. The front-end controller now navigates (full reload) instead of swapping via AJAX, so the selection persists in the URL, sort keeps the filters, and product-search pages work; Infinite Scroll runs normally on the reloaded page. Active-filter chips are server-rendered. The public AJAX endpoint is retained but no longer called by the bundled JS. Checkbox facets only; reuses the freeman_core_shop_filters_frontend_enabled flag.
+- Shop Filters 6.3a.1 read-path fix: storefront filters now actually filter the grid. New Query bridge applies the URL filter selection (filter_pa_*) to the main WooCommerce product query via woocommerce_product_query_tax_query (shop / category / attribute archives, preserving product_visibility) plus a scoped pre_get_posts for product search. The front-end controller now navigates (full reload) instead of swapping via AJAX, so the selection persists in the URL, sort keeps the filters, and product-search pages work; Infinite Scroll runs normally on the reloaded page. Active-filter chips are server-rendered. The public AJAX endpoint is retained but no longer called by the bundled JS. Checkbox facets only; reuses the shopos_core_shop_filters_frontend_enabled flag.
 
 ## [1.12.6] — 2026-05-20
 
-- Shop Filters 6.3a: storefront read path. Query_Builder glues the index to the facet engine and shapes the AJAX response; the freeman_shop_filters shortcode server-renders the initial facet tree and enqueues the front-end controller; a public admin-AJAX endpoint (freeman_core_shop_filters_query, nonce + rate-limited) recomputes facets and counts. JS swaps the product grid by fetching the filtered front-end URL so Elementor card markup and Infinite Scroll coexistence are preserved. Checkbox facets only; gated by the new default-off freeman_core_shop_filters_frontend_enabled flag.
+- Shop Filters 6.3a: storefront read path. Query_Builder glues the index to the facet engine and shapes the AJAX response; the shopos_shop_filters shortcode server-renders the initial facet tree and enqueues the front-end controller; a public admin-AJAX endpoint (shopos_core_shop_filters_query, nonce + rate-limited) recomputes facets and counts. JS swaps the product grid by fetching the filtered front-end URL so Elementor card markup and Infinite Scroll coexistence are preserved. Checkbox facets only; gated by the new default-off shopos_core_shop_filters_frontend_enabled flag.
 
 ## [1.12.5] — 2026-05-20
 
@@ -451,7 +451,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.12.3] — 2026-05-20
 
-- Shop Filters admin control surface (by request): Freeman -> Shop Filters page now has the background-indexing toggle, live index status (products/rows/last sweep/scheduled) and the reindex tool, all manageable from wp-admin without WP-CLI. Toggle writes the same option the feature flag reads.
+- Shop Filters admin control surface (by request): ShopOS -> Shop Filters page now has the background-indexing toggle, live index status (products/rows/last sweep/scheduled) and the reindex tool, all manageable from wp-admin without WP-CLI. Toggle writes the same option the feature flag reads.
 
 ## [1.12.2] — 2026-05-20
 
@@ -463,7 +463,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.12.0] — 2026-05-20
 
-- Shop Filters new module - Wave 6 Phase 6.1 foundation: index table, background indexer, admin reindex tool. Behind freeman_core_shop_filters_indexer_enabled flag default off; module disabled by default. Storefront UI ships in later phases.
+- Shop Filters new module - Wave 6 Phase 6.1 foundation: index table, background indexer, admin reindex tool. Behind shopos_core_shop_filters_indexer_enabled flag default off; module disabled by default. Storefront UI ships in later phases.
 
 ## [1.11.51] — 2026-05-13
 
@@ -473,21 +473,21 @@ This is the aggregated changelog across all three packages. See each package's o
 
 - VariationSwatches: reorder swatch options to match taxonomy term order (matches WC native dropdown). PDP buy-box + shop archive picker.
 
-## [freeman-core 1.11.49] — 2026-05-11
+## [shopos-core 1.11.49] — 2026-05-11
 
 - VariationSwatches: the buy box, the shop / archive picker, the PDP price line and the toast notifications now read the kit body font from Elementor's `--e-global-typography-sk_type_12-font-family` variable (with `inherit` as fallback) instead of bare `font-family: inherit`. Bare `inherit` picked up the *wrapping element's* font when the buy box / picker is AJAX-injected into a foreign-styled container — e.g. WooSQ (Woo Smart Quick View)'s `.woosq-sidebar { font-family: "Open Sans", … }` — so the quick-view buy box wasn't matching the site's Style Kits typeface. A CSS custom property cascades through such wrappers untouched, so the kit font reaches it regardless. No regression: without Style Kits the `inherit` fallback applies as before. CSS-only.
 
-## [freeman-core 1.11.48] — 2026-05-11
+## [shopos-core 1.11.48] — 2026-05-11
 
 - VariationSwatches: the shop / archive variation-picker now inherits the site/theme font instead of forcing a built-in "Ploni"-first stack — matches the 1.11.47 buy-box change so the picker reads in the page typeface (i.e. whatever Style Kits / Elementor global typography sets). CSS-only.
 
-## [freeman-theme 1.11.23] — 2026-05-11
+## [shopos-theme 1.11.23] — 2026-05-11
 
-- Typography: `--fm-font-body` / `--fm-font-display` now follow Elementor's global typography (`--e-global-typography-sk_type_12/2-font-family`, written by the Style Kits for Elementor addon) with the previous hardcoded stacks as fallback — the theme no longer overrides Style Kits' fonts. `--fm-font-mono` (code/preformatted) unchanged. Also bumped `FREEMAN_THEME_VERSION` 1.0.3 → 1.11.23 so it matches `style.css` and the theme's CSS asset URLs actually cache-bust on this change (the constant, not `style.css`'s `Version:`, is what `wp_enqueue_style` uses).
+- Typography: `--fm-font-body` / `--fm-font-display` now follow Elementor's global typography (`--e-global-typography-sk_type_12/2-font-family`, written by the Style Kits for Elementor addon) with the previous hardcoded stacks as fallback — the theme no longer overrides Style Kits' fonts. `--fm-font-mono` (code/preformatted) unchanged. Also bumped `SHOPOS_THEME_VERSION` 1.0.3 → 1.11.23 so it matches `style.css` and the theme's CSS asset URLs actually cache-bust on this change (the constant, not `style.css`'s `Version:`, is what `wp_enqueue_style` uses).
 
 ## [1.11.47] — 2026-05-11
 
-- VariationSwatches: the simple-product buy box now renders its own `.etucart-pdp-price` line (same markup as the variable buy box). Fixes the missing price in simple-product quick-view modals — the WooSQ duplicate-price suppression was hiding WooCommerce's separately-rendered `<p class="price">`, which the simple buy box previously had nothing to replace. `maybe_suppress_pdp_price()` now also unhooks `woocommerce_template_single_price` for simple products so a plain simple PDP isn't doubled; on Elementor-built simple PDPs the 1.11.46 `:has()` rule consequently hides the Elementor "Product Price" widget there too. On a default-template simple PDP the price moves to just above the add-to-cart button (where the buy box renders), matching the variable buy box.
+- VariationSwatches: the simple-product buy box now renders its own `.shopos-pdp-price` line (same markup as the variable buy box). Fixes the missing price in simple-product quick-view modals — the WooSQ duplicate-price suppression was hiding WooCommerce's separately-rendered `<p class="price">`, which the simple buy box previously had nothing to replace. `maybe_suppress_pdp_price()` now also unhooks `woocommerce_template_single_price` for simple products so a plain simple PDP isn't doubled; on Elementor-built simple PDPs the 1.11.46 `:has()` rule consequently hides the Elementor "Product Price" widget there too. On a default-template simple PDP the price moves to just above the add-to-cart button (where the buy box renders), matching the variable buy box.
 - VariationSwatches: the buy box (and toast) now inherit the site/theme font instead of forcing a built-in "Ploni"-first stack — the buy box reads in the same typeface as the rest of the page.
 - VariationSwatches: the shop / archive variation-picker swatch row is now centred within the card; the single-product buy box's swatch row is back to its original right-anchored layout (the 1.11.46 centring there was reverted).
 
@@ -498,11 +498,11 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.11.45] — 2026-05-11
 
-- Wave 2.2/4g: VariationSwatches settings moved to Freeman -> Variation Swatches page (sole editing surface); settings_hub flag retired; legacy WooCommerce Products section soft-deprecated to a moved-notice; re-sync migration for flag-off sites
+- Wave 2.2/4g: VariationSwatches settings moved to ShopOS -> Variation Swatches page (sole editing surface); settings_hub flag retired; legacy WooCommerce Products section soft-deprecated to a moved-notice; re-sync migration for flag-off sites
 
 ## [1.11.44] — 2026-05-11
 
-- Add Freeman -> Feature Flags admin page (checkbox per flag, grouped by module, with descriptions); Feature_Flags::registry/option_name/is_forced_by_filter helpers
+- Add ShopOS -> Feature Flags admin page (checkbox per flag, grouped by module, with descriptions); Feature_Flags::registry/option_name/is_forced_by_filter helpers
 
 ## [1.11.43] — 2026-05-11
 
@@ -526,11 +526,11 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.11.38] — 2026-05-11
 
-- Wave 4.1b — RestockNotify CSV export admin button. Adds an Export Subscribers submenu under the legacy restock-notify parent menu and an admin-post.php handler that streams the rsn_subscribers table as a UTF-8 BOM CSV with all 9 columns and a date-stamped filename. Gated behind freeman_core_restock_notify_csv_export_enabled (default off). Defense-in-depth: flag-OFF means neither the submenu nor the admin_post listener attaches. Closes Wave 4.1.
+- Wave 4.1b — RestockNotify CSV export admin button. Adds an Export Subscribers submenu under the legacy restock-notify parent menu and an admin-post.php handler that streams the rsn_subscribers table as a UTF-8 BOM CSV with all 9 columns and a date-stamped filename. Gated behind shopos_core_restock_notify_csv_export_enabled (default off). Defense-in-depth: flag-OFF means neither the submenu nor the admin_post listener attaches. Closes Wave 4.1.
 
 ## [1.11.37] — 2026-05-11
 
-- Wave 4.1a — RestockNotify WP_Privacy exporter + eraser. Registers wp_privacy_personal_data_exporters and wp_privacy_personal_data_erasers under the freeman-core-restock-notify key so a privacy admin can export or erase a customer's restock-notify subscriptions through WP Tools. Eraser nulls customer_name/customer_email (empty string; columns are NOT NULL) and flips status to unsubscribed; the row stays as audit trail. Unconditional — privacy hooks are a platform contract, not flag-gated. Wave 4.1b will add the CSV admin button behind a flag.
+- Wave 4.1a — RestockNotify WP_Privacy exporter + eraser. Registers wp_privacy_personal_data_exporters and wp_privacy_personal_data_erasers under the shopos-core-restock-notify key so a privacy admin can export or erase a customer's restock-notify subscriptions through WP Tools. Eraser nulls customer_name/customer_email (empty string; columns are NOT NULL) and flips status to unsubscribed; the row stays as audit trail. Unconditional — privacy hooks are a platform contract, not flag-gated. Wave 4.1b will add the CSV admin button behind a flag.
 
 ## [1.11.36] — 2026-05-11
 
@@ -542,11 +542,11 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.11.33] — 2026-05-04
 
-- Wave 3.1a - InfiniteScroll trigger_mode / history_mode / hybrid_threshold settings + JS dispatcher (gates at attachObserver entry + post-loadNext threshold check) + applyHistoryMode wrapper around the existing pushState call. No new hooks (those land in 3.1b). Behind freeman_core_infinite_scroll_trigger_modes_enabled (default off). Flag-OFF and flag-ON-with-defaults both byte-identical to pre-3.1a behavior.
+- Wave 3.1a - InfiniteScroll trigger_mode / history_mode / hybrid_threshold settings + JS dispatcher (gates at attachObserver entry + post-loadNext threshold check) + applyHistoryMode wrapper around the existing pushState call. No new hooks (those land in 3.1b). Behind shopos_core_infinite_scroll_trigger_modes_enabled (default off). Flag-OFF and flag-ON-with-defaults both byte-identical to pre-3.1a behavior.
 
 ## [1.11.32] — 2026-05-04
 
-- Wave 3.3 - CheapestDefaultVariation strategy selector (cheapest / first_in_stock) with per-product _freeman_cheapest_variation_strategy meta override and freeman_core/cheapest_variation/strategy filter. Behind freeman_core_cheapest_variation_strategy_enabled (default off).
+- Wave 3.3 - CheapestDefaultVariation strategy selector (cheapest / first_in_stock) with per-product _shopos_cheapest_variation_strategy meta override and shopos_core/cheapest_variation/strategy filter. Behind shopos_core_cheapest_variation_strategy_enabled (default off).
 
 ## [1.11.31] — 2026-05-04
 
@@ -554,11 +554,11 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.11.30] — 2026-05-04
 
-- Wave 3.2b -- ProductSlider autoplay / loop / indicator (advanced controls behind freeman_core_sliders_advanced_controls_enabled, default off; reuses 3.2a flag; grid mode unchanged)
+- Wave 3.2b -- ProductSlider autoplay / loop / indicator (advanced controls behind shopos_core_sliders_advanced_controls_enabled, default off; reuses 3.2a flag; grid mode unchanged)
 
 ## [1.11.29] — 2026-05-03
 
-- Wave 3.2a — CategorySlider autoplay / loop / indicator (Roadmap #6, sub-PR 1 of 2). New Elementor controls behind `freeman_core_sliders_advanced_controls_enabled` (default off). Indicator selector (`progress` / `dots` / `none`) supersedes the legacy `show_progress` switcher with a back-compat shim. Render path gated on the flag — rollback is byte-identical. Wave 3.2b (ProductSlider) queued.
+- Wave 3.2a — CategorySlider autoplay / loop / indicator (Roadmap #6, sub-PR 1 of 2). New Elementor controls behind `shopos_core_sliders_advanced_controls_enabled` (default off). Indicator selector (`progress` / `dots` / `none`) supersedes the legacy `show_progress` switcher with a back-compat shim. Render path gated on the flag — rollback is byte-identical. Wave 3.2b (ProductSlider) queued.
 
 ## [1.11.28] — 2026-05-03
 
@@ -570,27 +570,27 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.11.26] — 2026-05-03
 
-- Bugfix: Settings_Hub storage-shape mismatch in 4a's read-shim — Settings_Reader returned 1/0/string verbatim from new keys, breaking Etucart_VS_Settings::bool yes/no comparisons and excluded_category_ids array shape on flag-ON sites. Adds normalize_new_value_for_legacy_reader path and fixes Settings_Hub render_field checkbox checked() call to FILTER_VALIDATE_BOOLEAN
+- Bugfix: Settings_Hub storage-shape mismatch in 4a's read-shim — Settings_Reader returned 1/0/string verbatim from new keys, breaking ShopOS_VS_Settings::bool yes/no comparisons and excluded_category_ids array shape on flag-ON sites. Adds normalize_new_value_for_legacy_reader path and fixes Settings_Hub render_field checkbox checked() call to FILTER_VALIDATE_BOOLEAN
 
 ## [1.11.25] — 2026-05-03
 
-- Wave 2.2 / 4c — Hover tooltip on swatches: pure CSS via data-tooltip attr + hover::after, per-term admin override via freeman_core_variation_swatches_term_tooltip_text term-meta, gated on freeman_core_variation_swatches_tooltip_enabled flag, flag folded into transient cache key
+- Wave 2.2 / 4c — Hover tooltip on swatches: pure CSS via data-tooltip attr + hover::after, per-term admin override via shopos_core_variation_swatches_term_tooltip_text term-meta, gated on shopos_core_variation_swatches_tooltip_enabled flag, flag folded into transient cache key
 
 ## [1.11.24] — 2026-05-03
 
-- Wave 2.2 / 4b — Image swatches: per-term image upload (Iconic/WPC pattern) gated on freeman_core_variation_swatches_image_swatches_enabled, freeman_core_variation_swatches_term_image_id term-meta key under the canonical namespace (not extending legacy etucart_*), image wins over color precedence, term_image_url filter, smart test stubs promoted to bootstrap.php
+- Wave 2.2 / 4b — Image swatches: per-term image upload (Iconic/WPC pattern) gated on shopos_core_variation_swatches_image_swatches_enabled, shopos_core_variation_swatches_term_image_id term-meta key under the canonical namespace (not extending legacy shopos_*), image wins over color precedence, term_image_url filter, smart test stubs promoted to bootstrap.php
 
 ## [1.11.23] — 2026-05-03
 
-- Wave 2.2 / 4f — Variation-image-on-card swap on shop / archive listings: per-variation image payload (gated on freeman_core_variation_swatches_card_image_swap_enabled), refreshCardImage() in etucart-shop-swatches.js, two new additive filters (card_image_selector and card_image_payload), flag-state folded into transient signature for implicit cache-bust on flag flip
+- Wave 2.2 / 4f — Variation-image-on-card swap on shop / archive listings: per-variation image payload (gated on shopos_core_variation_swatches_card_image_swap_enabled), refreshCardImage() in shopos-shop-swatches.js, two new additive filters (card_image_selector and card_image_payload), flag-state folded into transient signature for implicit cache-bust on flag flip
 
 ## [1.11.22] — 2026-05-03
 
-- Drop PHP 7.4 from CI matrix and bump min PHP to 8.0 (freeman-core + freeman-theme headers, composer.json require, .github/workflows/ci.yml). Aligns CI to reality after Wave 2.3a-c baked PHP 8.0+ idioms (str_starts_with, str_contains) into shipped code; PHP 7.4 PHPUnit lane was de-facto failing.
+- Drop PHP 7.4 from CI matrix and bump min PHP to 8.0 (shopos-core + shopos-theme headers, composer.json require, .github/workflows/ci.yml). Aligns CI to reality after Wave 2.3a-c baked PHP 8.0+ idioms (str_starts_with, str_contains) into shipped code; PHP 7.4 PHPUnit lane was de-facto failing.
 
 ## [1.11.21] — 2026-05-03
 
-- Wave 2.2 / 4a — VariationSwatches settings migration to Settings_Hub: read-shim, 1.11.21 one-shot migration of 14 etucart_vs_* keys, new admin page gated behind freeman_core_variation_swatches_settings_hub_enabled flag (default off, P1 version-skew model)
+- Wave 2.2 / 4a — VariationSwatches settings migration to Settings_Hub: read-shim, 1.11.21 one-shot migration of 14 shopos_vs_* keys, new admin page gated behind shopos_core_variation_swatches_settings_hub_enabled flag (default off, P1 version-skew model)
 
 ## [1.11.20] — 2026-05-03
 
@@ -610,11 +610,11 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.11.5] — 2026-04-29
 
-- Wave 2.3c: modern Frontend via class_alias swap; Hebrew JS strings + form placeholders moved to locales/; freeman_core/restock_notify/should_inject filter
+- Wave 2.3c: modern Frontend via class_alias swap; Hebrew JS strings + form placeholders moved to locales/; shopos_core/restock_notify/should_inject filter
 
 ## [1.11.4] — 2026-04-29
 
-- Wave 2.3b: modern Email + Stock_Monitor classes via class_alias swap; bilingual email shell fix; freeman_core/restock_notify/email_args filter and before_send action
+- Wave 2.3b: modern Email + Stock_Monitor classes via class_alias swap; bilingual email shell fix; shopos_core/restock_notify/email_args filter and before_send action
 
 ## [1.11.3] — 2026-04-29
 
@@ -638,7 +638,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.10.16] — 2026-04-29
 
-- Wave 0.4: regression baselines (hooks, REST, CLI, freeman_/etucart_ identifiers) + tools/capture-baselines.sh + BaselinesIntegrityTest
+- Wave 0.4: regression baselines (hooks, REST, CLI, shopos_/shopos_ identifiers) + tools/capture-baselines.sh + BaselinesIntegrityTest
 
 ## [1.10.15] — 2026-04-29
 
@@ -650,11 +650,11 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.10.13] — 2026-04-28
 
-- Wave 0.1: add freeman_core/logger/entry filter and freeman_core/logger/written action inside Logger::log() (D8)
+- Wave 0.1: add shopos_core/logger/entry filter and shopos_core/logger/written action inside Logger::log() (D8)
 
 ## [1.10.12] — 2026-04-27
 
-- Variation +N badge: add .etucart-shop-pick__more[hidden] display:none !important rule to fix the root cause that made the badge stay visible whenever JS tried to hide it. The class rule .etucart-shop-pick__more had display:inline-flex !important which silently overrode the browser user-agent [hidden] display:none, so moreBtn.hidden=true from refreshOverflow was a no-op. Result: badge visible with zero chips marked .is-overflow so clicking did nothing. Mirrors the existing .etucart-shop-pick__opt[hidden] rule that already worked for chips.
+- Variation +N badge: add .shopos-shop-pick__more[hidden] display:none !important rule to fix the root cause that made the badge stay visible whenever JS tried to hide it. The class rule .shopos-shop-pick__more had display:inline-flex !important which silently overrode the browser user-agent [hidden] display:none, so moreBtn.hidden=true from refreshOverflow was a no-op. Result: badge visible with zero chips marked .is-overflow so clicking did nothing. Mirrors the existing .shopos-shop-pick__opt[hidden] rule that already worked for chips.
 
 ## [1.10.11] — 2026-04-27
 
@@ -726,7 +726,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.9.5] — 2026-04-27
 
-- i18n: regenerated freeman-core.pot from current source (395 strings); merged he_IL.po preserves existing translations; new en_US.po ships English translations for all 115 Hebrew strings wrapped in 1.9.4 — non-Hebrew sites now display English by default
+- i18n: regenerated shopos-core.pot from current source (395 strings); merged he_IL.po preserves existing translations; new en_US.po ships English translations for all 115 Hebrew strings wrapped in 1.9.4 — non-Hebrew sites now display English by default
 
 ## [1.9.4] — 2026-04-27
 
@@ -738,7 +738,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.9.2] — 2026-04-27
 
-- renamed slider/infinite-scroll asset handles to canonical freeman-core-* prefix per audit (N-07); deprecated names registered as no-source aliases that resolve via dependency on the canonical handle, removed in 2.0.0
+- renamed slider/infinite-scroll asset handles to canonical shopos-core-* prefix per audit (N-07); deprecated names registered as no-source aliases that resolve via dependency on the canonical handle, removed in 2.0.0
 
 ## [1.9.1] — 2026-04-27
 
@@ -746,7 +746,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.9.0] — 2026-04-27
 
-- renamed ProductFeed/VariableStockFix hooks and VariationSwatches filter to canonical freeman_core_* prefix per audit (N-02/N-03/N-04); added one-release deprecation shims, version-gated migrations (option copy, cron reschedule, rewrite flush); fixed plugin description to list the actual 8 modules (N-05); release.sh stamping Plugin::VERSION resolves N-01
+- renamed ProductFeed/VariableStockFix hooks and VariationSwatches filter to canonical shopos_core_* prefix per audit (N-02/N-03/N-04); added one-release deprecation shims, version-gated migrations (option copy, cron reschedule, rewrite flush); fixed plugin description to list the actual 8 modules (N-05); release.sh stamping Plugin::VERSION resolves N-01
 
 ## [1.7.15] — 2026-04-27
 
@@ -794,17 +794,17 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.7.4] — 2026-04-27 + Theme [1.0.3]
 
-- **Freeman Theme** (1.0.3): hide the WC-injected `a.added_to_cart` "View cart" link on shop / archive cards.
+- **ShopOS Theme** (1.0.3): hide the WC-injected `a.added_to_cart` "View cart" link on shop / archive cards.
 
 ## [1.7.4] — 2026-04-27
 
-- **Freeman Core**: CategorySlider mouse drag is now opt-in via a new switcher (default OFF) — desktop clicks no longer fight with drag at all. VariationSwatches gains a "No pre-selected variation on archive" setting (default ON) that bypasses both manually-set defaults AND the auto-cheapest pick on shop / archive / loop contexts.
-- **Freeman Theme** (1.0.2): Removed the global `a:hover { opacity: 0.75 }` rule entirely — the 1.0.1 `:has()`-based scoping wasn't enough; killing the rule fixes the grey hover wash on every image-wrapping anchor.
+- **ShopOS Core**: CategorySlider mouse drag is now opt-in via a new switcher (default OFF) — desktop clicks no longer fight with drag at all. VariationSwatches gains a "No pre-selected variation on archive" setting (default ON) that bypasses both manually-set defaults AND the auto-cheapest pick on shop / archive / loop contexts.
+- **ShopOS Theme** (1.0.2): Removed the global `a:hover { opacity: 0.75 }` rule entirely — the 1.0.1 `:has()`-based scoping wasn't enough; killing the rule fixes the grey hover wash on every image-wrapping anchor.
 
 ## [1.7.3] — 2026-04-26
 
-- **Freeman Core**: CategorySlider drag threshold raised 8 → 16px so mouse drag no longer fights with click intent; new Hover ring color control. CheapestDefaultVariation gains an "Apply on product pages only" setting (default ON) — auto-selection is suppressed on shop / archive / loop contexts so swatches there render with nothing pre-selected.
-- **Freeman Theme** (1.0.1): Fix grey hover wash on image-containing anchors — global `a:hover { opacity: 0.75 }` rule scoped to text links only via `:has()`.
+- **ShopOS Core**: CategorySlider drag threshold raised 8 → 16px so mouse drag no longer fights with click intent; new Hover ring color control. CheapestDefaultVariation gains an "Apply on product pages only" setting (default ON) — auto-selection is suppressed on shop / archive / loop contexts so swatches there render with nothing pre-selected.
+- **ShopOS Theme** (1.0.1): Fix grey hover wash on image-containing anchors — global `a:hover { opacity: 0.75 }` rule scoped to text links only via `:has()`.
 
 ## [1.7.2] — 2026-04-26
 
@@ -816,7 +816,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.7.0] — 2026-04-26
 
-- New Freeman Core module **CategorySlider**: Elementor widget rendering WooCommerce product categories as an editorial drag-scroll slider with momentum, optional CSS scroll-snap, hover ring, progress bar, and per-breakpoint cards-per-view. Controls use Elementor SLIDER + CHOOSE for parity with the Claude Design Tweaks panel. Term-query controls (include/exclude/child-of). Full RTL — Direction control flips arrows, drag, and progress bar; auto follows `is_rtl()`.
+- New ShopOS Core module **CategorySlider**: Elementor widget rendering WooCommerce product categories as an editorial drag-scroll slider with momentum, optional CSS scroll-snap, hover ring, progress bar, and per-breakpoint cards-per-view. Controls use Elementor SLIDER + CHOOSE for parity with the Claude Design Tweaks panel. Term-query controls (include/exclude/child-of). Full RTL — Direction control flips arrows, drag, and progress bar; auto follows `is_rtl()`.
 
 ## [1.6.0] — 2026-04-23
 
@@ -836,7 +836,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.3.0] — 2026-04-22
 
-- Deferred items: RestockNotify assets now load only on product/shop/cart/checkout/shortcode pages (filter: rsn_should_enqueue); Swatches legacy strings migrated from etucart-vs to freeman-core text-domain, .pot + he_IL.po updated; typed Detection_Result value object returned from every Base_Importer::detect() — Legacy_Importer::scan() now coerces + logs on shape mismatch instead of silently going blank
+- Deferred items: RestockNotify assets now load only on product/shop/cart/checkout/shortcode pages (filter: rsn_should_enqueue); Swatches legacy strings migrated from shopos-vs to shopos-core text-domain, .pot + he_IL.po updated; typed Detection_Result value object returned from every Base_Importer::detect() — Legacy_Importer::scan() now coerces + logs on shape mismatch instead of silently going blank
 
 ## [1.2.1] — 2026-04-22
 
@@ -857,10 +857,10 @@ This is the aggregated changelog across all three packages. See each package's o
 ## [1.0.3] — 2026-04-22
 
 ### Added
-- **Swatches** — Simple products now use the Freeman buy box on both the PDP and the shop grid.
+- **Swatches** — Simple products now use the ShopOS buy box on both the PDP and the shop grid.
   - Single product page: styled Add to Cart + Buy Now + quantity stepper + sticky mobile bar.
   - Shop / archive: compact Add-to-cart card with a quantity stepper (AJAX, shared toast stack).
-  - OOS / non-purchasable simple products render the Freeman button disabled with "אזל מהמלאי".
+  - OOS / non-purchasable simple products render the ShopOS button disabled with "אזל מהמלאי".
   - Grouped and external products keep WooCommerce's default templates.
 
 ## [1.0.2] — 2026-04-22
@@ -870,16 +870,16 @@ This is the aggregated changelog across all three packages. See each package's o
 ## [1.0.1] — 2026-04-22
 
 ### Fixed
-- **Freeman Core** — Parse error in `src/Core/Module_Registry.php` docblock (unescaped `*/` in the path `src/Modules/*/Module.php` closed the comment early and caused a fatal at plugin activation). Path is now written with backticks in the docblock.
-- `tools/release.sh` now also bumps the `FREEMAN_CORE_VERSION` constant in the main plugin file and prepends a changelog entry automatically.
+- **ShopOS Core** — Parse error in `src/Core/Module_Registry.php` docblock (unescaped `*/` in the path `src/Modules/*/Module.php` closed the comment early and caused a fatal at plugin activation). Path is now written with backticks in the docblock.
+- `tools/release.sh` now also bumps the `SHOPOS_CORE_VERSION` constant in the main plugin file and prepends a changelog entry automatically.
 - `tools/activation-sim.php` added: offline WP-stubbed activation harness so parse errors and activation fatals are caught before `dist/` is shipped.
 
 ## [1.0.0] — 2026-04-22
 
 ### Added
 - Initial release.
-- **Freeman Theme** 1.0.0 — child theme of Hello Elementor 3.4.x.
-- **Freeman Core** 1.0.0 — unified plugin hosting all seven modules:
+- **ShopOS Theme** 1.0.0 — child theme of Hello Elementor 3.4.x.
+- **ShopOS Core** 1.0.0 — unified plugin hosting all seven modules:
   - `Cards` (ElevatedCards) — product card replacement, Quick View, Quick Add, Elementor widget.
   - `Swatches` (VariationSwatches) — variable-product buy-box + archive swatches.
   - `Restock` (RestockNotify) — back-in-stock subscription system with custom DB table.
@@ -888,6 +888,6 @@ This is the aggregated changelog across all three packages. See each package's o
   - `Scroll` (InfiniteScroll) — shop grid infinite scroll.
   - `Cheapest` (CheapestDefaultVariation) — auto-select cheapest in-stock variation.
 - `Legacy_Importer` migration wizard: detects each of the 7 legacy plugins, copies settings, adopts the restock-notify DB table, offers one-click "deactivate & delete legacy" action.
-- Unified `Freeman` admin menu with module toggles, onboarding wizard, health checks.
+- Unified `ShopOS` admin menu with module toggles, onboarding wizard, health checks.
 - Hebrew (`he_IL`) translation.
 - WooCommerce HPOS + Cart/Checkout Blocks compatibility declared centrally.

@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Ajax;
-use Freeman\Core\Modules\ShopFilters\Module;
-use Freeman\Core\Modules\ShopFilters\Shortcode;
+use ShopOS\Core\Modules\ShopFilters\Ajax;
+use ShopOS\Core\Modules\ShopFilters\Module;
+use ShopOS\Core\Modules\ShopFilters\Shortcode;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Frontend read-path wiring (Phase 6.3a): the shortcode and public AJAX
  * endpoint register on boot.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Ajax
- * @covers \Freeman\Core\Modules\ShopFilters\Shortcode
- * @covers \Freeman\Core\Modules\ShopFilters\Module
+ * @covers \ShopOS\Core\Modules\ShopFilters\Ajax
+ * @covers \ShopOS\Core\Modules\ShopFilters\Shortcode
+ * @covers \ShopOS\Core\Modules\ShopFilters\Module
  */
 final class ShopFiltersFrontendTest extends TestCase {
 

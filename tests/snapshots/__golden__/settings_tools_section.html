@@ -4,16 +4,16 @@
 
 
 <h3>Export</h3>
-<p>Download every freeman_core_* and freeman_digital_* option as a JSON envelope. Runtime state (logs, boot diagnostics, the backup store) is excluded.</p>
+<p>Download every shopos_core_* and shopos_digital_* option as a JSON envelope. Runtime state (logs, boot diagnostics, the backup store) is excluded.</p>
 <form method="post" action="https://example.test/wp-admin/admin-post.php">
-		<input type="hidden" name="action" value="freeman_settings_export"/>
+		<input type="hidden" name="action" value="shopos_settings_export"/>
 	<button type="submit" class="button button-primary">Download settings JSON</button>
 </form>
 
 <h3 style="margin-top:24px;">Import</h3>
 <p>Upload a previously-exported JSON envelope. Only version 1 envelopes are accepted. A backup of current state is created automatically before any write.</p>
 <form method="post" action="https://example.test/wp-admin/admin-post.php" enctype="multipart/form-data">
-		<input type="hidden" name="action" value="freeman_settings_import"/>
+		<input type="hidden" name="action" value="shopos_settings_import"/>
 	<input type="file" name="envelope" accept="application/json" required/>
 	<button type="submit" class="button button-primary">Import settings JSON</button>
 </form>

@@ -1,6 +1,6 @@
 # Tests
 
-PHPUnit test suite for Freeman Core. Added in 1.5.0 alongside a GitHub Actions CI config (`.github/workflows/ci.yml`).
+PHPUnit test suite for ShopOS Core. Added in 1.5.0 alongside a GitHub Actions CI config (`.github/workflows/ci.yml`).
 
 ## Running locally
 
@@ -30,7 +30,7 @@ PATH="/opt/homebrew/opt/php@8.3/bin:$PATH" composer test
 
 ## Bootstrap
 
-`tests/bootstrap.php` stubs the WordPress globals every `Freeman\Core\*` class touches: identity-style `apply_filters`, pass-through sanitizers, an in-memory option + transient store, a `wp_upload_dir` that points at `sys_get_temp_dir()`, plus null-return shims for everything else. The bootstrap also wires the same PSR-4 autoloader the plugin uses at runtime.
+`tests/bootstrap.php` stubs the WordPress globals every `ShopOS\Core\*` class touches: identity-style `apply_filters`, pass-through sanitizers, an in-memory option + transient store, a `wp_upload_dir` that points at `sys_get_temp_dir()`, plus null-return shims for everything else. The bootstrap also wires the same PSR-4 autoloader the plugin uses at runtime.
 
 No database required. Tests run in <10 ms locally.
 

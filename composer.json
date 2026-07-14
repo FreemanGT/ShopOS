@@ -1,6 +1,6 @@
 {
-    "name": "freeman/workspace",
-    "description": "Freeman Theme + Freeman Core development workspace",
+    "name": "shopos/workspace",
+    "description": "ShopOS Theme + ShopOS Core development workspace",
     "type": "project",
     "license": "GPL-2.0-or-later",
     "require": {

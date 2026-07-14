@@ -9,13 +9,13 @@
          beStrictAboutTestsThatDoNotTestAnything="false"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd">
     <testsuites>
-        <testsuite name="freeman-core">
+        <testsuite name="shopos-core">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
     <source>
         <include>
-            <directory suffix=".php">freeman-core/src</directory>
+            <directory suffix=".php">shopos-core/src</directory>
         </include>
     </source>
 </phpunit>

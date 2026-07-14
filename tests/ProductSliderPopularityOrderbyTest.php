@@ -37,7 +37,7 @@ if ( ! function_exists( 'is_tax' ) ) {
 	function is_tax( $tax ) { return false; }
 }
 
-use Freeman\Core\Modules\ProductSlider\Widget;
+use ShopOS\Core\Modules\ProductSlider\Widget;
 
 /**
  * Covers the popularity / rating / price orderby in
@@ -57,7 +57,7 @@ use Freeman\Core\Modules\ProductSlider\Widget;
  * stub hardcodes 42), but the IDs PASSED to wc_get_product reflect the in-PHP
  * sort exactly.
  *
- * @covers \Freeman\Core\Modules\ProductSlider\Widget
+ * @covers \ShopOS\Core\Modules\ProductSlider\Widget
  */
 final class ProductSliderPopularityOrderbyTest extends TestCase {
 

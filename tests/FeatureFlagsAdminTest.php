@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Core\Feature_Flags;
-use Freeman\Core\Core\Settings_Hub;
+use ShopOS\Core\Core\Feature_Flags;
+use ShopOS\Core\Core\Settings_Hub;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Freeman\Core\Core\Feature_Flags
- * @covers \Freeman\Core\Core\Settings_Hub
+ * @covers \ShopOS\Core\Core\Feature_Flags
+ * @covers \ShopOS\Core\Core\Settings_Hub
  */
 final class FeatureFlagsAdminTest extends TestCase {
 
@@ -26,10 +26,10 @@ final class FeatureFlagsAdminTest extends TestCase {
 		return $keys;
 	}
 
-	/** Scan freeman-core/src for is_enabled( 'module', 'feature' ) call sites. */
+	/** Scan shopos-core/src for is_enabled( 'module', 'feature' ) call sites. */
 	private function source_referenced_keys(): array {
-		$root  = realpath( __DIR__ . '/../freeman-core/src' );
-		$this->assertNotFalse( $root, 'freeman-core/src must exist' );
+		$root  = realpath( __DIR__ . '/../shopos-core/src' );
+		$this->assertNotFalse( $root, 'shopos-core/src must exist' );
 
 		$found = array();
 		$it    = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $root, FilesystemIterator::SKIP_DOTS ) );
@@ -99,13 +99,13 @@ final class FeatureFlagsAdminTest extends TestCase {
 
 	public function test_option_name_format(): void {
 		$this->assertSame(
-			'freeman_core_sliders_advanced_controls_enabled',
+			'shopos_core_sliders_advanced_controls_enabled',
 			Feature_Flags::option_name( 'sliders', 'advanced_controls' )
 		);
 		// Every registry entry's computed option name follows the convention.
 		foreach ( Feature_Flags::registry() as $flag ) {
 			$this->assertSame(
-				'freeman_core_' . $flag['module'] . '_' . $flag['feature'] . '_enabled',
+				'shopos_core_' . $flag['module'] . '_' . $flag['feature'] . '_enabled',
 				Feature_Flags::option_name( $flag['module'], $flag['feature'] )
 			);
 		}
@@ -116,16 +116,16 @@ final class FeatureFlagsAdminTest extends TestCase {
 	}
 
 	public function test_is_forced_by_filter_true_when_filter_registered(): void {
-		add_filter( 'freeman_core/feature_flag/sliders/advanced_controls', '__return_true' );
+		add_filter( 'shopos_core/feature_flag/sliders/advanced_controls', '__return_true' );
 		$this->assertTrue( Feature_Flags::is_forced_by_filter( 'sliders', 'advanced_controls' ) );
 		// A filter on a different flag does not bleed over.
 		$this->assertFalse( Feature_Flags::is_forced_by_filter( 'infinite_scroll', 'trigger_modes' ) );
 	}
 
 	public function test_hub_registers_save_feature_flags_handler(): void {
-		$hub = new Settings_Hub( new \Freeman\Core\Core\Module_Registry() );
+		$hub = new Settings_Hub( new \ShopOS\Core\Core\Module_Registry() );
 		$hub->boot();
-		$this->assertArrayHasKey( 'admin_post_freeman_save_feature_flags', $GLOBALS['fr_hooks'] );
-		$this->assertArrayHasKey( 'admin_post_freeman_toggle_module', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'admin_post_shopos_save_feature_flags', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'admin_post_shopos_toggle_module', $GLOBALS['fr_hooks'] );
 	}
 }

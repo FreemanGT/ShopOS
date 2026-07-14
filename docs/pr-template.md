@@ -20,7 +20,7 @@ List which entries in `/docs/decisions-2026-04-28.md` this PR relies on. Write "
 ## Backward compatibility
 For every existing surface this PR could affect, confirm it still works identically. Be specific.
 
-- **Option keys**: list every `freeman_core_*` and `etucart_*` key the touched modules read/write. State which still work.
+- **Option keys**: list every `shopos_core_*` and `shopos_*` key the touched modules read/write. State which still work.
 - **Hooks/filters**: list every existing hook in scope. State which still fire with the same name and payload.
 - **Shortcodes**: list each one. State that they still render the same output.
 - **CSS classes**: list every class consumers might target. State they still exist.
@@ -28,7 +28,7 @@ For every existing surface this PR could affect, confirm it still works identica
 - **Admin URLs / REST routes**: state they still resolve.
 
 ## Feature flag
-- Flag name: `freeman_core_<module>_<feature>_enabled`
+- Flag name: `shopos_core_<module>_<feature>_enabled`
 - Default: `false`
 - How to enable: `wp option update <flag> 1`
 - If no flag: explain why this is additive-only and risk-free.
@@ -47,7 +47,7 @@ Test command: `vendor/bin/phpunit tests/path/to/new/tests`
 - [ ] Committed updated `.pot` file
 
 ## Logging
-- [ ] New code paths log via `Freeman\Core\Core\Logger`
+- [ ] New code paths log via `ShopOS\Core\Core\Logger`
 - [ ] No `error_log()`, `var_dump()`, `console.log()` left in
 - [ ] Log levels appropriate (info/warning/error)
 
@@ -60,7 +60,7 @@ Test command: `vendor/bin/phpunit tests/path/to/new/tests`
 (downgrade procedure here, or "N/A — no schema change")
 
 ## Manual QA checklist
-- [ ] Activated freeman-core on a clean WP install — no fatal errors
+- [ ] Activated shopos-core on a clean WP install — no fatal errors
 - [ ] Activated alongside WooCommerce — no fatal errors
 - [ ] Flag OFF: snapshot of relevant module output matches pre-PR snapshot byte-for-byte
 - [ ] Flag ON: new behavior works as described
@@ -75,7 +75,7 @@ Test command: `vendor/bin/phpunit tests/path/to/new/tests`
 One paragraph. Usually:
 
 > To disable in production without deactivating the plugin, run:
-> `wp option update freeman_core_<module>_<feature>_enabled 0`
+> `wp option update shopos_core_<module>_<feature>_enabled 0`
 > This reverts to pre-PR behavior immediately. No data migration needed.
 
 ## Future work (optional)

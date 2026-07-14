@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Core\Logger;
-use Freeman\Core\Modules\ProductFeed\Generator;
+use ShopOS\Core\Core\Logger;
+use ShopOS\Core\Modules\ProductFeed\Generator;
 use PHPUnit\Framework\TestCase;
 
 /**

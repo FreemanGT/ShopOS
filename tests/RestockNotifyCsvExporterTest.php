@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\RestockNotify\Admin_Tools;
-use Freeman\Core\Modules\RestockNotify\CSV_Exporter;
-use Freeman\Core\Modules\RestockNotify\Subscribers;
+use ShopOS\Core\Modules\RestockNotify\Admin_Tools;
+use ShopOS\Core\Modules\RestockNotify\CSV_Exporter;
+use ShopOS\Core\Modules\RestockNotify\Subscribers;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -18,9 +18,9 @@ use PHPUnit\Framework\TestCase;
  * and exercising the wp_die branches would require fatal-recovery
  * gymnastics for thin value.
  *
- * @covers \Freeman\Core\Modules\RestockNotify\CSV_Exporter
- * @covers \Freeman\Core\Modules\RestockNotify\Admin_Tools
- * @covers \Freeman\Core\Modules\RestockNotify\Subscribers::all
+ * @covers \ShopOS\Core\Modules\RestockNotify\CSV_Exporter
+ * @covers \ShopOS\Core\Modules\RestockNotify\Admin_Tools
+ * @covers \ShopOS\Core\Modules\RestockNotify\Subscribers::all
  */
 final class RestockNotifyCsvExporterTest extends TestCase {
 

@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Module;
+use ShopOS\Core\Modules\ShopFilters\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Module identity, default-disabled state, and boot wiring.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Module
+ * @covers \ShopOS\Core\Modules\ShopFilters\Module
  */
 final class ShopFiltersModuleTest extends TestCase {
 
@@ -22,11 +22,11 @@ final class ShopFiltersModuleTest extends TestCase {
 		$module = new Module();
 
 		$this->assertSame( 'shop_filters', $module->id() );
-		$this->assertSame( 'freeman_core_shop_filters_dirty_queue', $module->option_name( 'dirty_queue' ) );
+		$this->assertSame( 'shopos_core_shop_filters_dirty_queue', $module->option_name( 'dirty_queue' ) );
 	}
 
 	public function test_disabled_by_default(): void {
-		// No freeman_core_modules option set → a newly-added module is absent → off.
+		// No shopos_core_modules option set → a newly-added module is absent → off.
 		$this->assertFalse( ( new Module() )->is_enabled() );
 	}
 

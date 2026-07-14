@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\VariationSwatches\Module;
+use ShopOS\Core\Modules\VariationSwatches\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Wave 4.5 (1.11.40) — VariationSwatches WPC Bundles + FBT compat. PHP-side
- * plumbing only: `Module::inject_feature_flags()` emits a `window.FreemanCoreVSFlags`
- * inline script before the `freeman-core` handle, gated by the
- * `freeman_core_variation_swatches_bundle_compat_enabled` flag. The
+ * plumbing only: `Module::inject_feature_flags()` emits a `window.ShopOSCoreVSFlags`
+ * inline script before the `shopos-core` handle, gated by the
+ * `shopos_core_variation_swatches_bundle_compat_enabled` flag. The
  * behavioral JS changes (full-form serialize + woobt bridge) are
  * staging-validated per PR #17 and not exercisable from PHPUnit.
  *
- * @covers \Freeman\Core\Modules\VariationSwatches\Module
+ * @covers \ShopOS\Core\Modules\VariationSwatches\Module
  */
 
 final class VariationSwatchesBundleCompatTest extends TestCase {
@@ -26,43 +26,43 @@ final class VariationSwatchesBundleCompatTest extends TestCase {
 	}
 
 	public function test_inject_feature_flags_bails_when_handle_not_registered(): void {
-		$GLOBALS['fr_wp_script_is_registered']['freeman-core'] = false;
+		$GLOBALS['fr_wp_script_is_registered']['shopos-core'] = false;
 
 		( new Module() )->inject_feature_flags();
 
 		$this->assertSame(
 			array(),
 			$GLOBALS['fr_scripts_inline'],
-			'wp_add_inline_script must not be called when the freeman-core handle is unregistered'
+			'wp_add_inline_script must not be called when the shopos-core handle is unregistered'
 		);
 	}
 
 	public function test_inject_feature_flags_emits_bundle_compat_false_when_flag_off(): void {
-		$GLOBALS['fr_wp_script_is_registered']['freeman-core'] = true;
+		$GLOBALS['fr_wp_script_is_registered']['shopos-core'] = true;
 		// Flag default is false; no option set.
 
 		( new Module() )->inject_feature_flags();
 
-		$this->assertArrayHasKey( 'freeman-core', $GLOBALS['fr_scripts_inline'] );
-		$this->assertArrayHasKey( 'before', $GLOBALS['fr_scripts_inline']['freeman-core'] );
-		$payload = $GLOBALS['fr_scripts_inline']['freeman-core']['before'][0] ?? '';
-		$this->assertStringContainsString( 'window.FreemanCoreVSFlags', $payload );
+		$this->assertArrayHasKey( 'shopos-core', $GLOBALS['fr_scripts_inline'] );
+		$this->assertArrayHasKey( 'before', $GLOBALS['fr_scripts_inline']['shopos-core'] );
+		$payload = $GLOBALS['fr_scripts_inline']['shopos-core']['before'][0] ?? '';
+		$this->assertStringContainsString( 'window.ShopOSCoreVSFlags', $payload );
 		$this->assertStringContainsString( '"bundleCompat":false', $payload );
 	}
 
 	public function test_inject_feature_flags_emits_bundle_compat_true_when_flag_on(): void {
-		$GLOBALS['fr_wp_script_is_registered']['freeman-core'] = true;
-		$GLOBALS['fr_opts']['freeman_core_variation_swatches_bundle_compat_enabled'] = '1';
+		$GLOBALS['fr_wp_script_is_registered']['shopos-core'] = true;
+		$GLOBALS['fr_opts']['shopos_core_variation_swatches_bundle_compat_enabled'] = '1';
 
 		( new Module() )->inject_feature_flags();
 
-		$payload = $GLOBALS['fr_scripts_inline']['freeman-core']['before'][0] ?? '';
+		$payload = $GLOBALS['fr_scripts_inline']['shopos-core']['before'][0] ?? '';
 		$this->assertStringContainsString( '"bundleCompat":true', $payload );
 		$this->assertStringNotContainsString( '"bundleCompat":false', $payload );
 	}
 
 	/**
-	 * Other VariationSwatches tests in the suite pre-load `Etucart_VS_Plugin`,
+	 * Other VariationSwatches tests in the suite pre-load `ShopOS_VS_Plugin`,
 	 * which triggers Module::boot()'s legacy-conflict bail-out and prevents
 	 * the add_action() registration we want to observe. Running this test in
 	 * an isolated process gives us a clean class symbol table.

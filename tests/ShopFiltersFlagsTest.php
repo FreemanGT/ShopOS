@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Query;
-use Freeman\Core\Modules\ShopFilters\Query_Builder;
+use ShopOS\Core\Modules\ShopFilters\Query;
+use ShopOS\Core\Modules\ShopFilters\Query_Builder;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,8 +11,8 @@ use PHPUnit\Framework\TestCase;
  * when out-of-stock products are shown). The lookup reads + hook wiring are
  * integration / live-QA.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Query
- * @covers \Freeman\Core\Modules\ShopFilters\Query_Builder
+ * @covers \ShopOS\Core\Modules\ShopFilters\Query
+ * @covers \ShopOS\Core\Modules\ShopFilters\Query_Builder
  */
 final class ShopFiltersFlagsTest extends TestCase {
 

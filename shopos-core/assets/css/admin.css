@@ -1,0 +1,126 @@
+/*
+ * ShopOS admin dashboard styles.
+ * Scoped to .shopos-wrap so we don't touch the rest of wp-admin.
+ */
+
+.shopos-wrap .shopos-version {
+    font-size: 13px;
+    color: #666;
+    font-weight: 400;
+    margin-left: 6px;
+}
+
+.shopos-healthbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 24px;
+}
+
+.shopos-healthbar-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    background: #f0f0f1;
+    color: #1d2327;
+}
+.shopos-healthbar-item strong {
+    margin-right: 6px;
+}
+.shopos-healthbar-item.ok   { background: #d1fae5; color: #065f46; }
+.shopos-healthbar-item.bad  { background: #fee2e2; color: #991b1b; }
+.shopos-healthbar-item.soft { background: #fef3c7; color: #92400e; }
+
+.shopos-modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.shopos-module-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    transition: box-shadow 180ms ease;
+}
+.shopos-module-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.shopos-module-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.shopos-module-title {
+    font-size: 16px;
+    margin: 0;
+}
+
+.shopos-module-desc {
+    color: #555;
+    font-size: 13px;
+    flex: 1;
+    margin: 0 0 16px;
+}
+
+.shopos-module-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.shopos-toggle-form {
+    margin: 0;
+}
+
+.shopos-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+.shopos-dot-green { background: #10b981; }
+.shopos-dot-amber { background: #f59e0b; }
+.shopos-dot-red   { background: #ef4444; }
+
+.shopos-onboarding {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 24px;
+    margin-top: 16px;
+}
+
+.shopos-onboarding-list {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0;
+}
+.shopos-onboarding-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f1;
+}
+.shopos-onboarding-list li:last-child {
+    border-bottom: none;
+}
+
+.shopos-log {
+    background: #1d2327;
+    color: #f0f0f1;
+    padding: 12px;
+    border-radius: 6px;
+    max-height: 320px;
+    overflow: auto;
+    font-size: 12px;
+    line-height: 1.5;
+}

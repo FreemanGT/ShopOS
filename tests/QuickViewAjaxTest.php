@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\QuickView\Ajax;
-use Freeman\Core\Modules\QuickView\Module;
+use ShopOS\Core\Modules\QuickView\Ajax;
+use ShopOS\Core\Modules\QuickView\Module;
 use PHPUnit\Framework\TestCase;
 
 if ( ! class_exists( '\\WC_Product' ) ) {
@@ -20,7 +20,7 @@ if ( ! function_exists( 'get_post_status' ) ) {
  * that keeps the public endpoint from serving drafts, hidden products, or
  * arbitrary post ids. The JSON-echoing handler itself is live-QA.
  *
- * @covers \Freeman\Core\Modules\QuickView\Ajax
+ * @covers \ShopOS\Core\Modules\QuickView\Ajax
  */
 final class QuickViewAjaxTest extends TestCase {
 
@@ -55,8 +55,8 @@ final class QuickViewAjaxTest extends TestCase {
 	public function test_register_wires_both_public_actions(): void {
 		$this->ajax()->register();
 
-		$this->assertArrayHasKey( 'wp_ajax_freeman_core_quick_view_product', $GLOBALS['fr_hooks'] );
-		$this->assertArrayHasKey( 'wp_ajax_nopriv_freeman_core_quick_view_product', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'wp_ajax_shopos_core_quick_view_product', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'wp_ajax_nopriv_shopos_core_quick_view_product', $GLOBALS['fr_hooks'] );
 	}
 
 	public function test_is_viewable_rejects_a_non_product(): void {

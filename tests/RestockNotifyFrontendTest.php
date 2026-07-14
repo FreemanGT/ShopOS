@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../freeman-core/src/Modules/RestockNotify/legacy/helpers.php';
+require_once __DIR__ . '/../shopos-core/src/Modules/RestockNotify/legacy/helpers.php';
 require_once __DIR__ . '/snapshots/__fixtures__/wc_product_stub.php';
 require_once __DIR__ . '/__stubs__/rsn_database_stub.php';
 
-use Freeman\Core\Modules\RestockNotify\Frontend;
+use ShopOS\Core\Modules\RestockNotify\Frontend;
 use PHPUnit\Framework\TestCase;
 
 if ( ! function_exists( 'wc_get_product' ) ) {
@@ -37,7 +37,7 @@ final class TestFrontendProduct extends \WC_Product {
 }
 
 /**
- * @covers \Freeman\Core\Modules\RestockNotify\Frontend
+ * @covers \ShopOS\Core\Modules\RestockNotify\Frontend
  */
 final class RestockNotifyFrontendTest extends TestCase {
 
@@ -106,7 +106,7 @@ final class RestockNotifyFrontendTest extends TestCase {
 
 	public function test_should_inject_filter_can_short_circuit_render(): void {
 		add_filter(
-			'freeman_core/restock_notify/should_inject',
+			'shopos_core/restock_notify/should_inject',
 			static function () {
 				return false;
 			}
@@ -128,7 +128,7 @@ final class RestockNotifyFrontendTest extends TestCase {
 	public function test_should_inject_filter_receives_inject_product_context(): void {
 		$captured = null;
 		add_filter(
-			'freeman_core/restock_notify/should_inject',
+			'shopos_core/restock_notify/should_inject',
 			static function ( $inject, $product, $context ) use ( &$captured ) {
 				$captured = compact( 'inject', 'product', 'context' );
 				return $inject;
@@ -288,7 +288,7 @@ final class RestockNotifyFrontendTest extends TestCase {
 			// has no native way to suppress exit. Skip the actual call and
 			// instead verify the lookup wiring via a manual replay:
 			\RSN_Database::$calls = array();
-			\Freeman\Core\Modules\RestockNotify\Subscribers::get_by_token( 'tok-abc' );
+			\ShopOS\Core\Modules\RestockNotify\Subscribers::get_by_token( 'tok-abc' );
 			$this->assertSame( 'get_by_token', \RSN_Database::$calls[0]['method'] );
 		} finally {
 			unset( $_GET['rsn_unsubscribe'] );
@@ -307,7 +307,7 @@ final class RestockNotifyFrontendTest extends TestCase {
 		// the full method (which needs a stubbed variable product); the
 		// source-presence check below is sufficient to detect drift in
 		// the literal prefix.
-		$src = file_get_contents( FREEMAN_CORE_PATH . 'src/Modules/RestockNotify/Frontend.php' );
+		$src = file_get_contents( SHOPOS_CORE_PATH . 'src/Modules/RestockNotify/Frontend.php' );
 		$this->assertStringContainsString(
 			"\$cache_key = 'rsn_oos_' . \$product->get_id();",
 			$src,

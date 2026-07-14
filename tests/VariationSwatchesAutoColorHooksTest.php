@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\VariationSwatches\Sampler_Scheduler;
-use Freeman\Core\Modules\VariationSwatches\Color_Sampler;
+use ShopOS\Core\Modules\VariationSwatches\Sampler_Scheduler;
+use ShopOS\Core\Modules\VariationSwatches\Color_Sampler;
 use PHPUnit\Framework\TestCase;
 
 // WP-Cron stubs live in tests/bootstrap.php (smart promotion, Wave 2.2 / 4d).
@@ -49,11 +49,11 @@ if ( ! function_exists( 'get_attached_file' ) ) {
  * matter — the stubs in bootstrap support add_action/do_action for the
  * filters that DO need to fire (e.g., the batch-size filter).
  *
- * @covers \Freeman\Core\Modules\VariationSwatches\Sampler_Scheduler
+ * @covers \ShopOS\Core\Modules\VariationSwatches\Sampler_Scheduler
  */
 final class VariationSwatchesAutoColorHooksTest extends TestCase {
 
-	private const FLAG_OPT = 'freeman_core_variation_swatches_auto_color_enabled';
+	private const FLAG_OPT = 'shopos_core_variation_swatches_auto_color_enabled';
 
 	public static function setUpBeforeClass(): void {
 		if ( ! extension_loaded( 'gd' ) ) {
@@ -78,7 +78,7 @@ final class VariationSwatchesAutoColorHooksTest extends TestCase {
 	}
 
 	private function register_synthetic_image( int $attachment_id, int $variation_id, int $r, int $g, int $b ): void {
-		$dir  = sys_get_temp_dir() . '/freeman-sched-' . bin2hex( random_bytes( 4 ) );
+		$dir  = sys_get_temp_dir() . '/shopos-sched-' . bin2hex( random_bytes( 4 ) );
 		mkdir( $dir, 0755, true );
 		$im   = imagecreatetruecolor( 30, 30 );
 		$col  = imagecolorallocate( $im, $r, $g, $b );

@@ -1,0 +1,230 @@
+<?php
+/**
+ * Orchestrates schema/option migrations across Core + every module that owns
+ * a custom table. Modules register schemas by implementing a get_schema()
+ * method on a sibling Database class; Migrations looks those up by convention.
+ *
+ * @package ShopOSCore
+ */
+
+namespace ShopOS\Core\Core;
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Migrations runner.
+ */
+final class Migrations {
+
+	const DB_VERSION_OPTION = 'shopos_core_db_version';
+
+	/**
+	 * Registry reference.
+	 *
+	 * @var Module_Registry
+	 */
+	private $registry;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Module_Registry $registry Registry.
+	 */
+	public function __construct( Module_Registry $registry ) {
+		$this->registry = $registry;
+	}
+
+	/**
+	 * Run migrations if the stored DB version is behind the plugin version.
+	 */
+	public function maybe_run() {
+		$installed = get_option( self::DB_VERSION_OPTION, '0' );
+		if ( version_compare( $installed, SHOPOS_CORE_VERSION, '<' ) ) {
+			$this->run( $installed );
+		}
+	}
+
+	/**
+	 * Run migrations unconditionally. Safe to call repeatedly (dbDelta is
+	 * idempotent; one-shot migrations are version-gated).
+	 *
+	 * @param string|null $previous_version Stored DB version before this run.
+	 *                                      Defaults to the current option value.
+	 */
+	public function run( $previous_version = null ) {
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
+		if ( null === $previous_version ) {
+			$previous_version = get_option( self::DB_VERSION_OPTION, '0' );
+		}
+
+		foreach ( $this->registry->discover() as $module ) {
+			$id            = $module->id();
+			$reflection    = new \ReflectionClass( $module );
+			$module_ns     = $reflection->getNamespaceName();
+			$database_cls  = $module_ns . '\\Database';
+
+			if ( class_exists( $database_cls ) && is_callable( array( $database_cls, 'install' ) ) ) {
+				try {
+					call_user_func( array( $database_cls, 'install' ) );
+				} catch ( \Throwable $e ) {
+					Logger::log( 'Migrations: ' . $id . ' install failed: ' . $e->getMessage(), 'error' );
+				}
+			}
+		}
+
+		$this->run_one_shot_migrations( $previous_version );
+
+		update_option( self::DB_VERSION_OPTION, SHOPOS_CORE_VERSION );
+	}
+
+	/**
+	 * Version-gated one-shot migrations. Each block runs at most once per
+	 * install (because the DB_VERSION_OPTION is bumped at the end of run()).
+	 *
+	 * @param string $previous_version Stored DB version before this run.
+	 */
+	private function run_one_shot_migrations( $previous_version ) {
+		// 1.9.0 — hook/option rename for ProductFeed (N-02) and
+		// VariableStockFix (N-03). See AUDIT-2026-04.md.
+		if ( version_compare( $previous_version, '1.9.0', '<' ) ) {
+			$this->migrate_to_1_9_0();
+		}
+
+		// 1.11.21 — Wave 2.2 / sub-PR 4a: copy the 14 shopos_vs_*
+		// VariationSwatches settings into their shopos_core_variation_swatches_*
+		// counterparts so the new Settings_Hub admin page (gated behind the
+		// settings_hub feature flag) has values to render. Never deletes the
+		// legacy keys; never overwrites an already-set new key.
+		if ( version_compare( $previous_version, '1.11.21', '<' ) ) {
+			$this->migrate_variation_swatches_settings_to_hub();
+		}
+
+		// 1.11.45 — Wave 2.2 / 4g: the ShopOS → Variation Swatches page is now
+		// the sole editing surface and the settings_hub flag is retired. On
+		// sites where the flag was OFF (the default), the legacy WooCommerce →
+		// Products tab has been the live writer since 1.11.21, so the
+		// shopos_core_variation_swatches_* keys hold only the frozen 1.11.21
+		// snapshot — re-sync them from the current legacy values so nothing is
+		// lost. On sites where the flag was ON, the new keys are already
+		// current; leave them alone. (This is the last read of the retired
+		// flag option.)
+		if ( version_compare( $previous_version, '1.11.45', '<' )
+			&& ! Feature_Flags::is_enabled( 'variation_swatches', 'settings_hub' )
+		) {
+			$this->resync_variation_swatches_settings_from_legacy();
+		}
+	}
+
+	/**
+	 * 1.9.0 rename migration. Idempotent: safe if run twice.
+	 */
+	private function migrate_to_1_9_0() {
+		// (a) Copy the VariableStockFix debounce queue to its canonical key,
+		//     then drop the legacy key.
+		$old_queue = get_option( 'shopos_vpsf_debounce_queue', null );
+		if ( null !== $old_queue ) {
+			if ( false === get_option( 'shopos_core_variable_stock_fix_debounce_queue', false ) ) {
+				update_option( 'shopos_core_variable_stock_fix_debounce_queue', $old_queue, false );
+			}
+			delete_option( 'shopos_vpsf_debounce_queue' );
+		}
+
+		// (b) Reschedule the ProductFeed hourly cron under its canonical hook
+		//     name. The legacy hook name is also handled at runtime by an
+		//     add_action() shim (Module::boot) so any in-flight events still
+		//     fire — but new schedules need to use the new name.
+		if ( $ts = wp_next_scheduled( 'shopos_productfeed_hourly' ) ) {
+			wp_unschedule_event( $ts, 'shopos_productfeed_hourly' );
+		}
+		if ( ! wp_next_scheduled( 'shopos_core_product_feed_hourly' ) ) {
+			wp_schedule_event( time() + HOUR_IN_SECONDS, 'hourly', 'shopos_core_product_feed_hourly' );
+		}
+
+		// (c) Same for the VariableStockFix daily audit cron.
+		if ( $ts = wp_next_scheduled( 'shopos_vpsf_daily_audit' ) ) {
+			wp_unschedule_event( $ts, 'shopos_vpsf_daily_audit' );
+		}
+		if ( ! wp_next_scheduled( 'shopos_core_variable_stock_fix_daily_audit' ) ) {
+			wp_schedule_event( time() + DAY_IN_SECONDS, 'daily', 'shopos_core_variable_stock_fix_daily_audit' );
+		}
+
+		// (d) Flush rewrite rules so the cached rule for /product-feed maps
+		//     onto the canonical query var (`shopos_core_product_feed`)
+		//     instead of the legacy one. Server.php still registers the
+		//     legacy query var as a one-release alias for safety.
+		flush_rewrite_rules( false );
+	}
+
+	/**
+	 * Legacy → new option-key pairs for the VariationSwatches settings.
+	 * Shared by the 1.11.21 (4a) initial copy and the 1.11.45 (4g) re-sync.
+	 *
+	 * @return array<string,string> legacy `shopos_vs_*` => new `shopos_core_variation_swatches_*`
+	 */
+	private function vs_settings_key_pairs() {
+		return array(
+			'shopos_vs_shop_enabled'             => 'shopos_core_variation_swatches_shop_enabled',
+			'shopos_vs_shop_max_visible'         => 'shopos_core_variation_swatches_shop_max_visible',
+			'shopos_vs_shop_show_price'          => 'shopos_core_variation_swatches_shop_show_price',
+			'shopos_vs_shop_apply_shop'          => 'shopos_core_variation_swatches_shop_apply_shop',
+			'shopos_vs_shop_apply_category'      => 'shopos_core_variation_swatches_shop_apply_category',
+			'shopos_vs_shop_apply_tag'           => 'shopos_core_variation_swatches_shop_apply_tag',
+			'shopos_vs_shop_apply_search'        => 'shopos_core_variation_swatches_shop_apply_search',
+			'shopos_vs_shop_apply_related'       => 'shopos_core_variation_swatches_shop_apply_related',
+			'shopos_vs_shop_excluded_categories' => 'shopos_core_variation_swatches_shop_excluded_categories',
+			'shopos_vs_pdp_hide_oos'             => 'shopos_core_variation_swatches_pdp_hide_oos',
+			'shopos_vs_shop_hide_oos'            => 'shopos_core_variation_swatches_shop_hide_oos',
+			'shopos_vs_shop_no_preselect'        => 'shopos_core_variation_swatches_shop_no_preselect',
+			'shopos_vs_shop_hide_attr_labels'    => 'shopos_core_variation_swatches_shop_hide_attr_labels',
+			'shopos_vs_shop_hide_selected'       => 'shopos_core_variation_swatches_shop_hide_selected',
+		);
+	}
+
+	/**
+	 * 1.11.21 Wave 2.2 / 4a — copy shopos_vs_* settings into the
+	 * shopos_core_variation_swatches_* namespace.
+	 *
+	 * Idempotent: a new key that already has a value is never overwritten,
+	 * so re-running this method is a no-op (and the version-gate in
+	 * run_one_shot_migrations() prevents re-runs anyway via DB_VERSION_OPTION).
+	 *
+	 * Never deletes legacy keys — they remain readable forever via
+	 * Settings_Reader's legacy fallback (per the §4.5 zero-downtime decision).
+	 */
+	private function migrate_variation_swatches_settings_to_hub() {
+		$sentinel = '__FR_NOT_SET__'; // Non-`shopos_*` so it stays out of baseline-options-declared.txt; in-memory only.
+		foreach ( $this->vs_settings_key_pairs() as $legacy_key => $new_key ) {
+			$existing_new = get_option( $new_key, $sentinel );
+			if ( $sentinel !== $existing_new ) {
+				continue;
+			}
+			$legacy_val = get_option( $legacy_key, $sentinel );
+			if ( $sentinel === $legacy_val ) {
+				continue;
+			}
+			update_option( $new_key, $legacy_val );
+		}
+	}
+
+	/**
+	 * 1.11.45 Wave 2.2 / 4g — re-sync shopos_vs_* → shopos_core_variation_swatches_*,
+	 * overwriting the new key with the current legacy value.
+	 *
+	 * Called only when the (now-retired) settings_hub flag was OFF, i.e. the
+	 * legacy WooCommerce → Products tab has been the live writer since 1.11.21
+	 * and the new keys hold only the frozen 1.11.21 snapshot. A legacy key
+	 * that was never set is skipped (the new key keeps its schema default).
+	 * Legacy keys are not deleted.
+	 */
+	private function resync_variation_swatches_settings_from_legacy() {
+		$sentinel = '__FR_NOT_SET__';
+		foreach ( $this->vs_settings_key_pairs() as $legacy_key => $new_key ) {
+			$legacy_val = get_option( $legacy_key, $sentinel );
+			if ( $sentinel === $legacy_val ) {
+				continue;
+			}
+			update_option( $new_key, $legacy_val );
+		}
+	}
+}

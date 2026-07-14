@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\PageTransitions\Module;
+use ShopOS\Core\Modules\PageTransitions\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  * blank). The overlay/trigger behaviour and the cross-document fade are
  * JS/CSS — live-QA.
  *
- * @covers \Freeman\Core\Modules\PageTransitions\Module
+ * @covers \ShopOS\Core\Modules\PageTransitions\Module
  */
 final class PageTransitionsModuleTest extends TestCase {
 
@@ -24,11 +24,11 @@ final class PageTransitionsModuleTest extends TestCase {
 		$module = new Module();
 
 		$this->assertSame( 'page_transitions', $module->id() );
-		$this->assertSame( 'freeman_core_page_transitions_loading_label', $module->option_name( 'loading_label' ) );
+		$this->assertSame( 'shopos_core_page_transitions_loading_label', $module->option_name( 'loading_label' ) );
 	}
 
 	public function test_disabled_by_default(): void {
-		// Absent from freeman_core_modules → a newly-added module is off.
+		// Absent from shopos_core_modules → a newly-added module is off.
 		$this->assertFalse( ( new Module() )->is_enabled() );
 	}
 
@@ -84,7 +84,7 @@ final class PageTransitionsModuleTest extends TestCase {
 	}
 
 	public function test_localized_payload_uses_saved_label(): void {
-		$GLOBALS['fr_opts']['freeman_core_page_transitions_loading_label'] = 'טוען תוצאות…';
+		$GLOBALS['fr_opts']['shopos_core_page_transitions_loading_label'] = 'טוען תוצאות…';
 
 		$payload = ( new Module() )->localized_payload();
 

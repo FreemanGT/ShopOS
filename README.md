@@ -1,43 +1,46 @@
-# Freeman
+# ShopOS
 
-Freeman is a two-package WordPress product for WooCommerce stores built on top of Elementor.
+**ShopOS** is a modular WordPress + WooCommerce product suite for Elementor stores, localized for the Israeli market (Hebrew/RTL UI, shekel pricing).
 
 ## Packages
 
-- **`freeman-theme/`** — child theme of [Hello Elementor](https://wordpress.org/themes/hello-elementor/). Presentation only: design tokens, typography, RTL, Woo template overrides.
-- **`freeman-core/`** — single plugin containing all business logic as independently togglable modules (Swatches, Restock, StockFix, Feed, Scroll, Cheapest).
+- **`shopos-theme/`** — child theme of [Hello Elementor](https://wordpress.org/themes/hello-elementor/). Presentation only: design tokens, typography, RTL, WooCommerce template overrides.
+- **`shopos-core/`** — single plugin containing all storefront features as independently togglable modules. New modules are auto-discovered from `src/Modules/`.
+- **`shopos-digital/`** — standalone WordPress/WooCommerce performance plugin: database indexes, query tuning, autoload optimizer, security hardening, speed tuning, transient management, bloat removal.
 
-The theme requires the plugin. The plugin works without the theme, so data (subscribers, settings, feed) is never orphaned if the theme is ever changed.
+The theme requires the plugin. The plugin works without the theme, so data (subscribers, settings, feed, indexes) is never orphaned if the theme is changed.
 
-## Modules (inside Freeman Core)
+## Modules
 
-| Short name | Folder | Replaces |
-|---|---|---|
-| Swatches | `src/Modules/VariationSwatches/` | etucart-variation-swatches |
-| Restock | `src/Modules/RestockNotify/` | restock-notify |
-| StockFix | `src/Modules/VariableStockFix/` | woo-variable-stock-fix |
-| Feed | `src/Modules/ProductFeed/` | wc-product-feed |
-| Scroll | `src/Modules/InfiniteScroll/` | bookomers-infinite-scroll |
-| Cheapest | `src/Modules/CheapestDefaultVariation/` | auto-default-cheapest-variation.php |
+ShopOS Core ships **15 built modules** across storefront discovery, product/conversion, customer account, merchandising, and experience — with more planned to reach a complete storefront OS (~20).
+
+👉 **See [`docs/Modules.md`](docs/Modules.md) for the full, categorized module catalog** (what's built, what's planned, and the roadmap).
 
 ## Getting started (development)
 
 ```bash
 composer install          # installs PHPCS + WordPress-Coding-Standards
 npm install               # installs esbuild + postcss
-bash tools/build.sh       # produces freeman-theme.zip + freeman-core.zip in dist/
+bash tools/build.sh       # produces shopos-theme.zip + shopos-core.zip in dist/
+```
+
+Run the test suite (PHP 8.3 required for PHPUnit 10):
+
+```bash
+PATH="/opt/homebrew/opt/php@8.3/bin:$PATH" composer test
 ```
 
 ## Interaction protocol
 
 When asking the agent to make changes, use `<scope>: <request>`. Scopes:
 
-- `Theme: …` — only `freeman-theme/`
-- `Core: …` — Core infrastructure (Registry, Hub, Security, Dashboard)
-- `Swatches: …` / `Restock: …` / `StockFix: …` / `Feed: …` / `Scroll: …` / `Cheapest: …`
+- `Theme: …` — only `shopos-theme/`
+- `Core: …` — Core infrastructure (Registry, Settings Hub, Security, Dashboard)
+- `<Module>: …` — a specific module (e.g. `Search:`, `ShopFilters:`, `QuickView:`)
+- `Digital: …` — the `shopos-digital/` performance plugin
 - `New module <Name>: …` — scaffold a brand-new module
 
-See each module's `HOOKS.md` for public extension points.
+Hooks are namespaced `shopos_core/<module>/…`; options prefixed `shopos_core_<module>_…`. See each module's `HOOKS.md` for public extension points, and [`docs/CLAUDE.md`](docs/CLAUDE.md) for the working rules.
 
 ## License
 

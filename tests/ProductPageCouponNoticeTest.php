@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ProductPage\Coupon_Notice;
-use Freeman\Core\Modules\ProductPage\Labels;
-use Freeman\Core\Modules\ProductPage\Module;
+use ShopOS\Core\Modules\ProductPage\Coupon_Notice;
+use ShopOS\Core\Modules\ProductPage\Labels;
+use ShopOS\Core\Modules\ProductPage\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * live-coupon validation and the variation objects read are integration
  * (need WC) — live-QA.
  *
- * @covers \Freeman\Core\Modules\ProductPage\Coupon_Notice
- * @covers \Freeman\Core\Modules\ProductPage\Labels
+ * @covers \ShopOS\Core\Modules\ProductPage\Coupon_Notice
+ * @covers \ShopOS\Core\Modules\ProductPage\Labels
  */
 final class ProductPageCouponNoticeTest extends TestCase {
 

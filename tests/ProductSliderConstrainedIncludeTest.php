@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ProductSlider\Widget;
+use ShopOS\Core\Modules\ProductSlider\Widget;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  * widget's own cap for a slider row / fixed-source grid. The fetch-path wiring
  * (pre/post filter include comparison) and pagination render are live QA.
  *
- * @covers \Freeman\Core\Modules\ProductSlider\Widget
+ * @covers \ShopOS\Core\Modules\ProductSlider\Widget
  */
 final class ProductSliderConstrainedIncludeTest extends TestCase {
 

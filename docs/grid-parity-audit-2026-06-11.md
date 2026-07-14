@@ -2,7 +2,7 @@
 
 **Date**: 2026-06-11
 **Wave**: 7.1 (see `/docs/roadmap.md` Wave 7, `/docs/decisions-2026-04-28.md` §6.1)
-**Scope**: `freeman_product_slider` with `display_mode = grid` (`freeman-core/src/Modules/ProductSlider/Widget.php` + `assets/css/product-slider.css`) compared against Elementor Pro's **Products** widget (the reference grid on this store's archive pages).
+**Scope**: `shopos_product_slider` with `display_mode = grid` (`shopos-core/src/Modules/ProductSlider/Widget.php` + `assets/css/product-slider.css`) compared against Elementor Pro's **Products** widget (the reference grid on this store's archive pages).
 
 ## Summary
 
@@ -14,7 +14,7 @@ The card layer is already at parity by construction: both grids render `wc_get_t
 
 The `per_view_mobile` control allows fractional values (default **1.4**) so the slider can show a "peek" of the next card. Grid mode feeds the same value into:
 
-```397:399:freeman-core/src/Modules/ProductSlider/assets/css/product-slider.css
+```397:399:shopos-core/src/Modules/ProductSlider/assets/css/product-slider.css
 	.cs.cs-products.cs-grid-mode .cs-grid.products {
 		grid-template-columns: repeat(var(--cs-per-mobile), minmax(0, 1fr));
 	}
@@ -24,9 +24,9 @@ The `per_view_mobile` control allows fractional values (default **1.4**) so the 
 
 **Fix**: in `Widget::render()`, when `display_mode = grid`, coerce the mobile value to a whole number (`max( 1, round() )`) before emitting `--cs-per-mobile`. Slider mode keeps the float (peek is slider-only by design). No control change, no saved-data change.
 
-### G2 — MEDIUM — theme mobile-columns Customizer rule hijacks Freeman containers on archives → fix (7.1b, theme)
+### G2 — MEDIUM — theme mobile-columns Customizer rule hijacks ShopOS containers on archives → fix (7.1b, theme)
 
-`freeman-theme/inc/woocommerce.php` emits (only on product archives, only when the admin opted in):
+`shopos-theme/inc/woocommerce.php` emits (only on product archives, only when the admin opted in):
 
 ```css
 @media (max-width:767px){.woocommerce ul.products,.woocommerce ul.products.elementor-grid{display:grid !important;grid-template-columns:repeat(N,minmax(0,1fr)) !important;}}
@@ -37,7 +37,7 @@ The `per_view_mobile` control allows fractional values (default **1.4**) so the 
 - **Slider mode breaks outright**: the flex track is forced to `display: grid !important`, killing drag/overflow scrolling.
 - **Grid mode loses its per-instance mobile column control** to the site-wide value.
 
-The rule is meant for the main archive grid (stock WC or `elementor-grid`), not for Freeman's self-managing containers.
+The rule is meant for the main archive grid (stock WC or `elementor-grid`), not for ShopOS's self-managing containers.
 
 **Fix**: exclude the widget containers in the emitted selector — `.woocommerce ul.products:not(.cs-track):not(.cs-grid)` (both selector branches). Behaviour on the main archive grid is unchanged.
 

@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Facet_Config;
+use ShopOS\Core\Modules\ShopFilters\Facet_Config;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Admin facet-config matrix (Phase 6.4): the pure sanitisation of a matrix
  * submission, and that a saved config is honoured by resolve().
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Facet_Config
+ * @covers \ShopOS\Core\Modules\ShopFilters\Facet_Config
  */
 final class ShopFiltersFacetConfigAdminTest extends TestCase {
 

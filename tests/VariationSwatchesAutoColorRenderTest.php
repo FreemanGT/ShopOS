@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\VariationSwatches\Color_Sampler;
-use Freeman\Core\Core\Logger;
+use ShopOS\Core\Modules\VariationSwatches\Color_Sampler;
+use ShopOS\Core\Core\Logger;
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/../freeman-core/src/Modules/VariationSwatches/legacy/includes/class-plugin.php';
+require_once __DIR__ . '/../shopos-core/src/Modules/VariationSwatches/legacy/includes/class-plugin.php';
 
 // Test-local stubs for the WP / WC bits that Color_Sampler::resolve_term_color
 // reaches. Inline-stubbed (not promoted) — these are 4e-specific; promote if a
@@ -87,13 +87,13 @@ final class Test_AutoColor_Variable_Product {
  * the disagreement filter, the empty-sentinel rule, and the flag-OFF
  * byte-identity contract.
  *
- * @covers \Freeman\Core\Modules\VariationSwatches\Color_Sampler::resolve_term_color
+ * @covers \ShopOS\Core\Modules\VariationSwatches\Color_Sampler::resolve_term_color
  */
 final class VariationSwatchesAutoColorRenderTest extends TestCase {
 
-	private const FLAG_OPT  = 'freeman_core_variation_swatches_auto_color_enabled';
-	private const FILTER    = 'freeman_core/variation_swatches/auto_color_disagreement_fallback';
-	private const COLOR_KEY = 'etucart_swatch_color';
+	private const FLAG_OPT  = 'shopos_core_variation_swatches_auto_color_enabled';
+	private const FILTER    = 'shopos_core/variation_swatches/auto_color_disagreement_fallback';
+	private const COLOR_KEY = 'shopos_swatch_color';
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -154,7 +154,7 @@ final class VariationSwatchesAutoColorRenderTest extends TestCase {
 		// Manual term-meta empty, flag OFF → both should return ''.
 		$this->register_term( 10, 'pa_color', 'red' );
 
-		$direct  = \Etucart_VS_Plugin::term_color( 10 );
+		$direct  = \ShopOS_VS_Plugin::term_color( 10 );
 		$wrapped = Color_Sampler::resolve_term_color( 10, 99 );
 
 		$this->assertSame( '', $direct );
@@ -162,7 +162,7 @@ final class VariationSwatchesAutoColorRenderTest extends TestCase {
 
 		// Manual term-meta set, flag OFF → both should return the manual hex.
 		update_term_meta( 10, self::COLOR_KEY, '#aabbcc' );
-		$direct2  = \Etucart_VS_Plugin::term_color( 10 );
+		$direct2  = \ShopOS_VS_Plugin::term_color( 10 );
 		$wrapped2 = Color_Sampler::resolve_term_color( 10, 99 );
 		$this->assertSame( '#AABBCC', $direct2 );
 		$this->assertSame( $direct2, $wrapped2, 'Flag-OFF with manual hex must match term_color().' );

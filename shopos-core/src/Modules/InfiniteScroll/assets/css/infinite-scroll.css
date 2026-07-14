@@ -1,0 +1,107 @@
+/*
+ * ShopOS Infinite Scroll — skeleton shimmer + fade-in animation.
+ *
+ * Original class prefix `shopos-` preserved so existing markup / CSS
+ * overrides that customers might have in place continue to work.
+ */
+
+.shopos-infinite-sentinel {
+    width: 100%;
+    height: 1px;
+    margin: 24px 0;
+    pointer-events: none;
+}
+
+.shopos-skeleton {
+    list-style: none;
+    pointer-events: none;
+    padding: 0 12px;
+}
+
+.shopos-skel-image,
+.shopos-skel-line {
+    background: linear-gradient(
+        90deg,
+        var(--fm-is-shimmer-base, #eceff3) 0%,
+        var(--fm-is-shimmer-highlight, #f6f8fb) 50%,
+        var(--fm-is-shimmer-base, #eceff3) 100%
+    );
+    background-size: 200% 100%;
+    animation: shopos-shimmer var(--fm-is-shimmer-duration, 1.4s) linear infinite;
+    border-radius: var(--fm-radius-md, 6px);
+    display: block;
+}
+
+.shopos-skel-image {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    margin-bottom: 14px;
+}
+
+.shopos-skel-line {
+    height: 12px;
+    margin: 8px 0;
+    width: 100%;
+}
+
+.shopos-skel-line.short { width: 65%; }
+.shopos-skel-line.price { width: 35%; margin-top: 14px; height: 14px; }
+
+@keyframes shopos-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.shopos-new-product {
+    opacity: 0;
+    animation: shopos-fade-in var(--fm-is-fade-duration, .55s) cubic-bezier(.2,.7,.3,1) forwards;
+    will-change: opacity, transform;
+}
+
+@keyframes shopos-fade-in {
+    from { opacity: 0; transform: var(--fm-is-fade-transform, translateY(18px)); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.shopos-end-message,
+.shopos-error-message {
+    width: 100%;
+    text-align: center;
+    padding: 28px 16px;
+    color: #6b7280;
+    font-size: 14px;
+    letter-spacing: .02em;
+}
+
+.shopos-end-message::before {
+    content: "";
+    display: block;
+    width: 48px;
+    height: 2px;
+    margin: 0 auto 14px;
+    background: currentColor;
+    opacity: .35;
+}
+
+.shopos-error-message button {
+    margin-left: 6px;
+    background: transparent;
+    border: 1px solid currentColor;
+    color: inherit;
+    padding: 4px 12px;
+    border-radius: var(--fm-radius-sm, 4px);
+    cursor: pointer;
+    font: inherit;
+}
+
+.shopos-error-message button:hover { opacity: .75; }
+
+@media (prefers-reduced-motion: reduce) {
+    .shopos-skel-image,
+    .shopos-skel-line { animation: none; }
+    .shopos-new-product {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}

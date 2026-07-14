@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\HoverSwap\Module;
+use ShopOS\Core\Modules\HoverSwap\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
  * activation is the module-enable switch plus the `card_image_mode` setting
  * (no feature flags). Mode `none` (the default) registers nothing.
  *
- * @covers \Freeman\Core\Modules\HoverSwap\Module
+ * @covers \ShopOS\Core\Modules\HoverSwap\Module
  */
 final class HoverSwapModuleTest extends TestCase {
 
@@ -53,7 +53,7 @@ final class HoverSwapModuleTest extends TestCase {
 	}
 
 	public function test_boot_mode_hover_swap_registers_overlay(): void {
-		$GLOBALS['fr_opts']['freeman_core_hover_swap_card_image_mode'] = 'hover_swap';
+		$GLOBALS['fr_opts']['shopos_core_hover_swap_card_image_mode'] = 'hover_swap';
 
 		( new Module() )->boot();
 
@@ -63,7 +63,7 @@ final class HoverSwapModuleTest extends TestCase {
 	}
 
 	public function test_boot_mode_gallery_slider_registers_slider(): void {
-		$GLOBALS['fr_opts']['freeman_core_hover_swap_card_image_mode'] = 'gallery_slider';
+		$GLOBALS['fr_opts']['shopos_core_hover_swap_card_image_mode'] = 'gallery_slider';
 
 		( new Module() )->boot();
 
@@ -73,7 +73,7 @@ final class HoverSwapModuleTest extends TestCase {
 	}
 
 	public function test_assets_exist_on_disk(): void {
-		$base = FREEMAN_CORE_PATH . 'src/Modules/HoverSwap/';
+		$base = SHOPOS_CORE_PATH . 'src/Modules/HoverSwap/';
 
 		$this->assertFileExists( $base . 'assets/css/hover-swap.css' );
 		$this->assertFileExists( $base . 'assets/css/card-slider.css' );

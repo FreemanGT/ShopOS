@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ProductPage\Variations;
+use ShopOS\Core\Modules\ProductPage\Variations;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  * one per product per request. Asserted with a counting product double; the
  * live objects read is integration (needs WC).
  *
- * @covers \Freeman\Core\Modules\ProductPage\Variations
+ * @covers \ShopOS\Core\Modules\ProductPage\Variations
  */
 final class ProductPageVariationsTest extends TestCase {
 

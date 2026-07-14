@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Facet_Engine;
+use ShopOS\Core\Modules\ShopFilters\Facet_Engine;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Pure facet set-algebra: AND-across / OR-within, self-exclusion, hide-zero,
  * hide-empty-facet.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Facet_Engine
+ * @covers \ShopOS\Core\Modules\ShopFilters\Facet_Engine
  */
 final class ShopFiltersFacetEngineTest extends TestCase {
 

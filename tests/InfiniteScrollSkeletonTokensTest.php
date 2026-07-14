@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\InfiniteScroll\Module;
+use ShopOS\Core\Modules\InfiniteScroll\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  * wp_add_inline_style. Defaults map byte-identically to the prior
  * hardcoded CSS values so flag-OFF / no-settings-saved is back-compat.
  *
- * @covers \Freeman\Core\Modules\InfiniteScroll\Module
+ * @covers \ShopOS\Core\Modules\InfiniteScroll\Module
  */
 
 // Bootstrap stubs are missing is_feed (Module::enqueue() short-circuits
@@ -92,11 +92,11 @@ final class InfiniteScrollSkeletonTokensTest extends TestCase {
 	}
 
 	public function test_inline_css_reflects_custom_settings(): void {
-		$GLOBALS['fr_opts']['freeman_core_infinite_scroll_shimmer_base_color']      = '#101010';
-		$GLOBALS['fr_opts']['freeman_core_infinite_scroll_shimmer_highlight_color'] = '#fafafa';
-		$GLOBALS['fr_opts']['freeman_core_infinite_scroll_shimmer_duration_ms']     = 2000;
-		$GLOBALS['fr_opts']['freeman_core_infinite_scroll_fade_duration_ms']        = 800;
-		$GLOBALS['fr_opts']['freeman_core_infinite_scroll_fade_transform_px']       = 32;
+		$GLOBALS['fr_opts']['shopos_core_infinite_scroll_shimmer_base_color']      = '#101010';
+		$GLOBALS['fr_opts']['shopos_core_infinite_scroll_shimmer_highlight_color'] = '#fafafa';
+		$GLOBALS['fr_opts']['shopos_core_infinite_scroll_shimmer_duration_ms']     = 2000;
+		$GLOBALS['fr_opts']['shopos_core_infinite_scroll_fade_duration_ms']        = 800;
+		$GLOBALS['fr_opts']['shopos_core_infinite_scroll_fade_transform_px']       = 32;
 
 		$css = ( new Module() )->inline_token_css();
 
@@ -111,8 +111,8 @@ final class InfiniteScrollSkeletonTokensTest extends TestCase {
 		// Settings_Hub `color` validator returns '' for invalid hex, so the
 		// post-rejection persisted state is the empty string. Module must
 		// treat empty as "use default" so a typo doesn't blank the shimmer.
-		$GLOBALS['fr_opts']['freeman_core_infinite_scroll_shimmer_base_color']      = '';
-		$GLOBALS['fr_opts']['freeman_core_infinite_scroll_shimmer_highlight_color'] = '';
+		$GLOBALS['fr_opts']['shopos_core_infinite_scroll_shimmer_base_color']      = '';
+		$GLOBALS['fr_opts']['shopos_core_infinite_scroll_shimmer_highlight_color'] = '';
 
 		$css = ( new Module() )->inline_token_css();
 
@@ -123,8 +123,8 @@ final class InfiniteScrollSkeletonTokensTest extends TestCase {
 	public function test_wp_add_inline_style_attaches_token_block_to_handle(): void {
 		( new Module() )->enqueue();
 
-		$this->assertArrayHasKey( 'freeman-core-infinite-scroll', $GLOBALS['fr_styles_inline'] );
-		$attached = $GLOBALS['fr_styles_inline']['freeman-core-infinite-scroll'];
+		$this->assertArrayHasKey( 'shopos-core-infinite-scroll', $GLOBALS['fr_styles_inline'] );
+		$attached = $GLOBALS['fr_styles_inline']['shopos-core-infinite-scroll'];
 		$this->assertNotEmpty( $attached, 'wp_add_inline_style was called but captured nothing' );
 		$this->assertStringContainsString( '--fm-is-shimmer-base:', $attached[0] );
 	}

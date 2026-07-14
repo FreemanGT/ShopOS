@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ProductPage\Module;
-use Freeman\Core\Modules\ProductPage\Template_Loader;
+use ShopOS\Core\Modules\ProductPage\Module;
+use ShopOS\Core\Modules\ProductPage\Template_Loader;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  * <details> markup, and the body-class scope hook. The actual render
  * (Elementor precedence, gallery, sticky bar) is integration — live-QA.
  *
- * @covers \Freeman\Core\Modules\ProductPage\Template_Loader
+ * @covers \ShopOS\Core\Modules\ProductPage\Template_Loader
  */
 final class ProductPageTemplateTest extends TestCase {
 
@@ -28,7 +28,7 @@ final class ProductPageTemplateTest extends TestCase {
 	}
 
 	public function test_template_file_exists_on_disk(): void {
-		$this->assertFileExists( FREEMAN_CORE_PATH . 'src/Modules/ProductPage/templates/single-product.php' );
+		$this->assertFileExists( SHOPOS_CORE_PATH . 'src/Modules/ProductPage/templates/single-product.php' );
 	}
 
 	public function test_takeover_passes_through_off_product_pages(): void {
@@ -38,14 +38,14 @@ final class ProductPageTemplateTest extends TestCase {
 	public function test_takeover_swaps_the_template_on_product_pages(): void {
 		$GLOBALS['fr_page_type'] = 'product';
 
-		$expected = FREEMAN_CORE_PATH . 'src/Modules/ProductPage/templates/single-product.php';
+		$expected = SHOPOS_CORE_PATH . 'src/Modules/ProductPage/templates/single-product.php';
 		$this->assertSame( $expected, $this->loader()->maybe_takeover( '/theme/single.php' ) );
 	}
 
 	public function test_takeover_prefers_a_theme_override(): void {
 		$GLOBALS['fr_page_type'] = 'product';
 		// The override must be a readable file — reuse a real fixture path.
-		$override                        = FREEMAN_CORE_PATH . 'src/Modules/ProductPage/templates/single-product.php';
+		$override                        = SHOPOS_CORE_PATH . 'src/Modules/ProductPage/templates/single-product.php';
 		$GLOBALS['fr_locate_template'] = $override;
 
 		$this->assertSame( $override, $this->loader()->maybe_takeover( '/theme/single.php' ) );
@@ -74,7 +74,7 @@ final class ProductPageTemplateTest extends TestCase {
 	}
 
 	public function test_trust_html_renders_only_filled_items(): void {
-		$GLOBALS['fr_opts']['freeman_core_product_page_label_trust_shipping'] = 'משלוח מהיר עד 3 ימי עסקים';
+		$GLOBALS['fr_opts']['shopos_core_product_page_label_trust_shipping'] = 'משלוח מהיר עד 3 ימי עסקים';
 
 		$html = Template_Loader::trust_html();
 
@@ -84,8 +84,8 @@ final class ProductPageTemplateTest extends TestCase {
 	}
 
 	public function test_trust_html_renders_both_items_and_escapes(): void {
-		$GLOBALS['fr_opts']['freeman_core_product_page_label_trust_shipping'] = 'Fast shipping';
-		$GLOBALS['fr_opts']['freeman_core_product_page_label_trust_returns']  = 'Returns <b>30</b> days';
+		$GLOBALS['fr_opts']['shopos_core_product_page_label_trust_shipping'] = 'Fast shipping';
+		$GLOBALS['fr_opts']['shopos_core_product_page_label_trust_returns']  = 'Returns <b>30</b> days';
 
 		$html = Template_Loader::trust_html();
 
@@ -166,11 +166,11 @@ final class ProductPageTemplateTest extends TestCase {
 		$css = Template_Loader::button_color_css( '#0A7C66' );
 
 		// Drives VS's own custom property (its action buttons read it)…
-		$this->assertStringContainsString( '.fm-pdp .etucart-buy-box{--etucart-primary:#0A7C66', $css );
-		$this->assertStringContainsString( '--etucart-primary-hover:#0A7C66', $css );
-		$this->assertStringContainsString( '--etucart-primary-active:#0A7C66', $css );
+		$this->assertStringContainsString( '.fm-pdp .shopos-buy-box{--shopos-primary:#0A7C66', $css );
+		$this->assertStringContainsString( '--shopos-primary-hover:#0A7C66', $css );
+		$this->assertStringContainsString( '--shopos-primary-active:#0A7C66', $css );
 		// …plus the explicit sticky-bar override, whose red is a hardcoded
 		// literal in VS rather than the var.
-		$this->assertStringContainsString( '.etucart-sticky-bar__buy{background:#0A7C66 !important}', $css );
+		$this->assertStringContainsString( '.shopos-sticky-bar__buy{background:#0A7C66 !important}', $css );
 	}
 }

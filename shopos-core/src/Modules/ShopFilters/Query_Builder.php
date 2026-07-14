@@ -1,0 +1,1185 @@
+<?php
+/**
+ * Shop Filters query builder — the glue between the index and the pure facet
+ * engine, plus the response shaping the AJAX endpoint and the shortcode emit.
+ *
+ * query() is integration code: it resolves the page context, loads the index
+ * slice via Index_Repository, hands it to Facet_Engine, and shapes the result
+ * for the wire. Two seams are split out as PURE statics so the request →
+ * active-selection mapping and the engine-counts → facets[] shaping are
+ * unit-testable without a WordPress bootstrap:
+ *   - resolve_active(): selected slugs → term-id selection (drops unknowns);
+ *   - shape_facets():   engine term counts + term display data → facets[].
+ *
+ * @package ShopOSCore
+ */
+
+namespace ShopOS\Core\Modules\ShopFilters;
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Query builder.
+ */
+final class Query_Builder {
+
+	/**
+	 * Seconds a facet-cache rebuild lock is held (A4 single-flight): long enough
+	 * to cover a build, short enough to self-heal if a request dies mid-build.
+	 */
+	const REBUILD_LOCK_TTL = 30;
+
+	/**
+	 * Index repository.
+	 *
+	 * @var Index_Repository
+	 */
+	private $repo;
+
+	/**
+	 * Per-request memo of the indexed taxonomy set (drives facet config AND
+	 * cache-key validation, so it's read on the hot cache-hit path).
+	 *
+	 * @var string[]|null
+	 */
+	private $available_tax_memo = null;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Index_Repository|null $repo Repository (injected for tests).
+	 */
+	public function __construct( Index_Repository $repo = null ) {
+		$this->repo = $repo ? $repo : new Index_Repository();
+	}
+
+	/**
+	 * Indexed taxonomies, memoised for the life of this request. Used both to
+	 * drive the facet config and to strip junk `filter_<tax>` params from the
+	 * cache key before the transient lookup (A2), so it must be cheap on the
+	 * cache-hit path — one DISTINCT query at most.
+	 *
+	 * @return string[]
+	 */
+	private function available_taxonomies() {
+		if ( null === $this->available_tax_memo ) {
+			$this->available_tax_memo = $this->repo->available_taxonomies();
+		}
+		return $this->available_tax_memo;
+	}
+
+	/* -----------------------------------------------------------------
+	 * Pure seams (unit-tested)
+	 * ----------------------------------------------------------------- */
+
+	/**
+	 * Map a parsed slug selection to the term-id selection the facet engine
+	 * consumes. Unknown slugs (not in the resolution map) are dropped, ids are
+	 * deduped, and a taxonomy left with no resolvable term is omitted. Pure.
+	 *
+	 * @param array<string,string[]>          $filters         taxonomy => selected slugs.
+	 * @param array<string,array<string,int>> $slug_to_term_id taxonomy => (slug => term id).
+	 * @return array<string,int[]> taxonomy => term ids.
+	 */
+	public static function resolve_active( array $filters, array $slug_to_term_id ) {
+		$active = array();
+		foreach ( $filters as $taxonomy => $slugs ) {
+			$taxonomy = (string) $taxonomy;
+			$map      = isset( $slug_to_term_id[ $taxonomy ] ) && is_array( $slug_to_term_id[ $taxonomy ] )
+				? $slug_to_term_id[ $taxonomy ]
+				: array();
+			$ids = array();
+			foreach ( (array) $slugs as $slug ) {
+				$slug = (string) $slug;
+				if ( isset( $map[ $slug ] ) ) {
+					$ids[ (int) $map[ $slug ] ] = true;
+				}
+			}
+			if ( ! empty( $ids ) ) {
+				$active[ $taxonomy ] = array_keys( $ids );
+			}
+		}
+		return $active;
+	}
+
+	/**
+	 * Shape the engine's per-facet term counts into the wire `facets[]` array.
+	 * Only terms the engine returned (count > 0 after self-exclusion + context)
+	 * appear — hide-zero is therefore reflected here. Terms are ordered by the
+	 * term-index `order` then name; the selected slugs are flagged. Pure.
+	 *
+	 * @param array $facet_defs    Ordered visible facet defs; each carries
+	 *                             'taxonomy', 'type' and an injected 'label'.
+	 * @param array $engine_facets taxonomy => (term_id => count).
+	 * @param array $term_index    taxonomy => (term_id => ['slug','name','order']).
+	 * @param array $active_slugs  taxonomy => selected slugs (for 'selected').
+	 * @return array<int,array<string,mixed>> facets[].
+	 */
+	public static function shape_facets( array $facet_defs, array $engine_facets, array $term_index, array $active_slugs ) {
+		$facets = array();
+
+		foreach ( $facet_defs as $def ) {
+			$taxonomy = isset( $def['taxonomy'] ) ? (string) $def['taxonomy'] : '';
+			if ( '' === $taxonomy || empty( $engine_facets[ $taxonomy ] ) ) {
+				continue; // hide-empty-facet (no available term in context).
+			}
+
+			$selected = array();
+			foreach ( (array) ( $active_slugs[ $taxonomy ] ?? array() ) as $slug ) {
+				$selected[ (string) $slug ] = true;
+			}
+
+			$meta       = isset( $term_index[ $taxonomy ] ) && is_array( $term_index[ $taxonomy ] ) ? $term_index[ $taxonomy ] : array();
+			$terms      = array();
+			$has_swatch = false;
+			foreach ( $engine_facets[ $taxonomy ] as $term_id => $count ) {
+				$term_id = (int) $term_id;
+				$info    = isset( $meta[ $term_id ] ) ? $meta[ $term_id ] : array();
+				$slug    = (string) ( $info['slug'] ?? '' );
+				if ( '' === $slug ) {
+					continue; // a term we can't address by slug can't be a checkbox.
+				}
+				$term = array(
+					'slug'     => $slug,
+					'label'    => (string) ( $info['name'] ?? $slug ),
+					'count'    => (int) $count,
+					'selected' => isset( $selected[ $slug ] ),
+					'order'    => (int) ( $info['order'] ?? 0 ),
+				);
+				// Swatch data (read by build_term_index from term meta) makes this a
+				// colour/image facet rather than a plain checkbox list.
+				if ( ! empty( $info['color'] ) ) {
+					$term['color'] = (string) $info['color'];
+					$has_swatch    = true;
+				}
+				if ( ! empty( $info['image'] ) ) {
+					$term['image'] = (string) $info['image'];
+					$has_swatch    = true;
+				}
+				$terms[] = $term;
+			}
+
+			if ( empty( $terms ) ) {
+				continue;
+			}
+
+			usort(
+				$terms,
+				static function ( $a, $b ) {
+					return ( $a['order'] <=> $b['order'] ) ?: strcmp( $a['label'], $b['label'] );
+				}
+			);
+			// 'order' was only needed for sorting — drop it from the wire shape.
+			$terms = array_map(
+				static function ( $term ) {
+					unset( $term['order'] );
+					return $term;
+				},
+				$terms
+			);
+
+			$facets[] = array(
+				'taxonomy' => $taxonomy,
+				'label'    => (string) ( $def['label'] ?? $taxonomy ),
+				'type'     => $has_swatch ? 'color' : (string) ( $def['type'] ?? 'checkbox' ),
+				'terms'    => $terms,
+				'hidden'   => false,
+			);
+		}
+
+		return $facets;
+	}
+
+	/**
+	 * Shape the engine's product_cat counts into the flat node list
+	 * Category_Tree::build() consumes. Counts come from the facet engine; the
+	 * display metadata (parent, name, slug, menu order) is looked up by the
+	 * caller and passed in. A term with no metadata (deleted between index and
+	 * read) is dropped. Pure.
+	 *
+	 * @param array $counts term_id => count.
+	 * @param array $meta   term_id => ['parent','name','slug','order'].
+	 * @return array<int,array<string,mixed>> flat nodes for Category_Tree::build().
+	 */
+	public static function shape_category_nodes( array $counts, array $meta ) {
+		$nodes = array();
+		foreach ( $counts as $term_id => $count ) {
+			$term_id = (int) $term_id;
+			if ( empty( $meta[ $term_id ] ) || ! is_array( $meta[ $term_id ] ) ) {
+				continue;
+			}
+			$info    = $meta[ $term_id ];
+			$nodes[] = array(
+				'term_id' => $term_id,
+				'parent'  => (int) ( $info['parent'] ?? 0 ),
+				'name'    => (string) ( $info['name'] ?? '' ),
+				'slug'    => (string) ( $info['slug'] ?? '' ),
+				'count'   => (int) $count,
+				'order'   => (int) ( $info['order'] ?? 0 ),
+			);
+		}
+		return $nodes;
+	}
+
+	/**
+	 * Turn a sorted list of upper bounds into contiguous price bands: the first
+	 * runs from 0 to the first bound, each subsequent from the previous bound to
+	 * the next, and the last is open-ended (max = null). Non-numeric / non-positive
+	 * bounds are dropped; bounds are deduped and sorted. Pure.
+	 *
+	 * @param float[] $bounds Upper bounds, e.g. [50, 100, 200].
+	 * @return array<int,array{min:float,max:?float}>
+	 */
+	public static function bands_from_bounds( array $bounds ) {
+		$clean = array();
+		foreach ( $bounds as $bound ) {
+			if ( is_numeric( $bound ) && (float) $bound > 0 ) {
+				$clean[ (string) ( (float) $bound ) ] = (float) $bound;
+			}
+		}
+		$clean = array_values( $clean );
+		sort( $clean );
+		if ( empty( $clean ) ) {
+			return array();
+		}
+
+		$bands = array();
+		$lo    = 0.0;
+		foreach ( $clean as $bound ) {
+			$bands[] = array(
+				'min' => $lo,
+				'max' => $bound,
+			);
+			$lo = $bound;
+		}
+		$bands[] = array(
+			'min' => $lo,
+			'max' => null,
+		);
+		return $bands;
+	}
+
+	/**
+	 * Auto-derive ~$count contiguous bands from 0 up to a rounded step, with the
+	 * last band open-ended. Used when no explicit bands are configured. Pure.
+	 *
+	 * @param float $max   Highest price in the candidate set.
+	 * @param int   $count Target band count.
+	 * @return array<int,array{min:float,max:?float}>
+	 */
+	public static function auto_bands( $max, $count = 4 ) {
+		$max   = (float) $max;
+		$count = max( 1, (int) $count );
+		if ( $max <= 0 ) {
+			return array( array( 'min' => 0.0, 'max' => null ) );
+		}
+
+		$step = self::nice_round( $max / $count );
+		$bounds = array();
+		for ( $i = 1; $i < $count; $i++ ) {
+			$bound = $step * $i;
+			if ( $bound >= $max ) {
+				break;
+			}
+			$bounds[] = $bound;
+		}
+		return self::bands_from_bounds( $bounds );
+	}
+
+	/**
+	 * Round a step up to a "nice" 1/2/5 × power-of-ten value (50, 100, 250, …) so
+	 * auto bands read cleanly. Pure.
+	 *
+	 * @param float $step Raw step.
+	 * @return float
+	 */
+	public static function nice_round( $step ) {
+		$step = (float) $step;
+		if ( $step <= 1 ) {
+			return 1.0;
+		}
+		$mag  = pow( 10, floor( log10( $step ) ) );
+		$frac = $step / $mag;
+		if ( $frac <= 1 ) {
+			$nice = 1;
+		} elseif ( $frac <= 2 ) {
+			$nice = 2;
+		} elseif ( $frac <= 5 ) {
+			$nice = 5;
+		} else {
+			$nice = 10;
+		}
+		return (float) ( $nice * $mag );
+	}
+
+	/**
+	 * Count how many products fall in each band (price range overlaps the band).
+	 * Pure. Parallel to $bands.
+	 *
+	 * @param array $prices product_id => ['min'=>float,'max'=>float].
+	 * @param array $bands  Bands.
+	 * @return int[] Count per band, same order as $bands.
+	 */
+	public static function count_in_bands( array $prices, array $bands ) {
+		$counts = array();
+		foreach ( $bands as $band ) {
+			$counts[] = count( self::ids_in_band( $prices, $band ) );
+		}
+		return $counts;
+	}
+
+	/**
+	 * Product ids whose price range overlaps ANY of the selected bands (OR within
+	 * the price facet). Pure.
+	 *
+	 * @param int[] $products Candidate product ids.
+	 * @param array $prices   product_id => ['min'=>float,'max'=>float].
+	 * @param array $selected Selected bands.
+	 * @return int[]
+	 */
+	public static function filter_by_bands( array $products, array $prices, array $selected ) {
+		if ( empty( $selected ) ) {
+			return array_values( $products );
+		}
+		$keep = array();
+		foreach ( $selected as $band ) {
+			foreach ( self::ids_in_band( $prices, $band ) as $id ) {
+				$keep[ $id ] = true;
+			}
+		}
+		$result = array();
+		foreach ( $products as $id ) {
+			if ( isset( $keep[ (int) $id ] ) ) {
+				$result[] = (int) $id;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Shape bands + counts into the wire price facet, dropping zero-count bands and
+	 * flagging the selected ones. Pure.
+	 *
+	 * @param array $bands    Bands.
+	 * @param int[] $counts   Count per band (parallel to $bands).
+	 * @param array $selected Selected bands.
+	 * @return array{bands:array<int,array<string,mixed>>}
+	 */
+	public static function shape_price_facet( array $bands, array $counts, array $selected ) {
+		$selected_sigs = array();
+		foreach ( $selected as $band ) {
+			$selected_sigs[ self::band_signature( $band ) ] = true;
+		}
+
+		$out = array();
+		foreach ( $bands as $i => $band ) {
+			$count = isset( $counts[ $i ] ) ? (int) $counts[ $i ] : 0;
+			if ( $count <= 0 ) {
+				continue;
+			}
+			$out[] = array(
+				'min'      => (float) $band['min'],
+				'max'      => isset( $band['max'] ) && null !== $band['max'] ? (float) $band['max'] : null,
+				'count'    => $count,
+				'selected' => isset( $selected_sigs[ self::band_signature( $band ) ] ),
+			);
+		}
+		return array( 'bands' => $out );
+	}
+
+	/**
+	 * Shape the on-sale / in-stock flags into the wire facet. A flag appears when
+	 * it has a non-zero count (hide-zero) or is already selected (so it can be
+	 * unticked). The in-stock flag is omitted entirely unless $show_in_stock
+	 * (i.e. the store shows out-of-stock products). Pure.
+	 *
+	 * @param int  $onsale_count    On-sale product count in the candidate set.
+	 * @param int  $instock_count   In-stock product count in the candidate set.
+	 * @param bool $onsale_selected On-sale currently selected.
+	 * @param bool $instock_selected In-stock currently selected.
+	 * @param bool $show_in_stock   Whether to offer the in-stock flag at all.
+	 * @return array<string,array{count:int,selected:bool}>
+	 */
+	public static function shape_flag_facet( $onsale_count, $instock_count, $onsale_selected, $instock_selected, $show_in_stock ) {
+		$facet = array();
+		if ( (int) $onsale_count > 0 || $onsale_selected ) {
+			$facet['onsale'] = array(
+				'count'    => (int) $onsale_count,
+				'selected' => (bool) $onsale_selected,
+			);
+		}
+		if ( $show_in_stock && ( (int) $instock_count > 0 || $instock_selected ) ) {
+			$facet['in_stock'] = array(
+				'count'    => (int) $instock_count,
+				'selected' => (bool) $instock_selected,
+			);
+		}
+		return $facet;
+	}
+
+	/**
+	 * Restrict a product-id list to those matching the active flags (AND across
+	 * on-sale and in-stock). Pure.
+	 *
+	 * @param array $products Candidate product ids.
+	 * @param array $flag_map product_id => ['onsale'=>bool,'in_stock'=>bool].
+	 * @param bool  $onsale   Require on-sale.
+	 * @param bool  $in_stock Require in-stock.
+	 * @return int[]
+	 */
+	public static function filter_by_flags( array $products, array $flag_map, $onsale, $in_stock ) {
+		if ( ! $onsale && ! $in_stock ) {
+			return array_values( array_map( 'intval', $products ) );
+		}
+		$out = array();
+		foreach ( $products as $id ) {
+			$id   = (int) $id;
+			$flag = isset( $flag_map[ $id ] ) ? $flag_map[ $id ] : array();
+			if ( $onsale && empty( $flag['onsale'] ) ) {
+				continue;
+			}
+			if ( $in_stock && empty( $flag['in_stock'] ) ) {
+				continue;
+			}
+			$out[] = $id;
+		}
+		return $out;
+	}
+
+	/**
+	 * Stable signature for a band, used to match selected against candidate bands.
+	 *
+	 * @param array $band Band.
+	 * @return string
+	 */
+	private static function band_signature( array $band ) {
+		$min = (float) ( $band['min'] ?? 0 );
+		$max = isset( $band['max'] ) && null !== $band['max'] ? (float) $band['max'] : null;
+		return ( $min + 0 ) . ':' . ( null === $max ? '' : ( $max + 0 ) );
+	}
+
+	/**
+	 * Ids whose price range overlaps a single band. Pure.
+	 *
+	 * @param array $prices product_id => ['min'=>float,'max'=>float].
+	 * @param array $band   Band.
+	 * @return int[]
+	 */
+	private static function ids_in_band( array $prices, array $band ) {
+		$min = (float) ( $band['min'] ?? 0 );
+		$max = isset( $band['max'] ) && null !== $band['max'] ? (float) $band['max'] : null;
+		$ids = array();
+		foreach ( $prices as $id => $range ) {
+			$p_min = (float) ( $range['min'] ?? 0 );
+			$p_max = (float) ( $range['max'] ?? $p_min );
+			if ( $p_max >= $min && ( null === $max || $p_min <= $max ) ) {
+				$ids[] = (int) $id;
+			}
+		}
+		return $ids;
+	}
+
+	/* -----------------------------------------------------------------
+	 * Integration entry point (live QA)
+	 * ----------------------------------------------------------------- */
+
+	/**
+	 * Run a filter query and build the full response payload.
+	 *
+	 * @param array $request Raw request params (context, context_id, filter_* …).
+	 * @return array{facets:array,category_tree:array,count:int,pagination:array,url:string}
+	 */
+	public function query( array $request ) {
+		$state       = Url_State::parse( $request );
+		$context_id  = isset( $request['context_id'] ) ? (int) $request['context_id'] : 0;
+		$filters     = $state['filters'];
+
+		// Mirror the storefront: when the store hides out-of-stock items, the
+		// grid excludes them, so the facet base + counts must too — otherwise a
+		// value backed only by a hidden out-of-stock product shows "(1)" but the
+		// filtered grid is empty.
+		$hide_oos = ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) );
+
+		$search   = isset( $request['search'] ) ? trim( (string) $request['search'] ) : '';
+		$per_page = $this->products_per_page();
+		$paged    = max( 1, (int) $state['paged'] );
+
+		// Indexed taxonomies drive the facet config below AND validate the cache
+		// key (A2) — memoised so the hot cache-hit path pays it at most once.
+		$available = $this->available_taxonomies();
+
+		// Serve repeat browse states from a short-lived transient: the build
+		// below sweeps the whole base's postings plus two meta_lookup reads on
+		// every shop/category pageview, even with nothing selected. The key
+		// folds in the index revision (bumped on index writes), so a
+		// product/stock change invalidates within the indexer's drain latency
+		// and the TTL only backstops a missed bump. The key drops junk
+		// `filter_<tax>` params (A2) and is page-invariant (A3): pagination is
+		// rebuilt per request in with_pagination(). Search states are skipped:
+		// per-term churn, and the engine ids are already memoized per request.
+		$cache_key = '';
+		if ( '' === $search ) {
+			$cache_key = self::cache_signature(
+				$request,
+				$hide_oos,
+				$per_page,
+				(int) get_option( Indexer::REV_OPTION, 0 ),
+				SHOPOS_CORE_VERSION,
+				$available
+			);
+			$cached = get_transient( $cache_key );
+			if ( is_array( $cached ) ) {
+				return $this->with_pagination( $cached, $context_id, $state, $paged, $per_page );
+			}
+		}
+
+		// Base universe:
+		//  - a search results page facets over the products matching the query
+		//    (so the panel shows only what's in the results, not the whole store);
+		//  - a category page expands to the queried term + all its descendants
+		//    (the index stores only directly-assigned product_cat rows);
+		//  - the shop page is every indexed product.
+		if ( '' !== $search ) {
+			$base = $this->repo->filter_indexed( $this->search_product_ids( $search ), $hide_oos );
+		} elseif ( $context_id > 0 ) {
+			$term_ids = array_merge( array( $context_id ), $this->descendant_category_ids( $context_id ) );
+			$base     = $this->repo->product_ids_in_terms( 'product_cat', $term_ids, $hide_oos );
+		} else {
+			$base = $this->repo->all_product_ids( $hide_oos );
+		}
+
+		// Count attribute values by IN-STOCK presence within the base (when the
+		// store hides out-of-stock items): a variation-axis term whose variations
+		// are all sold out carries in_stock=0 in the index, so an out-of-stock-only
+		// size drops out of both the counts and the grid (requirement #2). The grid
+		// is constrained to the same in-stock set in Query::apply_instock_post_in().
+		$postings   = $this->repo->postings_for_products( $base, $hide_oos );
+		$facet_defs = Facet_Config::resolve( $available, $context_id );
+
+		// Attribute facets render in facets[] (checkbox or colour/image swatches);
+		// the product_cat facet renders separately as a navigable category tree.
+		$attr_defs        = array();
+		$facet_taxonomies = array();
+		$show_category    = false;
+		foreach ( $facet_defs as $def ) {
+			$taxonomy = isset( $def['taxonomy'] ) ? (string) $def['taxonomy'] : '';
+			if ( '' === $taxonomy ) {
+				continue;
+			}
+			if ( 'product_cat' === $taxonomy || 'category' === ( $def['type'] ?? '' ) ) {
+				$show_category      = true;
+				$facet_taxonomies[] = 'product_cat';
+				continue;
+			}
+			$def['label']       = $this->taxonomy_label( $taxonomy );
+			$attr_defs[]        = $def;
+			$facet_taxonomies[] = $taxonomy;
+		}
+
+		$slug_to_term_id = $this->resolve_slug_map( $filters );
+		$active          = self::resolve_active( $filters, $slug_to_term_id );
+
+		$computed   = Facet_Engine::compute( $base, $postings, $active, $facet_taxonomies );
+		$term_index = $this->build_term_index( $computed['facets'] );
+		$facets     = self::shape_facets( $attr_defs, $computed['facets'], $term_index, $filters );
+
+		// Category tree (req #3): turn the engine's product_cat counts into a
+		// pruned, count-rolled-up parent → child hierarchy for the current context.
+		$category_tree = array();
+		if ( $show_category && ! empty( $computed['facets']['product_cat'] ) ) {
+			$cat_counts    = $computed['facets']['product_cat'];
+			$cat_meta      = $this->build_category_meta( array_keys( $cat_counts ) );
+			$category_tree = Category_Tree::build( self::shape_category_nodes( $cat_counts, $cat_meta ) );
+		}
+
+		// Price + flags share one wc_product_meta_lookup read (A6): both facets
+		// key off the same term-filtered id list, so the min/max price and the
+		// on-sale/stock-status columns come back in a single SELECT rather than
+		// two identical-id sweeps.
+		$meta     = $this->product_meta( $computed['products'] );
+		$prices   = $meta['prices'];
+		$flag_map = $meta['flags'];
+
+		// Price facet (numeric bands). Price isn't in the index (§5.2) — read it
+		// from wc_product_meta_lookup for the term-filtered set. Band counts are
+		// self-excluded w.r.t. the price selection (computed over the term-filtered
+		// set); the grid count below additionally applies the selected bands.
+		$selected_bands = isset( $state['price_bands'] ) && is_array( $state['price_bands'] ) ? $state['price_bands'] : array();
+		$price_facet    = array();
+		$grid_products  = $computed['products'];
+		if ( ! empty( $prices ) ) {
+			$bands       = $this->resolve_price_bands( $prices );
+			$band_counts = self::count_in_bands( $prices, $bands );
+			$price_facet = self::shape_price_facet( $bands, $band_counts, $selected_bands );
+			if ( ! empty( $selected_bands ) ) {
+				$grid_products = self::filter_by_bands( $computed['products'], $prices, $selected_bands );
+			}
+		}
+
+		// On-sale / in-stock flags (numeric, read from wc_product_meta_lookup —
+		// §5.2, never duplicated). Counts are over the term-filtered set (like
+		// price). The in-stock facet is meaningless when the store hides
+		// out-of-stock items (the base is already in-stock-only), so it's only
+		// offered when out-of-stock products are shown.
+		$onsale_selected  = ! empty( $state['onsale'] );
+		$instock_selected = ! empty( $state['in_stock'] );
+		$show_instock     = ! $hide_oos;
+		$onsale_count     = 0;
+		$instock_count    = 0;
+		foreach ( $flag_map as $flag ) {
+			if ( ! empty( $flag['onsale'] ) ) {
+				++$onsale_count;
+			}
+			if ( ! empty( $flag['in_stock'] ) ) {
+				++$instock_count;
+			}
+		}
+		$flags_facet   = self::shape_flag_facet( $onsale_count, $instock_count, $onsale_selected, $instock_selected, $show_instock );
+		$grid_products = self::filter_by_flags( $grid_products, $flag_map, $onsale_selected, $instock_selected );
+
+		$count = count( $grid_products );
+
+		// Cache only the page-invariant payload (A3) — facet counts don't depend
+		// on the page; pagination + url are rebuilt per request below.
+		$payload = array(
+			'facets'        => $facets,
+			'category_tree' => $category_tree,
+			'price'         => $price_facet,
+			'flags'         => $flags_facet,
+			'count'         => $count,
+		);
+
+		// Store only "real" states (A2): skip when filters were supplied but none
+		// resolved to a real term (garbage/probe slugs), so junk can't populate
+		// the cache. Single-flight the write behind a short rebuild lock (A4) so
+		// concurrent misses don't stampede the same option row.
+		if ( '' !== $cache_key && self::should_store_state( $filters, $active ) && self::acquire_rebuild_lock( $cache_key ) ) {
+			/** Filter the facet-response cache TTL, in seconds. @since 1.21.40 */
+			$ttl = (int) apply_filters( 'shopos_core/shop_filters/facet_cache_ttl', 5 * MINUTE_IN_SECONDS );
+			set_transient( $cache_key, $payload, $ttl );
+			self::release_rebuild_lock( $cache_key );
+		}
+
+		return $this->with_pagination( $payload, $context_id, $state, $paged, $per_page );
+	}
+
+	/**
+	 * Wrap a cached (page-invariant) facet payload with the per-request
+	 * pagination block + canonical url. Keeps the response shape identical to the
+	 * pre-A3 single-object form so consumers are unaffected.
+	 *
+	 * @param array $payload    Page-invariant payload (facets/tree/price/flags/count).
+	 * @param int   $context_id Context term id.
+	 * @param array $state      Parsed Url_State.
+	 * @param int   $paged      Current page.
+	 * @param int   $per_page   Products per page.
+	 * @return array
+	 */
+	private function with_pagination( array $payload, $context_id, array $state, $paged, $per_page ) {
+		$count               = isset( $payload['count'] ) ? (int) $payload['count'] : 0;
+		$payload['pagination'] = array(
+			'current'     => $paged,
+			'total_pages' => $per_page > 0 ? (int) ceil( $count / $per_page ) : 1,
+			'next_url'    => $this->page_url( $context_id, $state, $paged + 1 ),
+		);
+		$payload['url'] = $this->page_url( $context_id, $state, $paged );
+		return $payload;
+	}
+
+	/**
+	 * Whether a facet response should be cached. States that carried filter
+	 * params but resolved to no active term (garbage / probe slugs) are not
+	 * stored, so junk selections can't inflate cache storage (A2). Pure.
+	 *
+	 * @param array $filters Raw parsed filters (taxonomy => slugs).
+	 * @param array $active  Resolved active selection (taxonomy => term ids).
+	 * @return bool
+	 */
+	public static function should_store_state( array $filters, array $active ) {
+		return ! ( ! empty( $filters ) && empty( $active ) );
+	}
+
+	/**
+	 * Best-effort single-flight lock for a facet-cache rebuild (A4). Returns true
+	 * if this request may write the entry; false if another request already holds
+	 * the lock (it will build + return but skip the redundant store). Not atomic
+	 * — a rare double write is harmless (identical payload).
+	 *
+	 * @param string $cache_key Facet-response cache key.
+	 * @return bool
+	 */
+	public static function acquire_rebuild_lock( $cache_key ) {
+		$lock = $cache_key . '_lock';
+		if ( false !== get_transient( $lock ) ) {
+			return false;
+		}
+		set_transient( $lock, 1, self::REBUILD_LOCK_TTL );
+		return true;
+	}
+
+	/**
+	 * Release a rebuild lock taken by acquire_rebuild_lock().
+	 *
+	 * @param string $cache_key Facet-response cache key.
+	 * @return void
+	 */
+	public static function release_rebuild_lock( $cache_key ) {
+		delete_transient( $cache_key . '_lock' );
+	}
+
+	/**
+	 * Cache key for a browse-state facet response (pure given its inputs). The
+	 * parsed state is normalised — facets sorted by taxonomy, slugs sorted
+	 * within each facet — so equivalent selections that differ only in URL
+	 * parameter order share one entry. The index-revision and plugin-version
+	 * segments retire stale entries without needing deletes.
+	 *
+	 * @param array    $request          Raw request params.
+	 * @param bool     $hide_oos         Store-level hide-out-of-stock flag.
+	 * @param int      $per_page         Products per page (pagination totals depend on it).
+	 * @param int      $rev              Index revision (Indexer::REV_OPTION).
+	 * @param string   $version          Plugin version.
+	 * @param string[] $valid_taxonomies Indexed taxonomies; `filter_<tax>` params
+	 *                                   outside this set are dropped from the key
+	 *                                   (A2). An empty list skips validation.
+	 * @return string
+	 */
+	public static function cache_signature( array $request, $hide_oos, $per_page, $rev, $version, array $valid_taxonomies = array() ) {
+		$state   = Url_State::parse( $request );
+		$filters = isset( $state['filters'] ) && is_array( $state['filters'] ) ? $state['filters'] : array();
+
+		// A2: drop filter_<tax> entries whose taxonomy isn't actually indexed, so
+		// junk/probe params can't inflate cache-key cardinality. Equivalent
+		// selections that differ only by junk collapse to one entry.
+		if ( ! empty( $valid_taxonomies ) ) {
+			$filters = array_intersect_key( $filters, array_flip( array_map( 'strval', $valid_taxonomies ) ) );
+		}
+
+		ksort( $filters );
+		foreach ( $filters as $taxonomy => $slugs ) {
+			$slugs = (array) $slugs;
+			sort( $slugs );
+			$filters[ $taxonomy ] = array_values( $slugs );
+		}
+		$state['filters'] = $filters;
+
+		// A3: facet counts are page-invariant — pagination is computed per request
+		// outside the cached payload, so `paged` must not fragment the key.
+		unset( $state['paged'] );
+
+		$payload = array(
+			'state'      => $state,
+			'context_id' => isset( $request['context_id'] ) ? (int) $request['context_id'] : 0,
+			'hide_oos'   => (bool) $hide_oos,
+			'per_page'   => (int) $per_page,
+			'rev'        => (int) $rev,
+			'ver'        => (string) $version,
+		);
+		return 'shopos_core_sf_q_' . md5( (string) wp_json_encode( $payload ) );
+	}
+
+	/* -----------------------------------------------------------------
+	 * Integration helpers
+	 * ----------------------------------------------------------------- */
+
+	/**
+	 * Product ids matching a search term — the base universe on a search-results
+	 * page. A pre-filter listener may supply the ids directly (the Search engine
+	 * does when its index has data); otherwise this runs an unpaginated native
+	 * product search so the facets cover the whole result set, not just the
+	 * current page. (A search plugin that filters generic product-search WP_Query
+	 * runs will refine those native ids.)
+	 *
+	 * @param string $term Search term.
+	 * @return int[]
+	 */
+	private function search_product_ids( $term ) {
+		/**
+		 * Short-circuit pre-filter: a listener may supply the product ids up
+		 * front so the native product-search WP_Query below never runs. Return
+		 * null (the default) to fall through to WooCommerce's native
+		 * title/content search. The Search module supplies its engine-ranked ids
+		 * here whenever its index has data, making the native query dead weight
+		 * on every search-facet build.
+		 *
+		 * @since 1.21.29
+		 *
+		 * @param int[]|null $pre  Pre-supplied ids, or null to run native search.
+		 * @param string     $term Search term.
+		 */
+		$pre = apply_filters( 'shopos_core/shop_filters/pre_search_product_ids', null, (string) $term );
+		if ( null !== $pre ) {
+			$ids = array_map( 'intval', (array) $pre );
+		} else {
+			$query = new \WP_Query(
+				array(
+					'post_type'           => 'product',
+					'post_status'         => 'publish',
+					's'                   => (string) $term,
+					'fields'              => 'ids',
+					'posts_per_page'      => -1,
+					'no_found_rows'       => true,
+					'ignore_sticky_posts' => true,
+				)
+			);
+			$ids = array_map( 'intval', (array) $query->posts );
+		}
+
+		/**
+		 * Filters the product ids a search term resolves to before they seed the
+		 * facet base universe. The Search module supplies its engine-ranked ids
+		 * here so the panel's facets match the engine-driven search grid; without
+		 * a listener this is WooCommerce's native title/content search.
+		 *
+		 * @since 1.20.0
+		 *
+		 * @param int[]  $ids  Native WP product-search ids.
+		 * @param string $term Search term.
+		 */
+		return array_map( 'intval', (array) apply_filters( 'shopos_core/shop_filters/search_product_ids', $ids, (string) $term ) );
+	}
+
+	/**
+	 * Descendant product_cat term ids (cached by WP core's term-children cache).
+	 *
+	 * @param int $category_id Category term id.
+	 * @return int[]
+	 */
+	private function descendant_category_ids( $category_id ) {
+		$children = get_term_children( (int) $category_id, 'product_cat' );
+		if ( is_wp_error( $children ) || empty( $children ) ) {
+			return array();
+		}
+		return array_map( 'intval', $children );
+	}
+
+	/**
+	 * Resolve the slug → term-id map for the selected filters, one WP lookup per
+	 * slug. Keeps the pure resolve_active() free of WordPress.
+	 *
+	 * @param array<string,string[]> $filters taxonomy => slugs.
+	 * @return array<string,array<string,int>>
+	 */
+	private function resolve_slug_map( array $filters ) {
+		$map = array();
+		foreach ( $filters as $taxonomy => $slugs ) {
+			$taxonomy = (string) $taxonomy;
+			foreach ( (array) $slugs as $slug ) {
+				$slug = (string) $slug;
+				$term = get_term_by( 'slug', $slug, $taxonomy );
+				if ( ! $term && false !== strpos( $slug, '%' ) ) {
+					// Url_State canonicalises to the percent-encoded form; an
+					// importer-created term may store the raw-UTF-8 original.
+					$term = get_term_by( 'slug', rawurldecode( $slug ), $taxonomy );
+				}
+				if ( $term && ! is_wp_error( $term ) ) {
+					$map[ $taxonomy ][ $slug ] = (int) $term->term_id;
+				}
+			}
+		}
+		return $map;
+	}
+
+	/**
+	 * Warm WP's term + term-meta object caches for a set of term ids in one
+	 * query, so the subsequent per-term get_term()/get_term_meta() reads are
+	 * cache hits rather than N separate lookups (A5). Best-effort — a failed or
+	 * empty prime just means the per-term reads fall through as before.
+	 *
+	 * @param string $taxonomy Taxonomy.
+	 * @param int[]  $term_ids Term ids to prime.
+	 * @return void
+	 */
+	private function prime_terms( $taxonomy, array $term_ids ) {
+		$taxonomy = (string) $taxonomy;
+		$term_ids = array_values( array_unique( array_filter( array_map( 'intval', $term_ids ) ) ) );
+		if ( '' === $taxonomy || empty( $term_ids ) || ! function_exists( 'get_terms' ) ) {
+			return;
+		}
+		get_terms(
+			array(
+				'taxonomy'               => $taxonomy,
+				'include'                => $term_ids,
+				'hide_empty'             => false,
+				'update_term_meta_cache' => true,
+			)
+		);
+	}
+
+	/**
+	 * Display metadata (slug, name, menu order) for every term the engine
+	 * returned, so shape_facets() can render and order checkboxes.
+	 *
+	 * @param array $engine_facets taxonomy => (term_id => count).
+	 * @return array<string,array<int,array<string,mixed>>>
+	 */
+	private function build_term_index( array $engine_facets ) {
+		$index = array();
+		foreach ( $engine_facets as $taxonomy => $counts ) {
+			$taxonomy = (string) $taxonomy;
+			// Prime the term + term-meta caches for the whole taxonomy in one
+			// query (A5) so the per-term get_term()/get_term_meta() reads below
+			// hit cache instead of firing 2-4 queries each.
+			$this->prime_terms( $taxonomy, array_keys( $counts ) );
+			foreach ( array_keys( $counts ) as $term_id ) {
+				$term_id = (int) $term_id;
+				$term    = get_term( $term_id, $taxonomy );
+				if ( ! $term || is_wp_error( $term ) ) {
+					continue;
+				}
+				$entry = array(
+					'slug'  => (string) $term->slug,
+					'name'  => (string) $term->name,
+					'order' => (int) get_term_meta( $term_id, 'order', true ),
+				);
+				if ( 0 === strpos( $taxonomy, 'pa_' ) ) {
+					$swatch = $this->swatch_data( $term_id );
+					if ( '' !== $swatch['color'] ) {
+						$entry['color'] = $swatch['color'];
+					}
+					if ( '' !== $swatch['image'] ) {
+						$entry['image'] = $swatch['image'];
+					}
+				}
+				$index[ $taxonomy ][ $term_id ] = $entry;
+			}
+		}
+		return $index;
+	}
+
+	/**
+	 * Read the VariationSwatches term meta for an attribute term DIRECTLY (no call
+	 * into ShopOS_VS_Plugin, which only loads when that module is enabled — see
+	 * decisions §5.7). Returns the hex colour and a resolved image URL, each '' when
+	 * unset.
+	 *
+	 * @param int $term_id Attribute term id.
+	 * @return array{color:string,image:string}
+	 */
+	private function swatch_data( $term_id ) {
+		$term_id = (int) $term_id;
+		$color   = (string) get_term_meta( $term_id, 'shopos_swatch_color', true );
+
+		$image    = '';
+		$image_id = (int) get_term_meta( $term_id, 'shopos_core_variation_swatches_term_image_id', true );
+		if ( $image_id > 0 && function_exists( 'wp_get_attachment_image_src' ) ) {
+			$src = wp_get_attachment_image_src( $image_id, 'thumbnail' );
+			if ( is_array( $src ) && ! empty( $src[0] ) ) {
+				$image = (string) $src[0];
+			}
+		}
+
+		return array(
+			'color' => $color,
+			'image' => $image,
+		);
+	}
+
+	/**
+	 * Display metadata (parent, name, slug, menu order) for the product_cat terms
+	 * the engine returned, so shape_category_nodes() can build the tree. Keeps the
+	 * pure seam free of WordPress.
+	 *
+	 * @param int[] $term_ids product_cat term ids.
+	 * @return array<int,array<string,mixed>>
+	 */
+	private function build_category_meta( array $term_ids ) {
+		// Prime the term + term-meta caches for all product_cat terms in one query
+		// (A5) so the per-term get_term()/get_term_meta() reads below hit cache.
+		$this->prime_terms( 'product_cat', $term_ids );
+		$meta = array();
+		foreach ( $term_ids as $term_id ) {
+			$term_id = (int) $term_id;
+			$term    = get_term( $term_id, 'product_cat' );
+			if ( ! $term || is_wp_error( $term ) ) {
+				continue;
+			}
+			$meta[ $term_id ] = array(
+				'parent' => (int) $term->parent,
+				'name'   => (string) $term->name,
+				'slug'   => (string) $term->slug,
+				'order'  => (int) get_term_meta( $term_id, 'order', true ),
+			);
+		}
+		return $meta;
+	}
+
+	/**
+	 * Read min/max price AND the on-sale/stock-status flags for a set of products
+	 * in ONE wc_product_meta_lookup SELECT (§5.2 — price + flags live in
+	 * WooCommerce's lookup, never duplicated in our index). The price facet and
+	 * the flag facet key off the same term-filtered id list, so a single read
+	 * feeds both (A6). The row → (prices, flags) mapping is the pure
+	 * shape_product_meta() seam.
+	 *
+	 * @param int[] $product_ids Product ids.
+	 * @return array{prices:array<int,array{min:float,max:float}>,flags:array<int,array{onsale:bool,in_stock:bool}>}
+	 */
+	private function product_meta( array $product_ids ) {
+		$product_ids = array_values( array_unique( array_map( 'intval', $product_ids ) ) );
+		if ( empty( $product_ids ) ) {
+			return array(
+				'prices' => array(),
+				'flags'  => array(),
+			);
+		}
+
+		global $wpdb;
+		$lookup       = $wpdb->prefix . 'wc_product_meta_lookup';
+		$placeholders = implode( ', ', array_fill( 0, count( $product_ids ), '%d' ) );
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT product_id, min_price, max_price, onsale, stock_status FROM {$lookup} WHERE product_id IN ({$placeholders})",
+				$product_ids
+			)
+		);
+		// phpcs:enable
+
+		return self::shape_product_meta( (array) $rows );
+	}
+
+	/**
+	 * Map wc_product_meta_lookup rows into the parallel price + flag maps the
+	 * facet build consumes: min/max as floats, onsale as `onsale === 1`, in_stock
+	 * as `stock_status === 'instock'`. Pure.
+	 *
+	 * @param array $rows Rows with product_id, min_price, max_price, onsale, stock_status.
+	 * @return array{prices:array<int,array{min:float,max:float}>,flags:array<int,array{onsale:bool,in_stock:bool}>}
+	 */
+	public static function shape_product_meta( array $rows ) {
+		$prices = array();
+		$flags  = array();
+		foreach ( $rows as $row ) {
+			$row        = (object) $row;
+			$product_id = (int) ( $row->product_id ?? 0 );
+			$prices[ $product_id ] = array(
+				'min' => (float) ( $row->min_price ?? 0 ),
+				'max' => (float) ( $row->max_price ?? 0 ),
+			);
+			$flags[ $product_id ] = array(
+				'onsale'   => ( 1 === (int) ( $row->onsale ?? 0 ) ),
+				'in_stock' => ( 'instock' === (string) ( $row->stock_status ?? '' ) ),
+			);
+		}
+		return array(
+			'prices' => $prices,
+			'flags'  => $flags,
+		);
+	}
+
+	/**
+	 * Resolve the candidate price bands: the configured `price_bands` upper bounds
+	 * if set, otherwise auto-derived from the highest price in the candidate set.
+	 *
+	 * @param array $prices product_id => ['min'=>float,'max'=>float].
+	 * @return array<int,array{min:float,max:?float}>
+	 */
+	private function resolve_price_bands( array $prices ) {
+		$setting = (string) get_option( 'shopos_core_shop_filters_price_bands', '' );
+		$bounds  = array();
+		foreach ( explode( ',', $setting ) as $token ) {
+			$token = trim( $token );
+			if ( is_numeric( $token ) ) {
+				$bounds[] = (float) $token;
+			}
+		}
+		if ( ! empty( $bounds ) ) {
+			return self::bands_from_bounds( $bounds );
+		}
+
+		$max = 0.0;
+		foreach ( $prices as $range ) {
+			$max = max( $max, (float) ( $range['max'] ?? 0 ) );
+		}
+		return self::auto_bands( $max );
+	}
+
+	/**
+	 * Human label for a facet taxonomy (attribute label for pa_*, taxonomy
+	 * label otherwise).
+	 *
+	 * @param string $taxonomy Taxonomy.
+	 * @return string
+	 */
+	private function taxonomy_label( $taxonomy ) {
+		if ( 0 === strpos( $taxonomy, 'pa_' ) && function_exists( 'wc_attribute_label' ) ) {
+			return (string) wc_attribute_label( $taxonomy );
+		}
+		$object = get_taxonomy( $taxonomy );
+		if ( $object && isset( $object->labels->singular_name ) ) {
+			return (string) $object->labels->singular_name;
+		}
+		return (string) $taxonomy;
+	}
+
+	/**
+	 * Products-per-page for the advisory total_pages count. Prefers the
+	 * WooCommerce shop grid size over the blog posts-per-page so the panel's
+	 * count matches the storefront on stores where the two differ.
+	 *
+	 * @return int
+	 */
+	private function products_per_page() {
+		return self::resolve_per_page( self::wc_grid_per_page(), (int) get_option( 'posts_per_page', 12 ) );
+	}
+
+	/**
+	 * The WooCommerce shop grid's products-per-page — the same value the
+	 * storefront loop uses (`loop_shop_per_page` over the WC default), so a
+	 * grid-slice / pagination count keys off the real page size rather than the
+	 * blog posts-per-page. Returns 0 when WooCommerce is unavailable, signalling
+	 * resolve_per_page() to fall back. Integration (reads a live WC filter).
+	 *
+	 * @return int
+	 */
+	public static function wc_grid_per_page() {
+		if ( ! function_exists( 'wc_get_default_products_per_page' ) ) {
+			return 0;
+		}
+		/** This filter is documented in WooCommerce (WC_Query::product_query). */
+		return (int) apply_filters( 'loop_shop_per_page', wc_get_default_products_per_page() );
+	}
+
+	/**
+	 * Pick the effective products-per-page: the WooCommerce shop grid size when
+	 * it resolves to a positive value, else the blog posts-per-page, else 12
+	 * (mirroring the pre-existing `> 0 ? : 12` clamp so the "show all" / -1 edge
+	 * behaves as before). Pure.
+	 *
+	 * @param int $wc_per_page   WooCommerce shop grid size (0 when unavailable).
+	 * @param int $blog_per_page Blog posts-per-page fallback.
+	 * @return int
+	 */
+	public static function resolve_per_page( $wc_per_page, $blog_per_page ) {
+		$wc = (int) $wc_per_page;
+		if ( $wc > 0 ) {
+			return $wc;
+		}
+		$blog = (int) $blog_per_page;
+		return $blog > 0 ? $blog : 12;
+	}
+
+	/**
+	 * Build the filtered front-end URL for a context + state at a given page.
+	 *
+	 * @param int   $context_id Category term id (0 = shop).
+	 * @param array $state      Parsed URL state.
+	 * @param int   $paged      Page number.
+	 * @return string
+	 */
+	private function page_url( $context_id, array $state, $paged ) {
+		$base = '';
+		if ( $context_id > 0 ) {
+			$link = get_term_link( (int) $context_id, 'product_cat' );
+			$base = is_wp_error( $link ) ? '' : (string) $link;
+		}
+		if ( '' === $base ) {
+			$base = function_exists( 'wc_get_page_permalink' ) ? (string) wc_get_page_permalink( 'shop' ) : home_url( '/' );
+		}
+
+		$state['paged'] = (int) $paged;
+		$params         = Url_State::serialize( $state );
+		return empty( $params ) ? $base : add_query_arg( $params, $base );
+	}
+}

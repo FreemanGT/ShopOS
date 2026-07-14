@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\CategorySlider\Module;
+use ShopOS\Core\Modules\CategorySlider\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -37,11 +37,11 @@ final class CategorySliderModuleTest extends TestCase {
 		}
 
 		$this->assertTrue(
-			class_exists( '\\Freeman\\Core\\Modules\\CategorySlider\\Widget' ),
+			class_exists( '\\ShopOS\\Core\\Modules\\CategorySlider\\Widget' ),
 			'CategorySlider Widget class must autoload'
 		);
 		$this->assertTrue(
-			is_subclass_of( '\\Freeman\\Core\\Modules\\CategorySlider\\Widget', '\\Elementor\\Widget_Base' ),
+			is_subclass_of( '\\ShopOS\\Core\\Modules\\CategorySlider\\Widget', '\\Elementor\\Widget_Base' ),
 			'Widget must extend \\Elementor\\Widget_Base'
 		);
 	}
@@ -59,7 +59,7 @@ final class CategorySliderModuleTest extends TestCase {
 	}
 
 	public function test_assets_exist_on_disk(): void {
-		$base = FREEMAN_CORE_PATH . 'src/Modules/CategorySlider/assets/';
+		$base = SHOPOS_CORE_PATH . 'src/Modules/CategorySlider/assets/';
 		$this->assertFileExists( $base . 'css/category-slider.css' );
 		$this->assertFileExists( $base . 'js/category-slider.js' );
 	}

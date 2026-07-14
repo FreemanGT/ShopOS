@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Category_Tree;
+use ShopOS\Core\Modules\ShopFilters\Category_Tree;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Pure category-tree build: nesting, count roll-up, zero-branch pruning,
  * sibling ordering, orphan-as-root.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Category_Tree
+ * @covers \ShopOS\Core\Modules\ShopFilters\Category_Tree
  */
 final class ShopFiltersCategoryTreeTest extends TestCase {
 

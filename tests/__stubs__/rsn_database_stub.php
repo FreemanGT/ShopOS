@@ -3,7 +3,7 @@
  * Shared `\RSN_Database` stub for unit tests.
  *
  * The real legacy class lives in
- * `freeman-core/src/Modules/RestockNotify/legacy/includes/class-rsn-database.php`
+ * `shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-database.php`
  * and is only loaded inside `Module::boot()` — which the tests never exercise.
  * This stub captures method calls into a public static array and lets the
  * caller drive return values via static properties.
@@ -16,7 +16,7 @@
  * first; do NOT redeclare the class inline (PHP forbids the redeclare and
  * test order becomes load-order-sensitive).
  *
- * @package FreemanCore
+ * @package ShopOSCore
  */
 
 defined( 'ABSPATH' ) || exit;

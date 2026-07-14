@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\QuickView\Labels;
-use Freeman\Core\Modules\QuickView\Module;
+use ShopOS\Core\Modules\QuickView\Labels;
+use ShopOS\Core\Modules\QuickView\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  * surfaces are always-on since 1.23.0 (the frontend flag graduated); the
  * module-enable toggle is the kill-switch.
  *
- * @covers \Freeman\Core\Modules\QuickView\Module
+ * @covers \ShopOS\Core\Modules\QuickView\Module
  */
 final class QuickViewModuleTest extends TestCase {
 
@@ -45,12 +45,12 @@ final class QuickViewModuleTest extends TestCase {
 		$this->assertArrayHasKey( 'wp_enqueue_scripts', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'woocommerce_after_shop_loop_item', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'wp_footer', $GLOBALS['fr_hooks'] );
-		$this->assertArrayHasKey( 'wp_ajax_freeman_core_quick_view_product', $GLOBALS['fr_hooks'] );
-		$this->assertArrayHasKey( 'wp_ajax_nopriv_freeman_core_quick_view_product', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'wp_ajax_shopos_core_quick_view_product', $GLOBALS['fr_hooks'] );
+		$this->assertArrayHasKey( 'wp_ajax_nopriv_shopos_core_quick_view_product', $GLOBALS['fr_hooks'] );
 	}
 
 	public function test_assets_exist_on_disk(): void {
-		$base = FREEMAN_CORE_PATH . 'src/Modules/QuickView/';
+		$base = SHOPOS_CORE_PATH . 'src/Modules/QuickView/';
 
 		$this->assertFileExists( $base . 'assets/css/quick-view.css' );
 		$this->assertFileExists( $base . 'assets/js/quick-view.js' );

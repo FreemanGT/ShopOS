@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Core\Logger;
+use ShopOS\Core\Core\Logger;
 use PHPUnit\Framework\TestCase;
 
 final class LoggerHooksTest extends TestCase {
@@ -14,7 +14,7 @@ final class LoggerHooksTest extends TestCase {
 
 	public function test_entry_filter_mutates_stored_entry(): void {
 		add_filter(
-			'freeman_core/logger/entry',
+			'shopos_core/logger/entry',
 			static function ( $entry ) {
 				$entry['context'] = 'x';
 				return $entry;
@@ -32,7 +32,7 @@ final class LoggerHooksTest extends TestCase {
 	public function test_entry_filter_receives_message_and_level(): void {
 		$captured = array();
 		add_filter(
-			'freeman_core/logger/entry',
+			'shopos_core/logger/entry',
 			static function ( $entry, $message, $level ) use ( &$captured ) {
 				$captured = array( $message, $level );
 				return $entry;
@@ -49,7 +49,7 @@ final class LoggerHooksTest extends TestCase {
 	public function test_written_action_fires_with_payload(): void {
 		$calls = array();
 		add_action(
-			'freeman_core/logger/written',
+			'shopos_core/logger/written',
 			static function ( $entry, $log ) use ( &$calls ) {
 				$calls[] = array( 'entry' => $entry, 'log_count' => count( $log ) );
 			},
@@ -77,6 +77,6 @@ final class LoggerHooksTest extends TestCase {
 
 		Logger::log( 'test', 'info' );
 
-		$this->assertSame( $expected, serialize( get_option( 'freeman_core_log' ) ) );
+		$this->assertSame( $expected, serialize( get_option( 'shopos_core_log' ) ) );
 	}
 }

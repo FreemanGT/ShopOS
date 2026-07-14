@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Query;
-use Freeman\Core\Modules\ShopFilters\Query_Builder;
-use Freeman\Core\Modules\ShopFilters\Url_State;
+use ShopOS\Core\Modules\ShopFilters\Query;
+use ShopOS\Core\Modules\ShopFilters\Query_Builder;
+use ShopOS\Core\Modules\ShopFilters\Url_State;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Pure seams of the price-band facet: URL state, band construction, counting,
  * filtering, shaping, and the SQL overlap fragment.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Url_State
- * @covers \Freeman\Core\Modules\ShopFilters\Query_Builder
- * @covers \Freeman\Core\Modules\ShopFilters\Query
+ * @covers \ShopOS\Core\Modules\ShopFilters\Url_State
+ * @covers \ShopOS\Core\Modules\ShopFilters\Query_Builder
+ * @covers \ShopOS\Core\Modules\ShopFilters\Query
  */
 final class ShopFiltersPriceTest extends TestCase {
 

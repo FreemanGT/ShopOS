@@ -55,7 +55,7 @@ if ( ! function_exists( 'esc_attr_e' ) ) {
 	function esc_attr_e( $text, $domain = 'default' ) { echo htmlspecialchars( (string) $text, ENT_QUOTES ); }
 }
 
-use Freeman\Core\Modules\ProductSlider\Widget;
+use ShopOS\Core\Modules\ProductSlider\Widget;
 
 final class ProductSliderAutoplayTest extends TestCase {
 

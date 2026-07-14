@@ -1,0 +1,67 @@
+/*
+ * Product Page — coupon-price notice.
+ *
+ * Token-driven (shopos-theme design API) with literal fallbacks so the
+ * notice renders correctly on non-theme installs (1.21.38 convention).
+ * Typography inherits the page font — no font-family on purpose.
+ */
+
+.fm-coupon-notice {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--fm-space-sm, 8px);
+	margin-block: var(--fm-space-md, 16px) 0;
+	padding: var(--fm-space-md, 16px);
+	/* Paper on the paper-dim summary panel: the 9.2 panel adopted the same
+	   dim tone this notice used, turning it invisible — a white card with a
+	   hairline reads subtle on the panel AND on plain-white contexts (the
+	   shortcode placements). Wave 9.3. */
+	background: var(--fm-color-paper, #ffffff);
+	border: 1px solid var(--fm-color-hairline, #e6e6e2);
+	border-radius: var(--fm-radius-lg, 12px);
+	color: var(--fm-color-ink, #1b1b1b);
+	font-size: var(--fm-text-sm, 0.875rem);
+	line-height: var(--fm-leading-base, 1.55);
+}
+
+.fm-coupon-notice__icon {
+	flex: none;
+	margin-block-start: 3px;
+	color: var(--fm-color-ink-soft, #3a3a3a);
+}
+
+/* Baseline flex row: the sentence takes the available width and wraps inside
+   its own box, while the price stays pinned beside it (flex:0 0 auto) instead
+   of dropping to a line of its own. */
+.fm-coupon-notice__text {
+	margin: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	column-gap: 0.4em;
+}
+
+.fm-coupon-notice__sentence {
+	flex: 1 1 auto;
+}
+
+.fm-coupon-notice__code {
+	display: inline-block;
+	padding: 0 var(--fm-space-sm, 8px);
+	background: var(--fm-color-paper, #ffffff);
+	border: 1px dashed var(--fm-color-ink-soft, #3a3a3a);
+	border-radius: var(--fm-radius-sm, 4px);
+	font-weight: var(--fm-weight-bold, 700);
+	letter-spacing: var(--fm-tracking-wide, 0.04em);
+}
+
+.fm-coupon-notice__price {
+	color: var(--fm-color-danger, #b11226);
+	font-weight: var(--fm-weight-bold, 700);
+	white-space: nowrap;
+}
+
+/* wc_price() output inside the notice — keep del/ins neutral. */
+.fm-coupon-notice__price .woocommerce-Price-amount {
+	color: inherit;
+}

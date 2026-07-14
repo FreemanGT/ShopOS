@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/SnapshotTestCase.php';
 require_once __DIR__ . '/__fixtures__/wc_product_stub.php';
-require_once __DIR__ . '/../../freeman-core/src/Modules/RestockNotify/legacy/helpers.php';
+require_once __DIR__ . '/../../shopos-core/src/Modules/RestockNotify/legacy/helpers.php';
 
-use Freeman\Core\Modules\RestockNotify\Email;
-use Freeman\Tests\Snapshots\SnapshotTestCase;
+use ShopOS\Core\Modules\RestockNotify\Email;
+use ShopOS\Tests\Snapshots\SnapshotTestCase;
 use PHPUnit\Framework\TestCase;
 
 if ( ! function_exists( 'wc_get_product' ) ) {

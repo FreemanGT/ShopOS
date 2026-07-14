@@ -4,12 +4,12 @@ declare(strict_types=1);
 require_once __DIR__ . '/SnapshotTestCase.php';
 require_once __DIR__ . '/Scrubber.php';
 
-use Freeman\Tests\Snapshots\SnapshotTestCase;
+use ShopOS\Tests\Snapshots\SnapshotTestCase;
 use PHPUnit\Framework\TestCase;
 
 // Elementor + WP stubs — match the shapes used in CategorySliderHooksTest. The
 // snapshot test exists to guarantee that rendered HTML is byte-identical when
-// no `freeman_core/category_slider/render_card` listener is attached, so any
+// no `shopos_core/category_slider/render_card` listener is attached, so any
 // future drift in the inline card markup surfaces as a snapshot failure.
 if ( ! class_exists( '\\Elementor\\Widget_Base' ) ) {
 	eval( 'namespace Elementor; class Widget_Base { public $fr_test_settings = array(); public function __construct( $data = array(), $args = null ) {} public function get_settings_for_display() { return $this->fr_test_settings; } }' );
@@ -51,7 +51,7 @@ if ( ! function_exists( '_n' ) ) {
 	}
 }
 
-use Freeman\Core\Modules\CategorySlider\Widget;
+use ShopOS\Core\Modules\CategorySlider\Widget;
 
 final class CategorySliderSnapshotTest extends TestCase {
 	use SnapshotTestCase;

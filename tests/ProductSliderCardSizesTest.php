@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ProductSlider\Widget;
+use ShopOS\Core\Modules\ProductSlider\Widget;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  * scoped wp_calculate_image_sizes filter and the actual byte savings are
  * live QA.
  *
- * @covers \Freeman\Core\Modules\ProductSlider\Widget
+ * @covers \ShopOS\Core\Modules\ProductSlider\Widget
  */
 final class ProductSliderCardSizesTest extends TestCase {
 

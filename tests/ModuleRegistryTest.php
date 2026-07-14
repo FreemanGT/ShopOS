@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Core\Module_Base;
-use Freeman\Core\Core\Module_Interface;
-use Freeman\Core\Core\Module_Registry;
+use ShopOS\Core\Core\Module_Base;
+use ShopOS\Core\Core\Module_Interface;
+use ShopOS\Core\Core\Module_Registry;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -15,7 +15,7 @@ final class ModuleRegistryTest extends TestCase {
 
 	public function test_discover_finds_every_module_on_disk(): void {
 		$dirs = array_filter(
-			(array) glob( FREEMAN_CORE_PATH . 'src/Modules/*/Module.php' ),
+			(array) glob( SHOPOS_CORE_PATH . 'src/Modules/*/Module.php' ),
 			static function ( $f ) { return is_readable( $f ); }
 		);
 		$expected = count( $dirs );

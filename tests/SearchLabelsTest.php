@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\Search\Labels;
+use ShopOS\Core\Modules\Search\Labels;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Search storefront label resolver — the defaults map plus the saved-override /
  * blank-fallback resolution (QuickView / ShopFilters Labels precedent).
  *
- * @covers \Freeman\Core\Modules\Search\Labels
+ * @covers \ShopOS\Core\Modules\Search\Labels
  */
 final class SearchLabelsTest extends TestCase {
 
@@ -34,7 +34,7 @@ final class SearchLabelsTest extends TestCase {
 	}
 
 	public function test_get_returns_saved_override(): void {
-		update_option( 'freeman_core_search_label_no_results', 'לא נמצאו מוצרים' );
+		update_option( 'shopos_core_search_label_no_results', 'לא נמצאו מוצרים' );
 		$this->assertSame( 'לא נמצאו מוצרים', Labels::get( 'no_results' ) );
 	}
 
@@ -43,7 +43,7 @@ final class SearchLabelsTest extends TestCase {
 		$this->assertSame( 'Searching…', Labels::get( 'searching' ) );
 
 		// Saved-but-blank → still the default (the Hub can persist an empty string).
-		update_option( 'freeman_core_search_label_searching', '   ' );
+		update_option( 'shopos_core_search_label_searching', '   ' );
 		$this->assertSame( 'Searching…', Labels::get( 'searching' ) );
 	}
 

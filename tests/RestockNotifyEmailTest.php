@@ -4,7 +4,7 @@ declare(strict_types=1);
 // Email needs the legacy `rsn_get_option()` shim to read configurable options.
 // Loading helpers.php is side-effect-free (just defines two functions if they
 // aren't already defined).
-require_once __DIR__ . '/../freeman-core/src/Modules/RestockNotify/legacy/helpers.php';
+require_once __DIR__ . '/../shopos-core/src/Modules/RestockNotify/legacy/helpers.php';
 
 // Reuse the WC_Product shim from the ProductFeed snapshot fixture so a single
 // definition exists across the suite (matches Wave 1.1b's pattern). The shim
@@ -12,7 +12,7 @@ require_once __DIR__ . '/../freeman-core/src/Modules/RestockNotify/legacy/helper
 // and the rest the Email class touches.
 require_once __DIR__ . '/snapshots/__fixtures__/wc_product_stub.php';
 
-use Freeman\Core\Modules\RestockNotify\Email;
+use ShopOS\Core\Modules\RestockNotify\Email;
 use PHPUnit\Framework\TestCase;
 
 if ( ! function_exists( 'wc_get_product' ) ) {
@@ -22,7 +22,7 @@ if ( ! function_exists( 'wc_get_product' ) ) {
 }
 
 /**
- * @covers \Freeman\Core\Modules\RestockNotify\Email
+ * @covers \ShopOS\Core\Modules\RestockNotify\Email
  */
 final class RestockNotifyEmailTest extends TestCase {
 
@@ -113,7 +113,7 @@ final class RestockNotifyEmailTest extends TestCase {
 
 	public function test_email_args_filter_can_mutate_args_dictionary(): void {
 		add_filter(
-			'freeman_core/restock_notify/email_args',
+			'shopos_core/restock_notify/email_args',
 			static function ( $args ) {
 				$args['heading'] = 'INJECTED HEADING';
 				return $args;
@@ -129,7 +129,7 @@ final class RestockNotifyEmailTest extends TestCase {
 	public function test_email_args_filter_receives_subscriber_and_kind(): void {
 		$captured = array();
 		add_filter(
-			'freeman_core/restock_notify/email_args',
+			'shopos_core/restock_notify/email_args',
 			static function ( $args, $subscriber, $kind ) use ( &$captured ) {
 				$captured[] = array( 'kind' => $kind, 'sub_id' => $subscriber->id );
 				return $args;
@@ -150,7 +150,7 @@ final class RestockNotifyEmailTest extends TestCase {
 	public function test_before_send_action_fires_with_to_subject_html_subscriber(): void {
 		$captured = null;
 		add_action(
-			'freeman_core/restock_notify/before_send',
+			'shopos_core/restock_notify/before_send',
 			static function ( $to, $subject, $html, $subscriber ) use ( &$captured ) {
 				$captured = compact( 'to', 'subject', 'html', 'subscriber' );
 			},

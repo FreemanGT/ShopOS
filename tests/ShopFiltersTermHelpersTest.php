@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Term_Helpers;
+use ShopOS\Core\Modules\ShopFilters\Term_Helpers;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Pure attribute/term helpers used by the indexer.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Term_Helpers
+ * @covers \ShopOS\Core\Modules\ShopFilters\Term_Helpers
  */
 final class ShopFiltersTermHelpersTest extends TestCase {
 

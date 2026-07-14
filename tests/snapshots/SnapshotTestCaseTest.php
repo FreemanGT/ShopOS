@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/SnapshotTestCase.php';
 
-use Freeman\Tests\Snapshots\SnapshotTestCase;
+use ShopOS\Tests\Snapshots\SnapshotTestCase;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
 

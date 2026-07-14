@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Url_State;
+use ShopOS\Core\Modules\ShopFilters\Url_State;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Pure URL filter-state parse / serialize.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Url_State
+ * @covers \ShopOS\Core\Modules\ShopFilters\Url_State
  */
 final class ShopFiltersUrlStateTest extends TestCase {
 

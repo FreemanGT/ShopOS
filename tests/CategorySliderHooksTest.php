@@ -58,10 +58,10 @@ if ( ! function_exists( '_n' ) ) {
 	}
 }
 
-use Freeman\Core\Modules\CategorySlider\Widget;
+use ShopOS\Core\Modules\CategorySlider\Widget;
 
 /**
- * @covers \Freeman\Core\Modules\CategorySlider\Widget
+ * @covers \ShopOS\Core\Modules\CategorySlider\Widget
  */
 final class CategorySliderHooksTest extends TestCase {
 
@@ -75,7 +75,7 @@ final class CategorySliderHooksTest extends TestCase {
 	public function test_query_args_filter_receives_args_and_settings(): void {
 		$captured = array();
 		add_filter(
-			'freeman_core/category_slider/query_args',
+			'shopos_core/category_slider/query_args',
 			static function ( $args, $settings ) use ( &$captured ) {
 				$captured = array(
 					'args'     => $args,
@@ -104,7 +104,7 @@ final class CategorySliderHooksTest extends TestCase {
 		// Override the get_terms stub for this test by intercepting via a
 		// trailing-edge listener that captures what fetch_terms returned.
 		add_filter(
-			'freeman_core/category_slider/query_args',
+			'shopos_core/category_slider/query_args',
 			static function ( $args ) {
 				$args['number'] = 999; // overwrite the limit
 				return $args;
@@ -117,7 +117,7 @@ final class CategorySliderHooksTest extends TestCase {
 		// To inspect the args, register a second listener that runs after ours.
 		$captured = null;
 		add_filter(
-			'freeman_core/category_slider/query_args',
+			'shopos_core/category_slider/query_args',
 			static function ( $args ) use ( &$captured ) {
 				$captured = $args;
 				return $args;
@@ -137,7 +137,7 @@ final class CategorySliderHooksTest extends TestCase {
 	public function test_render_card_filter_receives_html_and_context(): void {
 		$captured = array();
 		add_filter(
-			'freeman_core/category_slider/render_card',
+			'shopos_core/category_slider/render_card',
 			static function ( $html, $term, $context ) use ( &$captured ) {
 				$captured[] = array(
 					'html'    => $html,
@@ -168,7 +168,7 @@ final class CategorySliderHooksTest extends TestCase {
 
 	public function test_render_card_filter_can_replace_markup(): void {
 		add_filter(
-			'freeman_core/category_slider/render_card',
+			'shopos_core/category_slider/render_card',
 			static function ( $html, $term ) {
 				return '<a class="custom-card" data-slug="' . esc_attr( $term->slug ) . '">x</a>';
 			},

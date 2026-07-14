@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../freeman-core/src/Modules/RestockNotify/legacy/helpers.php';
+require_once __DIR__ . '/../shopos-core/src/Modules/RestockNotify/legacy/helpers.php';
 require_once __DIR__ . '/snapshots/__fixtures__/wc_product_stub.php';
 require_once __DIR__ . '/__stubs__/rsn_database_stub.php';
 
-use Freeman\Core\Modules\RestockNotify\Stock_Monitor;
+use ShopOS\Core\Modules\RestockNotify\Stock_Monitor;
 use PHPUnit\Framework\TestCase;
 
 if ( ! function_exists( 'wc_get_product' ) ) {
@@ -33,7 +33,7 @@ final class TestStockMonitorProduct extends \WC_Product {
 }
 
 /**
- * @covers \Freeman\Core\Modules\RestockNotify\Stock_Monitor
+ * @covers \ShopOS\Core\Modules\RestockNotify\Stock_Monitor
  */
 final class RestockNotifyStockMonitorTest extends TestCase {
 

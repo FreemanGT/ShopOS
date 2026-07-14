@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\HoverSwap\Gallery_Slider;
-use Freeman\Core\Modules\HoverSwap\Module;
+use ShopOS\Core\Modules\HoverSwap\Gallery_Slider;
+use ShopOS\Core\Modules\HoverSwap\Module;
 use PHPUnit\Framework\TestCase;
 
 // A product with a primary image id + a settable gallery list, instanceof
@@ -38,7 +38,7 @@ if ( ! function_exists( 'wp_get_attachment_image' ) ) {
  * Gallery-slider seams: slide-image selection (primary first, deduped) and the
  * slider markup — single-image fallback and the hover-arrows toggle.
  *
- * @covers \Freeman\Core\Modules\HoverSwap\Gallery_Slider
+ * @covers \ShopOS\Core\Modules\HoverSwap\Gallery_Slider
  */
 final class HoverSwapGallerySliderTest extends TestCase {
 
@@ -90,7 +90,7 @@ final class HoverSwapGallerySliderTest extends TestCase {
 	}
 
 	public function test_arrows_can_be_turned_off(): void {
-		$GLOBALS['fr_opts']['freeman_core_hover_swap_slider_arrows'] = 0;
+		$GLOBALS['fr_opts']['shopos_core_hover_swap_slider_arrows'] = 0;
 
 		$html = $this->slider()->slider_html( new FR_CardSlider_Test_Product( 10, array( 11 ) ) );
 

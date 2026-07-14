@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\InfiniteScroll\Module;
+use ShopOS\Core\Modules\InfiniteScroll\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Wave 3.1a — settings registration + payload propagation to localized
  * JS payload. Hook firing + render-path tests live in 3.1b.
  *
- * @covers \Freeman\Core\Modules\InfiniteScroll\Module
+ * @covers \ShopOS\Core\Modules\InfiniteScroll\Module
  */
 final class InfiniteScrollSettingsTest extends TestCase {
 
@@ -55,7 +55,7 @@ final class InfiniteScrollSettingsTest extends TestCase {
 
 		$this->assertArrayHasKey( 'end_message', $schema );
 		$this->assertSame(
-			__( 'You have reached the end.', 'freeman-core' ),
+			__( 'You have reached the end.', 'shopos-core' ),
 			$schema['end_message']['default']
 		);
 	}

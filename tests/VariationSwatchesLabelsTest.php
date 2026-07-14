@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\VariationSwatches\Labels;
+use ShopOS\Core\Modules\VariationSwatches\Labels;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
  * a Hebrew site, English everywhere else, with admin-free deterministic
  * switching (no .mo dependency).
  *
- * @covers \Freeman\Core\Modules\VariationSwatches\Labels
+ * @covers \ShopOS\Core\Modules\VariationSwatches\Labels
  */
 final class VariationSwatchesLabelsTest extends TestCase {
 

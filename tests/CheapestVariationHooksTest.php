@@ -6,11 +6,11 @@ declare(strict_types=1);
 // test loading races different shims and snapshot tests that need richer stubs lose.
 require_once __DIR__ . '/snapshots/__fixtures__/wc_product_stub.php';
 
-use Freeman\Core\Modules\CheapestDefaultVariation\Module;
+use ShopOS\Core\Modules\CheapestDefaultVariation\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Freeman\Core\Modules\CheapestDefaultVariation\Module
+ * @covers \ShopOS\Core\Modules\CheapestDefaultVariation\Module
  */
 final class CheapestVariationHooksTest extends TestCase {
 
@@ -22,8 +22,8 @@ final class CheapestVariationHooksTest extends TestCase {
 
 		// PDP-only mode is on by default; the module bails early on shop loops.
 		// Disable it so the picker actually runs in unit tests (no `is_product()`).
-		update_option( 'freeman_core_cheapest_default_variation_pdp_only', 0 );
-		update_option( 'freeman_core_cheapest_default_variation_respect_manual_defaults', 0 );
+		update_option( 'shopos_core_cheapest_default_variation_pdp_only', 0 );
+		update_option( 'shopos_core_cheapest_default_variation_respect_manual_defaults', 0 );
 
 		// Wave 3.3 introduced the strategy selector; always-on since 1.23.0
 		// (the flag graduated). Existing hook-tests are strategy-agnostic —
@@ -33,7 +33,7 @@ final class CheapestVariationHooksTest extends TestCase {
 
 	public function test_should_apply_filter_can_skip_picker(): void {
 		add_filter(
-			'freeman_core/cheapest_variation/should_apply',
+			'shopos_core/cheapest_variation/should_apply',
 			static function () {
 				return false;
 			}
@@ -48,7 +48,7 @@ final class CheapestVariationHooksTest extends TestCase {
 	public function test_should_apply_filter_receives_product_and_defaults(): void {
 		$captured = array();
 		add_filter(
-			'freeman_core/cheapest_variation/should_apply',
+			'shopos_core/cheapest_variation/should_apply',
 			static function ( $apply, $product, $defaults ) use ( &$captured ) {
 				$captured = array(
 					'apply'    => $apply,
@@ -71,7 +71,7 @@ final class CheapestVariationHooksTest extends TestCase {
 
 	public function test_chosen_filter_can_swap_picked_variation(): void {
 		add_filter(
-			'freeman_core/cheapest_variation/chosen',
+			'shopos_core/cheapest_variation/chosen',
 			static function ( $picked, $product, $variations ) {
 				foreach ( $variations as $v ) {
 					if ( 12 === $v['variation_id'] ) {
@@ -92,7 +92,7 @@ final class CheapestVariationHooksTest extends TestCase {
 
 	public function test_chosen_filter_returning_null_leaves_defaults_untouched(): void {
 		add_filter(
-			'freeman_core/cheapest_variation/chosen',
+			'shopos_core/cheapest_variation/chosen',
 			static function () {
 				return null;
 			}
@@ -165,7 +165,7 @@ final class CheapestVariationHooksTest extends TestCase {
 	// --- Wave 3.3: strategy-selector tests ---------------------------------
 
 	public function test_strategy_first_in_stock_picks_first_passing_variation_after_oos(): void {
-		update_option( 'freeman_core_cheapest_default_variation_strategy', 'first_in_stock' );
+		update_option( 'shopos_core_cheapest_default_variation_strategy', 'first_in_stock' );
 
 		$product = new TestCheapestVariableProduct( 31, $this->three_variations_oos_first() );
 		$result  = ( new Module() )->default_cheapest_variation( array(), $product );
@@ -174,7 +174,7 @@ final class CheapestVariationHooksTest extends TestCase {
 	}
 
 	public function test_strategy_setting_dispatches_cheapest(): void {
-		update_option( 'freeman_core_cheapest_default_variation_strategy', 'cheapest' );
+		update_option( 'shopos_core_cheapest_default_variation_strategy', 'cheapest' );
 
 		$product = new TestCheapestVariableProduct( 32, $this->three_variations_oos_first() );
 		$result  = ( new Module() )->default_cheapest_variation( array(), $product );
@@ -183,9 +183,9 @@ final class CheapestVariationHooksTest extends TestCase {
 	}
 
 	public function test_strategy_filter_overrides_setting(): void {
-		update_option( 'freeman_core_cheapest_default_variation_strategy', 'cheapest' );
+		update_option( 'shopos_core_cheapest_default_variation_strategy', 'cheapest' );
 		add_filter(
-			'freeman_core/cheapest_variation/strategy',
+			'shopos_core/cheapest_variation/strategy',
 			static function () {
 				return 'first_in_stock';
 			}
@@ -198,9 +198,9 @@ final class CheapestVariationHooksTest extends TestCase {
 	}
 
 	public function test_strategy_meta_overrides_setting(): void {
-		update_option( 'freeman_core_cheapest_default_variation_strategy', 'cheapest' );
+		update_option( 'shopos_core_cheapest_default_variation_strategy', 'cheapest' );
 		$GLOBALS['fr_post_meta'][34] = array(
-			'_freeman_cheapest_variation_strategy' => 'first_in_stock',
+			'_shopos_cheapest_variation_strategy' => 'first_in_stock',
 		);
 
 		$product = new TestCheapestVariableProduct( 34, $this->three_variations_oos_first() );
@@ -210,12 +210,12 @@ final class CheapestVariationHooksTest extends TestCase {
 	}
 
 	public function test_strategy_filter_overrides_meta(): void {
-		update_option( 'freeman_core_cheapest_default_variation_strategy', 'cheapest' );
+		update_option( 'shopos_core_cheapest_default_variation_strategy', 'cheapest' );
 		$GLOBALS['fr_post_meta'][35] = array(
-			'_freeman_cheapest_variation_strategy' => 'first_in_stock',
+			'_shopos_cheapest_variation_strategy' => 'first_in_stock',
 		);
 		add_filter(
-			'freeman_core/cheapest_variation/strategy',
+			'shopos_core/cheapest_variation/strategy',
 			static function () {
 				return 'cheapest';
 			}
@@ -228,9 +228,9 @@ final class CheapestVariationHooksTest extends TestCase {
 	}
 
 	public function test_strategy_filter_invalid_value_falls_back_to_resolved_pre_filter(): void {
-		update_option( 'freeman_core_cheapest_default_variation_strategy', 'cheapest' );
+		update_option( 'shopos_core_cheapest_default_variation_strategy', 'cheapest' );
 		add_filter(
-			'freeman_core/cheapest_variation/strategy',
+			'shopos_core/cheapest_variation/strategy',
 			static function () {
 				return 'bogus';
 			}
@@ -245,10 +245,10 @@ final class CheapestVariationHooksTest extends TestCase {
 	}
 
 	public function test_strategy_filter_receives_resolved_strategy_and_product(): void {
-		update_option( 'freeman_core_cheapest_default_variation_strategy', 'first_in_stock' );
+		update_option( 'shopos_core_cheapest_default_variation_strategy', 'first_in_stock' );
 		$captured = array();
 		add_filter(
-			'freeman_core/cheapest_variation/strategy',
+			'shopos_core/cheapest_variation/strategy',
 			static function ( $strategy, $product ) use ( &$captured ) {
 				$captured = array(
 					'strategy' => $strategy,
@@ -273,7 +273,7 @@ final class CheapestVariationHooksTest extends TestCase {
 	 * order, this test fails loudly instead of behavior shifting silently.
 	 */
 	public function test_first_in_stock_pins_wc_order_assumption(): void {
-		update_option( 'freeman_core_cheapest_default_variation_strategy', 'first_in_stock' );
+		update_option( 'shopos_core_cheapest_default_variation_strategy', 'first_in_stock' );
 
 		// All three are in stock; 'first' must mean the array-order first,
 		// which is the more expensive 'red' variation, not the cheaper 'blue'.
@@ -331,9 +331,9 @@ final class CheapestVariationHooksTest extends TestCase {
 	public function test_every_module_select_schema_uses_choices_not_options(): void {
 		$modules = array(
 			Module::class,
-			\Freeman\Core\Modules\HoverSwap\Module::class,
-			\Freeman\Core\Modules\InfiniteScroll\Module::class,
-			\Freeman\Core\Modules\ShopFilters\Module::class,
+			\ShopOS\Core\Modules\HoverSwap\Module::class,
+			\ShopOS\Core\Modules\InfiniteScroll\Module::class,
+			\ShopOS\Core\Modules\ShopFilters\Module::class,
 		);
 
 		foreach ( $modules as $class ) {

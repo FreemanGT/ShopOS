@@ -33,10 +33,10 @@ if ( ! function_exists( 'is_tax' ) ) {
 	function is_tax( $tax ) { return false; }
 }
 
-use Freeman\Core\Modules\ProductSlider\Widget;
+use ShopOS\Core\Modules\ProductSlider\Widget;
 
 /**
- * @covers \Freeman\Core\Modules\ProductSlider\Widget
+ * @covers \ShopOS\Core\Modules\ProductSlider\Widget
  */
 final class ProductSliderHooksTest extends TestCase {
 
@@ -51,7 +51,7 @@ final class ProductSliderHooksTest extends TestCase {
 	public function test_query_args_filter_receives_args_and_settings(): void {
 		$captured = array();
 		add_filter(
-			'freeman_core/product_slider/query_args',
+			'shopos_core/product_slider/query_args',
 			static function ( $args, $settings ) use ( &$captured ) {
 				$captured = array(
 					'args'     => $args,
@@ -82,7 +82,7 @@ final class ProductSliderHooksTest extends TestCase {
 
 	public function test_query_args_filter_can_mutate_args_seen_by_wc_get_products(): void {
 		add_filter(
-			'freeman_core/product_slider/query_args',
+			'shopos_core/product_slider/query_args',
 			static function ( $args ) {
 				$args['limit'] = 99;
 				return $args;

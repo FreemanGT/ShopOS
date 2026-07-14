@@ -76,7 +76,7 @@ if ( ! function_exists( 'plugin_dir_path' ) ) {
 	eval( 'function plugin_dir_path($f){return rtrim(dirname($f),"/")."/";}' );
 }
 if ( ! function_exists( 'plugin_dir_url' ) ) {
-	eval( 'function plugin_dir_url($f){return "https://example.test/wp-content/plugins/freeman-core/";}' );
+	eval( 'function plugin_dir_url($f){return "https://example.test/wp-content/plugins/shopos-core/";}' );
 }
 if ( ! function_exists( '__' ) ) {
 	eval( 'function __($s,$d=null){return $s;}' );
@@ -136,12 +136,12 @@ if ( ! file_exists( ABSPATH . 'wp-admin/includes/plugin.php' ) ) {
 }
 
 echo "=== Including plugin file ===\n";
-require_once __DIR__ . '/../freeman-core/freeman-core.php';
+require_once __DIR__ . '/../shopos-core/shopos-core.php';
 echo "plugin file loaded OK\n\n";
 
 echo "=== Calling activation ===\n";
 try {
-	\Freeman\Core\Core\Plugin::on_activate();
+	\ShopOS\Core\Core\Plugin::on_activate();
 	echo "activation OK\n";
 } catch ( \Throwable $e ) {
 	echo "FATAL: " . get_class( $e ) . ": " . $e->getMessage() . "\n";
@@ -151,7 +151,7 @@ try {
 
 echo "\n=== Calling plugins_loaded boot (is_admin=false) ===\n";
 try {
-	\Freeman\Core\Core\Plugin::instance()->boot();
+	\ShopOS\Core\Core\Plugin::instance()->boot();
 	echo "boot (frontend) OK\n";
 } catch ( \Throwable $e ) {
 	echo "FATAL in boot: " . get_class( $e ) . ": " . $e->getMessage() . "\n";

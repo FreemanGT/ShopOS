@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\HoverSwap\Frontend;
-use Freeman\Core\Modules\HoverSwap\Module;
+use ShopOS\Core\Modules\HoverSwap\Frontend;
+use ShopOS\Core\Modules\HoverSwap\Module;
 use PHPUnit\Framework\TestCase;
 
 // A gallery-bearing product that is `instanceof WC_Product` regardless of
@@ -37,7 +37,7 @@ if ( ! function_exists( 'wp_get_attachment_image' ) ) {
  * Hover Image Swap storefront seams: which image is swapped to, the overlay
  * markup, the no-gallery no-op, and the show filter.
  *
- * @covers \Freeman\Core\Modules\HoverSwap\Frontend
+ * @covers \ShopOS\Core\Modules\HoverSwap\Frontend
  */
 final class HoverSwapFrontendTest extends TestCase {
 
@@ -80,7 +80,7 @@ final class HoverSwapFrontendTest extends TestCase {
 	}
 
 	public function test_show_filter_can_suppress_the_overlay(): void {
-		add_filter( 'freeman_core/hover_swap/show', '__return_false' );
+		add_filter( 'shopos_core/hover_swap/show', '__return_false' );
 
 		$GLOBALS['product'] = new FR_HoverSwap_Test_Product( array( 88 ) );
 

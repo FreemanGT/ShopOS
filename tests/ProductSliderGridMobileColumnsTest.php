@@ -46,7 +46,7 @@ if ( ! function_exists( 'get_post' ) ) {
 	function get_post( $id ) { return (object) array( 'ID' => is_object( $id ) ? $id->ID : $id ); }
 }
 
-use Freeman\Core\Modules\ProductSlider\Widget;
+use ShopOS\Core\Modules\ProductSlider\Widget;
 
 /**
  * Grid parity audit G1 (1.12.31): grid mode feeds `--cs-per-mobile` into
@@ -56,7 +56,7 @@ use Freeman\Core\Modules\ProductSlider\Widget;
  * column. The render path must round the value to a whole column count in
  * grid mode while preserving the float in slider mode.
  *
- * @covers \Freeman\Core\Modules\ProductSlider\Widget
+ * @covers \ShopOS\Core\Modules\ProductSlider\Widget
  */
 final class ProductSliderGridMobileColumnsTest extends TestCase {
 

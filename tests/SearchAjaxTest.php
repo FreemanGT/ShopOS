@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\Search\Ajax;
+use ShopOS\Core\Modules\Search\Ajax;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  * the broad LIKE fallback scan. The handler itself (nonce, rate limit, JSON,
  * live WC products) is integration / live QA.
  *
- * @covers \Freeman\Core\Modules\Search\Ajax
+ * @covers \ShopOS\Core\Modules\Search\Ajax
  */
 final class SearchAjaxTest extends TestCase {
 

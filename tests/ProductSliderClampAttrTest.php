@@ -46,7 +46,7 @@ if ( ! function_exists( 'get_post' ) ) {
 	function get_post( $id ) { return (object) array( 'ID' => is_object( $id ) ? $id->ID : $id ); }
 }
 
-use Freeman\Core\Modules\ProductSlider\Widget;
+use ShopOS\Core\Modules\ProductSlider\Widget;
 
 /**
  * The fix for the homepage ProductSlider over-scrolling past the last card
@@ -55,7 +55,7 @@ use Freeman\Core\Modules\ProductSlider\Widget;
  * max-scroll math. Verify the attribute is emitted in slider mode and
  * absent in grid mode.
  *
- * @covers \Freeman\Core\Modules\ProductSlider\Widget
+ * @covers \ShopOS\Core\Modules\ProductSlider\Widget
  */
 final class ProductSliderClampAttrTest extends TestCase {
 

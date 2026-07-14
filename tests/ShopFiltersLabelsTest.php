@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Labels;
+use ShopOS\Core\Modules\ShopFilters\Labels;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Storefront label resolver: the defaults map, option override + blank
  * fallback, and the singular/plural count line.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Labels
+ * @covers \ShopOS\Core\Modules\ShopFilters\Labels
  */
 final class ShopFiltersLabelsTest extends TestCase {
 
@@ -39,13 +39,13 @@ final class ShopFiltersLabelsTest extends TestCase {
 	}
 
 	public function test_get_returns_override_when_set(): void {
-		$GLOBALS['fr_opts']['freeman_core_shop_filters_label_clear_all'] = 'נקה הכל';
+		$GLOBALS['fr_opts']['shopos_core_shop_filters_label_clear_all'] = 'נקה הכל';
 
 		$this->assertSame( 'נקה הכל', Labels::get( 'clear_all' ) );
 	}
 
 	public function test_get_falls_back_when_override_is_blank(): void {
-		$GLOBALS['fr_opts']['freeman_core_shop_filters_label_apply'] = '   ';
+		$GLOBALS['fr_opts']['shopos_core_shop_filters_label_apply'] = '   ';
 
 		$this->assertSame( 'Apply filters', Labels::get( 'apply' ) );
 	}
@@ -61,7 +61,7 @@ final class ShopFiltersLabelsTest extends TestCase {
 	}
 
 	public function test_count_text_honours_overrides(): void {
-		$GLOBALS['fr_opts']['freeman_core_shop_filters_label_count_plural'] = '%d מוצרים';
+		$GLOBALS['fr_opts']['shopos_core_shop_filters_label_count_plural'] = '%d מוצרים';
 
 		$this->assertSame( '5 מוצרים', Labels::count_text( 5 ) );
 	}

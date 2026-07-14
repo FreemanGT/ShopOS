@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/snapshots/__fixtures__/wc_product_stub.php';
 
-use Freeman\Core\Modules\RestockNotify\Frontend;
+use ShopOS\Core\Modules\RestockNotify\Frontend;
 use PHPUnit\Framework\TestCase;
 
 if ( ! function_exists( 'wc_get_product' ) ) {
@@ -49,7 +49,7 @@ final class TestVariableParent extends \WC_Product {
 }
 
 /**
- * @covers \Freeman\Core\Modules\RestockNotify\Frontend
+ * @covers \ShopOS\Core\Modules\RestockNotify\Frontend
  *
  * One test per case in the 6-case ladder at Frontend::is_variation_truly_oos().
  * The ladder was copied verbatim from legacy/class-rsn-frontend.php:513-564 —

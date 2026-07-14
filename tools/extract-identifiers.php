@@ -6,8 +6,8 @@
  *
  * Used by tools/capture-baselines.sh. Token-based so comments and docblocks
  * cannot pollute the baseline. The pattern is matched anywhere inside the
- * literal value (not anchored), so substrings like the `freeman_settings_export`
- * inside `'admin_post_freeman_settings_export'` are still captured — those
+ * literal value (not anchored), so substrings like the `shopos_settings_export`
+ * inside `'admin_post_shopos_settings_export'` are still captured — those
  * are real public surfaces (admin-post actions, capability slugs, etc.).
  *
  * Usage:

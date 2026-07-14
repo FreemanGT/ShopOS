@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\Search\Indexer;
+use ShopOS\Core\Modules\Search\Indexer;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Dirty-queue mechanics (pure, option-backed). The per-product reindex and the
  * reconcile sweep touch WooCommerce / $wpdb and are integration / live QA.
  *
- * @covers \Freeman\Core\Modules\Search\Indexer
+ * @covers \ShopOS\Core\Modules\Search\Indexer
  */
 final class SearchIndexerTest extends TestCase {
 
@@ -57,7 +57,7 @@ final class SearchIndexerTest extends TestCase {
 
 	public function test_queue_option_is_search_namespaced(): void {
 		// Guard against accidentally sharing the Shop Filters queue option.
-		$this->assertSame( 'freeman_core_search_dirty_queue', Indexer::QUEUE_OPTION );
+		$this->assertSame( 'shopos_core_search_dirty_queue', Indexer::QUEUE_OPTION );
 	}
 
 	/**

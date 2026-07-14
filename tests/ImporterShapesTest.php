@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Core\Base_Importer;
-use Freeman\Core\Core\Detection_Result;
+use ShopOS\Core\Core\Base_Importer;
+use ShopOS\Core\Core\Detection_Result;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,10 +16,10 @@ final class ImporterShapesTest extends TestCase {
 	/** @return array<int, array{0:string}> */
 	public static function importer_provider(): array {
 		$out   = array();
-		$files = glob( FREEMAN_CORE_PATH . 'src/Modules/*/Importer.php' );
+		$files = glob( SHOPOS_CORE_PATH . 'src/Modules/*/Importer.php' );
 		foreach ( (array) $files as $f ) {
 			$dir   = basename( dirname( $f ) );
-			$class = 'Freeman\\Core\\Modules\\' . $dir . '\\Importer';
+			$class = 'ShopOS\\Core\\Modules\\' . $dir . '\\Importer';
 			$out[] = array( $class );
 		}
 		return $out;

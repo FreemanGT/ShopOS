@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Seo;
-use Freeman\Core\Modules\ShopFilters\Url_State;
+use ShopOS\Core\Modules\ShopFilters\Seo;
+use ShopOS\Core\Modules\ShopFilters\Url_State;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  * as a filtered view, how a URL is cleaned to its canonical, and the robots
  * directive mutations. Plugin routing + tag emission are live-QA.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Seo
+ * @covers \ShopOS\Core\Modules\ShopFilters\Seo
  */
 final class ShopFiltersSeoTest extends TestCase {
 

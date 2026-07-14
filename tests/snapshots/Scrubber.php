@@ -7,12 +7,12 @@
  * Each function targets one source of nondeterminism in the codebase:
  * timestamps, nonces, plugin versions, the site URL, and JSON object fields.
  *
- * @package FreemanCore
+ * @package ShopOSCore
  */
 
 declare(strict_types=1);
 
-namespace Freeman\Tests\Snapshots;
+namespace ShopOS\Tests\Snapshots;
 
 final class Scrubber {
 

@@ -1,0 +1,26 @@
+/*
+Theme Name: ShopOS Theme
+Theme URI: https://shoposdigital.com/shopos-theme
+Description: ShopOS is a WooCommerce-first child theme of Hello Elementor. It provides the design tokens, typography, RTL/Hebrew support, and WooCommerce template refinements. All business logic lives in the companion ShopOS Core plugin — the theme handles presentation only.
+Author: ShopOS Digital
+Author URI: https://shoposdigital.com
+Template: hello-elementor
+Version: 1.11.27
+Requires at least: 6.0
+Tested up to: 6.8
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: shopos-theme
+Domain Path: /languages
+Tags: elementor, woocommerce, rtl-language-support, translation-ready, child-theme
+*/
+
+/*
+ * Theme CSS is split across separate files (enqueued by functions.php):
+ *   assets/css/shopos-tokens.css     (design tokens — all modules consume these)
+ *   assets/css/shopos.css            (theme components)
+ *   assets/css/shopos-rtl.css        (RTL overrides)
+ *
+ * Do not add rules here — this file exists only for the theme header.
+ */

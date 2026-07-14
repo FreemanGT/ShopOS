@@ -12,34 +12,34 @@ use PHPUnit\Framework\TestCase;
 /**
  * Wave 2.2 / 4b — image-swatches term-meta read path + filter contract.
  *
- * Exercises the new helpers on Etucart_VS_Plugin (image_meta_key,
+ * Exercises the new helpers on ShopOS_VS_Plugin (image_meta_key,
  * term_image_id, term_image_url, attribute_has_images) and the additive
- * `freeman_core/variation_swatches/term_image_url` filter.
+ * `shopos_core/variation_swatches/term_image_url` filter.
  *
  * Does NOT cover the option-payload assembly (that path runs through
- * Etucart_VS_Archive::prepare_product_data which depends on the full
+ * ShopOS_VS_Archive::prepare_product_data which depends on the full
  * \WC_Product_Variable stack — see VariationSwatchesCardImagePayloadSnapshotTest
  * for the precedent of unit-testing extracted helpers without the WC stack).
  *
- * @covers \Etucart_VS_Plugin::image_meta_key
- * @covers \Etucart_VS_Plugin::term_image_id
- * @covers \Etucart_VS_Plugin::term_image_url
- * @covers \Etucart_VS_Plugin::attribute_has_images
+ * @covers \ShopOS_VS_Plugin::image_meta_key
+ * @covers \ShopOS_VS_Plugin::term_image_id
+ * @covers \ShopOS_VS_Plugin::term_image_url
+ * @covers \ShopOS_VS_Plugin::attribute_has_images
  */
 final class VariationSwatchesImageSwatchesSnapshotTest extends TestCase {
 
-	private const PLUGIN_FILE = __DIR__ . '/../freeman-core/src/Modules/VariationSwatches/legacy/includes/class-plugin.php';
-	private const META_KEY    = 'freeman_core_variation_swatches_term_image_id';
+	private const PLUGIN_FILE = __DIR__ . '/../shopos-core/src/Modules/VariationSwatches/legacy/includes/class-plugin.php';
+	private const META_KEY    = 'shopos_core_variation_swatches_term_image_id';
 
 	public static function setUpBeforeClass(): void {
-		if ( ! defined( 'ETUCART_VS_VERSION' ) ) {
-			define( 'ETUCART_VS_VERSION', '1.11.24' );
+		if ( ! defined( 'SHOPOS_VS_VERSION' ) ) {
+			define( 'SHOPOS_VS_VERSION', '1.11.24' );
 		}
-		if ( ! defined( 'ETUCART_VS_DIR' ) ) {
-			define( 'ETUCART_VS_DIR', dirname( self::PLUGIN_FILE ) . '/' );
+		if ( ! defined( 'SHOPOS_VS_DIR' ) ) {
+			define( 'SHOPOS_VS_DIR', dirname( self::PLUGIN_FILE ) . '/' );
 		}
-		if ( ! defined( 'ETUCART_VS_URL' ) ) {
-			define( 'ETUCART_VS_URL', 'https://example.test/' );
+		if ( ! defined( 'SHOPOS_VS_URL' ) ) {
+			define( 'SHOPOS_VS_URL', 'https://example.test/' );
 		}
 		require_once self::PLUGIN_FILE;
 	}
@@ -57,44 +57,43 @@ final class VariationSwatchesImageSwatchesSnapshotTest extends TestCase {
 		unset( $GLOBALS['fr_get_terms_return'] );
 	}
 
-	public function test_image_meta_key_is_namespaced_under_freeman_core(): void {
-		$this->assertSame( self::META_KEY, \Etucart_VS_Plugin::image_meta_key() );
-		$this->assertStringStartsWith( 'freeman_core_', \Etucart_VS_Plugin::image_meta_key() );
-		$this->assertStringNotContainsString( 'etucart_', \Etucart_VS_Plugin::image_meta_key() );
+	public function test_image_meta_key_is_namespaced_under_shopos_core(): void {
+		$this->assertSame( self::META_KEY, \ShopOS_VS_Plugin::image_meta_key() );
+		$this->assertStringStartsWith( 'shopos_core_variation_swatches_', \ShopOS_VS_Plugin::image_meta_key() );
 	}
 
 	public function test_term_image_id_returns_zero_when_meta_unset(): void {
-		$this->assertSame( 0, \Etucart_VS_Plugin::term_image_id( 7 ) );
+		$this->assertSame( 0, \ShopOS_VS_Plugin::term_image_id( 7 ) );
 	}
 
 	public function test_term_image_id_returns_int_when_meta_set(): void {
 		$GLOBALS['fr_term_meta'][7][ self::META_KEY ] = '42';
 
-		$this->assertSame( 42, \Etucart_VS_Plugin::term_image_id( 7 ) );
+		$this->assertSame( 42, \ShopOS_VS_Plugin::term_image_id( 7 ) );
 	}
 
 	public function test_term_image_url_returns_empty_when_no_image_id(): void {
-		$this->assertSame( '', \Etucart_VS_Plugin::term_image_url( 7 ) );
+		$this->assertSame( '', \ShopOS_VS_Plugin::term_image_url( 7 ) );
 	}
 
 	public function test_term_image_url_returns_attachment_url_when_set(): void {
 		$GLOBALS['fr_term_meta'][7][ self::META_KEY ] = 42;
 		$GLOBALS['fr_attachments'][42]['thumbnail']   = 'https://example.test/blue-thumb.jpg';
 
-		$this->assertSame( 'https://example.test/blue-thumb.jpg', \Etucart_VS_Plugin::term_image_url( 7 ) );
+		$this->assertSame( 'https://example.test/blue-thumb.jpg', \ShopOS_VS_Plugin::term_image_url( 7 ) );
 	}
 
 	public function test_term_image_url_returns_empty_when_attachment_missing(): void {
 		// Term meta points to a non-existent attachment.
 		$GLOBALS['fr_term_meta'][7][ self::META_KEY ] = 999;
 
-		$this->assertSame( '', \Etucart_VS_Plugin::term_image_url( 7 ) );
+		$this->assertSame( '', \ShopOS_VS_Plugin::term_image_url( 7 ) );
 	}
 
 	public function test_term_image_url_filter_runs_with_full_signature(): void {
 		$captured = array();
 		add_filter(
-			'freeman_core/variation_swatches/term_image_url',
+			'shopos_core/variation_swatches/term_image_url',
 			static function ( $url, $term_id, $size ) use ( &$captured ) {
 				$captured = array(
 					'url'     => $url,
@@ -109,7 +108,7 @@ final class VariationSwatchesImageSwatchesSnapshotTest extends TestCase {
 		$GLOBALS['fr_term_meta'][7][ self::META_KEY ] = 42;
 		$GLOBALS['fr_attachments'][42]['thumbnail']   = 'https://example.test/blue.jpg';
 
-		$out = \Etucart_VS_Plugin::term_image_url( 7, 'thumbnail' );
+		$out = \ShopOS_VS_Plugin::term_image_url( 7, 'thumbnail' );
 
 		$this->assertSame( 'https://example.test/blue.jpg?cdn=replaced', $out );
 		$this->assertSame( 7, $captured['term_id'] );
@@ -121,14 +120,14 @@ final class VariationSwatchesImageSwatchesSnapshotTest extends TestCase {
 		// Filter consumers may want to substitute a default image when none is set.
 		$fired = false;
 		add_filter(
-			'freeman_core/variation_swatches/term_image_url',
+			'shopos_core/variation_swatches/term_image_url',
 			static function ( $url ) use ( &$fired ) {
 				$fired = true;
 				return $url;
 			}
 		);
 
-		\Etucart_VS_Plugin::term_image_url( 7 );
+		\ShopOS_VS_Plugin::term_image_url( 7 );
 
 		$this->assertTrue( $fired, 'Filter must fire even when no image is set so consumers can substitute defaults.' );
 	}
@@ -139,25 +138,25 @@ final class VariationSwatchesImageSwatchesSnapshotTest extends TestCase {
 		// tests would leak cached results.
 		$GLOBALS['fr_terms']['pa_no_images'] = array();
 
-		$this->assertFalse( \Etucart_VS_Plugin::attribute_has_images( 'pa_no_images' ) );
+		$this->assertFalse( \ShopOS_VS_Plugin::attribute_has_images( 'pa_no_images' ) );
 	}
 
 	public function test_attribute_has_images_returns_true_when_at_least_one_term_has_image(): void {
 		$GLOBALS['fr_terms']['pa_with_images']         = array( 7 );
 		$GLOBALS['fr_term_meta'][7][ self::META_KEY ] = 42;
 
-		$this->assertTrue( \Etucart_VS_Plugin::attribute_has_images( 'pa_with_images' ) );
+		$this->assertTrue( \ShopOS_VS_Plugin::attribute_has_images( 'pa_with_images' ) );
 	}
 
 	public function test_attribute_has_images_caches_per_request(): void {
 		// First call populates the static cache. A subsequent change to the
 		// underlying terms must not affect the second call's return value.
 		$GLOBALS['fr_terms']['pa_cache_check'] = array();
-		$first = \Etucart_VS_Plugin::attribute_has_images( 'pa_cache_check' );
+		$first = \ShopOS_VS_Plugin::attribute_has_images( 'pa_cache_check' );
 
 		$GLOBALS['fr_terms']['pa_cache_check']         = array( 9 );
 		$GLOBALS['fr_term_meta'][9][ self::META_KEY ] = 100;
-		$second = \Etucart_VS_Plugin::attribute_has_images( 'pa_cache_check' );
+		$second = \ShopOS_VS_Plugin::attribute_has_images( 'pa_cache_check' );
 
 		$this->assertFalse( $first );
 		$this->assertSame( $first, $second, 'Static cache must hold for the request.' );

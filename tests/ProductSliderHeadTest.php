@@ -42,14 +42,14 @@ if ( ! function_exists( 'get_post' ) ) {
 	function get_post( $id ) { return (object) array( 'ID' => is_object( $id ) ? $id->ID : $id ); }
 }
 
-use Freeman\Core\Modules\ProductSlider\Widget;
+use ShopOS\Core\Modules\ProductSlider\Widget;
 
 /**
  * #2 (1.14.3): the `.cs-head` header block was always emitted, so its shared
  * `border-bottom` showed as a stray line even with no eyebrow / headline /
  * arrows (the common grid-mode case). It must only render when it has content.
  *
- * @covers \Freeman\Core\Modules\ProductSlider\Widget
+ * @covers \ShopOS\Core\Modules\ProductSlider\Widget
  */
 final class ProductSliderHeadTest extends TestCase {
 
@@ -91,8 +91,8 @@ final class ProductSliderHeadTest extends TestCase {
 	}
 
 	public function test_head_rendered_when_headline_set(): void {
-		$out = $this->render( array( 'headline' => 'FreemanFeatured' ) );
+		$out = $this->render( array( 'headline' => 'ShopOSFeatured' ) );
 		$this->assertStringContainsString( 'class="cs-head"', $out );
-		$this->assertStringContainsString( 'FreemanFeatured', $out );
+		$this->assertStringContainsString( 'ShopOSFeatured', $out );
 	}
 }

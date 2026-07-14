@@ -48,7 +48,7 @@ if ( ! class_exists( 'WP_Query' ) ) {
 	}' );
 }
 
-use Freeman\Core\Modules\ProductSlider\Widget;
+use ShopOS\Core\Modules\ProductSlider\Widget;
 
 /**
  * #1 grid-cap fix (1.14.2): the `current_query` grid path must read the
@@ -58,7 +58,7 @@ use Freeman\Core\Modules\ProductSlider\Widget;
  * cover the three extracted seams; archive detection against a real Elementor
  * render is live-QA on the store.
  *
- * @covers \Freeman\Core\Modules\ProductSlider\Widget
+ * @covers \ShopOS\Core\Modules\ProductSlider\Widget
  */
 final class ProductSliderArchiveQueryTest extends TestCase {
 

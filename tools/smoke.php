@@ -1,7 +1,7 @@
 <?php
 /**
  * Offline smoke test: load each Module class through the same PSR-4 paths
- * Freeman Core uses at runtime, verify it implements Module_Interface and
+ * ShopOS Core uses at runtime, verify it implements Module_Interface and
  * exposes the minimum required API surface.
  *
  * Run:
@@ -12,20 +12,20 @@
 if ( ! defined( 'ABSPATH' ) ) {
     define( 'ABSPATH', '/tmp/' );
 }
-if ( ! defined( 'FREEMAN_CORE_FILE' ) ) {
-    define( 'FREEMAN_CORE_FILE', __DIR__ . '/../freeman-core/freeman-core.php' );
+if ( ! defined( 'SHOPOS_CORE_FILE' ) ) {
+    define( 'SHOPOS_CORE_FILE', __DIR__ . '/../shopos-core/shopos-core.php' );
 }
-if ( ! defined( 'FREEMAN_CORE_PATH' ) ) {
-    define( 'FREEMAN_CORE_PATH', dirname( FREEMAN_CORE_FILE ) . '/' );
+if ( ! defined( 'SHOPOS_CORE_PATH' ) ) {
+    define( 'SHOPOS_CORE_PATH', dirname( SHOPOS_CORE_FILE ) . '/' );
 }
-if ( ! defined( 'FREEMAN_CORE_URL' ) ) {
-    define( 'FREEMAN_CORE_URL', 'https://example.test/wp-content/plugins/freeman-core/' );
+if ( ! defined( 'SHOPOS_CORE_URL' ) ) {
+    define( 'SHOPOS_CORE_URL', 'https://example.test/wp-content/plugins/shopos-core/' );
 }
-if ( ! defined( 'FREEMAN_CORE_BASENAME' ) ) {
-    define( 'FREEMAN_CORE_BASENAME', 'freeman-core/freeman-core.php' );
+if ( ! defined( 'SHOPOS_CORE_BASENAME' ) ) {
+    define( 'SHOPOS_CORE_BASENAME', 'shopos-core/shopos-core.php' );
 }
-if ( ! defined( 'FREEMAN_CORE_VERSION' ) ) {
-    define( 'FREEMAN_CORE_VERSION', '1.0.0' );
+if ( ! defined( 'SHOPOS_CORE_VERSION' ) ) {
+    define( 'SHOPOS_CORE_VERSION', '1.0.0' );
 }
 
 // Minimal WP function stubs.
@@ -65,27 +65,27 @@ if ( ! function_exists( 'is_plugin_active' ) ) {
     eval( 'function is_plugin_active( $x ) { return false; }' );
 }
 
-// PSR-4 autoloader mirroring composer.json: Freeman\\Core\\ → src/.
+// PSR-4 autoloader mirroring composer.json: ShopOS\\Core\\ → src/.
 spl_autoload_register(
     function ( $class ) {
-        $prefix = 'Freeman\\Core\\';
+        $prefix = 'ShopOS\\Core\\';
         if ( strpos( $class, $prefix ) !== 0 ) {
             return;
         }
         $relative = substr( $class, strlen( $prefix ) );
-        $path     = FREEMAN_CORE_PATH . 'src/' . str_replace( '\\', '/', $relative ) . '.php';
+        $path     = SHOPOS_CORE_PATH . 'src/' . str_replace( '\\', '/', $relative ) . '.php';
         if ( is_readable( $path ) ) {
             require_once $path;
         }
     }
 );
 
-$modules = glob( FREEMAN_CORE_PATH . 'src/Modules/*/Module.php' );
+$modules = glob( SHOPOS_CORE_PATH . 'src/Modules/*/Module.php' );
 $pass    = 0;
 $fail    = 0;
 foreach ( $modules as $file ) {
     $dir   = basename( dirname( $file ) );
-    $class = 'Freeman\\Core\\Modules\\' . $dir . '\\Module';
+    $class = 'ShopOS\\Core\\Modules\\' . $dir . '\\Module';
 
     try {
         if ( ! class_exists( $class ) ) {
@@ -94,7 +94,7 @@ foreach ( $modules as $file ) {
             continue;
         }
         $instance = new $class();
-        if ( ! $instance instanceof \Freeman\Core\Core\Module_Interface ) {
+        if ( ! $instance instanceof \ShopOS\Core\Core\Module_Interface ) {
             echo "FAIL  $dir — $class does not implement Module_Interface\n";
             $fail++;
             continue;
@@ -118,12 +118,12 @@ foreach ( $modules as $file ) {
 // Importer sanity: every Importer must extend Base_Importer and detect()
 // must return the array{installed,active,file} shape. Catches regressions
 // from the Base_Importer refactor.
-$importers = glob( FREEMAN_CORE_PATH . 'src/Modules/*/Importer.php' );
+$importers = glob( SHOPOS_CORE_PATH . 'src/Modules/*/Importer.php' );
 $imp_pass  = 0;
 $imp_fail  = 0;
 foreach ( $importers as $file ) {
     $dir   = basename( dirname( $file ) );
-    $class = 'Freeman\\Core\\Modules\\' . $dir . '\\Importer';
+    $class = 'ShopOS\\Core\\Modules\\' . $dir . '\\Importer';
 
     try {
         if ( ! class_exists( $class ) ) {
@@ -132,7 +132,7 @@ foreach ( $importers as $file ) {
             continue;
         }
         $i = new $class();
-        if ( ! $i instanceof \Freeman\Core\Core\Base_Importer ) {
+        if ( ! $i instanceof \ShopOS\Core\Core\Base_Importer ) {
             echo "FAIL  $dir::Importer — does not extend Base_Importer\n";
             $imp_fail++;
             continue;
@@ -140,7 +140,7 @@ foreach ( $importers as $file ) {
         $result = $i->detect();
         // Accept both the new typed DTO and the legacy array shape (for
         // any 3rd-party importer that hasn't migrated yet).
-        $coerced = \Freeman\Core\Core\Detection_Result::from( $result );
+        $coerced = \ShopOS\Core\Core\Detection_Result::from( $result );
         if ( null === $coerced ) {
             echo "FAIL  $dir::Importer — detect() returned bad shape\n";
             $imp_fail++;

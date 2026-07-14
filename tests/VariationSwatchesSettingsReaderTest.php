@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\VariationSwatches\Settings_Reader;
+use ShopOS\Core\Modules\VariationSwatches\Settings_Reader;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Freeman\Core\Modules\VariationSwatches\Settings_Reader
+ * @covers \ShopOS\Core\Modules\VariationSwatches\Settings_Reader
  */
 final class VariationSwatchesSettingsReaderTest extends TestCase {
 
-	private const LEGACY  = 'etucart_vs_shop_enabled';
-	private const NEW_KEY = 'freeman_core_variation_swatches_shop_enabled';
+	private const LEGACY  = 'shopos_vs_shop_enabled';
+	private const NEW_KEY = 'shopos_core_variation_swatches_shop_enabled';
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -20,8 +20,8 @@ final class VariationSwatchesSettingsReaderTest extends TestCase {
 
 	public function test_translate_maps_legacy_prefix_to_new(): void {
 		$this->assertSame(
-			'freeman_core_variation_swatches_pdp_hide_oos',
-			Settings_Reader::translate( 'etucart_vs_pdp_hide_oos' )
+			'shopos_core_variation_swatches_pdp_hide_oos',
+			Settings_Reader::translate( 'shopos_vs_pdp_hide_oos' )
 		);
 	}
 
@@ -80,20 +80,20 @@ final class VariationSwatchesSettingsReaderTest extends TestCase {
 	}
 
 	public function test_normalizes_comma_separated_excluded_categories(): void {
-		update_option( 'freeman_core_variation_swatches_shop_excluded_categories', '12, 34, invalid, 0, 56' );
+		update_option( 'shopos_core_variation_swatches_shop_excluded_categories', '12, 34, invalid, 0, 56' );
 
 		$this->assertSame(
 			array( 12, 34, 56 ),
-			Settings_Reader::get( 'etucart_vs_shop_excluded_categories', array() )
+			Settings_Reader::get( 'shopos_vs_shop_excluded_categories', array() )
 		);
 	}
 
 	public function test_preserves_array_excluded_categories(): void {
-		update_option( 'freeman_core_variation_swatches_shop_excluded_categories', array( 12, 34, 56 ) );
+		update_option( 'shopos_core_variation_swatches_shop_excluded_categories', array( 12, 34, 56 ) );
 
 		$this->assertSame(
 			array( 12, 34, 56 ),
-			Settings_Reader::get( 'etucart_vs_shop_excluded_categories', array() )
+			Settings_Reader::get( 'shopos_vs_shop_excluded_categories', array() )
 		);
 	}
 
@@ -105,7 +105,7 @@ final class VariationSwatchesSettingsReaderTest extends TestCase {
 	 * 1.11.21 storage-shape bug.
 	 */
 	public function test_every_checkbox_in_settings_schema_is_in_checkbox_keys_list(): void {
-		$schema = ( new \Freeman\Core\Modules\VariationSwatches\Module() )->settings_schema();
+		$schema = ( new \ShopOS\Core\Modules\VariationSwatches\Module() )->settings_schema();
 
 		$ref           = new ReflectionClass( Settings_Reader::class );
 		$checkbox_keys = $ref->getConstant( 'CHECKBOX_KEYS' );
@@ -116,7 +116,7 @@ final class VariationSwatchesSettingsReaderTest extends TestCase {
 			if ( ( $def['type'] ?? '' ) !== 'checkbox' ) {
 				continue;
 			}
-			$legacy_key = 'etucart_vs_' . $suffix;
+			$legacy_key = 'shopos_vs_' . $suffix;
 			if ( ! in_array( $legacy_key, $checkbox_keys, true ) ) {
 				$missing[] = $legacy_key;
 			}
@@ -135,7 +135,7 @@ final class VariationSwatchesSettingsReaderTest extends TestCase {
 	 * behind when a setting is removed.
 	 */
 	public function test_every_checkbox_keys_entry_corresponds_to_a_schema_checkbox(): void {
-		$schema = ( new \Freeman\Core\Modules\VariationSwatches\Module() )->settings_schema();
+		$schema = ( new \ShopOS\Core\Modules\VariationSwatches\Module() )->settings_schema();
 
 		$ref           = new ReflectionClass( Settings_Reader::class );
 		$checkbox_keys = $ref->getConstant( 'CHECKBOX_KEYS' );
@@ -143,7 +143,7 @@ final class VariationSwatchesSettingsReaderTest extends TestCase {
 		$schema_checkbox_legacy_keys = array();
 		foreach ( $schema as $suffix => $def ) {
 			if ( ( $def['type'] ?? '' ) === 'checkbox' ) {
-				$schema_checkbox_legacy_keys[] = 'etucart_vs_' . $suffix;
+				$schema_checkbox_legacy_keys[] = 'shopos_vs_' . $suffix;
 			}
 		}
 

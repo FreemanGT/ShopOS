@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\Search\Query_Engine;
+use ShopOS\Core\Modules\Search\Query_Engine;
 use PHPUnit\Framework\TestCase;
 
 /**
  * The pure searchable-text blob builder. The MATCH ... AGAINST read query is
  * Wave 2 and lives in Search_Repository (integration / live QA).
  *
- * @covers \Freeman\Core\Modules\Search\Query_Engine
+ * @covers \ShopOS\Core\Modules\Search\Query_Engine
  */
 final class SearchQueryEngineTest extends TestCase {
 
@@ -67,7 +67,7 @@ final class SearchQueryEngineTest extends TestCase {
 	}
 
 	public function test_search_sql_has_score_match_and_like_fallback(): void {
-		$sql = Query_Engine::search_sql( 'wp_freeman_search_index' );
+		$sql = Query_Engine::search_sql( 'wp_shopos_search_index' );
 
 		$this->assertStringContainsString( 'MATCH(search_text) AGAINST (%s IN NATURAL LANGUAGE MODE)', $sql );
 		$this->assertStringContainsString( '4 * MATCH(title) AGAINST (%s IN NATURAL LANGUAGE MODE)', $sql );
@@ -80,7 +80,7 @@ final class SearchQueryEngineTest extends TestCase {
 		$this->assertStringContainsString( 'WHEN search_text LIKE %s THEN %d', $sql );
 		// The LIKE substring fallback that rescues short / non-Latin tokens.
 		$this->assertStringContainsString( 'OR search_text LIKE %s', $sql );
-		$this->assertStringContainsString( 'FROM wp_freeman_search_index', $sql );
+		$this->assertStringContainsString( 'FROM wp_shopos_search_index', $sql );
 		// Deterministic tiebreak: broad terms tie many rows at the same score,
 		// and an unstable order flaps page membership between requests.
 		$this->assertStringContainsString( 'ORDER BY score DESC, product_id DESC', $sql );

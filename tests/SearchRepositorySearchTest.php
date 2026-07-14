@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\Search\Search_Repository;
+use ShopOS\Core\Modules\Search\Search_Repository;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  * live ranked query (esc_like + $wpdb->prepare + get_col) is integration /
  * live QA; the SQL algebra it composes is covered by SearchQueryEngineTest.
  *
- * @covers \Freeman\Core\Modules\Search\Search_Repository
+ * @covers \ShopOS\Core\Modules\Search\Search_Repository
  */
 final class SearchRepositorySearchTest extends TestCase {
 
@@ -88,7 +88,7 @@ final class SearchRepositorySearchTest extends TestCase {
 
 	public function test_max_results_filter_overrides_the_cap(): void {
 		add_filter(
-			'freeman_core/search/max_results',
+			'shopos_core/search/max_results',
 			static function () {
 				return 50;
 			}
@@ -100,7 +100,7 @@ final class SearchRepositorySearchTest extends TestCase {
 			// A smaller explicit limit still wins over the filtered cap.
 			$this->assertSame( 10, Search_Repository::effective_limit( 10 ) );
 		} finally {
-			unset( $GLOBALS['fr_hooks']['freeman_core/search/max_results'] );
+			unset( $GLOBALS['fr_hooks']['shopos_core/search/max_results'] );
 		}
 	}
 

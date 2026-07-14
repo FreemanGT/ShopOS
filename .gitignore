@@ -9,5 +9,4 @@ dist/
 *.zip
 .phpunit.result.cache
 coverage/
-.gstack/
 .impeccable/

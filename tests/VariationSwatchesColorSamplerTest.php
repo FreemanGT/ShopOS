@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\VariationSwatches\Color_Sampler;
+use ShopOS\Core\Modules\VariationSwatches\Color_Sampler;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Eliminates license + repo-size questions and lets each test express its
  * exact pixel pattern inline.
  *
- * @covers \Freeman\Core\Modules\VariationSwatches\Color_Sampler
+ * @covers \ShopOS\Core\Modules\VariationSwatches\Color_Sampler
  */
 final class VariationSwatchesColorSamplerTest extends TestCase {
 
@@ -37,7 +37,7 @@ final class VariationSwatchesColorSamplerTest extends TestCase {
 		$GLOBALS['fr_attachment_paths'] = array();
 		$GLOBALS['fr_hooks']            = array();
 
-		$this->tmp_dir = sys_get_temp_dir() . '/freeman-sampler-' . bin2hex( random_bytes( 4 ) );
+		$this->tmp_dir = sys_get_temp_dir() . '/shopos-sampler-' . bin2hex( random_bytes( 4 ) );
 		mkdir( $this->tmp_dir, 0755, true );
 	}
 

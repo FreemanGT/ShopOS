@@ -1,8 +1,8 @@
 <?php
 /**
- * PHPUnit bootstrap for freeman-core.
+ * PHPUnit bootstrap for shopos-core.
  *
- * Stubs enough of WordPress that every class under `Freeman\Core\` can
+ * Stubs enough of WordPress that every class under `ShopOS\Core\` can
  * instantiate + run its public methods in isolation. Sits alongside
  * tools/smoke.php (which does a simpler module instantiation check);
  * this file adds the missing pieces for real unit assertions.
@@ -13,20 +13,20 @@ declare(strict_types=1);
 if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', '/tmp/' );
 }
-if ( ! defined( 'FREEMAN_CORE_FILE' ) ) {
-	define( 'FREEMAN_CORE_FILE', __DIR__ . '/../freeman-core/freeman-core.php' );
+if ( ! defined( 'SHOPOS_CORE_FILE' ) ) {
+	define( 'SHOPOS_CORE_FILE', __DIR__ . '/../shopos-core/shopos-core.php' );
 }
-if ( ! defined( 'FREEMAN_CORE_PATH' ) ) {
-	define( 'FREEMAN_CORE_PATH', dirname( FREEMAN_CORE_FILE ) . '/' );
+if ( ! defined( 'SHOPOS_CORE_PATH' ) ) {
+	define( 'SHOPOS_CORE_PATH', dirname( SHOPOS_CORE_FILE ) . '/' );
 }
-if ( ! defined( 'FREEMAN_CORE_URL' ) ) {
-	define( 'FREEMAN_CORE_URL', 'https://example.test/wp-content/plugins/freeman-core/' );
+if ( ! defined( 'SHOPOS_CORE_URL' ) ) {
+	define( 'SHOPOS_CORE_URL', 'https://example.test/wp-content/plugins/shopos-core/' );
 }
-if ( ! defined( 'FREEMAN_CORE_BASENAME' ) ) {
-	define( 'FREEMAN_CORE_BASENAME', 'freeman-core/freeman-core.php' );
+if ( ! defined( 'SHOPOS_CORE_BASENAME' ) ) {
+	define( 'SHOPOS_CORE_BASENAME', 'shopos-core/shopos-core.php' );
 }
-if ( ! defined( 'FREEMAN_CORE_VERSION' ) ) {
-	define( 'FREEMAN_CORE_VERSION', '1.5.0' );
+if ( ! defined( 'SHOPOS_CORE_VERSION' ) ) {
+	define( 'SHOPOS_CORE_VERSION', '1.5.0' );
 }
 if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
 	define( 'HOUR_IN_SECONDS', 3600 );
@@ -761,8 +761,8 @@ foreach ( $stubs as $fn ) {
 	}
 }
 
-// Minimal $wpdb stub: returns option keys matching the freeman_core_/freeman_digital_
-// prefixes from the in-memory option store. Settings_Tools::freeman_option_keys()
+// Minimal $wpdb stub: returns option keys matching the shopos_core_/shopos_digital_
+// prefixes from the in-memory option store. Settings_Tools::shopos_option_keys()
 // is its only consumer in the test suite.
 if ( ! isset( $GLOBALS['wpdb'] ) ) {
 	$GLOBALS['wpdb'] = new class {
@@ -770,7 +770,7 @@ if ( ! isset( $GLOBALS['wpdb'] ) ) {
 		public function get_col( $sql ) {
 			$keys = array_keys( $GLOBALS['fr_opts'] ?? array() );
 			return array_values( array_filter( $keys, static function ( $k ) {
-				return strpos( $k, 'freeman_core_' ) === 0 || strpos( $k, 'freeman_digital_' ) === 0;
+				return strpos( $k, 'shopos_core_' ) === 0 || strpos( $k, 'shopos_digital_' ) === 0;
 			} ) );
 		}
 	};
@@ -792,12 +792,12 @@ if ( ! function_exists( 'nocache_headers' ) ) {
 // PSR-4 autoloader mirroring the plugin's own.
 spl_autoload_register(
 	static function ( $class ) {
-		$prefix = 'Freeman\\Core\\';
+		$prefix = 'ShopOS\\Core\\';
 		if ( strpos( $class, $prefix ) !== 0 ) {
 			return;
 		}
 		$relative = substr( $class, strlen( $prefix ) );
-		$path     = FREEMAN_CORE_PATH . 'src/' . str_replace( '\\', '/', $relative ) . '.php';
+		$path     = SHOPOS_CORE_PATH . 'src/' . str_replace( '\\', '/', $relative ) . '.php';
 		if ( is_readable( $path ) ) {
 			require_once $path;
 		}

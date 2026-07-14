@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Indexer;
+use ShopOS\Core\Modules\ShopFilters\Indexer;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Dirty-queue mechanics (pure, option-backed). The per-product reindex and the
  * reconcile sweep touch WooCommerce / $wpdb and are integration / live QA.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Indexer
+ * @covers \ShopOS\Core\Modules\ShopFilters\Indexer
  */
 final class ShopFiltersIndexerTest extends TestCase {
 

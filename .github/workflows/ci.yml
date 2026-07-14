@@ -16,11 +16,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # PHP 7.4 dropped 2026-05-03 (release 1.11.22). Shipped freeman-core
+        # PHP 7.4 dropped 2026-05-03 (release 1.11.22). Shipped shopos-core
         # already used PHP 8.0+ idioms (str_starts_with, str_contains) baked
         # in by Wave 2.3a–c, so the 7.4 PHPUnit lane was de-facto failing.
-        # WordPress recommends PHP 8.1+ in 2026; freeman-core is internal-only
-        # and runs on Freeman Digital's client sites — none on PHP 7.4.
+        # WordPress recommends PHP 8.1+ in 2026; shopos-core is internal-only
+        # and runs on ShopOS Digital's client sites — none on PHP 7.4.
         # See PR description on the matrix-drop PR for the full rationale.
         php: [ '8.0', '8.1', '8.2', '8.3' ]
         deps: [ 'normal' ]
@@ -62,7 +62,7 @@ jobs:
 
       - name: php -l on every source file
         run: |
-          find freeman-core freeman-theme tests tools -type f -name "*.php" \
+          find shopos-core shopos-theme tests tools -type f -name "*.php" \
             -not -path "*/node_modules/*" -not -path "*/vendor/*" \
             -print0 | xargs -0 -n1 php -l >/dev/null
 
@@ -127,7 +127,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: freeman-zips
+          name: shopos-zips
           path: dist/*.zip
           if-no-files-found: error
           retention-days: 14

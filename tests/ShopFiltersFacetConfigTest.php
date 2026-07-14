@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Facet_Config;
+use ShopOS\Core\Modules\ShopFilters\Facet_Config;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Facet config resolution: auto-derived defaults, per-category hiding, and the
  * visibility filter override.
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Facet_Config
+ * @covers \ShopOS\Core\Modules\ShopFilters\Facet_Config
  */
 final class ShopFiltersFacetConfigTest extends TestCase {
 
@@ -52,7 +52,7 @@ final class ShopFiltersFacetConfigTest extends TestCase {
 
 	public function test_is_facet_visible_filter_can_force_hide(): void {
 		add_filter(
-			'freeman_core/shop_filters/is_facet_visible',
+			'shopos_core/shop_filters/is_facet_visible',
 			static function ( $visible, $taxonomy ) {
 				return 'pa_color' === $taxonomy ? false : $visible;
 			},

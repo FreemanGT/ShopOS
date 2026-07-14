@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\Search\Ajax;
-use Freeman\Core\Modules\Search\Frontend;
-use Freeman\Core\Modules\Search\Module;
+use ShopOS\Core\Modules\Search\Ajax;
+use ShopOS\Core\Modules\Search\Frontend;
+use ShopOS\Core\Modules\Search\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
  * The localized JS payload the dropdown script reads — keys, the configurable
  * selector default, and the numeric knobs from settings_schema defaults.
  *
- * @covers \Freeman\Core\Modules\Search\Frontend
+ * @covers \ShopOS\Core\Modules\Search\Frontend
  */
 final class SearchFrontendTest extends TestCase {
 
@@ -46,9 +46,9 @@ final class SearchFrontendTest extends TestCase {
 		// Settings_Hub persists checkboxes as 1/0 (not the schema's 'yes'/'no'
 		// string default), so the payload must read them as booleans — otherwise a
 		// saved settings page hides image/price/SKU. Regression for 1.21.9.
-		$GLOBALS['fr_opts']['freeman_core_search_show_image'] = 0;
-		$GLOBALS['fr_opts']['freeman_core_search_show_price'] = 1;
-		$GLOBALS['fr_opts']['freeman_core_search_show_sku']   = 1;
+		$GLOBALS['fr_opts']['shopos_core_search_show_image'] = 0;
+		$GLOBALS['fr_opts']['shopos_core_search_show_price'] = 1;
+		$GLOBALS['fr_opts']['shopos_core_search_show_sku']   = 1;
 
 		$payload = ( new Frontend( new Module() ) )->localized_payload();
 
@@ -58,8 +58,8 @@ final class SearchFrontendTest extends TestCase {
 	}
 
 	public function test_payload_honours_numeric_setting_overrides(): void {
-		$GLOBALS['fr_opts']['freeman_core_search_min_chars']   = 3;
-		$GLOBALS['fr_opts']['freeman_core_search_debounce_ms'] = 350;
+		$GLOBALS['fr_opts']['shopos_core_search_min_chars']   = 3;
+		$GLOBALS['fr_opts']['shopos_core_search_debounce_ms'] = 350;
 
 		$payload = ( new Frontend( new Module() ) )->localized_payload();
 
@@ -85,8 +85,8 @@ final class SearchFrontendTest extends TestCase {
 	}
 
 	public function test_payload_labels_reflect_saved_overrides(): void {
-		$GLOBALS['fr_opts']['freeman_core_search_label_no_results'] = 'אין תוצאות';
-		$GLOBALS['fr_opts']['freeman_core_search_label_see_all']    = 'הצג הכל';
+		$GLOBALS['fr_opts']['shopos_core_search_label_no_results'] = 'אין תוצאות';
+		$GLOBALS['fr_opts']['shopos_core_search_label_see_all']    = 'הצג הכל';
 
 		$payload = ( new Frontend( new Module() ) )->localized_payload();
 
@@ -96,7 +96,7 @@ final class SearchFrontendTest extends TestCase {
 
 	public function test_shortcode_placeholder_default_comes_from_label_setting(): void {
 		// No att passed → the placeholder default is the admin label setting.
-		$GLOBALS['fr_opts']['freeman_core_search_label_placeholder'] = 'חפש מוצר';
+		$GLOBALS['fr_opts']['shopos_core_search_label_placeholder'] = 'חפש מוצר';
 
 		$html = ( new Frontend( new Module() ) )->render_form();
 

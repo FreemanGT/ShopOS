@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ProductFeed\Generator;
-use Freeman\Core\Modules\ProductFeed\Module;
-use Freeman\Core\Modules\ProductFeed\Server;
+use ShopOS\Core\Modules\ProductFeed\Generator;
+use ShopOS\Core\Modules\ProductFeed\Module;
+use ShopOS\Core\Modules\ProductFeed\Server;
 use PHPUnit\Framework\TestCase;
 
 /**

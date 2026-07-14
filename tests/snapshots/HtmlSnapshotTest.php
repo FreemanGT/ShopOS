@@ -4,8 +4,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/SnapshotTestCase.php';
 require_once __DIR__ . '/Scrubber.php';
 
-use Freeman\Tests\Snapshots\Scrubber;
-use Freeman\Tests\Snapshots\SnapshotTestCase;
+use ShopOS\Tests\Snapshots\Scrubber;
+use ShopOS\Tests\Snapshots\SnapshotTestCase;
 use PHPUnit\Framework\TestCase;
 
 // Stubs only reached by HTML snapshot rendering. Each is guarded so it does
@@ -48,7 +48,7 @@ final class HtmlSnapshotTest extends TestCase {
 		// fresh — and the one that must remain byte-identical when
 		// future PRs add unrelated tools.
 		ob_start();
-		include __DIR__ . '/../../freeman-core/src/Admin/views/settings-tools-section.php';
+		include __DIR__ . '/../../shopos-core/src/Admin/views/settings-tools-section.php';
 		$html = (string) ob_get_clean();
 
 		$scrubbed = Scrubber::nonces( $html );

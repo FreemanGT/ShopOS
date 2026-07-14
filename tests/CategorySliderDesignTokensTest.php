@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\CategorySlider\Widget;
+use ShopOS\Core\Modules\CategorySlider\Widget;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  * Tests drive `register_controls()` against the capable Widget_Base stub
  * declared in tests/bootstrap.php (`$fr_test_controls` capture).
  *
- * @covers \Freeman\Core\Modules\CategorySlider\Widget
+ * @covers \ShopOS\Core\Modules\CategorySlider\Widget
  */
 final class CategorySliderDesignTokensTest extends TestCase {
 
@@ -111,7 +111,7 @@ final class CategorySliderDesignTokensTest extends TestCase {
 	}
 
 	public function test_css_arrow_size_consumed_with_40px_fallback(): void {
-		$css = file_get_contents( FREEMAN_CORE_PATH . 'src/Modules/CategorySlider/assets/css/category-slider.css' );
+		$css = file_get_contents( SHOPOS_CORE_PATH . 'src/Modules/CategorySlider/assets/css/category-slider.css' );
 
 		// width / height / min-width / min-height each consume --cs-arrow-size
 		// with the prior 40px hardcoded value as fallback.
@@ -123,13 +123,13 @@ final class CategorySliderDesignTokensTest extends TestCase {
 	}
 
 	public function test_css_arrow_radius_consumed_with_50_percent_fallback(): void {
-		$css = file_get_contents( FREEMAN_CORE_PATH . 'src/Modules/CategorySlider/assets/css/category-slider.css' );
+		$css = file_get_contents( SHOPOS_CORE_PATH . 'src/Modules/CategorySlider/assets/css/category-slider.css' );
 
 		$this->assertStringContainsString( 'border-radius: var(--cs-arrow-radius, 50%)', $css );
 	}
 
 	public function test_css_arrow_duration_consumed_with_18s_fallback_four_times(): void {
-		$css = file_get_contents( FREEMAN_CORE_PATH . 'src/Modules/CategorySlider/assets/css/category-slider.css' );
+		$css = file_get_contents( SHOPOS_CORE_PATH . 'src/Modules/CategorySlider/assets/css/category-slider.css' );
 
 		// The .cs-arrow transition declares 4 properties (background /
 		// border-color / color / opacity) — all four reference

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Build clean, distributable zips for Freeman Theme and Freeman Core.
+# Build clean, distributable zips for ShopOS Theme and ShopOS Core.
 #
 # Usage:
 #   bash tools/build.sh            # builds both zips into dist/
@@ -9,8 +9,8 @@
 #   bash tools/build.sh all        # theme + core
 #
 # Output:
-#   dist/freeman-theme-<version>.zip
-#   dist/freeman-core-<version>.zip
+#   dist/shopos-theme-<version>.zip
+#   dist/shopos-core-<version>.zip
 #
 # Requires: zip, rsync. Optionally uses msgfmt to (re)compile .po → .mo.
 
@@ -121,44 +121,44 @@ stage_dir() {
 # ---------------------------------------------------------------------------
 
 build_theme() {
-    local src="${ROOT}/freeman-theme"
+    local src="${ROOT}/shopos-theme"
     local version; version="$( get_version "${src}/style.css" )"
     [[ -n "${version}" ]] || fail "Could not read theme version from style.css"
-    local out="${DIST}/freeman-theme-${version}.zip"
+    local out="${DIST}/shopos-theme-${version}.zip"
     log "Building theme zip → ${out}"
 
     compile_mo "${src}/languages"
 
     local stage; stage="$( mktemp -d )"
-    stage_dir "${src}" "${stage}/freeman-theme"
-    minify_assets "${stage}/freeman-theme"
+    stage_dir "${src}" "${stage}/shopos-theme"
+    minify_assets "${stage}/shopos-theme"
     (
         cd "${stage}"
         rm -f "${out}"
-        zip -qr "${out}" "freeman-theme"
+        zip -qr "${out}" "shopos-theme"
     )
     rm -rf "${stage}"
 }
 
 build_core() {
-    local src="${ROOT}/freeman-core"
-    local version; version="$( get_version "${src}/freeman-core.php" )"
+    local src="${ROOT}/shopos-core"
+    local version; version="$( get_version "${src}/shopos-core.php" )"
     [[ -n "${version}" ]] || fail "Could not read core plugin version"
-    local out="${DIST}/freeman-core-${version}.zip"
+    local out="${DIST}/shopos-core-${version}.zip"
     log "Building core plugin zip → ${out}"
 
     compile_mo "${src}/languages"
 
     local stage; stage="$( mktemp -d )"
-    stage_dir "${src}" "${stage}/freeman-core"
+    stage_dir "${src}" "${stage}/shopos-core"
     # Remove tooling that only matters at dev-time.
-    rm -rf "${stage}/freeman-core/tools"
-    rm -f  "${stage}/freeman-core/composer.json"
-    minify_assets "${stage}/freeman-core"
+    rm -rf "${stage}/shopos-core/tools"
+    rm -f  "${stage}/shopos-core/composer.json"
+    minify_assets "${stage}/shopos-core"
     (
         cd "${stage}"
         rm -f "${out}"
-        zip -qr "${out}" "freeman-core"
+        zip -qr "${out}" "shopos-core"
     )
     rm -rf "${stage}"
 }
@@ -176,7 +176,7 @@ preflight() {
             php -l "$f" || true
             fails=$((fails + 1))
         fi
-    done < <(find "${ROOT}/freeman-core" "${ROOT}/freeman-theme" -type f -name "*.php" \
+    done < <(find "${ROOT}/shopos-core" "${ROOT}/shopos-theme" -type f -name "*.php" \
                  -not -path "*/node_modules/*" -not -path "*/vendor/*" -print0)
     [[ "${fails}" -eq 0 ]] || fail "${fails} PHP file(s) failed to parse — refusing to build"
 

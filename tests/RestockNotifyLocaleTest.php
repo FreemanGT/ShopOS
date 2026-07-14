@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\RestockNotify\Module;
+use ShopOS\Core\Modules\RestockNotify\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Freeman\Core\Modules\RestockNotify\Module
+ * @covers \ShopOS\Core\Modules\RestockNotify\Module
  */
 final class RestockNotifyLocaleTest extends TestCase {
 

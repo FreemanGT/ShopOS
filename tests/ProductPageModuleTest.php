@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ProductPage\Labels;
-use Freeman\Core\Modules\ProductPage\Module;
+use ShopOS\Core\Modules\ProductPage\Labels;
+use ShopOS\Core\Modules\ProductPage\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  * always-on since 1.23.0 (their feature flags graduated); boot() wires them
  * unconditionally and the module-enable toggle is the kill-switch.
  *
- * @covers \Freeman\Core\Modules\ProductPage\Module
+ * @covers \ShopOS\Core\Modules\ProductPage\Module
  */
 final class ProductPageModuleTest extends TestCase {
 
@@ -58,9 +58,9 @@ final class ProductPageModuleTest extends TestCase {
 		// Coupon notice + stock urgency render hooks and shortcodes.
 		$this->assertArrayHasKey( 'wp_enqueue_scripts', $GLOBALS['fr_hooks'] );
 		$this->assertArrayHasKey( 'woocommerce_single_product_summary', $GLOBALS['fr_hooks'] );
-		$this->assertArrayHasKey( 'freeman_discounted_price', $GLOBALS['fr_shortcodes'] );
+		$this->assertArrayHasKey( 'shopos_discounted_price', $GLOBALS['fr_shortcodes'] );
 		$this->assertArrayHasKey( 'discounted_price', $GLOBALS['fr_shortcodes'], 'legacy alias must stay registered' );
-		$this->assertArrayHasKey( 'freeman_stock_urgency', $GLOBALS['fr_shortcodes'] );
+		$this->assertArrayHasKey( 'shopos_stock_urgency', $GLOBALS['fr_shortcodes'] );
 		$this->assertArrayHasKey( 'stock_urgency', $GLOBALS['fr_shortcodes'], 'legacy alias must stay registered' );
 
 		// Designed-layout template takeover.
@@ -70,7 +70,7 @@ final class ProductPageModuleTest extends TestCase {
 	}
 
 	public function test_assets_exist_on_disk(): void {
-		$base = FREEMAN_CORE_PATH . 'src/Modules/ProductPage/';
+		$base = SHOPOS_CORE_PATH . 'src/Modules/ProductPage/';
 
 		$this->assertFileExists( $base . 'assets/css/coupon-notice.css' );
 		$this->assertFileExists( $base . 'assets/js/coupon-notice.js' );

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/snapshots/__fixtures__/wc_product_stub.php';
 
-use Freeman\Core\Modules\ProductFeed\Generator;
-use Freeman\Core\Modules\ProductFeed\Server;
+use ShopOS\Core\Modules\ProductFeed\Generator;
+use ShopOS\Core\Modules\ProductFeed\Server;
 use PHPUnit\Framework\TestCase;
 
 // WP/WC stubs — guarded so they don't collide with XmlSnapshotTest's stubs.
@@ -72,8 +72,8 @@ if ( ! function_exists( 'gc_collect_cycles' ) ) {
 }
 
 /**
- * @covers \Freeman\Core\Modules\ProductFeed\Generator
- * @covers \Freeman\Core\Modules\ProductFeed\Server
+ * @covers \ShopOS\Core\Modules\ProductFeed\Generator
+ * @covers \ShopOS\Core\Modules\ProductFeed\Server
  */
 final class ProductFeedHooksTest extends TestCase {
 
@@ -88,7 +88,7 @@ final class ProductFeedHooksTest extends TestCase {
 		$GLOBALS['fr_wc_get_product_return'] = null;
 		$GLOBALS['fr_query_vars']            = array();
 
-		$this->tmp_file = sys_get_temp_dir() . '/freeman_feed_hooks_' . uniqid() . '.xml.gz';
+		$this->tmp_file = sys_get_temp_dir() . '/shopos_feed_hooks_' . uniqid() . '.xml.gz';
 	}
 
 	protected function tearDown(): void {
@@ -105,7 +105,7 @@ final class ProductFeedHooksTest extends TestCase {
 		// Empty queue → write_feed bails after first get_posts. Filter still fires.
 		$captured = array();
 		add_filter(
-			'freeman_core/product_feed/query_args',
+			'shopos_core/product_feed/query_args',
 			static function ( $args, $offset ) use ( &$captured ) {
 				$captured[] = array( 'args' => $args, 'offset' => $offset );
 				$args['post_status'] = 'private'; // mutate
@@ -130,7 +130,7 @@ final class ProductFeedHooksTest extends TestCase {
 
 		$captured = array();
 		add_filter(
-			'freeman_core/product_feed/item',
+			'shopos_core/product_feed/item',
 			static function ( $xml, $product ) use ( &$captured ) {
 				$captured[] = array( 'xml_len' => strlen( $xml ), 'product' => $product );
 				return $xml . "\n  <!-- injected -->\n";
@@ -158,7 +158,7 @@ final class ProductFeedHooksTest extends TestCase {
 	public function test_before_serve_fires_when_query_var_is_set(): void {
 		$fired = 0;
 		add_action(
-			'freeman_core/product_feed/before_serve',
+			'shopos_core/product_feed/before_serve',
 			static function () use ( &$fired ) {
 				++$fired;
 				// Throw to escape serve_feed before headers/exit run.
@@ -181,7 +181,7 @@ final class ProductFeedHooksTest extends TestCase {
 	public function test_before_serve_does_not_fire_on_unrelated_request(): void {
 		$fired = 0;
 		add_action(
-			'freeman_core/product_feed/before_serve',
+			'shopos_core/product_feed/before_serve',
 			static function () use ( &$fired ) {
 				++$fired;
 			}
@@ -205,9 +205,9 @@ final class ProductFeedHooksTest extends TestCase {
 	 * making the rename visible during review.
 	 */
 	public function test_after_generate_hook_name_is_documented_constant(): void {
-		$src = file_get_contents( FREEMAN_CORE_PATH . 'src/Modules/ProductFeed/Generator.php' );
+		$src = file_get_contents( SHOPOS_CORE_PATH . 'src/Modules/ProductFeed/Generator.php' );
 		$this->assertStringContainsString(
-			"do_action( 'freeman_core/product_feed/after_generate'",
+			"do_action( 'shopos_core/product_feed/after_generate'",
 			$src,
 			'Hook name drift — update tests/ProductFeedHooksTest.php and HOOKS.md to match'
 		);

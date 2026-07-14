@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\ShopFilters\Query_Builder;
+use ShopOS\Core\Modules\ShopFilters\Query_Builder;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Pure seams of the query builder: slug → term-id resolution and the
  * engine-counts → facets[] shaping (hide-zero, selected flag, ordering).
  *
- * @covers \Freeman\Core\Modules\ShopFilters\Query_Builder
+ * @covers \ShopOS\Core\Modules\ShopFilters\Query_Builder
  */
 final class ShopFiltersQueryBuilderTest extends TestCase {
 
@@ -188,7 +188,7 @@ final class ShopFiltersQueryBuilderTest extends TestCase {
 		);
 
 		$this->assertSame( $a, $b );
-		$this->assertStringStartsWith( 'freeman_core_sf_q_', $a );
+		$this->assertStringStartsWith( 'shopos_core_sf_q_', $a );
 	}
 
 	public function test_cache_signature_varies_by_state_context_and_rev(): void {
@@ -272,7 +272,7 @@ final class ShopFiltersQueryBuilderTest extends TestCase {
 
 	public function test_rebuild_lock_is_single_flight(): void {
 		$GLOBALS['fr_transients'] = array();
-		$key                      = 'freeman_core_sf_q_' . md5( 'lock-test' );
+		$key                      = 'shopos_core_sf_q_' . md5( 'lock-test' );
 
 		$this->assertTrue( Query_Builder::acquire_rebuild_lock( $key ), 'first caller acquires' );
 		$this->assertFalse( Query_Builder::acquire_rebuild_lock( $key ), 'second caller is locked out' );

@@ -5,11 +5,11 @@ declare(strict_types=1);
 // CheapestVariationHooksTest.php for the rationale.
 require_once __DIR__ . '/snapshots/__fixtures__/wc_product_stub.php';
 
-use Freeman\Core\Modules\VariableStockFix\Module;
+use ShopOS\Core\Modules\VariableStockFix\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Freeman\Core\Modules\VariableStockFix\Module
+ * @covers \ShopOS\Core\Modules\VariableStockFix\Module
  */
 final class VariableStockFixHooksTest extends TestCase {
 
@@ -22,7 +22,7 @@ final class VariableStockFixHooksTest extends TestCase {
 	public function test_should_check_filter_short_circuits_evaluation(): void {
 		$received = array();
 		add_filter(
-			'freeman_core/variable_stock_fix/should_check',
+			'shopos_core/variable_stock_fix/should_check',
 			static function ( $check, $product ) use ( &$received ) {
 				$received[] = array(
 					'check'   => $check,
@@ -42,7 +42,7 @@ final class VariableStockFixHooksTest extends TestCase {
 		$this->assertSame( $product, $received[0]['product'] );
 
 		$this->assertFalse( $result['changed'] );
-		$this->assertSame( 'skipped by freeman_core/variable_stock_fix/should_check', $result['reason'] );
+		$this->assertSame( 'skipped by shopos_core/variable_stock_fix/should_check', $result['reason'] );
 	}
 
 	public function test_should_check_filter_default_true_lets_evaluation_proceed(): void {
@@ -62,7 +62,7 @@ final class VariableStockFixHooksTest extends TestCase {
 		// products and saves listeners from having to type-check themselves.
 		$fired = 0;
 		add_filter(
-			'freeman_core/variable_stock_fix/should_check',
+			'shopos_core/variable_stock_fix/should_check',
 			static function ( $v ) use ( &$fired ) {
 				++$fired;
 				return $v;

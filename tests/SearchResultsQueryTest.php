@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\Search\Results_Query;
+use ShopOS\Core\Modules\Search\Results_Query;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
  * filter. The pre_get_posts / posts_search adapters touch WP_Query and are
  * integration / live QA.
  *
- * @covers \Freeman\Core\Modules\Search\Results_Query
+ * @covers \ShopOS\Core\Modules\Search\Results_Query
  */
 final class SearchResultsQueryTest extends TestCase {
 

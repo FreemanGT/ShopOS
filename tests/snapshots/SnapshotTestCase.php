@@ -12,12 +12,12 @@
  * drift (CRLF on Windows, BOM from a manual edit) surfaces as a clear
  * test failure rather than a silent byte-mismatch.
  *
- * @package FreemanCore
+ * @package ShopOSCore
  */
 
 declare(strict_types=1);
 
-namespace Freeman\Tests\Snapshots;
+namespace ShopOS\Tests\Snapshots;
 
 trait SnapshotTestCase {
 

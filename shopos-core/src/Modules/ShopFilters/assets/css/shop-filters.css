@@ -1,0 +1,629 @@
+/**
+ * ShopOS Shop Filters — panel styling.
+ *
+ * Desktop: the panel renders inline (sidebar). Mobile (<=768px): a full-width
+ * toggle reveals a bottom-sheet drawer with an overlay and Apply/Clear actions.
+ * Direction-agnostic (works in RTL) — the drawer slides up from the bottom, so
+ * no inline-axis transform flips are needed. Loaded via SHOPOS_CORE_VERSION.
+ */
+
+.shopos-sf {
+	font-size: 0.95rem;
+}
+
+/* Kill default list bullets/indent everywhere in the panel (QA #5). */
+.shopos-sf__terms,
+.shopos-sf__swatches,
+.shopos-sf__cat-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* ---- attribute facets ---- */
+.shopos-sf__facet {
+	border: 0;
+	margin: 0 0 1.25em;
+	padding: 0;
+	min-width: 0; /* let fieldset shrink in flex/grid parents */
+}
+
+.shopos-sf__facet-title,
+.shopos-sf__categories-title {
+	display: block;
+	font-weight: 600;
+	margin: 0 0 0.5em;
+	padding: 0;
+}
+
+.shopos-sf__term {
+	margin: 0 0 0.25em;
+}
+
+.shopos-sf__term label {
+	display: flex;
+	align-items: center;
+	gap: 0.45em;
+	cursor: pointer;
+}
+
+.shopos-sf__term-count,
+.shopos-sf__cat-count {
+	color: #767676;
+	font-size: 0.85em;
+}
+
+/* Checkbox facets: branded fill + a quick pop on the label when ticked — the
+   visible selection feedback for plain (non-swatch) attribute terms. */
+.shopos-sf__checkbox {
+	accent-color: #111;
+}
+
+.shopos-sf__checkbox:checked + .shopos-sf__term-label {
+	animation: shopos-sf-pop 0.22s ease;
+}
+
+/* ---- chips + count ---- */
+.shopos-sf__chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4em;
+	margin: 0 0 0.75em;
+}
+
+.shopos-sf__chip,
+.shopos-sf__clear {
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	background: transparent;
+	border-radius: var(--fm-radius-pill, 999px);
+	padding: 0.3em 0.85em;
+	font-size: 0.85em;
+	line-height: 1.5;
+	color: inherit;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.shopos-sf__chip:hover {
+	border-color: rgba(0, 0, 0, 0.3);
+	background: rgba(0, 0, 0, 0.03);
+}
+
+.shopos-sf__clear {
+	border-color: transparent;
+	opacity: 0.65;
+}
+
+.shopos-sf__clear:hover {
+	opacity: 1;
+}
+
+/* Active-filter chips fade/slide in on load — a subtle confirmation of the
+   applied selection. Re-rendered server-side each load, so it replays per filter. */
+.shopos-sf__chip {
+	animation: shopos-sf-chip-in 0.32s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+@keyframes shopos-sf-chip-in {
+	from { opacity: 0; transform: translateY(10px) scale(0.92); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes shopos-sf-rise {
+	from { opacity: 0; transform: translateY(12px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.shopos-sf__count {
+	margin: 0 0 1em;
+	color: #767676;
+}
+
+/* ---- sort dropdown ---- */
+.shopos-sf__sort {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	margin: 0 0 1.25em;
+}
+
+.shopos-sf__sort-label {
+	font-weight: 600;
+}
+
+.shopos-sf__sort-select {
+	flex: 1 1 auto;
+	min-width: 0;
+	padding: 0.45em 0.7em;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: var(--fm-radius-md, 6px);
+	background: transparent;
+	color: inherit;
+}
+
+/* ---- category tree (navigation) ---- */
+.shopos-sf__categories {
+	margin: 0 0 1.25em;
+}
+
+.shopos-sf__cat-list .shopos-sf__cat-list {
+	padding-inline-start: 1em;
+}
+
+.shopos-sf__cat-item {
+	margin: 0 0 0.25em;
+}
+
+.shopos-sf__cat-link {
+	text-decoration: none;
+}
+
+/* ---- colour / image swatches ---- */
+.shopos-sf__swatches {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+}
+
+.shopos-sf__swatch-label {
+	position: relative;
+	display: inline-flex;
+	cursor: pointer;
+}
+
+.shopos-sf__swatch-input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	margin: 0;
+	pointer-events: none;
+}
+
+.shopos-sf__swatch-chip {
+	display: block;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	background-size: cover;
+	background-position: center;
+	transition: box-shadow 0.15s ease;
+}
+
+.shopos-sf__swatch-chip--text {
+	width: auto;
+	min-width: 28px;
+	height: auto;
+	border-radius: 999px;
+	padding: 0.25em 0.7em;
+	background: #f6f6f6;
+	font-size: 0.85em;
+	line-height: 1.4;
+}
+
+.shopos-sf__swatch-input:checked + .shopos-sf__swatch-chip {
+	box-shadow: 0 0 0 2px #fff, 0 0 0 4px #111;
+	animation: shopos-sf-pop 0.2s ease;
+}
+
+@keyframes shopos-sf-pop {
+	0% { transform: scale(1); }
+	50% { transform: scale(1.18); }
+	100% { transform: scale(1); }
+}
+
+.shopos-sf__swatch-input:focus-visible + .shopos-sf__swatch-chip {
+	box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2271b1;
+}
+
+/* ============================================================
+   Refined panel style — opt-in via ShopOS → Shop Filters →
+   "Filter panel style" = Refined (adds `shopos-sf--refined`).
+   Every rule below is scoped to that modifier, so the Classic
+   style stays untouched.
+   ============================================================ */
+
+/* Attribute terms render as pill buttons. The native checkbox stays as the
+   (visually hidden) state holder, so readSelection() + the reload transport
+   are unchanged — only the presentation differs. */
+.shopos-sf--refined .shopos-sf__terms {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4em;
+}
+
+.shopos-sf--refined .shopos-sf__term {
+	margin: 0;
+}
+
+.shopos-sf--refined .shopos-sf__term label {
+	gap: 0.4em;
+	padding: 0.4em 0.9em;
+	border: 1px solid var(--fm-color-hairline, rgba(0, 0, 0, 0.14));
+	border-radius: var(--fm-radius-pill, 999px);
+	background: var(--fm-color-paper, #fff);
+	color: var(--fm-color-ink, #1b1b1b);
+	font-size: 0.88em;
+	line-height: 1.4;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.shopos-sf--refined .shopos-sf__term label:hover {
+	border-color: var(--fm-color-ink, #1b1b1b);
+	background: var(--fm-color-paper-soft, #faf9f7);
+}
+
+.shopos-sf--refined .shopos-sf__term .shopos-sf__checkbox {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	margin: 0;
+	pointer-events: none;
+}
+
+/* Selected = soft fill + ink ring + weight. Text stays INK in every state
+   (incl. hover), so no theme hover can produce ink-on-ink. The inset ring
+   reads as a 2px border with no layout shift. */
+.shopos-sf--refined .shopos-sf__term label:has(.shopos-sf__checkbox:checked) {
+	background: var(--fm-color-accent-soft, #f1efea);
+	border-color: var(--fm-color-ink, #1b1b1b);
+	box-shadow: inset 0 0 0 1px var(--fm-color-ink, #1b1b1b);
+	color: var(--fm-color-ink, #1b1b1b);
+	font-weight: 600;
+}
+
+.shopos-sf--refined .shopos-sf__term-count {
+	color: var(--fm-color-ink-muted, #767676);
+}
+
+.shopos-sf--refined .shopos-sf__term label:has(.shopos-sf__checkbox:focus-visible) {
+	box-shadow: 0 0 0 2px var(--fm-color-paper, #fff), 0 0 0 4px var(--fm-color-ink, #1b1b1b);
+}
+
+/* Long lists cap at 8 via CSS — immediate, so the full list never flashes
+   before JS runs. The JS-injected "+N" toggle adds `is-sf-expanded` to reveal. */
+.shopos-sf--refined .shopos-sf__terms .shopos-sf__term:nth-child(n + 9) {
+	display: none;
+}
+
+.shopos-sf--refined .shopos-sf__terms.is-sf-expanded .shopos-sf__term:nth-child(n + 9) {
+	display: block;
+}
+
+.shopos-sf--refined .shopos-sf__more {
+	margin: 0.5em 0 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	font-size: 0.85em;
+	text-decoration: underline;
+	opacity: 0.7;
+	cursor: pointer;
+}
+
+.shopos-sf--refined .shopos-sf__more:hover {
+	opacity: 1;
+}
+
+/* Collapsible facets. The chevron is a CSS ::after (no JS-injected node, so
+   nothing pops in on reload); the JS only toggles `is-sf-collapsed`. */
+.shopos-sf--refined .shopos-sf__facet-title,
+.shopos-sf--refined .shopos-sf__categories-title {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5em;
+	cursor: pointer;
+}
+
+.shopos-sf--refined .shopos-sf__facet-title::after,
+.shopos-sf--refined .shopos-sf__categories-title::after {
+	content: "";
+	flex: 0 0 auto;
+	width: 0.32em;
+	height: 0.32em;
+	border-right: 1.5px solid currentColor;
+	border-bottom: 1.5px solid currentColor;
+	transform: rotate(45deg);
+	opacity: 0.3;
+	transition: transform 0.2s ease;
+}
+
+.shopos-sf--refined .is-sf-collapsed .shopos-sf__facet-title::after,
+.shopos-sf--refined .is-sf-collapsed .shopos-sf__categories-title::after {
+	transform: rotate(-135deg);
+}
+
+.shopos-sf--refined .shopos-sf__facet.is-sf-collapsed .shopos-sf__terms,
+.shopos-sf--refined .shopos-sf__facet.is-sf-collapsed .shopos-sf__more,
+.shopos-sf--refined .shopos-sf__facet.is-sf-collapsed .shopos-sf__swatches,
+.shopos-sf--refined .shopos-sf__categories.is-sf-collapsed .shopos-sf__cat-list {
+	display: none;
+}
+
+/* The category tree sits above the attribute facets (Size, Colour, …) in the
+   panel. On desktop the panel is height-contained (see the min-width:769px
+   rule below), so a long expanded tree consumed the whole panel and pushed the
+   attribute facets below the scroll fold — they read as "hidden when
+   categories are open". Bound the tree's own height with an internal scroll so
+   every facet stays reachable. Refined-only; classic is unchanged. */
+.shopos-sf--refined .shopos-sf__categories .shopos-sf__cat-list {
+	max-height: 16em;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+
+/* Active-filter chips → soft pills with a circular × badge. Ink text + a
+   tinted (not solid-dark) badge, so nothing inverts on hover. */
+.shopos-sf--refined .shopos-sf__chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45em;
+	background: var(--fm-color-accent-soft, #f1efea);
+	border-color: var(--fm-color-ink, #1b1b1b);
+	color: var(--fm-color-ink, #1b1b1b);
+}
+
+.shopos-sf--refined .shopos-sf__chip:hover {
+	background: var(--fm-color-paper-dim, #f1efea);
+	border-color: var(--fm-color-ink, #1b1b1b);
+}
+
+.shopos-sf--refined .shopos-sf__chip-x {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.2em;
+	height: 1.2em;
+	border-radius: 50%;
+	background: var(--fm-color-hairline, rgba(0, 0, 0, 0.12));
+	font-size: 0.85em;
+	line-height: 1;
+}
+
+/* Circular close button (mobile drawer head). Higher specificity than the
+   mobile rule, so the size/shape win while `display` stays from that rule. */
+.shopos-sf--refined .shopos-sf__close {
+	width: 2.2em;
+	height: 2.2em;
+	border: 1px solid var(--fm-color-hairline, rgba(0, 0, 0, 0.15));
+	border-radius: 50%;
+	font-size: 1.25rem;
+	transition: background-color 0.15s ease;
+}
+
+.shopos-sf--refined .shopos-sf__close:hover {
+	background: var(--fm-color-paper-dim, rgba(0, 0, 0, 0.05));
+}
+
+/* The chosen style renders instant — kill the entry fades / cascade (owner:
+   "no fades, no lags, smooth"). Hover transitions stay; only load-time
+   animations are removed, so nothing visibly fades in on select/reload. */
+.shopos-sf--refined .shopos-sf__chip,
+.shopos-sf--refined .shopos-sf__checkbox:checked + .shopos-sf__term-label,
+.shopos-sf--refined .shopos-sf__swatch-input:checked + .shopos-sf__swatch-chip {
+	animation: none;
+}
+
+/* Desktop: contain the panel height so a large catalogue can't make a
+   page-tall sidebar. Mobile keeps its own fixed bottom-sheet (below). */
+@media (min-width: 769px) {
+	.shopos-sf--refined .shopos-sf__panel {
+		position: sticky;
+		top: 1em;
+		max-height: calc(100vh - 2em);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		padding-inline-end: 0.25em;
+	}
+}
+
+@media (max-width: 768px) {
+	.shopos-sf--refined.shopos-sf--open .shopos-sf__panel > * {
+		animation: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.shopos-sf--refined .shopos-sf__facet-title::after,
+	.shopos-sf--refined .shopos-sf__categories-title::after,
+	.shopos-sf--refined .shopos-sf__term label,
+	.shopos-sf--refined .shopos-sf__close {
+		transition: none;
+	}
+}
+
+/* ---- loading hint ---- */
+.shopos-sf--loading {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+/* ---- mobile drawer machinery: hidden on desktop ---- */
+.shopos-sf__overlay,
+.shopos-sf__close,
+.shopos-sf__panel-head,
+.shopos-sf__actions {
+	display: none;
+}
+
+/* The toggle carries the theme's .fm-btn (display:inline-flex, specificity 0,2,0),
+   which would otherwise beat a plain display:none — so force it hidden on desktop. */
+.shopos-sf__toggle {
+	display: none !important;
+}
+
+.screen-reader-text {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+@media (max-width: 768px) {
+	.shopos-sf__toggle {
+		display: flex !important; /* re-show on mobile, beating the desktop !important hide */
+		justify-content: center;
+		width: 100%;
+		padding: 0.8em 1.1em;
+		font-size: 1rem;
+		font-weight: var(--fm-button-font-weight, 600);
+		letter-spacing: var(--fm-button-tracking, normal);
+		border: 1px solid rgba(0, 0, 0, 0.15);
+		background: transparent;
+		color: inherit;
+		border-radius: var(--fm-radius-pill, 999px);
+		cursor: pointer;
+		transition: transform 0.08s ease;
+	}
+
+	.shopos-sf__toggle:active {
+		transform: scale(0.94);
+	}
+
+	.shopos-sf__overlay {
+		display: block;
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.45);
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity 0.25s ease;
+		z-index: var(--fm-z-max, 99998);
+	}
+
+	.shopos-sf__panel {
+		position: fixed;
+		inset-inline: 0;
+		bottom: 0;
+		max-height: 85vh;
+		overflow-y: auto;
+		background: #fff;
+		padding: 1em;
+		border-radius: 12px 12px 0 0;
+		box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
+		transform: translateY(100%);
+		transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+		z-index: var(--fm-z-max, 99999);
+	}
+
+	.shopos-sf--open .shopos-sf__panel {
+		transform: translateY(0);
+	}
+
+	/* Content cascade: as the sheet rises, its sections fade/rise in sequence —
+	   the app-sheet feel. Actions bar is excluded so the sticky Apply stays put
+	   and tappable immediately. Delays are mapped to the panel's section order. */
+	.shopos-sf--open .shopos-sf__panel > *:not(.shopos-sf__actions) {
+		animation: shopos-sf-rise 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
+	}
+
+	.shopos-sf--open .shopos-sf__panel > *:nth-child(1) { animation-delay: 0.04s; }
+	.shopos-sf--open .shopos-sf__panel > *:nth-child(2) { animation-delay: 0.08s; }
+	.shopos-sf--open .shopos-sf__panel > *:nth-child(3) { animation-delay: 0.12s; }
+	.shopos-sf--open .shopos-sf__panel > *:nth-child(4) { animation-delay: 0.16s; }
+	.shopos-sf--open .shopos-sf__panel > *:nth-child(5) { animation-delay: 0.20s; }
+	.shopos-sf--open .shopos-sf__panel > *:nth-child(6) { animation-delay: 0.24s; }
+	.shopos-sf--open .shopos-sf__panel > *:nth-child(7) { animation-delay: 0.28s; }
+	.shopos-sf--open .shopos-sf__panel > *:nth-child(8) { animation-delay: 0.32s; }
+
+	.shopos-sf--open .shopos-sf__overlay {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.shopos-sf__panel-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin: 0 0 1em;
+	}
+
+	.shopos-sf__panel-title {
+		font-weight: 600;
+		font-size: 1.1rem;
+	}
+
+	.shopos-sf__close {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2em;
+		height: 2em;
+		border: 0;
+		background: transparent;
+		font-size: 1.5rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	.shopos-sf__actions {
+		display: flex;
+		gap: 0.75em;
+		position: sticky;
+		bottom: 0;
+		background: #fff;
+		padding-top: 1em;
+		margin-top: 0.5em;
+	}
+
+	.shopos-sf__apply {
+		flex: 1 1 auto;
+		padding: 0.85em 1.25em;
+		font-weight: var(--fm-button-font-weight, 600);
+		letter-spacing: var(--fm-button-tracking, normal);
+		border: 1px solid #111;
+		border-radius: var(--fm-radius-pill, 999px);
+		background: #111;
+		color: #fff;
+		cursor: pointer;
+		transition: transform 0.08s ease;
+	}
+
+	.shopos-sf__apply:active {
+		transform: scale(0.94);
+	}
+
+	.shopos-sf__clear-mobile {
+		flex: 0 0 auto;
+		padding: 0.85em 1.25em;
+		border: 1px solid rgba(0, 0, 0, 0.15);
+		border-radius: var(--fm-radius-pill, 999px);
+		background: transparent;
+		color: inherit;
+		cursor: pointer;
+		transition: transform 0.08s ease;
+	}
+
+	.shopos-sf__clear-mobile:active {
+		transform: scale(0.94);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.shopos-sf__overlay,
+	.shopos-sf__panel {
+		transition: none;
+	}
+
+	.shopos-sf__chip,
+	.shopos-sf__swatch-input:checked + .shopos-sf__swatch-chip,
+	.shopos-sf__checkbox:checked + .shopos-sf__term-label,
+	.shopos-sf--open .shopos-sf__panel > * {
+		animation: none;
+	}
+
+	.shopos-sf__toggle:active,
+	.shopos-sf__apply:active,
+	.shopos-sf__clear-mobile:active {
+		transform: none;
+	}
+}

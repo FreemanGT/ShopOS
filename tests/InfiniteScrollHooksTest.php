@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\InfiniteScroll\Module;
+use ShopOS\Core\Modules\InfiniteScroll\Module;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  * path is always-on since 1.23.0 (the trigger_modes flag graduated); the
  * predicate + filter remain the render gate.
  *
- * @covers \Freeman\Core\Modules\InfiniteScroll\Module
+ * @covers \ShopOS\Core\Modules\InfiniteScroll\Module
  */
 
 // Bootstrap stubs are missing is_search + is_post_type_archive (only is_shop /
@@ -58,14 +58,14 @@ final class InfiniteScrollHooksTest extends TestCase {
 	}
 
 	public function test_resolve_container_selector_setting_normalized_to_array(): void {
-		update_option( 'freeman_core_infinite_scroll_container_selector', '.my-grid' );
+		update_option( 'shopos_core_infinite_scroll_container_selector', '.my-grid' );
 		$this->assertSame( array( '.my-grid' ), ( new Module() )->resolve_container_selector() );
 	}
 
 	public function test_selector_filter_overrides_setting(): void {
-		update_option( 'freeman_core_infinite_scroll_container_selector', '.from-setting' );
+		update_option( 'shopos_core_infinite_scroll_container_selector', '.from-setting' );
 		add_filter(
-			'freeman_core/infinite_scroll/selector',
+			'shopos_core/infinite_scroll/selector',
 			static function () {
 				return '.from-filter';
 			}
@@ -74,9 +74,9 @@ final class InfiniteScrollHooksTest extends TestCase {
 	}
 
 	public function test_selector_filter_empty_string_falls_back_to_default(): void {
-		update_option( 'freeman_core_infinite_scroll_container_selector', '.from-setting' );
+		update_option( 'shopos_core_infinite_scroll_container_selector', '.from-setting' );
 		add_filter(
-			'freeman_core/infinite_scroll/selector',
+			'shopos_core/infinite_scroll/selector',
 			static function () {
 				return '';
 			}
@@ -104,7 +104,7 @@ final class InfiniteScrollHooksTest extends TestCase {
 		// Force-true on a non-archive context (custom archive use case).
 		$GLOBALS['fr_page_type'] = '';
 		add_filter(
-			'freeman_core/infinite_scroll/should_render_wrapper',
+			'shopos_core/infinite_scroll/should_render_wrapper',
 			static function () {
 				return true;
 			}
@@ -115,7 +115,7 @@ final class InfiniteScrollHooksTest extends TestCase {
 		$GLOBALS['fr_hooks']     = array();
 		$GLOBALS['fr_page_type'] = 'shop';
 		add_filter(
-			'freeman_core/infinite_scroll/should_render_wrapper',
+			'shopos_core/infinite_scroll/should_render_wrapper',
 			static function () {
 				return false;
 			}
@@ -133,13 +133,13 @@ final class InfiniteScrollHooksTest extends TestCase {
 		$before = 0;
 		$after  = 0;
 		add_action(
-			'freeman_core/infinite_scroll/before_render',
+			'shopos_core/infinite_scroll/before_render',
 			static function () use ( &$before ) {
 				$before++;
 			}
 		);
 		add_action(
-			'freeman_core/infinite_scroll/after_render',
+			'shopos_core/infinite_scroll/after_render',
 			static function () use ( &$after ) {
 				$after++;
 			}
@@ -153,7 +153,7 @@ final class InfiniteScrollHooksTest extends TestCase {
 
 		$this->assertSame( 1, $before, 'before_render fires once on open bracket' );
 		$this->assertSame( 0, $after, 'after_render does not fire yet on open bracket' );
-		$this->assertStringContainsString( '<div class="freeman-is-wrapper">', $open_output );
+		$this->assertStringContainsString( '<div class="shopos-is-wrapper">', $open_output );
 
 		ob_start();
 		$module->render_grid_wrapper_close();
@@ -171,13 +171,13 @@ final class InfiniteScrollHooksTest extends TestCase {
 		$before = 0;
 		$after  = 0;
 		add_action(
-			'freeman_core/infinite_scroll/before_render',
+			'shopos_core/infinite_scroll/before_render',
 			static function () use ( &$before ) {
 				$before++;
 			}
 		);
 		add_action(
-			'freeman_core/infinite_scroll/after_render',
+			'shopos_core/infinite_scroll/after_render',
 			static function () use ( &$after ) {
 				$after++;
 			}

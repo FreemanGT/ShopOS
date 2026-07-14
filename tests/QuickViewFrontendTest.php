@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Freeman\Core\Modules\QuickView\Frontend;
-use Freeman\Core\Modules\QuickView\Module;
+use ShopOS\Core\Modules\QuickView\Frontend;
+use ShopOS\Core\Modules\QuickView\Module;
 use PHPUnit\Framework\TestCase;
 
 if ( ! class_exists( '\\WC_Product' ) ) {
@@ -14,7 +14,7 @@ if ( ! class_exists( '\\WC_Product' ) ) {
  * footer-shell gating (only after a trigger rendered), the show_trigger
  * filter, label overrides, and the localized JS payload shape.
  *
- * @covers \Freeman\Core\Modules\QuickView\Frontend
+ * @covers \ShopOS\Core\Modules\QuickView\Frontend
  */
 final class QuickViewFrontendTest extends TestCase {
 
@@ -39,10 +39,10 @@ final class QuickViewFrontendTest extends TestCase {
 	}
 
 	public function test_trigger_label_is_overridable_blank_falls_back(): void {
-		$GLOBALS['fr_opts']['freeman_core_quick_view_label_trigger'] = 'תצוגה מהירה';
+		$GLOBALS['fr_opts']['shopos_core_quick_view_label_trigger'] = 'תצוגה מהירה';
 		$this->assertStringContainsString( 'aria-label="תצוגה מהירה"', $this->frontend()->trigger_html( 7 ) );
 
-		$GLOBALS['fr_opts']['freeman_core_quick_view_label_trigger'] = '   ';
+		$GLOBALS['fr_opts']['shopos_core_quick_view_label_trigger'] = '   ';
 		$this->assertStringContainsString( 'aria-label="Quick view"', $this->frontend()->trigger_html( 7 ) );
 	}
 
@@ -85,7 +85,7 @@ final class QuickViewFrontendTest extends TestCase {
 
 	public function test_show_trigger_filter_suppresses_the_trigger(): void {
 		$GLOBALS['product'] = new \WC_Product( 42 );
-		add_filter( 'freeman_core/quick_view/show_trigger', '__return_false' );
+		add_filter( 'shopos_core/quick_view/show_trigger', '__return_false' );
 
 		$frontend = $this->frontend();
 		ob_start();
@@ -101,7 +101,7 @@ final class QuickViewFrontendTest extends TestCase {
 		$payload = $this->frontend()->localized_payload();
 
 		$this->assertSame( 'https://example.test/wp-admin/admin-ajax.php', $payload['ajaxUrl'] );
-		$this->assertSame( 'freeman_core_quick_view_product', $payload['action'] );
+		$this->assertSame( 'shopos_core_quick_view_product', $payload['action'] );
 		$this->assertNotEmpty( $payload['nonce'] );
 		$this->assertSame( 'Loading…', $payload['labels']['loading'] );
 		$this->assertNotEmpty( $payload['labels']['error'] );

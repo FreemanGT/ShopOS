@@ -4,11 +4,11 @@ declare(strict_types=1);
 // Shared stub for \RSN_Database — see tests/__stubs__/rsn_database_stub.php.
 require_once __DIR__ . '/__stubs__/rsn_database_stub.php';
 
-use Freeman\Core\Modules\RestockNotify\Subscribers;
+use ShopOS\Core\Modules\RestockNotify\Subscribers;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Freeman\Core\Modules\RestockNotify\Subscribers
+ * @covers \ShopOS\Core\Modules\RestockNotify\Subscribers
  */
 final class SubscribersTest extends TestCase {
 
