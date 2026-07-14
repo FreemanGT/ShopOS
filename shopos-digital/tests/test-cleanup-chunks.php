@@ -1,48 +1,48 @@
 <?php
 /**
- * @covers FD_Database::run_cleanup
+ * @covers ShopOS_Digital_Database::run_cleanup
  */
 class Test_FD_Cleanup_Chunks extends WP_UnitTestCase {
 
     public function test_cleanup_batch_size_filter_is_respected() {
         $seen = array();
-        add_filter('fd/cleanup_batch_size', function ($size) use (&$seen) {
+        add_filter('shopos_digital/cleanup_batch_size', function ($size) use (&$seen) {
             $seen[] = (int) $size;
             return 100;
         });
 
-        $opts = FD_Core::get_defaults();
+        $opts = ShopOS_Digital_Core::get_defaults();
         $opts['db_cleanup_revisions']   = 1;
         $opts['db_cleanup_auto_drafts'] = 1;
         $opts['db_cleanup_trash_posts'] = 1;
-        update_option(FD_OPT, $opts);
+        update_option(SHOPOS_DIGITAL_OPT, $opts);
 
-        $db = new FD_Database($opts);
+        $db = new ShopOS_Digital_Database($opts);
         $results = $db->run_cleanup();
 
         $this->assertIsArray($results);
         $this->assertNotEmpty($seen, 'cleanup_batch_size filter should have run at least once.');
         $this->assertSame(5000, $seen[0], 'Default batch size handed to the filter should be 5000.');
 
-        remove_all_filters('fd/cleanup_batch_size');
+        remove_all_filters('shopos_digital/cleanup_batch_size');
     }
 
     public function test_before_and_after_hooks_fire() {
         $before = 0; $after = 0;
-        add_action('fd/before_run_cleanup', function () use (&$before) { $before++; });
-        add_action('fd/after_run_cleanup', function ($r) use (&$after) { $after++; });
+        add_action('shopos_digital/before_run_cleanup', function () use (&$before) { $before++; });
+        add_action('shopos_digital/after_run_cleanup', function ($r) use (&$after) { $after++; });
 
-        $opts = FD_Core::get_defaults();
-        update_option(FD_OPT, $opts);
+        $opts = ShopOS_Digital_Core::get_defaults();
+        update_option(SHOPOS_DIGITAL_OPT, $opts);
 
-        $db = new FD_Database($opts);
+        $db = new ShopOS_Digital_Database($opts);
         $db->run_cleanup();
 
-        $this->assertSame(1, $before, 'fd/before_run_cleanup must fire once.');
-        $this->assertSame(1, $after, 'fd/after_run_cleanup must fire once.');
+        $this->assertSame(1, $before, 'shopos_digital/before_run_cleanup must fire once.');
+        $this->assertSame(1, $after, 'shopos_digital/after_run_cleanup must fire once.');
 
-        remove_all_actions('fd/before_run_cleanup');
-        remove_all_actions('fd/after_run_cleanup');
+        remove_all_actions('shopos_digital/before_run_cleanup');
+        remove_all_actions('shopos_digital/after_run_cleanup');
     }
 
     public function test_revisions_are_deleted_in_chunks() {
@@ -59,11 +59,11 @@ class Test_FD_Cleanup_Chunks extends WP_UnitTestCase {
         );
         $this->assertGreaterThan(0, $rev_count_before);
 
-        $opts = FD_Core::get_defaults();
+        $opts = ShopOS_Digital_Core::get_defaults();
         $opts['db_cleanup_revisions'] = 1;
-        update_option(FD_OPT, $opts);
+        update_option(SHOPOS_DIGITAL_OPT, $opts);
 
-        $db = new FD_Database($opts);
+        $db = new ShopOS_Digital_Database($opts);
         $db->run_cleanup();
 
         $rev_count_after = (int) $wpdb->get_var(

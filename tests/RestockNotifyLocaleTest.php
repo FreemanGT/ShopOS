@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class RestockNotifyLocaleTest extends TestCase {
 
-	/** The 18 `rsn_*` option keys seeded by `Module::seed_locale_defaults()`. */
+	/** The 18 `shopos_restock_*` option keys seeded by `Module::seed_locale_defaults()`. */
 	private const REQUIRED_KEYS = array(
 		'auto_inject', 'form_heading', 'form_description', 'form_button_text',
 		'form_success_message', 'form_duplicate_message', 'enable_confirmation',
@@ -20,7 +20,7 @@ final class RestockNotifyLocaleTest extends TestCase {
 
 	/**
 	 * Email-shell keys added in Wave 2.3b (1.11.4). Consumed directly by the
-	 * modern `Email` class; NOT seeded into `rsn_*` options.
+	 * modern `Email` class; NOT seeded into `shopos_restock_*` options.
 	 */
 	private const SHELL_KEYS = array(
 		'shell_customer_name_fallback',
@@ -33,7 +33,7 @@ final class RestockNotifyLocaleTest extends TestCase {
 	 * Frontend keys added in Wave 2.3c (1.11.5). Consumed directly by the
 	 * modern `Frontend` class (`js_*` end up in the wp_localize_script
 	 * payload, `form_placeholder_*` end up as inline form input
-	 * placeholders). NOT seeded into `rsn_*` options.
+	 * placeholders). NOT seeded into `shopos_restock_*` options.
 	 */
 	private const FRONTEND_KEYS = array(
 		'js_invalid_email',
@@ -110,12 +110,12 @@ final class RestockNotifyLocaleTest extends TestCase {
 		// table — they're read directly from the locale files at call time.
 		foreach ( array_merge( self::SHELL_KEYS, self::FRONTEND_KEYS ) as $k ) {
 			$this->assertFalse(
-				get_option( 'rsn_' . $k, false ),
-				"rsn_{$k} must NOT be seeded as an option"
+				get_option( 'shopos_restock_' . $k, false ),
+				"shopos_restock_{$k} must NOT be seeded as an option"
 			);
 		}
 		// Sanity: option keys still ARE seeded.
-		$this->assertNotFalse( get_option( 'rsn_form_heading', false ) );
+		$this->assertNotFalse( get_option( 'shopos_restock_form_heading', false ) );
 	}
 
 	public function test_seed_locale_defaults_seeds_english_when_locale_is_english(): void {
@@ -123,11 +123,11 @@ final class RestockNotifyLocaleTest extends TestCase {
 
 		( new Module() )->seed_locale_defaults();
 
-		$this->assertSame( 'Notify me when back in stock', get_option( 'rsn_form_heading' ) );
-		$this->assertSame( 'Subscribe', get_option( 'rsn_form_button_text' ) );
+		$this->assertSame( 'Notify me when back in stock', get_option( 'shopos_restock_form_heading' ) );
+		$this->assertSame( 'Subscribe', get_option( 'shopos_restock_form_button_text' ) );
 		// All 18 keys populated.
 		foreach ( self::REQUIRED_KEYS as $k ) {
-			$this->assertNotFalse( get_option( 'rsn_' . $k, false ), "rsn_{$k} should be seeded" );
+			$this->assertNotFalse( get_option( 'shopos_restock_' . $k, false ), "shopos_restock_{$k} should be seeded" );
 		}
 	}
 
@@ -136,8 +136,8 @@ final class RestockNotifyLocaleTest extends TestCase {
 
 		( new Module() )->seed_locale_defaults();
 
-		$this->assertSame( 'עדכנו אותי כשיחזור למלאי', get_option( 'rsn_form_heading' ) );
-		$this->assertSame( 'הרשמה לעדכון', get_option( 'rsn_form_button_text' ) );
+		$this->assertSame( 'עדכנו אותי כשיחזור למלאי', get_option( 'shopos_restock_form_heading' ) );
+		$this->assertSame( 'הרשמה לעדכון', get_option( 'shopos_restock_form_button_text' ) );
 	}
 
 	public function test_seed_locale_defaults_does_not_overwrite_existing_values(): void {
@@ -151,7 +151,7 @@ final class RestockNotifyLocaleTest extends TestCase {
 			'enable_confirmation' => 'no',
 		);
 		foreach ( $preset as $k => $v ) {
-			update_option( 'rsn_' . $k, $v );
+			update_option( 'shopos_restock_' . $k, $v );
 		}
 		$GLOBALS['fr_locale'] = 'en_US';
 
@@ -159,12 +159,12 @@ final class RestockNotifyLocaleTest extends TestCase {
 
 		// Preset values must be preserved.
 		foreach ( $preset as $k => $v ) {
-			$this->assertSame( $v, get_option( 'rsn_' . $k ), "rsn_{$k} must not be overwritten" );
+			$this->assertSame( $v, get_option( 'shopos_restock_' . $k ), "shopos_restock_{$k} must not be overwritten" );
 		}
 		// Non-preset keys must still be seeded with English defaults.
-		$this->assertSame( "You're on the waiting list!", get_option( 'rsn_confirm_subject' ) );
-		$this->assertSame( "We'll let you know", get_option( 'rsn_confirm_heading' ) );
-		$this->assertNotFalse( get_option( 'rsn_form_description', false ), 'Non-preset key must still be seeded' );
+		$this->assertSame( "You're on the waiting list!", get_option( 'shopos_restock_confirm_subject' ) );
+		$this->assertSame( "We'll let you know", get_option( 'shopos_restock_confirm_heading' ) );
+		$this->assertNotFalse( get_option( 'shopos_restock_form_description', false ), 'Non-preset key must still be seeded' );
 	}
 
 	public function test_en_us_strings_are_pure_ascii(): void {

@@ -35,7 +35,7 @@ return array(
 	'from_email'             => '',
 
 	// Email-shell strings — consumed directly by Modern \ShopOS\Core\Modules\
-	// RestockNotify\Email; NOT seeded into rsn_* options. See Module::OPTION_KEYS
+	// RestockNotify\Email; NOT seeded into shopos_restock_* options. See Module::OPTION_KEYS
 	// for the seeded subset.
 	'shell_customer_name_fallback' => 'Customer',
 	'shell_greeting'               => 'Hi %s,',
@@ -44,7 +44,7 @@ return array(
 
 	// Frontend strings (Wave 2.3c) — consumed by modern Frontend's
 	// wp_localize_script payload (js_*) and render_form() placeholders
-	// (form_placeholder_*). NOT seeded into rsn_* options.
+	// (form_placeholder_*). NOT seeded into shopos_restock_* options.
 	'js_invalid_email'             => 'Please enter a valid email address.',
 	'js_consent_missing'           => 'Please confirm the consent checkbox.',
 	'js_product_missing'           => 'Error: missing product id.',

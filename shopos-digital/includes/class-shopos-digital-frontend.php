@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) exit;
  * Controls WHAT assets get loaded (complementary to WP Rocket which handles HOW they're delivered).
  * Elementor-aware: knows which scripts/styles to safely remove.
  */
-class FD_Frontend {
+class ShopOS_Digital_Frontend {
     private $o;
 
     public function __construct($o) {
@@ -222,9 +222,9 @@ class FD_Frontend {
         }
 
         // Fallback: register a tiny empty handle and attach the inline style
-        wp_register_style('fd-mobile-anim', false);
-        wp_enqueue_style('fd-mobile-anim');
-        wp_add_inline_style('fd-mobile-anim', $css);
+        wp_register_style('shopos-digital-mobile-anim', false);
+        wp_enqueue_style('shopos-digital-mobile-anim');
+        wp_add_inline_style('shopos-digital-mobile-anim', $css);
     }
 
     /**

@@ -16,11 +16,11 @@
 
     function bindEvents() {
         // Use delegated events so they work on any form, even injected late.
-        $(document).on('click', '.rsn-submit-btn', handleSubmit);
-        $(document).on('keypress', '.rsn-input', function (e) {
+        $(document).on('click', '.shopos-restock-submit-btn', handleSubmit);
+        $(document).on('keypress', '.shopos-restock-input', function (e) {
             if (e.which === 13) {
                 e.preventDefault();
-                $(this).closest('.rsn-form-card').find('.rsn-submit-btn').trigger('click');
+                $(this).closest('.shopos-restock-form-card').find('.shopos-restock-submit-btn').trigger('click');
             }
         });
     }
@@ -28,28 +28,28 @@
     /* =============================================================
        FORM SUBMISSION
        ============================================================= */
-    // Translatable strings — provided by rsn_ajax.i18n via wp_localize_script.
+    // Translatable strings — provided by shopos_restock_ajax.i18n via wp_localize_script.
     // Hebrew fallbacks are embedded so the form still works if the localize
     // payload is somehow stripped (e.g. an aggressive minifier on a custom build).
     function t(key, fallback) {
-        return (typeof rsn_ajax !== 'undefined' && rsn_ajax.i18n && rsn_ajax.i18n[key]) || fallback;
+        return (typeof shopos_restock_ajax !== 'undefined' && shopos_restock_ajax.i18n && shopos_restock_ajax.i18n[key]) || fallback;
     }
 
     function handleSubmit() {
         var $btn  = $(this);
-        var $card = $btn.closest('.rsn-form-card');
-        var $wrap = $btn.closest('.rsn-form-wrap');
+        var $card = $btn.closest('.shopos-restock-form-card');
+        var $wrap = $btn.closest('.shopos-restock-form-wrap');
 
-        var name  = $card.find('.rsn-name').val().trim();
-        var email = $card.find('.rsn-email').val().trim();
+        var name  = $card.find('.shopos-restock-name').val().trim();
+        var email = $card.find('.shopos-restock-email').val().trim();
 
         if (!email || !isValidEmail(email)) {
             showError($card, t('invalidEmail', 'יש להזין כתובת אימייל תקינה.'));
-            $card.find('.rsn-email').focus();
+            $card.find('.shopos-restock-email').focus();
             return;
         }
 
-        var $gdpr = $card.find('.rsn-gdpr-check');
+        var $gdpr = $card.find('.shopos-restock-gdpr-check');
         if ($gdpr.length && !$gdpr.is(':checked')) {
             showError($card, t('consentMissing', 'יש לאשר את תיבת ההסכמה.'));
             return;
@@ -64,36 +64,36 @@
             return;
         }
 
-        $btn.addClass('rsn-loading');
+        $btn.addClass('shopos-restock-loading');
         hideError($card);
 
-        // Ensure rsn_ajax is available.
-        if (typeof rsn_ajax === 'undefined') {
+        // Ensure shopos_restock_ajax is available.
+        if (typeof shopos_restock_ajax === 'undefined') {
             showError($card, t('scriptError', 'שגיאה: הסקריפט לא נטען כראוי. רענן את הדף.'));
-            $btn.removeClass('rsn-loading');
+            $btn.removeClass('shopos-restock-loading');
             return;
         }
 
         $.ajax({
-            url: rsn_ajax.url,
+            url: shopos_restock_ajax.url,
             type: 'POST',
             data: {
-                action:       'rsn_subscribe',
-                nonce:        rsn_ajax.nonce,
+                action:       'shopos_restock_subscribe',
+                nonce:        shopos_restock_ajax.nonce,
                 product_id:   productId,
                 variation_id: variationId,
                 name:         name,
                 email:        email,
                 gdpr:         $gdpr.length && $gdpr.is(':checked') ? 'yes' : 'no',
-                _hp:          $card.find('.rsn-hp').val() || ''
+                _hp:          $card.find('.shopos-restock-hp').val() || ''
             },
             success: function (response) {
-                $btn.removeClass('rsn-loading');
+                $btn.removeClass('shopos-restock-loading');
 
                 if (response.success) {
-                    $card.find('.rsn-form-fields').slideUp(250, function () {
-                        $card.find('.rsn-form-desc').slideUp(150);
-                        $card.find('.rsn-form-success').removeClass('rsn-hidden').hide().fadeIn(300);
+                    $card.find('.shopos-restock-form-fields').slideUp(250, function () {
+                        $card.find('.shopos-restock-form-desc').slideUp(150);
+                        $card.find('.shopos-restock-form-success').removeClass('shopos-restock-hidden').hide().fadeIn(300);
                     });
                 } else {
                     var msg = (response.data && response.data.message)
@@ -101,10 +101,10 @@
                         : t('genericError', 'משהו השתבש. נסו שוב.');
 
                     if (response.data && response.data.duplicate) {
-                        $card.find('.rsn-form-fields').slideUp(250, function () {
-                            $card.find('.rsn-form-desc').slideUp(150);
-                            $card.find('.rsn-success-text').text(msg);
-                            $card.find('.rsn-form-success').removeClass('rsn-hidden').hide().fadeIn(300);
+                        $card.find('.shopos-restock-form-fields').slideUp(250, function () {
+                            $card.find('.shopos-restock-form-desc').slideUp(150);
+                            $card.find('.shopos-restock-success-text').text(msg);
+                            $card.find('.shopos-restock-form-success').removeClass('shopos-restock-hidden').hide().fadeIn(300);
                         });
                     } else {
                         showError($card, msg);
@@ -112,7 +112,7 @@
                 }
             },
             error: function () {
-                $btn.removeClass('rsn-loading');
+                $btn.removeClass('shopos-restock-loading');
                 showError($card, t('networkError', 'שגיאת רשת. נסו שוב.'));
             }
         });
@@ -124,22 +124,22 @@
        variation.is_in_stock which can be wrong when parent manages stock.
        ============================================================= */
     function initVariations() {
-        if (typeof rsn_variations === 'undefined') return;
+        if (typeof shopos_restock_variations === 'undefined') return;
 
         var $form = $('form.variations_form');
-        var $wrap = $('.rsn-form-wrap.rsn-variable-product');
+        var $wrap = $('.shopos-restock-form-wrap.shopos-restock-variable-product');
 
         if (!$wrap.length) return;
 
         // Build a fast lookup set of OOS variation IDs (as integers).
         var oosSet = {};
-        for (var i = 0; i < rsn_variations.oos_variation_ids.length; i++) {
-            oosSet[parseInt(rsn_variations.oos_variation_ids[i], 10)] = true;
+        for (var i = 0; i < shopos_restock_variations.oos_variation_ids.length; i++) {
+            oosSet[parseInt(shopos_restock_variations.oos_variation_ids[i], 10)] = true;
         }
 
         // If ALL variations are out of stock, show immediately.
-        if (rsn_variations.all_oos) {
-            $wrap.removeClass('rsn-hidden');
+        if (shopos_restock_variations.all_oos) {
+            $wrap.removeClass('shopos-restock-hidden');
         }
 
         // If there's no WC variation form (Elementor may not have it),
@@ -147,8 +147,8 @@
         if (!$form.length) return;
 
         // Already bound? Don't re-bind.
-        if ($form.data('rsn-bound')) return;
-        $form.data('rsn-bound', true);
+        if ($form.data('shopos-restock-bound')) return;
+        $form.data('shopos-restock-bound', true);
 
         $form.on('found_variation', function (e, variation) {
             var vid = parseInt(variation.variation_id, 10);
@@ -162,20 +162,20 @@
                 // Variation is out of stock — show the notification form.
                 $wrap.attr('data-variation-id', vid);
                 resetForm($wrap);
-                $wrap.removeClass('rsn-hidden').hide().slideDown(300);
+                $wrap.removeClass('shopos-restock-hidden').hide().slideDown(300);
             } else {
                 // Variation is in stock — hide the form.
                 $wrap.slideUp(200, function () {
-                    $wrap.addClass('rsn-hidden');
+                    $wrap.addClass('shopos-restock-hidden');
                 });
             }
         });
 
         $form.on('reset_data', function () {
             // No variation selected — hide unless all are OOS.
-            if (!rsn_variations.all_oos) {
+            if (!shopos_restock_variations.all_oos) {
                 $wrap.slideUp(200, function () {
-                    $wrap.addClass('rsn-hidden');
+                    $wrap.addClass('shopos-restock-hidden');
                 });
             }
         });
@@ -185,22 +185,22 @@
        HELPERS
        ============================================================= */
     function resetForm($wrap) {
-        var $card = $wrap.find('.rsn-form-card');
-        $card.find('.rsn-form-fields').show();
-        $card.find('.rsn-form-desc').show();
-        $card.find('.rsn-form-success').addClass('rsn-hidden');
-        $card.find('.rsn-form-error').addClass('rsn-hidden');
-        $card.find('.rsn-submit-btn').removeClass('rsn-loading');
+        var $card = $wrap.find('.shopos-restock-form-card');
+        $card.find('.shopos-restock-form-fields').show();
+        $card.find('.shopos-restock-form-desc').show();
+        $card.find('.shopos-restock-form-success').addClass('shopos-restock-hidden');
+        $card.find('.shopos-restock-form-error').addClass('shopos-restock-hidden');
+        $card.find('.shopos-restock-submit-btn').removeClass('shopos-restock-loading');
     }
 
     function showError($card, msg) {
-        var $error = $card.find('.rsn-form-error');
-        $error.find('.rsn-error-text').text(msg);
-        $error.removeClass('rsn-hidden').hide().fadeIn(200);
+        var $error = $card.find('.shopos-restock-form-error');
+        $error.find('.shopos-restock-error-text').text(msg);
+        $error.removeClass('shopos-restock-hidden').hide().fadeIn(200);
     }
 
     function hideError($card) {
-        $card.find('.rsn-form-error').addClass('rsn-hidden');
+        $card.find('.shopos-restock-form-error').addClass('shopos-restock-hidden');
     }
 
     function isValidEmail(email) {

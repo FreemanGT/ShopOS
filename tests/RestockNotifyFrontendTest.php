@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../shopos-core/src/Modules/RestockNotify/legacy/helpers.php';
 require_once __DIR__ . '/snapshots/__fixtures__/wc_product_stub.php';
-require_once __DIR__ . '/__stubs__/rsn_database_stub.php';
+require_once __DIR__ . '/__stubs__/shopos_restock_database_stub.php';
 
 use ShopOS\Core\Modules\RestockNotify\Frontend;
 use PHPUnit\Framework\TestCase;
@@ -53,9 +53,9 @@ final class RestockNotifyFrontendTest extends TestCase {
 		$GLOBALS['fr_singular_type']         = '';
 		$GLOBALS['fr_doing_ajax']            = false;
 		$GLOBALS['fr_wc_get_product_return'] = new \WC_Product();
-		\RSN_Database::$calls                = array();
-		\RSN_Database::$get_by_token_return  = null;
-		\RSN_Database::$unsubscribe_return   = 1;
+		\ShopOS_Restock_Database::$calls                = array();
+		\ShopOS_Restock_Database::$get_by_token_return  = null;
+		\ShopOS_Restock_Database::$unsubscribe_return   = 1;
 
 		// Reset Frontend's static dedup tracker so tests don't leak.
 		$ref  = new \ReflectionClass( Frontend::class );
@@ -67,16 +67,16 @@ final class RestockNotifyFrontendTest extends TestCase {
 		$css->setValue( null, false );
 
 		// Form-content options the form needs to render.
-		update_option( 'rsn_form_heading',         'Notify me when back in stock' );
-		update_option( 'rsn_form_description',     'Leave your details.' );
-		update_option( 'rsn_form_button_text',     'Subscribe' );
-		update_option( 'rsn_form_success_message', 'Subscribed!' );
-		update_option( 'rsn_enable_gdpr',          'no' );
-		update_option( 'rsn_gdpr_text',            'I agree.' );
+		update_option( 'shopos_restock_form_heading',         'Notify me when back in stock' );
+		update_option( 'shopos_restock_form_description',     'Leave your details.' );
+		update_option( 'shopos_restock_form_button_text',     'Subscribe' );
+		update_option( 'shopos_restock_form_success_message', 'Subscribed!' );
+		update_option( 'shopos_restock_enable_gdpr',          'no' );
+		update_option( 'shopos_restock_gdpr_text',            'I agree.' );
 	}
 
 	public function test_constructor_wires_assets_shortcode_and_init_when_auto_inject_off(): void {
-		update_option( 'rsn_auto_inject', 'no' );
+		update_option( 'shopos_restock_auto_inject', 'no' );
 
 		new Frontend();
 
@@ -92,7 +92,7 @@ final class RestockNotifyFrontendTest extends TestCase {
 	}
 
 	public function test_constructor_wires_all_inject_hooks_when_auto_inject_on(): void {
-		update_option( 'rsn_auto_inject', 'yes' );
+		update_option( 'shopos_restock_auto_inject', 'yes' );
 
 		new Frontend();
 
@@ -178,7 +178,7 @@ final class RestockNotifyFrontendTest extends TestCase {
 		$m->setAccessible( true );
 		$out = $m->invoke( $frontend, $product, 'summary', false );
 
-		$this->assertStringContainsString( 'rsn-form-wrap', $out );
+		$this->assertStringContainsString( 'shopos-restock-form-wrap', $out );
 		$this->assertStringContainsString( 'Notify me when back in stock', $out );
 	}
 
@@ -230,7 +230,7 @@ final class RestockNotifyFrontendTest extends TestCase {
 
 		$this->assertNotEmpty( $GLOBALS['fr_localize_calls'] );
 		$payload = $GLOBALS['fr_localize_calls'][0]['l10n'];
-		$this->assertSame( 'rsn_ajax', $GLOBALS['fr_localize_calls'][0]['object_name'] );
+		$this->assertSame( 'shopos_restock_ajax', $GLOBALS['fr_localize_calls'][0]['object_name'] );
 		$this->assertSame( 'יש להזין כתובת אימייל תקינה.', $payload['i18n']['invalidEmail'] );
 		$this->assertSame( 'משהו השתבש. נסו שוב.', $payload['i18n']['genericError'] );
 	}
@@ -258,8 +258,8 @@ final class RestockNotifyFrontendTest extends TestCase {
 	}
 
 	public function test_handle_unsubscribe_routes_through_subscribers_wrapper(): void {
-		$_GET['rsn_unsubscribe']             = 'tok-abc';
-		\RSN_Database::$get_by_token_return  = (object) array( 'id' => 99 );
+		$_GET['shopos_restock_unsubscribe']             = 'tok-abc';
+		\ShopOS_Restock_Database::$get_by_token_return  = (object) array( 'id' => 99 );
 
 		try {
 			// wp_safe_redirect captures into globals; exit can't be tested
@@ -287,17 +287,17 @@ final class RestockNotifyFrontendTest extends TestCase {
 			// Use a separate process-style isolation by capturing exit. PHP
 			// has no native way to suppress exit. Skip the actual call and
 			// instead verify the lookup wiring via a manual replay:
-			\RSN_Database::$calls = array();
+			\ShopOS_Restock_Database::$calls = array();
 			\ShopOS\Core\Modules\RestockNotify\Subscribers::get_by_token( 'tok-abc' );
-			$this->assertSame( 'get_by_token', \RSN_Database::$calls[0]['method'] );
+			$this->assertSame( 'get_by_token', \ShopOS_Restock_Database::$calls[0]['method'] );
 		} finally {
-			unset( $_GET['rsn_unsubscribe'] );
+			unset( $_GET['shopos_restock_unsubscribe'] );
 		}
 	}
 
 	public function test_oos_transient_cache_key_matches_legacy_format(): void {
 		// The legacy code at frontend.php:315 builds:
-		//   $cache_key = 'rsn_oos_' . $product->get_id();
+		//   $cache_key = 'shopos_restock_oos_' . $product->get_id();
 		//   if class_exists WC_Cache_Helper: $cache_key .= '_' . get_transient_version('product');
 		//
 		// Modern Frontend's maybe_render() must construct the SAME shape so
@@ -309,7 +309,7 @@ final class RestockNotifyFrontendTest extends TestCase {
 		// the literal prefix.
 		$src = file_get_contents( SHOPOS_CORE_PATH . 'src/Modules/RestockNotify/Frontend.php' );
 		$this->assertStringContainsString(
-			"\$cache_key = 'rsn_oos_' . \$product->get_id();",
+			"\$cache_key = 'shopos_restock_oos_' . \$product->get_id();",
 			$src,
 			'Cache-key prefix drifted from legacy format — transient entries written by legacy may stop being readable.'
 		);

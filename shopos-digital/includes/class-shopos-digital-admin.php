@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-class FD_Admin {
+class ShopOS_Digital_Admin {
     public function __construct() {
         add_action('admin_menu', array($this, 'menu'));
         add_action('admin_init', array($this, 'register'));
@@ -23,7 +23,7 @@ class FD_Admin {
         add_action('wp_ajax_fd_clear_activity_log', array($this, 'ajax_clear_activity_log'));
 
         // Add "Revert deep indexes" hint to the plugin list-table entry
-        add_filter('plugin_action_links_' . plugin_basename(FD_PLUGIN_FILE), array($this, 'action_links'));
+        add_filter('plugin_action_links_' . plugin_basename(SHOPOS_DIGITAL_PLUGIN_FILE), array($this, 'action_links'));
     }
 
     public function action_links($links) {
@@ -46,15 +46,15 @@ class FD_Admin {
     }
 
     public function register() {
-        register_setting('fd_group', FD_OPT, array('sanitize_callback' => array($this, 'sanitize')));
+        register_setting('shopos_digital_group', SHOPOS_DIGITAL_OPT, array('sanitize_callback' => array($this, 'sanitize')));
     }
 
     public function sanitize($in) {
         // CRITICAL: merge with existing saved options.
         // The form only renders one tab at a time, so fields from other tabs
         // won't be in $in. We must preserve their existing values.
-        $existing = get_option(FD_OPT, array());
-        $defs = FD_Core::get_defaults();
+        $existing = get_option(SHOPOS_DIGITAL_OPT, array());
+        $defs = ShopOS_Digital_Core::get_defaults();
         $merged = wp_parse_args($existing, $defs);
 
         // Enum whitelists: free-text settings that must match a known value set.
@@ -88,17 +88,17 @@ class FD_Admin {
 
     public function assets($hook) {
         if (strpos($hook, 'shopos-digital') === false) return;
-        wp_enqueue_style('fd-admin', FD_PLUGIN_URL . 'assets/css/admin.css', array(), FD_VERSION);
-        wp_enqueue_script('fd-admin', FD_PLUGIN_URL . 'assets/js/admin.js', array('jquery'), FD_VERSION, true);
-        wp_localize_script('fd-admin', 'fdVars', array(
+        wp_enqueue_style('shopos-digital-admin', SHOPOS_DIGITAL_PLUGIN_URL . 'assets/css/admin.css', array(), SHOPOS_DIGITAL_VERSION);
+        wp_enqueue_script('shopos-digital-admin', SHOPOS_DIGITAL_PLUGIN_URL . 'assets/js/admin.js', array('jquery'), SHOPOS_DIGITAL_VERSION, true);
+        wp_localize_script('shopos-digital-admin', 'fdVars', array(
             'ajax' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('fd_nonce'),
+            'nonce' => wp_create_nonce('shopos_digital_nonce'),
         ));
     }
 
     public function page() {
         if (!current_user_can('manage_options')) return;
-        $o = FD_Core::opts();
+        $o = ShopOS_Digital_Core::opts();
 
         // Single source of truth for tab list
         $tabs = array(
@@ -129,12 +129,12 @@ class FD_Admin {
             $tab_method = 'tab_dashboard';
         }
         ?>
-        <div class="wrap fd-wrap">
-            <div class="fd-header">
-                <h1><?php echo esc_html__('⚡ ShopOS Digital', 'shopos-digital'); ?> <span class="fd-ver">v<?php echo esc_html(FD_VERSION); ?></span></h1>
+        <div class="wrap shopos-digital-wrap">
+            <div class="shopos-digital-header">
+                <h1><?php echo esc_html__('⚡ ShopOS Digital', 'shopos-digital'); ?> <span class="shopos-digital-ver">v<?php echo esc_html(SHOPOS_DIGITAL_VERSION); ?></span></h1>
                 <p><?php esc_html_e('WordPress & WooCommerce Optimization Suite', 'shopos-digital'); ?></p>
             </div>
-            <nav class="nav-tab-wrapper fd-tabs">
+            <nav class="nav-tab-wrapper shopos-digital-tabs">
                 <?php
                 foreach ($tabs as $s => $l) {
                     $c = ($tab === $s) ? 'nav-tab nav-tab-active' : 'nav-tab';
@@ -142,13 +142,13 @@ class FD_Admin {
                 }
                 ?>
             </nav>
-            <form method="post" action="options.php" id="fd-form">
-                <?php settings_fields('fd_group'); ?>
-                <div class="fd-content">
+            <form method="post" action="options.php" id="shopos-digital-form">
+                <?php settings_fields('shopos_digital_group'); ?>
+                <div class="shopos-digital-content">
                     <?php $this->{$tab_method}($o); ?>
                 </div>
                 <?php if (!in_array($tab, array('dashboard', 'indexes', 'tools', 'profiler', 'activity'))): ?>
-                    <p class="submit"><button type="submit" class="button button-primary fd-save"><?php esc_html_e('💾 Save Settings', 'shopos-digital'); ?></button></p>
+                    <p class="submit"><button type="submit" class="button button-primary shopos-digital-save"><?php esc_html_e('💾 Save Settings', 'shopos-digital'); ?></button></p>
                 <?php endif; ?>
             </form>
         </div>
@@ -176,30 +176,30 @@ class FD_Admin {
         // MyISAM check
         $myisam = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=%s AND engine='MyISAM' AND table_name LIKE %s", DB_NAME, $wpdb->esc_like($wpdb->prefix) . '%'));
         ?>
-        <div class="fd-stats-grid">
-            <div class="fd-card"><div class="fd-num"><?php echo $active; ?></div><div class="fd-lbl"><?php esc_html_e('Active Optimizations', 'shopos-digital'); ?></div></div>
-            <div class="fd-card"><div class="fd-num"><?php echo $db_size; ?> MB</div><div class="fd-lbl"><?php esc_html_e('Database Size', 'shopos-digital'); ?></div></div>
-            <div class="fd-card"><div class="fd-num"><?php echo number_format($posts); ?></div><div class="fd-lbl"><?php esc_html_e('Total Posts', 'shopos-digital'); ?></div></div>
-            <div class="fd-card"><div class="fd-num"><?php echo number_format($meta); ?></div><div class="fd-lbl"><?php esc_html_e('Postmeta Rows', 'shopos-digital'); ?></div></div>
+        <div class="shopos-digital-stats-grid">
+            <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo $active; ?></div><div class="shopos-digital-lbl"><?php esc_html_e('Active Optimizations', 'shopos-digital'); ?></div></div>
+            <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo $db_size; ?> MB</div><div class="shopos-digital-lbl"><?php esc_html_e('Database Size', 'shopos-digital'); ?></div></div>
+            <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo number_format($posts); ?></div><div class="shopos-digital-lbl"><?php esc_html_e('Total Posts', 'shopos-digital'); ?></div></div>
+            <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo number_format($meta); ?></div><div class="shopos-digital-lbl"><?php esc_html_e('Postmeta Rows', 'shopos-digital'); ?></div></div>
             <?php if ($woo): ?>
-            <div class="fd-card"><div class="fd-num"><?php echo number_format($products); ?></div><div class="fd-lbl"><?php esc_html_e('Products', 'shopos-digital'); ?></div></div>
-            <div class="fd-card"><div class="fd-num"><?php echo number_format($orders); ?></div><div class="fd-lbl"><?php esc_html_e('Orders', 'shopos-digital'); ?></div></div>
+            <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo number_format($products); ?></div><div class="shopos-digital-lbl"><?php esc_html_e('Products', 'shopos-digital'); ?></div></div>
+            <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo number_format($orders); ?></div><div class="shopos-digital-lbl"><?php esc_html_e('Orders', 'shopos-digital'); ?></div></div>
             <?php endif; ?>
-            <div class="fd-card"><div class="fd-num"><?php echo number_format($auto); ?></div><div class="fd-lbl"><?php esc_html_e('Autoloaded Options', 'shopos-digital'); ?></div></div>
-            <div class="fd-card"><div class="fd-num"><?php echo $auto_size; ?> MB</div><div class="fd-lbl"><?php esc_html_e('Autoload Size', 'shopos-digital'); ?></div></div>
+            <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo number_format($auto); ?></div><div class="shopos-digital-lbl"><?php esc_html_e('Autoloaded Options', 'shopos-digital'); ?></div></div>
+            <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo $auto_size; ?> MB</div><div class="shopos-digital-lbl"><?php esc_html_e('Autoload Size', 'shopos-digital'); ?></div></div>
         </div>
 
         <?php if ($auto > 1000 || (float)$auto_size > 1.0): ?>
-            <div class="fd-alert fd-warn"><strong><?php esc_html_e('⚠️ Autoload Warning:', 'shopos-digital'); ?></strong> <?php echo esc_html(sprintf(__('You have %1$s autoloaded options (%2$s MB). This is loaded on EVERY page request. Go to the Autoload tab to audit and fix.', 'shopos-digital'), number_format($auto), $auto_size)); ?></div>
+            <div class="shopos-digital-alert shopos-digital-warn"><strong><?php esc_html_e('⚠️ Autoload Warning:', 'shopos-digital'); ?></strong> <?php echo esc_html(sprintf(__('You have %1$s autoloaded options (%2$s MB). This is loaded on EVERY page request. Go to the Autoload tab to audit and fix.', 'shopos-digital'), number_format($auto), $auto_size)); ?></div>
         <?php endif; ?>
         <?php if ($myisam > 0): ?>
-            <div class="fd-alert fd-warn"><strong><?php esc_html_e('⚠️ MyISAM Tables Detected:', 'shopos-digital'); ?></strong> <?php echo esc_html(sprintf(__('You have %d MyISAM tables. InnoDB is faster and supports row-level locking. Go to Autoload tab to convert.', 'shopos-digital'), $myisam)); ?></div>
+            <div class="shopos-digital-alert shopos-digital-warn"><strong><?php esc_html_e('⚠️ MyISAM Tables Detected:', 'shopos-digital'); ?></strong> <?php echo esc_html(sprintf(__('You have %d MyISAM tables. InnoDB is faster and supports row-level locking. Go to Autoload tab to convert.', 'shopos-digital'), $myisam)); ?></div>
         <?php endif; ?>
         <?php if ($revs > 500): ?>
-            <div class="fd-alert fd-info"><strong>💡</strong> <?php echo esc_html(sprintf(__('%s post revisions found. Go to Cleanup tab to purge.', 'shopos-digital'), number_format($revs))); ?></div>
+            <div class="shopos-digital-alert shopos-digital-info"><strong>💡</strong> <?php echo esc_html(sprintf(__('%s post revisions found. Go to Cleanup tab to purge.', 'shopos-digital'), number_format($revs))); ?></div>
         <?php endif; ?>
         <?php if ($trans > 500): ?>
-            <div class="fd-alert fd-info"><strong>💡</strong> <?php echo esc_html(sprintf(__('%s transients in database. Go to Cleanup tab to clear expired ones.', 'shopos-digital'), number_format($trans))); ?></div>
+            <div class="shopos-digital-alert shopos-digital-info"><strong>💡</strong> <?php echo esc_html(sprintf(__('%s transients in database. Go to Cleanup tab to clear expired ones.', 'shopos-digital'), number_format($trans))); ?></div>
         <?php endif; ?>
 
         <div style="margin-top:20px">
@@ -215,7 +215,7 @@ class FD_Admin {
     // TAB: QUERY
     // ============================
     private function tab_query($o) {
-        echo '<div class="fd-section"><h2>' . esc_html__('Query Optimization', 'shopos-digital') . '</h2><p>' . esc_html__('Optimizes WP_Query SQL to prevent full table scans and use database indexes properly.', 'shopos-digital') . '</p>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Query Optimization', 'shopos-digital') . '</h2><p>' . esc_html__('Optimizes WP_Query SQL to prevent full table scans and use database indexes properly.', 'shopos-digital') . '</p>';
         $this->tog('qo_no_found_rows_front', __('Remove SQL_CALC_FOUND_ROWS (Front-end)', 'shopos-digital'), $o, __('Stops MySQL from counting total matching rows on archive/shop pages. Dramatically faster on large stores. Pagination shows approximate counts or switches to prev/next.', 'shopos-digital'));
         $this->tog('qo_no_found_rows_admin', __('Remove SQL_CALC_FOUND_ROWS (Admin)', 'shopos-digital'), $o, __('Same as above but for wp-admin edit.php screens. Admin pagination uses Next/Previous.', 'shopos-digital'));
         $this->tog('qo_remove_sort_order', __('Remove Sort Order (Front-end)', 'shopos-digital'), $o, __('Uses natural DB sort order instead of ORDER BY. Allows covering indexes. <strong>Warning:</strong> Disables user-facing sort dropdowns. Only enable if default product order is fine.', 'shopos-digital'));
@@ -229,9 +229,9 @@ class FD_Admin {
     // TAB: WOOCOMMERCE
     // ============================
     private function tab_woocommerce($o) {
-        if (!class_exists('WooCommerce')) echo '<div class="fd-alert fd-info">' . esc_html__('WooCommerce not active. Settings will apply when it\'s activated.', 'shopos-digital') . '</div>';
+        if (!class_exists('WooCommerce')) echo '<div class="shopos-digital-alert shopos-digital-info">' . esc_html__('WooCommerce not active. Settings will apply when it\'s activated.', 'shopos-digital') . '</div>';
 
-        echo '<div class="fd-section"><h2>' . esc_html__('WooCommerce Admin Bloat', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('WooCommerce Admin Bloat', 'shopos-digital') . '</h2>';
         $this->tog('wc_remove_dashboard_widget', __('Remove Dashboard Status Widget', 'shopos-digital'), $o, __('Removes the WooCommerce Status widget that runs expensive order count queries on every dashboard load.', 'shopos-digital'));
         $this->tog('wc_remove_marketplace_nag', __('Disable Marketplace Suggestions', 'shopos-digital'), $o, __('Stops WooCommerce from querying your orders to show upsell suggestions. This query runs on EVERY admin page load.', 'shopos-digital'));
         $this->tog('wc_remove_connect_nag', __('Remove "Connect Store" Notice', 'shopos-digital'), $o, __('Hides the persistent WooCommerce.com connection admin notice.', 'shopos-digital'));
@@ -241,7 +241,7 @@ class FD_Admin {
         $this->tog('wc_disable_admin_ajax_bloat', __('Reduce WC Admin AJAX', 'shopos-digital'), $o, __('Disables WooCommerce Admin feature that makes extra admin-ajax calls for notices, inbox messages, and activity panel on every admin page.', 'shopos-digital'));
         echo '</div>';
 
-        echo '<div class="fd-section"><h2>' . esc_html__('WooCommerce Performance', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('WooCommerce Performance', 'shopos-digital') . '</h2>';
         $this->tog('wc_optimize_delete_options', __('Optimize wp_options DELETE Queries', 'shopos-digital'), $o, __('WooCommerce runs DELETE FROM wp_options WHERE option_name LIKE \'%transient%\' which can\'t use indexes. We rewrite it to use a subquery that can. Prevents 3-minute lockups on large stores.', 'shopos-digital'));
         $this->tog('wc_fix_onboarding', __('Cache hasProducts Check', 'shopos-digital'), $o, __('WooCommerce checks "do you have products?" on every admin page via a full wp_posts scan. We cache the result for 24 hours. Saves 10-70 seconds on large stores.', 'shopos-digital'));
         $this->tog('wc_optimize_attr_lookup', __('Fix Attribute Lookup OR Query', 'shopos-digital'), $o, __('WooCommerce queries wc_product_attributes_lookup with a redundant OR (product_id = X OR product_or_parent_id = X). We simplify to just product_or_parent_id.', 'shopos-digital'));
@@ -250,13 +250,13 @@ class FD_Admin {
         $this->tog('wc_remove_variation_calc', __('Force AJAX Variation Loading', 'shopos-digital'), $o, __('Sets the variation AJAX threshold to 1, so any variable product with 2+ variations loads variations via AJAX instead of pre-rendering them all in HTML. Speeds up initial page load for products with many variations. Default WC threshold is 30.', 'shopos-digital'));
         echo '</div>';
 
-        echo '<div class="fd-section"><h2>' . esc_html__('WooCommerce Frontend', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('WooCommerce Frontend', 'shopos-digital') . '</h2>';
         $this->tog('wc_disable_cart_fragments', __('Disable Cart Fragments AJAX', 'shopos-digital'), $o, __('Stops wc-ajax=get_refreshed_fragments on every page load (~300ms per request). <strong>Warning:</strong> Mini-cart won\'t auto-update. Good if your theme doesn\'t use the default WC mini-cart or you use a dedicated cart icon plugin.', 'shopos-digital'));
         $this->tog('wc_limit_scripts_non_woo', __('Limit WC Scripts to WC Pages Only', 'shopos-digital'), $o, __('Only loads WooCommerce CSS/JS on product, shop, cart, checkout, and account pages. Saves 100-300KB of scripts on blog/homepage.', 'shopos-digital'));
         $this->tog('wc_disable_password_meter', __('Disable Password Strength Meter', 'shopos-digital'), $o, __('Removes the zxcvbn password strength script (~800KB uncompressed) from checkout and account pages.', 'shopos-digital'));
         echo '</div>';
 
-        echo '<div class="fd-section"><h2>' . esc_html__('Phone Home Blocker', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Phone Home Blocker', 'shopos-digital') . '</h2>';
         $this->tog('wc_stop_phone_home', __('Block Non-wp.org Outbound HTTP (Admin Context)', 'shopos-digital'), $o, esc_html__('Intercepts every outbound HTTP request originating from wp-admin / AJAX / cron that is NOT hitting wordpress.org. Can save 10+ seconds on admin loads on sites running many premium plugins. Frontend requests are untouched. WordPress.org is always allowed. Use the allowlist below to permit known-good SaaS endpoints (payment gateways, analytics, etc).', 'shopos-digital'));
 
         $allowlist = $o['wc_phone_home_allowlist'];
@@ -265,9 +265,9 @@ class FD_Admin {
             $allowlist = "*api.stripe.com*\n*googleapis.com*\n*woocommerce.com/wc-api/*";
         }
         ?>
-        <div class="fd-field" style="margin-top:10px">
+        <div class="shopos-digital-field" style="margin-top:10px">
             <label><strong><?php esc_html_e('Allowed URL Patterns', 'shopos-digital'); ?></strong> <?php esc_html_e('(one per line, * = wildcard)', 'shopos-digital'); ?></label>
-            <textarea name="<?php echo FD_OPT; ?>[wc_phone_home_allowlist]" rows="4" class="large-text"><?php echo esc_textarea($allowlist); ?></textarea>
+            <textarea name="<?php echo SHOPOS_DIGITAL_OPT; ?>[wc_phone_home_allowlist]" rows="4" class="large-text"><?php echo esc_textarea($allowlist); ?></textarea>
             <p class="description"><?php esc_html_e('Example: *wordpress.org* or *my-plugin.com/api/*. Pre-seeded with Stripe, Google APIs, and WooCommerce.com.', 'shopos-digital'); ?></p>
         </div>
         <?php
@@ -278,7 +278,7 @@ class FD_Admin {
     // TAB: WP ADMIN
     // ============================
     private function tab_wpadmin($o) {
-        echo '<div class="fd-section"><h2>' . esc_html__('WP Admin Caching', 'shopos-digital') . '</h2><p>' . esc_html__('Caches expensive admin queries that WordPress recalculates constantly.', 'shopos-digital') . '</p>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('WP Admin Caching', 'shopos-digital') . '</h2><p>' . esc_html__('Caches expensive admin queries that WordPress recalculates constantly.', 'shopos-digital') . '</p>';
         $this->tog('adm_cache_category_list', __('Cache Category Dropdown', 'shopos-digital'), $o, __('Caches the WP-admin category filter dropdown. WordPress\'s own cache gets wiped on any product edit — ours persists.', 'shopos-digital'));
         $this->tog('adm_cache_user_counts', __('Cache User Type Counts', 'shopos-digital'), $o, __('Caches user role counts for 12 hours. Prevents full wp_users + wp_usermeta table scan on Users page.', 'shopos-digital'));
         $this->tog('adm_cache_author_counts', __('Cache Author Post Counts', 'shopos-digital'), $o, __('Caches author post counts for 12 hours. One customer saw 16 seconds added per admin page load from this.', 'shopos-digital'));
@@ -290,31 +290,31 @@ class FD_Admin {
     // TAB: INDEXES
     // ============================
     private function tab_indexes($o) {
-        $caps = FD_Indexes::detect_capabilities();
-        $deep_status = FD_Indexes::get_deep_status();
-        $defs = FD_Indexes::get_definitions();
-        $created = FD_Indexes::get_created();
+        $caps = ShopOS_Digital_Indexes::detect_capabilities();
+        $deep_status = ShopOS_Digital_Indexes::get_deep_status();
+        $defs = ShopOS_Digital_Indexes::get_definitions();
+        $created = ShopOS_Digital_Indexes::get_created();
 
         // TIER 1: Deep Reindex
         ?>
         <?php if (isset($caps->can_ddl) && $caps->can_ddl === false): ?>
-            <div class="fd-alert fd-warn"><strong><?php esc_html_e('🔴 Database user lacks CREATE/ALTER privileges.', 'shopos-digital'); ?></strong> <?php esc_html_e('Index features will fail silently. Contact your host to grant DDL permissions.', 'shopos-digital'); ?><?php if (!empty($caps->ddl_error)) echo ' <code>' . esc_html($caps->ddl_error) . '</code>'; ?></div>
+            <div class="shopos-digital-alert shopos-digital-warn"><strong><?php esc_html_e('🔴 Database user lacks CREATE/ALTER privileges.', 'shopos-digital'); ?></strong> <?php esc_html_e('Index features will fail silently. Contact your host to grant DDL permissions.', 'shopos-digital'); ?><?php if (!empty($caps->ddl_error)) echo ' <code>' . esc_html($caps->ddl_error) . '</code>'; ?></div>
         <?php endif; ?>
 
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('🔥 Tier 1: Deep Reindex (PRIMARY KEY Restructuring)', 'shopos-digital'); ?></h2>
             <p><?php echo wp_kses(__('This is the <strong>highest-impact</strong> database optimization possible. It restructures PRIMARY KEYs on core WordPress and WooCommerce meta tables into compound clustered indexes — the same technique used by enterprise WordPress hosts. This means JOINs on postmeta, usermeta, and other meta tables use the clustered index directly, eliminating bookmark lookups entirely.', 'shopos-digital'), array('strong' => array())); ?></p>
             <p><?php esc_html_e('Server:', 'shopos-digital'); ?> <code><?php echo esc_html($caps->version); ?></code> — <?php esc_html_e('Format:', 'shopos-digital'); ?> <strong><?php echo $caps->barracuda ? esc_html__('✅ Barracuda (full-length keys)', 'shopos-digital') : esc_html__('⚠️ Antelope (prefix-limited keys)', 'shopos-digital'); ?></strong></p>
 
             <?php if (!$caps->can_reindex): ?>
-                <div class="fd-alert fd-warn"><?php esc_html_e('Your MySQL version is too old for deep reindexing. Please upgrade to MySQL 5.6+ or MariaDB 10.0+.', 'shopos-digital'); ?></div>
+                <div class="shopos-digital-alert shopos-digital-warn"><?php esc_html_e('Your MySQL version is too old for deep reindexing. Please upgrade to MySQL 5.6+ or MariaDB 10.0+.', 'shopos-digital'); ?></div>
             <?php else: ?>
-                <table class="wp-list-table widefat fixed striped fd-idx-table">
-                    <thead><tr><th style="width:30px"><input type="checkbox" id="fd-deep-all"></th><th><?php esc_html_e('Table', 'shopos-digital'); ?></th><th><?php esc_html_e('Status', 'shopos-digital'); ?></th></tr></thead>
+                <table class="wp-list-table widefat fixed striped shopos-digital-idx-table">
+                    <thead><tr><th style="width:30px"><input type="checkbox" id="shopos-digital-deep-all"></th><th><?php esc_html_e('Table', 'shopos-digital'); ?></th><th><?php esc_html_e('Status', 'shopos-digital'); ?></th></tr></thead>
                     <tbody>
                     <?php foreach ($deep_status as $table => $status): ?>
                         <tr>
-                            <td><input type="checkbox" class="fd-deep-cb" value="<?php echo esc_attr($table); ?>" <?php checked($status === 'standard'); ?>></td>
+                            <td><input type="checkbox" class="shopos-digital-deep-cb" value="<?php echo esc_attr($table); ?>" <?php checked($status === 'standard'); ?>></td>
                             <td><code><?php echo esc_html($table); ?></code></td>
                             <td><?php echo $status === 'optimized' ? '<span style="color:green">' . esc_html__('✅ Optimized', 'shopos-digital') . '</span>' : '<span style="color:#c00">' . esc_html__('⚪ Standard (can be optimized)', 'shopos-digital') . '</span>'; ?></td>
                         </tr>
@@ -322,23 +322,23 @@ class FD_Admin {
                     </tbody>
                 </table>
                 <p style="margin-top:15px">
-                    <button type="button" class="button button-primary" id="fd-deep-apply"><?php esc_html_e('⚡ Apply Deep Reindex', 'shopos-digital'); ?></button>
-                    <button type="button" class="button" id="fd-deep-revert" style="margin-left:10px"><?php esc_html_e('↩️ Revert to WordPress Standard', 'shopos-digital'); ?></button>
+                    <button type="button" class="button button-primary" id="shopos-digital-deep-apply"><?php esc_html_e('⚡ Apply Deep Reindex', 'shopos-digital'); ?></button>
+                    <button type="button" class="button" id="shopos-digital-deep-revert" style="margin-left:10px"><?php esc_html_e('↩️ Revert to WordPress Standard', 'shopos-digital'); ?></button>
                 </p>
                 <p class="description"><?php esc_html_e('⚠️ This restructures PRIMARY KEYs. Takes 1-60 seconds per table depending on size. Safe and reversible. Your site may briefly enter maintenance mode during large table operations.', 'shopos-digital'); ?></p>
-                <div id="fd-deep-msg" style="margin-top:10px"></div>
+                <div id="shopos-digital-deep-msg" style="margin-top:10px"></div>
             <?php endif; ?>
         </div>
 
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('📎 Tier 2: Secondary Indexes (Additional Coverage)', 'shopos-digital'); ?></h2>
             <p><?php esc_html_e('These add indexes on tables not covered by Tier 1 — taxonomy tables, WooCommerce order items, sessions, Action Scheduler, and more.', 'shopos-digital'); ?></p>
-            <table class="wp-list-table widefat fixed striped fd-idx-table">
-                <thead><tr><th style="width:30px"><input type="checkbox" id="fd-idx-all"></th><th><?php esc_html_e('Index', 'shopos-digital'); ?></th><th><?php esc_html_e('Table', 'shopos-digital'); ?></th><th><?php esc_html_e('Columns', 'shopos-digital'); ?></th><th><?php esc_html_e('Purpose', 'shopos-digital'); ?></th></tr></thead>
+            <table class="wp-list-table widefat fixed striped shopos-digital-idx-table">
+                <thead><tr><th style="width:30px"><input type="checkbox" id="shopos-digital-idx-all"></th><th><?php esc_html_e('Index', 'shopos-digital'); ?></th><th><?php esc_html_e('Table', 'shopos-digital'); ?></th><th><?php esc_html_e('Columns', 'shopos-digital'); ?></th><th><?php esc_html_e('Purpose', 'shopos-digital'); ?></th></tr></thead>
                 <tbody>
                 <?php foreach ($defs as $i): ?>
                     <tr>
-                        <td><input type="checkbox" class="fd-idx-cb" value="<?php echo esc_attr($i['name']); ?>" <?php checked(in_array($i['name'], $created)); ?>></td>
+                        <td><input type="checkbox" class="shopos-digital-idx-cb" value="<?php echo esc_attr($i['name']); ?>" <?php checked(in_array($i['name'], $created)); ?>></td>
                         <td><code><?php echo esc_html($i['name']); ?></code></td>
                         <td><?php echo esc_html($i['table']); ?></td>
                         <td><code><?php echo esc_html($i['columns']); ?></code></td>
@@ -348,10 +348,10 @@ class FD_Admin {
                 </tbody>
             </table>
             <p style="margin-top:15px">
-                <button type="button" class="button button-primary" id="fd-create-idx"><?php esc_html_e('✅ Update Secondary Indexes', 'shopos-digital'); ?></button>
-                <button type="button" class="button" id="fd-drop-idx" style="margin-left:10px"><?php esc_html_e('❌ Drop All Secondary', 'shopos-digital'); ?></button>
+                <button type="button" class="button button-primary" id="shopos-digital-create-idx"><?php esc_html_e('✅ Update Secondary Indexes', 'shopos-digital'); ?></button>
+                <button type="button" class="button" id="shopos-digital-drop-idx" style="margin-left:10px"><?php esc_html_e('❌ Drop All Secondary', 'shopos-digital'); ?></button>
             </p>
-            <div id="fd-idx-msg" style="margin-top:10px"></div>
+            <div id="shopos-digital-idx-msg" style="margin-top:10px"></div>
         </div>
         <?php
     }
@@ -360,7 +360,7 @@ class FD_Admin {
     // TAB: SECURITY
     // ============================
     private function tab_security($o) {
-        echo '<div class="fd-section"><h2>' . esc_html__('Security Hardening', 'shopos-digital') . '</h2><p>' . esc_html__('Reduce attack surface by disabling exploitable WordPress features.', 'shopos-digital') . '</p>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Security Hardening', 'shopos-digital') . '</h2><p>' . esc_html__('Reduce attack surface by disabling exploitable WordPress features.', 'shopos-digital') . '</p>';
         $this->tog('sec_disable_xmlrpc', __('Disable XML-RPC', 'shopos-digital'), $o, __('Blocks xmlrpc.php entirely — the #1 brute-force and DDoS vector. REST API replaces all its functionality. <strong>Note:</strong> Disable if using Jetpack.', 'shopos-digital'));
         $this->tog('sec_disable_file_editing', __('Disable File Editing', 'shopos-digital'), $o, __('Sets DISALLOW_FILE_EDIT. Prevents code injection if an attacker gets admin access.', 'shopos-digital'));
         $this->tog('sec_hide_wp_version', __('Hide WordPress Version', 'shopos-digital'), $o, __('Removes version from HTML source, RSS feeds, scripts, and styles. Prevents version-targeted attacks.', 'shopos-digital'));
@@ -381,7 +381,7 @@ class FD_Admin {
     // TAB: SPEED
     // ============================
     private function tab_speed($o) {
-        echo '<div class="fd-section"><h2>' . esc_html__('Frontend Speed', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Frontend Speed', 'shopos-digital') . '</h2>';
         $this->tog('spd_disable_emojis', __('Disable WordPress Emojis', 'shopos-digital'), $o, __('Removes emoji detection script + styles (~50KB). All modern browsers render emojis natively.', 'shopos-digital'));
         $this->tog('spd_disable_embeds', __('Disable WordPress Embeds', 'shopos-digital'), $o, __('Removes wp-embed.min.js and oEmbed discovery. Other sites can\'t embed your posts as rich cards.', 'shopos-digital'));
         $this->tog('spd_remove_jquery_migrate', __('Remove jQuery Migrate', 'shopos-digital'), $o, __('Dequeues jQuery Migrate on front-end. <strong>Warning:</strong> Test — some older plugins/themes depend on it.', 'shopos-digital'));
@@ -391,19 +391,19 @@ class FD_Admin {
         $this->tog('spd_disable_self_ping', __('Disable Self-Pingbacks', 'shopos-digital'), $o, __('Prevents WordPress from sending pingbacks to itself when you link to your own posts.', 'shopos-digital'));
         echo '</div>';
 
-        echo '<div class="fd-section"><h2>' . esc_html__('Header Cleanup', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Header Cleanup', 'shopos-digital') . '</h2>';
         $this->tog('spd_remove_generator', __('Remove Generator Tag', 'shopos-digital'), $o, __('Removes &lt;meta name="generator"&gt; revealing WordPress version.', 'shopos-digital'));
         $this->tog('spd_remove_shortlink', __('Remove Shortlink', 'shopos-digital'), $o, __('Removes the ?p=123 shortlink from head and HTTP headers.', 'shopos-digital'));
         $this->tog('spd_remove_rest_link', __('Remove REST API Link', 'shopos-digital'), $o, __('Removes REST API discovery link from HTML head.', 'shopos-digital'));
         $this->tog('spd_remove_feed_links', __('Remove RSS Feed Links', 'shopos-digital'), $o, __('Removes RSS/Atom links from head. <strong>Only if you don\'t use RSS.</strong>', 'shopos-digital'));
         echo '</div>';
 
-        echo '<div class="fd-section"><h2>' . esc_html__('Heartbeat API', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Heartbeat API', 'shopos-digital') . '</h2>';
         $this->sel('spd_heartbeat_control', __('Heartbeat Behavior', 'shopos-digital'), $o, array('default' => __('Default (15s)', 'shopos-digital'), 'reduce' => __('Reduce Frequency', 'shopos-digital'), 'disable' => __('Disable', 'shopos-digital')), __('WordPress sends AJAX requests every 15 seconds. Reducing saves server resources. Disabling stops all auto-save and real-time notifications.', 'shopos-digital'));
         $this->num('spd_heartbeat_freq', __('Heartbeat Interval (seconds)', 'shopos-digital'), $o, 15, 300, __('Only applies when set to "Reduce". Default: 60.', 'shopos-digital'));
         echo '</div>';
 
-        echo '<div class="fd-section"><h2>' . esc_html__('Post Revisions', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Post Revisions', 'shopos-digital') . '</h2>';
         $this->tog('spd_limit_revisions', __('Limit Post Revisions', 'shopos-digital'), $o, __('Caps revisions per post. Existing excess revisions stay — use Cleanup to delete them.', 'shopos-digital'));
         $this->num('spd_revisions_count', __('Max Revisions Per Post', 'shopos-digital'), $o, 0, 100, __('0 = disable revisions. 3-5 = good balance.', 'shopos-digital'));
         echo '</div>';
@@ -413,41 +413,41 @@ class FD_Admin {
     // TAB: FRONTEND
     // ============================
     private function tab_frontend($o) {
-        echo '<div class="fd-section"><h2>' . esc_html__('Elementor Optimization', 'shopos-digital') . '</h2><p>' . wp_kses(__('These optimizations are specifically designed for Elementor + WooCommerce sites. They control <strong>what gets loaded</strong> (complementary to WP Rocket which controls how it\'s delivered).', 'shopos-digital'), array('strong' => array())) . '</p>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Elementor Optimization', 'shopos-digital') . '</h2><p>' . wp_kses(__('These optimizations are specifically designed for Elementor + WooCommerce sites. They control <strong>what gets loaded</strong> (complementary to WP Rocket which controls how it\'s delivered).', 'shopos-digital'), array('strong' => array())) . '</p>';
         $this->tog('fe_cleanup_elementor', __('Smart Elementor Cleanup', 'shopos-digital'), $o, __('On pages NOT built with Elementor, removes all Elementor frontend CSS/JS. On Elementor pages, removes block editor CSS (not needed). This alone can save 200-500KB on non-Elementor pages. Automatically respects Elementor Pro theme-builder header/footer locations.', 'shopos-digital'));
         $this->tog('fe_remove_elementor_icons', __('Remove Elementor Icons Library (eicons)', 'shopos-digital'), $o, __('Removes the Elementor Icons CSS (~40KB). Only safe if your widgets use Font Awesome or custom icons instead of Elementor\'s default icons.', 'shopos-digital'));
         $this->tog('fe_defer_elementor_js', __('Defer Elementor JavaScript', 'shopos-digital'), $o, __('Adds <code>defer</code> to safe Elementor-companion scripts (Swiper, share-link, waypoints). Narrowed in 1.7.2 to avoid breaking custom widgets — <code>elementor-frontend</code> no longer deferred.', 'shopos-digital'));
         $this->tog('fe_disable_animations_mobile', __('Disable Animations on Mobile', 'shopos-digital'), $o, __('Removes all Elementor entrance animations on mobile devices (screen < 768px). Animations cause layout shifts and jank on mobile — this directly fixes LCP and CLS.', 'shopos-digital'));
         echo '</div>';
 
-        echo '<div class="fd-section"><h2>' . esc_html__('Font Optimization', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Font Optimization', 'shopos-digital') . '</h2>';
         $this->tog('fe_disable_elementor_gfonts', __('Disable Elementor Google Fonts Loading', 'shopos-digital'), $o, __('Prevents Elementor from loading Google Fonts via its own mechanism. <strong>Only enable if you self-host fonts or use system fonts.</strong> Eliminates 1-2 render-blocking requests.', 'shopos-digital'));
         $this->tog('fe_optimize_google_fonts', __('Add display=swap to Google Fonts', 'shopos-digital'), $o, __('Ensures text is visible immediately while fonts load (prevents FOIT — Flash of Invisible Text).', 'shopos-digital'));
         $this->tog('fe_font_display_swap', __('Force font-display: swap on Inline @font-face', 'shopos-digital'), $o, __('Rewrites @font-face blocks inside inline <style> tags to include <code>font-display: swap</code>. Theme-loaded CSS files are out of scope — add the property upstream.', 'shopos-digital'));
         echo '</div>';
 
-        echo '<div class="fd-section"><h2>' . esc_html__('Resource Hints & Preloading', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Resource Hints & Preloading', 'shopos-digital') . '</h2>';
         $this->tog('fe_add_preconnect', __('Add Preconnect Hints', 'shopos-digital'), $o, __('Tells the browser to start connecting to external domains (Google Fonts, CDNs) before they\'re needed. Saves 100-300ms per external domain.', 'shopos-digital'));
         $this->tog('fe_preconnect_cdnjs', __('Preconnect to cdnjs.cloudflare.com', 'shopos-digital'), $o, __('Adds a preconnect hint for cdnjs (used by some Elementor addons). Turn off if your site does not load anything from cdnjs. Only applies when Add Preconnect Hints is on.', 'shopos-digital'));
         ?>
-        <div class="fd-field" style="margin-top:10px">
+        <div class="shopos-digital-field" style="margin-top:10px">
             <label><strong><?php esc_html_e('Additional Preconnect Domains', 'shopos-digital'); ?></strong> <?php esc_html_e('(one per line)', 'shopos-digital'); ?></label>
-            <textarea name="<?php echo FD_OPT; ?>[fe_preconnect_domains]" rows="3" class="large-text"><?php echo esc_textarea($o['fe_preconnect_domains']); ?></textarea>
+            <textarea name="<?php echo SHOPOS_DIGITAL_OPT; ?>[fe_preconnect_domains]" rows="3" class="large-text"><?php echo esc_textarea($o['fe_preconnect_domains']); ?></textarea>
             <p class="description"><?php esc_html_e('Example: https://cdn.example.com', 'shopos-digital'); ?></p>
         </div>
         <?php
         $this->tog('fe_preload_lcp', __('Preload LCP Image', 'shopos-digital'), $o, __('Tells the browser to start downloading your largest visible image immediately — the single most impactful fix for LCP score. Enter the URL below.', 'shopos-digital'));
         ?>
-        <div class="fd-field" style="margin-top:10px">
+        <div class="shopos-digital-field" style="margin-top:10px">
             <label><strong><?php esc_html_e('LCP Image URL', 'shopos-digital'); ?></strong> <?php esc_html_e('(your hero image or main product image)', 'shopos-digital'); ?></label>
-            <input type="text" name="<?php echo FD_OPT; ?>[fe_lcp_image_url]" value="<?php echo esc_attr($o['fe_lcp_image_url']); ?>" class="large-text" placeholder="https://yoursite.com/wp-content/uploads/hero.webp">
+            <input type="text" name="<?php echo SHOPOS_DIGITAL_OPT; ?>[fe_lcp_image_url]" value="<?php echo esc_attr($o['fe_lcp_image_url']); ?>" class="large-text" placeholder="https://yoursite.com/wp-content/uploads/hero.webp">
             <p class="description"><?php esc_html_e('Find this in Chrome DevTools → Performance → look for the largest image, or in PageSpeed Insights under "Largest Contentful Paint element".', 'shopos-digital'); ?></p>
         </div>
         <?php
         $this->tog('fe_fetchpriority_lcp', __('Add fetchpriority="high" to LCP Image', 'shopos-digital'), $o, __('Marks the image whose URL matches the LCP Image URL above as high-priority. <strong>Requires LCP Image URL to be set</strong> — otherwise this toggle is a no-op.', 'shopos-digital'));
         echo '</div>';
 
-        echo '<div class="fd-section"><h2>' . esc_html__('Asset Cleanup', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Asset Cleanup', 'shopos-digital') . '</h2>';
         $this->tog('fe_disable_wc_blocks_css', __('Remove WooCommerce Blocks CSS', 'shopos-digital'), $o, __('WooCommerce loads its Blocks CSS (~50KB) on every page even if you don\'t use WC Blocks. Safe to remove if using Elementor for product layouts.', 'shopos-digital'));
         $this->tog('fe_lazy_iframes', __('Lazy Load iframes (skip first)', 'shopos-digital'), $o, __('Adds <code>loading="lazy"</code> to all iframes except the first one on a page (so hero videos still load eagerly).', 'shopos-digital'));
         $this->tog('fe_conditional_cf7', __('Load Contact Form 7 Only When Needed', 'shopos-digital'), $o, __('Detects [contact-form-7] shortcodes via the do_shortcode_tag hook (so Elementor-rendered forms also count) and dequeues CF7 assets at wp_footer when no form was rendered.', 'shopos-digital'));
@@ -467,8 +467,8 @@ class FD_Admin {
             __('Trashed Comments', 'shopos-digital') => $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->comments} WHERE comment_approved='trash'"),
             __('Expired Transients', 'shopos-digital') => $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '%_transient_timeout_%' AND option_value < " . time()),
         );
-        echo '<div class="fd-section"><h2>' . esc_html__('Database Cleanup', 'shopos-digital') . '</h2>';
-        echo '<div class="fd-cleanup-stats">';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Database Cleanup', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-cleanup-stats">';
         foreach ($stats as $label => $count) echo '<span>' . esc_html($label) . ': <strong>' . esc_html(number_format((int)$count)) . '</strong></span>';
         echo '</div>';
 
@@ -489,15 +489,15 @@ class FD_Admin {
         $this->tog('db_optimize_in_cron', __('Also run OPTIMIZE TABLE during nightly cron', 'shopos-digital'), $o, __('<strong>OFF by default.</strong> Only enable on a scheduled maintenance window with low traffic. Otherwise, trigger manually via the button below.', 'shopos-digital'));
         echo '</div>';
 
-        echo '<div class="fd-section"><h2>' . esc_html__('Automatic Cleanup', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Automatic Cleanup', 'shopos-digital') . '</h2>';
         $this->tog('db_auto_cleanup', __('Enable Nightly Cleanup (3:00 AM)', 'shopos-digital'), $o, __('Runs all enabled cleanup tasks above on a daily schedule.', 'shopos-digital'));
         echo '<p style="margin-top:15px">
-            <button type="button" class="button button-primary" id="fd-run-cleanup">' . esc_html__('🧹 Run Cleanup Now', 'shopos-digital') . '</button>
-            <button type="button" class="button" id="fd-optimize-tables" style="margin-left:10px">' . esc_html__('⚡ Optimize Tables Now', 'shopos-digital') . '</button>
+            <button type="button" class="button button-primary" id="shopos-digital-run-cleanup">' . esc_html__('🧹 Run Cleanup Now', 'shopos-digital') . '</button>
+            <button type="button" class="button" id="shopos-digital-optimize-tables" style="margin-left:10px">' . esc_html__('⚡ Optimize Tables Now', 'shopos-digital') . '</button>
         </p>';
         echo '<p class="description">' . wp_kses(__('<strong>Warning:</strong> OPTIMIZE TABLE locks tables for 1\u201315 minutes on large stores. Run during maintenance windows only.', 'shopos-digital'), $this->allowed_desc_html()) . '</p>';
-        echo '<div id="fd-cleanup-msg" style="margin-top:10px"></div>';
-        echo '<div id="fd-optimize-msg" style="margin-top:10px"></div>';
+        echo '<div id="shopos-digital-cleanup-msg" style="margin-top:10px"></div>';
+        echo '<div id="shopos-digital-optimize-msg" style="margin-top:10px"></div>';
         echo '</div>';
     }
 
@@ -509,17 +509,17 @@ class FD_Admin {
         $total = $wpdb->get_var("SELECT ROUND(SUM(LENGTH(option_value))/1024,0) FROM {$wpdb->options} WHERE autoload IN ('yes','on','auto','auto-on')");
         $count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE autoload IN ('yes','on','auto','auto-on')");
         ?>
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('Autoload Optimizer', 'shopos-digital'); ?></h2>
             <p><?php echo wp_kses(sprintf(__('WordPress loads ALL autoloaded options into memory on every single page request. A healthy site should have under 1 MB of autoloaded data. Yours: <strong>%1$s KB</strong> across <strong>%2$s</strong> options.', 'shopos-digital'), number_format((int)$total), number_format((int)$count)), array('strong' => array())); ?></p>
 
             <p>
-                <button type="button" class="button button-primary" id="fd-audit-autoload"><?php esc_html_e('🔍 Audit Top 30 Largest Autoloaded Options', 'shopos-digital'); ?></button>
+                <button type="button" class="button button-primary" id="shopos-digital-audit-autoload"><?php esc_html_e('🔍 Audit Top 30 Largest Autoloaded Options', 'shopos-digital'); ?></button>
             </p>
-            <div id="fd-autoload-results" style="margin-top:15px"></div>
+            <div id="shopos-digital-autoload-results" style="margin-top:15px"></div>
         </div>
 
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('Fix Large Autoloaded Options', 'shopos-digital'); ?></h2>
             <p><?php esc_html_e('Automatically set autoload=no for options larger than a threshold. This forces WordPress to load them only when actually needed.', 'shopos-digital'); ?></p>
 
@@ -527,14 +527,14 @@ class FD_Admin {
             <?php $this->num('auto_large_threshold_kb', __('Per-option threshold (KB)', 'shopos-digital'), $o, 10, 10240, __('Individual options must exceed this size (in kilobytes) to be eligible for auto-fix. Default: 100 KB.', 'shopos-digital')); ?>
             <?php $this->num('auto_ceiling_mb', __('Total autoload ceiling (MB)', 'shopos-digital'), $o, 0, 100, __('Only runs the auto-fix pass when total autoload exceeds this ceiling. Default: 2 MB. Set to 0 to fire any time.', 'shopos-digital')); ?>
 
-            <p><button type="button" class="button" id="fd-fix-autoload"><?php esc_html_e('⚡ Run Auto-Fix Now (using threshold above)', 'shopos-digital'); ?></button></p>
-            <div id="fd-fix-autoload-msg" style="margin-top:10px"></div>
+            <p><button type="button" class="button" id="shopos-digital-fix-autoload"><?php esc_html_e('⚡ Run Auto-Fix Now (using threshold above)', 'shopos-digital'); ?></button></p>
+            <div id="shopos-digital-fix-autoload-msg" style="margin-top:10px"></div>
         </div>
 
         <?php
         $myisam = $wpdb->get_results($wpdb->prepare("SELECT TABLE_NAME, ENGINE FROM information_schema.tables WHERE table_schema=%s AND engine='MyISAM' AND table_name LIKE %s", DB_NAME, $wpdb->esc_like($wpdb->prefix) . '%'));
         if ($myisam): ?>
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('MyISAM → InnoDB Conversion', 'shopos-digital'); ?></h2>
             <p><?php esc_html_e('InnoDB provides row-level locking, crash recovery, and better concurrent performance. The following tables are still MyISAM:', 'shopos-digital'); ?></p>
             <ul>
@@ -542,8 +542,8 @@ class FD_Admin {
                     <li><code><?php echo esc_html($t->TABLE_NAME); ?></code></li>
                 <?php endforeach; ?>
             </ul>
-            <p><button type="button" class="button button-primary" id="fd-convert-myisam"><?php esc_html_e('🔄 Convert All to InnoDB', 'shopos-digital'); ?></button></p>
-            <div id="fd-myisam-msg" style="margin-top:10px"></div>
+            <p><button type="button" class="button button-primary" id="shopos-digital-convert-myisam"><?php esc_html_e('🔄 Convert All to InnoDB', 'shopos-digital'); ?></button></p>
+            <div id="shopos-digital-myisam-msg" style="margin-top:10px"></div>
         </div>
         <?php endif;
     }
@@ -552,27 +552,27 @@ class FD_Admin {
     // TAB: PROFILER
     // ============================
     private function tab_profiler($o) {
-        $active = FD_Profiler::is_active();
-        $expires = FD_Profiler::get_expires();
-        $threshold = FD_Profiler::get_threshold();
-        $stats = FD_Profiler::get_stats();
+        $active = ShopOS_Digital_Profiler::is_active();
+        $expires = ShopOS_Digital_Profiler::get_expires();
+        $threshold = ShopOS_Digital_Profiler::get_threshold();
+        $stats = ShopOS_Digital_Profiler::get_stats();
         ?>
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('🔬 Query Profiler', 'shopos-digital'); ?></h2>
             <p><?php esc_html_e('Captures slow database queries during a timed session, identifies WHICH plugin/theme caused each one, classifies the type of slowness, and recommends exactly which setting in our plugin will fix it. Only run this when diagnosing — it has performance overhead while active.', 'shopos-digital'); ?></p>
 
-            <div class="fd-profiler-status">
+            <div class="shopos-digital-profiler-status">
                 <?php if ($active): ?>
-                    <div class="fd-alert fd-ok">
+                    <div class="shopos-digital-alert shopos-digital-ok">
                         <strong><?php esc_html_e('✅ Profiler is ACTIVE', 'shopos-digital'); ?></strong> — <?php echo esc_html(sprintf(__('Expires in %1$s (%2$s)', 'shopos-digital'), human_time_diff(time(), $expires), date('H:i:s', $expires))); ?><br>
                         <span style="font-size:12px"><?php esc_html_e('Browse your site now. Visit slow pages, edit a product, load the WooCommerce orders page — anything you want to profile.', 'shopos-digital'); ?></span>
                     </div>
-                    <p><button type="button" class="button button-primary" id="fd-prof-stop"><?php esc_html_e('⏹ Stop Profiler', 'shopos-digital'); ?></button></p>
+                    <p><button type="button" class="button button-primary" id="shopos-digital-prof-stop"><?php esc_html_e('⏹ Stop Profiler', 'shopos-digital'); ?></button></p>
                 <?php else: ?>
-                    <div class="fd-alert fd-info"><strong><?php esc_html_e('⚪ Profiler is OFF', 'shopos-digital'); ?></strong> — <?php esc_html_e('Click Start to begin capturing slow queries.', 'shopos-digital'); ?></div>
+                    <div class="shopos-digital-alert shopos-digital-info"><strong><?php esc_html_e('⚪ Profiler is OFF', 'shopos-digital'); ?></strong> — <?php esc_html_e('Click Start to begin capturing slow queries.', 'shopos-digital'); ?></div>
                     <p>
                         <label style="margin-right:15px"><strong><?php esc_html_e('Duration:', 'shopos-digital'); ?></strong>
-                            <select id="fd-prof-duration">
+                            <select id="shopos-digital-prof-duration">
                                 <option value="5"><?php esc_html_e('5 minutes', 'shopos-digital'); ?></option>
                                 <option value="15" selected><?php esc_html_e('15 minutes', 'shopos-digital'); ?></option>
                                 <option value="30"><?php esc_html_e('30 minutes', 'shopos-digital'); ?></option>
@@ -580,7 +580,7 @@ class FD_Admin {
                             </select>
                         </label>
                         <label style="margin-right:15px"><strong><?php esc_html_e('Threshold:', 'shopos-digital'); ?></strong>
-                            <select id="fd-prof-threshold">
+                            <select id="shopos-digital-prof-threshold">
                                 <option value="0.01"><?php esc_html_e('10 ms (aggressive)', 'shopos-digital'); ?></option>
                                 <option value="0.05" <?php selected($threshold, 0.05); ?>><?php esc_html_e('50 ms (recommended)', 'shopos-digital'); ?></option>
                                 <option value="0.1"><?php esc_html_e('100 ms', 'shopos-digital'); ?></option>
@@ -589,26 +589,26 @@ class FD_Admin {
                                 <option value="1"><?php esc_html_e('1000 ms', 'shopos-digital'); ?></option>
                             </select>
                         </label>
-                        <button type="button" class="button button-primary" id="fd-prof-start"><?php esc_html_e('▶ Start Profiler', 'shopos-digital'); ?></button>
+                        <button type="button" class="button button-primary" id="shopos-digital-prof-start"><?php esc_html_e('▶ Start Profiler', 'shopos-digital'); ?></button>
                     </p>
                 <?php endif; ?>
             </div>
         </div>
 
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('🗄️ Retention', 'shopos-digital'); ?></h2>
-            <p class="description"><?php esc_html_e('Nightly cleanup prunes the slow-query table by age AND enforces a hard row cap. Applies to the fd_slow_queries table only; all other activity is untouched.', 'shopos-digital'); ?></p>
+            <p class="description"><?php esc_html_e('Nightly cleanup prunes the slow-query table by age AND enforces a hard row cap. Applies to the shopos_digital_slow_queries table only; all other activity is untouched.', 'shopos-digital'); ?></p>
             <form method="post" action="options.php" style="margin-top:10px">
-                <?php settings_fields('fd_group'); ?>
-                <input type="hidden" name="fd_active_tab" value="profiler">
-                <div class="fd-field">
-                    <label for="fd_prof_retention_days"><strong><?php esc_html_e('Retention (days):', 'shopos-digital'); ?></strong></label>
-                    <input type="number" min="1" max="365" id="fd_prof_retention_days" name="<?php echo esc_attr(FD_OPT); ?>[prof_retention_days]" value="<?php echo esc_attr((int) ($o['prof_retention_days'] ?? 7)); ?>" style="width:90px">
+                <?php settings_fields('shopos_digital_group'); ?>
+                <input type="hidden" name="shopos_digital_active_tab" value="profiler">
+                <div class="shopos-digital-field">
+                    <label for="shopos_digital_prof_retention_days"><strong><?php esc_html_e('Retention (days):', 'shopos-digital'); ?></strong></label>
+                    <input type="number" min="1" max="365" id="shopos_digital_prof_retention_days" name="<?php echo esc_attr(SHOPOS_DIGITAL_OPT); ?>[prof_retention_days]" value="<?php echo esc_attr((int) ($o['prof_retention_days'] ?? 7)); ?>" style="width:90px">
                     <span class="description"><?php esc_html_e('Rows older than this are deleted nightly. Min 1, max 365.', 'shopos-digital'); ?></span>
                 </div>
-                <div class="fd-field">
-                    <label for="fd_prof_max_rows"><strong><?php esc_html_e('Max rows:', 'shopos-digital'); ?></strong></label>
-                    <input type="number" min="1000" max="1000000" step="1000" id="fd_prof_max_rows" name="<?php echo esc_attr(FD_OPT); ?>[prof_max_rows]" value="<?php echo esc_attr((int) ($o['prof_max_rows'] ?? 50000)); ?>" style="width:120px">
+                <div class="shopos-digital-field">
+                    <label for="shopos_digital_prof_max_rows"><strong><?php esc_html_e('Max rows:', 'shopos-digital'); ?></strong></label>
+                    <input type="number" min="1000" max="1000000" step="1000" id="shopos_digital_prof_max_rows" name="<?php echo esc_attr(SHOPOS_DIGITAL_OPT); ?>[prof_max_rows]" value="<?php echo esc_attr((int) ($o['prof_max_rows'] ?? 50000)); ?>" style="width:120px">
                     <span class="description"><?php esc_html_e('Hard ceiling — oldest rows trimmed first on overflow. Min 1,000, max 1,000,000.', 'shopos-digital'); ?></span>
                 </div>
                 <?php submit_button(__('Save Retention Settings', 'shopos-digital'), 'secondary'); ?>
@@ -616,63 +616,63 @@ class FD_Admin {
         </div>
 
         <?php if ($stats['total_queries'] > 0): ?>
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('📊 Captured Data', 'shopos-digital'); ?></h2>
-            <div class="fd-stats-grid">
-                <div class="fd-card"><div class="fd-num"><?php echo number_format($stats['total_queries']); ?></div><div class="fd-lbl"><?php esc_html_e('Slow Queries Captured', 'shopos-digital'); ?></div></div>
-                <div class="fd-card"><div class="fd-num"><?php echo number_format($stats['unique_queries']); ?></div><div class="fd-lbl"><?php esc_html_e('Unique Patterns', 'shopos-digital'); ?></div></div>
-                <div class="fd-card"><div class="fd-num"><?php echo number_format($stats['total_time'], 2); ?>s</div><div class="fd-lbl"><?php esc_html_e('Total Slow Time', 'shopos-digital'); ?></div></div>
-                <div class="fd-card"><div class="fd-num"><?php echo number_format($stats['max_time'] * 1000, 0); ?>ms</div><div class="fd-lbl"><?php esc_html_e('Slowest Query', 'shopos-digital'); ?></div></div>
-                <div class="fd-card"><div class="fd-num"><?php echo number_format($stats['components']); ?></div><div class="fd-lbl"><?php esc_html_e('Components', 'shopos-digital'); ?></div></div>
+            <div class="shopos-digital-stats-grid">
+                <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo number_format($stats['total_queries']); ?></div><div class="shopos-digital-lbl"><?php esc_html_e('Slow Queries Captured', 'shopos-digital'); ?></div></div>
+                <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo number_format($stats['unique_queries']); ?></div><div class="shopos-digital-lbl"><?php esc_html_e('Unique Patterns', 'shopos-digital'); ?></div></div>
+                <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo number_format($stats['total_time'], 2); ?>s</div><div class="shopos-digital-lbl"><?php esc_html_e('Total Slow Time', 'shopos-digital'); ?></div></div>
+                <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo number_format($stats['max_time'] * 1000, 0); ?>ms</div><div class="shopos-digital-lbl"><?php esc_html_e('Slowest Query', 'shopos-digital'); ?></div></div>
+                <div class="shopos-digital-card"><div class="shopos-digital-num"><?php echo number_format($stats['components']); ?></div><div class="shopos-digital-lbl"><?php esc_html_e('Components', 'shopos-digital'); ?></div></div>
             </div>
 
-            <div class="fd-prof-filters">
-                <label><input type="checkbox" id="fd-prof-hide-design" checked> <?php esc_html_e('Hide design/theme queries (Elementor, Plus Addons, Animation Addons, themes)', 'shopos-digital'); ?></label>
-                <button type="button" class="button" id="fd-prof-refresh" style="margin-left:15px"><?php esc_html_e('🔄 Refresh', 'shopos-digital'); ?></button>
-                <button type="button" class="button" id="fd-prof-clear" style="margin-left:8px"><?php esc_html_e('🗑️ Clear All Data', 'shopos-digital'); ?></button>
+            <div class="shopos-digital-prof-filters">
+                <label><input type="checkbox" id="shopos-digital-prof-hide-design" checked> <?php esc_html_e('Hide design/theme queries (Elementor, Plus Addons, Animation Addons, themes)', 'shopos-digital'); ?></label>
+                <button type="button" class="button" id="shopos-digital-prof-refresh" style="margin-left:15px"><?php esc_html_e('🔄 Refresh', 'shopos-digital'); ?></button>
+                <button type="button" class="button" id="shopos-digital-prof-clear" style="margin-left:8px"><?php esc_html_e('🗑️ Clear All Data', 'shopos-digital'); ?></button>
             </div>
 
-            <div id="fd-prof-results">
+            <div id="shopos-digital-prof-results">
                 <?php $this->render_profiler_table(); ?>
             </div>
         </div>
         <?php else: ?>
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('📊 No Data Yet', 'shopos-digital'); ?></h2>
             <p><?php esc_html_e('Start the profiler, browse your site (visit the slow pages, try editing a product, load the orders page), then come back here to see results.', 'shopos-digital'); ?></p>
         </div>
         <?php endif; ?>
 
         <!-- Details modal -->
-        <div id="fd-prof-modal" style="display:none">
-            <div class="fd-modal-overlay"></div>
-            <div class="fd-modal-content">
-                <span class="fd-modal-close">&times;</span>
-                <div id="fd-modal-body"></div>
+        <div id="shopos-digital-prof-modal" style="display:none">
+            <div class="shopos-digital-modal-overlay"></div>
+            <div class="shopos-digital-modal-content">
+                <span class="shopos-digital-modal-close">&times;</span>
+                <div id="shopos-digital-modal-body"></div>
             </div>
         </div>
         <?php
     }
 
     private function render_profiler_table() {
-        $rows_all = FD_Profiler::get_aggregated(array());
-        $rows_filtered = FD_Profiler::get_aggregated(array('hide_design' => true));
+        $rows_all = ShopOS_Digital_Profiler::get_aggregated(array());
+        $rows_filtered = ShopOS_Digital_Profiler::get_aggregated(array('hide_design' => true));
 
-        echo '<div id="fd-prof-table-all" style="display:none">';
+        echo '<div id="shopos-digital-prof-table-all" style="display:none">';
         $this->render_profiler_rows($rows_all);
         echo '</div>';
-        echo '<div id="fd-prof-table-filtered">';
+        echo '<div id="shopos-digital-prof-table-filtered">';
         $this->render_profiler_rows($rows_filtered);
         echo '</div>';
     }
 
     private function render_profiler_rows($rows) {
         if (empty($rows)) {
-            echo '<div class="fd-alert fd-info" style="margin-top:15px">' . esc_html__('No matching slow queries captured yet. Browse your site while the profiler is running.', 'shopos-digital') . '</div>';
+            echo '<div class="shopos-digital-alert shopos-digital-info" style="margin-top:15px">' . esc_html__('No matching slow queries captured yet. Browse your site while the profiler is running.', 'shopos-digital') . '</div>';
             return;
         }
         ?>
-        <table class="wp-list-table widefat striped fd-prof-table">
+        <table class="wp-list-table widefat striped shopos-digital-prof-table">
             <thead>
                 <tr>
                     <th style="width:22%"><?php esc_html_e('Component', 'shopos-digital'); ?></th>
@@ -716,7 +716,7 @@ class FD_Admin {
                     <td>
                         <code style="display:block;font-size:11px;background:#f5f5f5;padding:5px;border-radius:3px;max-height:80px;overflow:auto;margin-bottom:5px"><?php echo esc_html(substr($r->query_sample, 0, 500)); ?></code>
                         <div style="font-size:12px;color:#2e7d32"><?php echo $r->recommendation; ?></div>
-                        <button type="button" class="button button-small fd-prof-explain" data-fp="<?php echo esc_attr($r->fingerprint); ?>" style="margin-top:5px">🔍 EXPLAIN</button>
+                        <button type="button" class="button button-small shopos-digital-prof-explain" data-fp="<?php echo esc_attr($r->fingerprint); ?>" style="margin-top:5px">🔍 EXPLAIN</button>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -729,7 +729,7 @@ class FD_Admin {
     // TAB: BLOAT
     // ============================
     private function tab_bloat($o) {
-        echo '<div class="fd-section"><h2>' . esc_html__('Bloat Removal', 'shopos-digital') . '</h2>';
+        echo '<div class="shopos-digital-section"><h2>' . esc_html__('Bloat Removal', 'shopos-digital') . '</h2>';
         $this->tog('bloat_disable_comments', __('Disable Comments System Entirely', 'shopos-digital'), $o, __('Removes comment menus, meta boxes, admin bar items, closes all comments. <strong>Only if your store doesn\'t use product reviews.</strong>', 'shopos-digital'));
         $this->tog('bloat_disable_gutenberg', __('Disable Gutenberg Block Editor', 'shopos-digital'), $o, __('Restores classic editor and removes all block editor frontend assets (~200KB). <strong>Recommended for Elementor-only sites.</strong>', 'shopos-digital'));
         $this->tog('bloat_remove_dns_prefetch', __('Remove DNS Prefetch Hints', 'shopos-digital'), $o, __('Removes dns-prefetch resource hints from wp_head including s.w.org.', 'shopos-digital'));
@@ -740,7 +740,7 @@ class FD_Admin {
     // TAB: ACTIVITY LOG
     // ============================
     private function tab_activity($o) {
-        $log = class_exists('FD_Activity_Log') ? FD_Activity_Log::get_all() : array();
+        $log = class_exists('ShopOS_Digital_Activity_Log') ? ShopOS_Digital_Activity_Log::get_all() : array();
         $action_labels = array(
             'database_cleanup'          => __('Database Cleanup', 'shopos-digital'),
             'optimize_tables'           => __('Optimize Tables', 'shopos-digital'),
@@ -753,17 +753,17 @@ class FD_Admin {
             'myisam_convert'            => __('MyISAM → InnoDB', 'shopos-digital'),
         );
         ?>
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('📜 Activity Log', 'shopos-digital'); ?></h2>
-            <p><?php echo esc_html(sprintf(__('Last %d destructive actions performed by ShopOS Digital. Newest first. Rolling FIFO — older entries are pruned automatically.', 'shopos-digital'), FD_Activity_Log::MAX_ENTRIES)); ?></p>
+            <p><?php echo esc_html(sprintf(__('Last %d destructive actions performed by ShopOS Digital. Newest first. Rolling FIFO — older entries are pruned automatically.', 'shopos-digital'), ShopOS_Digital_Activity_Log::MAX_ENTRIES)); ?></p>
 
             <p>
-                <button type="button" class="button" id="fd-clear-log"><?php esc_html_e('🗑️ Clear log', 'shopos-digital'); ?></button>
+                <button type="button" class="button" id="shopos-digital-clear-log"><?php esc_html_e('🗑️ Clear log', 'shopos-digital'); ?></button>
             </p>
-            <div id="fd-clear-log-msg" style="margin-top:10px"></div>
+            <div id="shopos-digital-clear-log-msg" style="margin-top:10px"></div>
 
             <?php if (empty($log)): ?>
-                <div class="fd-alert fd-info"><?php esc_html_e('No activity recorded yet.', 'shopos-digital'); ?></div>
+                <div class="shopos-digital-alert shopos-digital-info"><?php esc_html_e('No activity recorded yet.', 'shopos-digital'); ?></div>
             <?php else: ?>
                 <table class="wp-list-table widefat fixed striped">
                     <thead>
@@ -804,23 +804,23 @@ class FD_Admin {
     // ============================
     private function tab_tools($o) {
         ?>
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('Export Settings', 'shopos-digital'); ?></h2>
-            <textarea id="fd-export" class="large-text" rows="8" readonly><?php echo esc_textarea(wp_json_encode($o, JSON_PRETTY_PRINT)); ?></textarea>
-            <p><button type="button" class="button" id="fd-copy"><?php esc_html_e('📋 Copy', 'shopos-digital'); ?></button> <button type="button" class="button" id="fd-download"><?php esc_html_e('💾 Download JSON', 'shopos-digital'); ?></button></p>
+            <textarea id="shopos-digital-export" class="large-text" rows="8" readonly><?php echo esc_textarea(wp_json_encode($o, JSON_PRETTY_PRINT)); ?></textarea>
+            <p><button type="button" class="button" id="shopos-digital-copy"><?php esc_html_e('📋 Copy', 'shopos-digital'); ?></button> <button type="button" class="button" id="shopos-digital-download"><?php esc_html_e('💾 Download JSON', 'shopos-digital'); ?></button></p>
         </div>
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('Import Settings', 'shopos-digital'); ?></h2>
-            <textarea id="fd-import" class="large-text" rows="8" placeholder="<?php esc_attr_e('Paste settings JSON...', 'shopos-digital'); ?>"></textarea>
-            <p><button type="button" class="button button-primary" id="fd-do-import"><?php esc_html_e('📥 Import', 'shopos-digital'); ?></button></p>
-            <div id="fd-import-msg" style="margin-top:10px"></div>
+            <textarea id="shopos-digital-import" class="large-text" rows="8" placeholder="<?php esc_attr_e('Paste settings JSON...', 'shopos-digital'); ?>"></textarea>
+            <p><button type="button" class="button button-primary" id="shopos-digital-do-import"><?php esc_html_e('📥 Import', 'shopos-digital'); ?></button></p>
+            <div id="shopos-digital-import-msg" style="margin-top:10px"></div>
         </div>
 
-        <div class="fd-section">
+        <div class="shopos-digital-section">
             <h2><?php esc_html_e('Changelog', 'shopos-digital'); ?></h2>
             <div style="background:#f5f7fa;padding:15px 20px;border-radius:6px;border:1px solid #e0e5ec;font-size:13px;line-height:1.8;">
                 <strong>v1.7.0</strong> — <strong>Third-audit fixes — 15 more critical issues.</strong> <strong>Fixed the flagship Smart Elementor Cleanup feature</strong> which had never worked — was using function_exists() on a class name (should be class_exists), so every non-Elementor page was loading the full Elementor bundle anyway. Fixed the Phone Home Blocker wildcard pattern bug (preg_quote ran before str_replace, escaping * before substitution). Fixed tab routing security: ?tab= parameter now validated against a whitelist with method_exists double-guard — prevents PHP fatals and arbitrary method calls. Fixed wc_defer_term_counting which was permanently breaking category counts (called defer(true) without matching defer(false)). Replaced obsolete woocommerce_admin_disabled filter (removed in WC 6.0) with modern WC 7+ APIs that actually work. Fixed transient cleanup REPLACE() bug that corrupted keys containing "_timeout_" substring. Moved months dropdown cache from options to transients (with save_post invalidation and cleanup of legacy rows). Added REST API detection to query optimizer — REST consumers no longer get found_posts silently zeroed. Added XSS hardening to all form helpers (esc_html labels, wp_kses descriptions with safe HTML whitelist). Added uninstall.php that cleans up all plugin data when deleted. Set_time_limit now guarded for safe_mode environments. Disable mobile animations now uses wp_add_inline_style instead of raw wp_head echo.<br>
-                <strong>v1.6.0</strong> — <strong>Major audit cleanup — 22 issues fixed.</strong> Fixed Google Fonts optimization no-op bug (str_replace was replacing href with itself). Fixed invalid bare @font-face CSS. Fixed session_tokens cleanup (now properly deserializes and prunes expired tokens). Implemented 5 previously-dead toggles: wc_ajax_attribute_edit (AJAX attribute search on edit-product), adm_cache_user_counts, adm_cache_author_counts, adm_cache_category_list (new FD_Admin_Cache module), and auto_convert_myisam (daily MyISAM→InnoDB conversion). Autoload module now respects auto_fix_large_options toggle and auto_large_threshold_kb setting (was hardcoded). Eliminated duplicate hook registrations across security/speed/frontend modules. Fixed activation cron strtotime('03:00') bug that could schedule in the past. Fixed SQL escaping inconsistency (MyISAM query, SHOW TABLES LIKE checks now use $wpdb->prepare). Corrected misleading wc_remove_variation_calc description.<br>
+                <strong>v1.6.0</strong> — <strong>Major audit cleanup — 22 issues fixed.</strong> Fixed Google Fonts optimization no-op bug (str_replace was replacing href with itself). Fixed invalid bare @font-face CSS. Fixed session_tokens cleanup (now properly deserializes and prunes expired tokens). Implemented 5 previously-dead toggles: wc_ajax_attribute_edit (AJAX attribute search on edit-product), adm_cache_user_counts, adm_cache_author_counts, adm_cache_category_list (new ShopOS_Digital_Admin_Cache module), and auto_convert_myisam (daily MyISAM→InnoDB conversion). Autoload module now respects auto_fix_large_options toggle and auto_large_threshold_kb setting (was hardcoded). Eliminated duplicate hook registrations across security/speed/frontend modules. Fixed activation cron strtotime('03:00') bug that could schedule in the past. Fixed SQL escaping inconsistency (MyISAM query, SHOW TABLES LIKE checks now use $wpdb->prepare). Corrected misleading wc_remove_variation_calc description.<br>
                 <strong>v1.5.0</strong> — <strong>NEW: Query Profiler module.</strong> Captures slow database queries with full plugin/theme attribution, smart classification, and actionable recommendations linking to specific ShopOS Digital settings. Runtime-toggleable (5-60 min sessions) so it has no overhead when off. "Hide design queries" filter excludes Elementor, Plus Addons, Animation Addons, and theme files so you see only actionable database bottlenecks. Click any query to see its EXPLAIN execution plan with table scan/filesort warnings highlighted. Stores data in custom table created on activation.<br>
                 <strong>v1.4.0</strong> — <strong>NEW: Frontend Optimizer module (12 toggles).</strong> Smart Elementor cleanup (removes all Elementor assets on non-Elementor pages), defer Elementor JS, disable animations on mobile (fixes CLS/LCP), disable Elementor Google Fonts, font-display:swap enforcement, preconnect resource hints, LCP image preload, fetchpriority="high" for first image, WooCommerce Blocks CSS removal, iframe lazy loading, conditional Contact Form 7 loading. This module targets the actual PageSpeed bottlenecks: render-blocking CSS/JS, font loading, and image priority.<br>
                 <strong>v1.3.0</strong> — <strong>Major: Integrated Index WP MySQL For Speed approach.</strong> New Tier 1 "Deep Reindex" restructures PRIMARY KEYs on 10 core tables (postmeta, usermeta, termmeta, commentmeta, options, comments, posts, users, wc_order_itemmeta, wc_orders_meta) into compound clustered indexes — the highest-impact DB optimization possible. Auto-detects Barracuda vs Antelope InnoDB format. Full revert capability. Tier 2 now has 18 secondary indexes for tables Tier 1 doesn't cover.<br>
@@ -838,20 +838,20 @@ class FD_Admin {
     private function tog($k, $label, $o, $desc = '') {
         $c = !empty($o[$k]) ? 'checked' : '';
         $k_esc = esc_attr($k);
-        $opt_esc = esc_attr(FD_OPT);
-        echo '<div class="fd-toggle-row"><label class="fd-toggle">';
+        $opt_esc = esc_attr(SHOPOS_DIGITAL_OPT);
+        echo '<div class="shopos-digital-toggle-row"><label class="shopos-digital-toggle">';
         echo '<input type="hidden" name="' . $opt_esc . '[' . $k_esc . ']" value="0">';
         echo '<input type="checkbox" name="' . $opt_esc . '[' . $k_esc . ']" value="1" ' . $c . '>';
-        echo '<span class="fd-slider"></span></label>';
-        echo '<div class="fd-toggle-txt"><strong>' . esc_html($label) . '</strong>';
+        echo '<span class="shopos-digital-slider"></span></label>';
+        echo '<div class="shopos-digital-toggle-txt"><strong>' . esc_html($label) . '</strong>';
         if ($desc) echo '<p class="description">' . wp_kses($desc, $this->allowed_desc_html()) . '</p>';
         echo '</div></div>';
     }
 
     private function sel($k, $label, $o, $choices, $desc = '') {
         $k_esc = esc_attr($k);
-        $opt_esc = esc_attr(FD_OPT);
-        echo '<div class="fd-field"><label><strong>' . esc_html($label) . '</strong></label>';
+        $opt_esc = esc_attr(SHOPOS_DIGITAL_OPT);
+        echo '<div class="shopos-digital-field"><label><strong>' . esc_html($label) . '</strong></label>';
         echo '<select name="' . $opt_esc . '[' . $k_esc . ']">';
         foreach ($choices as $v => $t) {
             echo '<option value="' . esc_attr($v) . '"' . selected($o[$k], $v, false) . '>' . esc_html($t) . '</option>';
@@ -863,8 +863,8 @@ class FD_Admin {
 
     private function num($k, $label, $o, $min, $max, $desc = '') {
         $k_esc = esc_attr($k);
-        $opt_esc = esc_attr(FD_OPT);
-        echo '<div class="fd-field"><label><strong>' . esc_html($label) . '</strong></label>';
+        $opt_esc = esc_attr(SHOPOS_DIGITAL_OPT);
+        echo '<div class="shopos-digital-field"><label><strong>' . esc_html($label) . '</strong></label>';
         echo '<input type="number" name="' . $opt_esc . '[' . $k_esc . ']" value="' . esc_attr($o[$k]) . '" min="' . (int)$min . '" max="' . (int)$max . '" style="width:80px">';
         if ($desc) echo '<p class="description">' . wp_kses($desc, $this->allowed_desc_html()) . '</p>';
         echo '</div>';
@@ -888,71 +888,71 @@ class FD_Admin {
     // AJAX HANDLERS
     // ============================
     public function ajax_cleanup() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
-        wp_send_json_success((new FD_Database(FD_Core::opts()))->run_cleanup());
+        wp_send_json_success((new ShopOS_Digital_Database(ShopOS_Digital_Core::opts()))->run_cleanup());
     }
 
     public function ajax_optimize_tables() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
-        $opts = FD_Core::opts();
+        $opts = ShopOS_Digital_Core::opts();
         if (empty($opts['db_optimize_tables'])) {
             wp_send_json_error(array('message' => esc_html__('Enable "Allow OPTIMIZE TABLE" in the Cleanup tab first.', 'shopos-digital')));
             return;
         }
-        $result = (new FD_Database($opts))->run_optimize_tables();
+        $result = (new ShopOS_Digital_Database($opts))->run_optimize_tables();
         wp_send_json_success($result);
     }
 
     public function ajax_clear_activity_log() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
-        if (class_exists('FD_Activity_Log')) {
-            FD_Activity_Log::clear();
+        if (class_exists('ShopOS_Digital_Activity_Log')) {
+            ShopOS_Digital_Activity_Log::clear();
         }
         wp_send_json_success(array('message' => esc_html__('Activity log cleared.', 'shopos-digital')));
     }
 
     public function ajax_create_idx() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
         $sel = isset($_POST['indexes']) ? array_map('sanitize_text_field', $_POST['indexes']) : array();
-        wp_send_json_success(FD_Indexes::create($sel));
+        wp_send_json_success(ShopOS_Digital_Indexes::create($sel));
     }
 
     public function ajax_drop_idx() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
-        FD_Indexes::drop_all();
+        ShopOS_Digital_Indexes::drop_all();
         wp_send_json_success(array('message' => esc_html__('All secondary indexes dropped.', 'shopos-digital')));
     }
 
     public function ajax_deep_reindex() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
         $tables = isset($_POST['tables']) ? array_map('sanitize_text_field', $_POST['tables']) : array();
-        wp_send_json_success(FD_Indexes::apply_deep($tables));
+        wp_send_json_success(ShopOS_Digital_Indexes::apply_deep($tables));
     }
 
     public function ajax_deep_revert() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
         $tables = isset($_POST['tables']) ? array_map('sanitize_text_field', $_POST['tables']) : array();
-        wp_send_json_success(FD_Indexes::revert_deep($tables));
+        wp_send_json_success(ShopOS_Digital_Indexes::revert_deep($tables));
     }
 
     public function ajax_import() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
         $data = json_decode(wp_unslash($_POST['settings']), true);
         if (!is_array($data)) { wp_send_json_error(array('message' => esc_html__('Invalid JSON', 'shopos-digital'))); return; }
-        update_option(FD_OPT, $this->sanitize($data));
+        update_option(SHOPOS_DIGITAL_OPT, $this->sanitize($data));
         wp_send_json_success(array('message' => esc_html__('Settings imported.', 'shopos-digital')));
     }
 
     public function ajax_audit_autoload() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
         global $wpdb;
         $rows = $wpdb->get_results("SELECT option_name, ROUND(LENGTH(option_value)/1024,1) AS size_kb FROM {$wpdb->options} WHERE autoload IN ('yes','on','auto','auto-on') ORDER BY LENGTH(option_value) DESC LIMIT 30");
@@ -960,15 +960,15 @@ class FD_Admin {
     }
 
     public function ajax_fix_autoload() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
         global $wpdb;
 
-        $opts = FD_Core::opts();
+        $opts = ShopOS_Digital_Core::opts();
         $threshold_kb = isset($opts['auto_large_threshold_kb']) ? max(10, (int)$opts['auto_large_threshold_kb']) : 100;
         $threshold_bytes = $threshold_kb * 1024;
 
-        $protected = FD_Autoload::get_protected_options();
+        $protected = ShopOS_Digital_Autoload::get_protected_options();
         $placeholders = implode(',', array_fill(0, count($protected), '%s'));
 
         $fixed = $wpdb->query($wpdb->prepare(
@@ -978,8 +978,8 @@ class FD_Admin {
              AND option_name NOT IN ($placeholders)",
             array_merge(array($threshold_bytes), $protected)
         ));
-        if (class_exists('FD_Activity_Log') && (int) $fixed > 0) {
-            FD_Activity_Log::record('autoload_manual_fix', array(
+        if (class_exists('ShopOS_Digital_Activity_Log') && (int) $fixed > 0) {
+            ShopOS_Digital_Activity_Log::record('autoload_manual_fix', array(
                 'rows_affected' => (int) $fixed,
                 'threshold_kb'  => $threshold_kb,
             ));
@@ -988,7 +988,7 @@ class FD_Admin {
     }
 
     public function ajax_convert_myisam() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
         global $wpdb;
         $tables = $wpdb->get_col($wpdb->prepare(
@@ -1012,8 +1012,8 @@ class FD_Admin {
             if ($result !== false) $count++;
             else $errors[] = $t . ': ' . $wpdb->last_error;
         }
-        if (class_exists('FD_Activity_Log') && $count > 0) {
-            FD_Activity_Log::record('myisam_convert', array(
+        if (class_exists('ShopOS_Digital_Activity_Log') && $count > 0) {
+            ShopOS_Digital_Activity_Log::record('myisam_convert', array(
                 'rows_affected' => $count,
                 'errors'        => $errors,
             ));
@@ -1024,35 +1024,35 @@ class FD_Admin {
     // === PROFILER AJAX ===
 
     public function ajax_profiler_start() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
         $duration = isset($_POST['duration']) ? (int) $_POST['duration'] : 15;
         $threshold = isset($_POST['threshold']) ? (float) $_POST['threshold'] : 0.05;
-        FD_Profiler::set_threshold($threshold);
-        FD_Profiler::start($duration);
+        ShopOS_Digital_Profiler::set_threshold($threshold);
+        ShopOS_Digital_Profiler::start($duration);
         wp_send_json_success(array('message' => sprintf(__('Profiler started for %d minutes.', 'shopos-digital'), $duration)));
     }
 
     public function ajax_profiler_stop() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
-        FD_Profiler::stop();
+        ShopOS_Digital_Profiler::stop();
         wp_send_json_success(array('message' => esc_html__('Profiler stopped.', 'shopos-digital')));
     }
 
     public function ajax_profiler_clear() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
-        FD_Profiler::clear_data();
+        ShopOS_Digital_Profiler::clear_data();
         wp_send_json_success(array('message' => esc_html__('All captured data cleared.', 'shopos-digital')));
     }
 
     public function ajax_profiler_explain() {
-        check_ajax_referer('fd_nonce', 'nonce');
+        check_ajax_referer('shopos_digital_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_die();
         $fp = isset($_POST['fingerprint']) ? sanitize_text_field($_POST['fingerprint']) : '';
         if (!$fp) wp_send_json_error(array('message' => esc_html__('Missing fingerprint', 'shopos-digital')));
-        $result = FD_Profiler::explain_query($fp);
+        $result = ShopOS_Digital_Profiler::explain_query($fp);
         wp_send_json_success($result);
     }
 }

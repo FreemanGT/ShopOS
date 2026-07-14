@@ -1,22 +1,22 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-class FD_Database {
+class ShopOS_Digital_Database {
     private $o;
     public function __construct($o) {
         $this->o = $o;
         if (!empty($o['db_auto_cleanup']))
-            add_action('fd_daily_maintenance', array($this,'run_cleanup'));
+            add_action('shopos_digital_daily_maintenance', array($this,'run_cleanup'));
     }
 
     /**
      * Chunked DELETE helper — runs the DELETE in LIMIT-bounded batches so a single cleanup
      * job doesn't hold locks or hit cron timeouts on large stores. Batch size is filterable
-     * via `fd/cleanup_batch_size` (default 5000).
+     * via `shopos_digital/cleanup_batch_size` (default 5000).
      */
     private function chunked_delete($sql_template) {
         global $wpdb;
-        $batch_size = (int) apply_filters('fd/cleanup_batch_size', 5000);
+        $batch_size = (int) apply_filters('shopos_digital/cleanup_batch_size', 5000);
         if ($batch_size < 1) $batch_size = 5000;
         $sql = str_replace('{BATCH}', (string) $batch_size, $sql_template);
 
@@ -39,7 +39,7 @@ class FD_Database {
          * Fires before the cleanup begins. Return value ignored.
          * Extenders can use this to pause workers, flush caches, or take backups.
          */
-        do_action('fd/before_run_cleanup');
+        do_action('shopos_digital/before_run_cleanup');
 
         $r = array();
 
@@ -209,10 +209,10 @@ class FD_Database {
          * Fires after cleanup completes. Includes per-bucket counts.
          * Extenders can use this for notifications, exports, or resuming workers.
          */
-        do_action('fd/after_run_cleanup', $r);
+        do_action('shopos_digital/after_run_cleanup', $r);
 
-        if (class_exists('FD_Activity_Log')) {
-            FD_Activity_Log::record('database_cleanup', array(
+        if (class_exists('ShopOS_Digital_Activity_Log')) {
+            ShopOS_Digital_Activity_Log::record('database_cleanup', array(
                 'rows_affected' => array_sum(array_map('intval', $r)),
                 'buckets'       => $r,
             ));
@@ -236,8 +236,8 @@ class FD_Database {
 
         $result = array('optimized_tables' => count($tables));
 
-        if (class_exists('FD_Activity_Log')) {
-            FD_Activity_Log::record('optimize_tables', array(
+        if (class_exists('ShopOS_Digital_Activity_Log')) {
+            ShopOS_Digital_Activity_Log::record('optimize_tables', array(
                 'rows_affected' => count($tables),
                 'tables'        => $tables,
             ));

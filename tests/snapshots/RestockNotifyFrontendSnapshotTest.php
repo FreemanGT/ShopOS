@@ -47,12 +47,12 @@ final class RestockNotifyFrontendSnapshotTest extends TestCase {
 
 		// Deterministic option content. Plain ASCII so the diff between
 		// he_IL and en_US goldens surfaces ONLY in the placeholder strings.
-		update_option( 'rsn_form_heading',         'HEADING' );
-		update_option( 'rsn_form_description',     'DESCRIPTION.' );
-		update_option( 'rsn_form_button_text',     'BUTTON' );
-		update_option( 'rsn_form_success_message', 'SUCCESS' );
-		update_option( 'rsn_enable_gdpr',          'no' );
-		update_option( 'rsn_gdpr_text',            'GDPR' );
+		update_option( 'shopos_restock_form_heading',         'HEADING' );
+		update_option( 'shopos_restock_form_description',     'DESCRIPTION.' );
+		update_option( 'shopos_restock_form_button_text',     'BUTTON' );
+		update_option( 'shopos_restock_form_success_message', 'SUCCESS' );
+		update_option( 'shopos_restock_enable_gdpr',          'no' );
+		update_option( 'shopos_restock_gdpr_text',            'GDPR' );
 	}
 
 	public function test_simple_oos_form_he_il_matches_golden(): void {
@@ -78,8 +78,8 @@ final class RestockNotifyFrontendSnapshotTest extends TestCase {
 	}
 
 	public function test_variable_form_he_il_matches_golden(): void {
-		// Variable-product mode = wrapper class includes `rsn-hidden`. The
-		// rsn_variations <script> block is prepended by maybe_render(), not
+		// Variable-product mode = wrapper class includes `shopos-restock-hidden`. The
+		// shopos_restock_variations <script> block is prepended by maybe_render(), not
 		// render_form() itself — that's tested at the Frontend test level.
 		$GLOBALS['fr_locale'] = 'he_IL';
 

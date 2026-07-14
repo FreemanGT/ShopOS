@@ -1,7 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class RSN_Stock_Monitor {
+class ShopOS_Restock_Stock_Monitor {
 
     public function __construct() {
         add_action( 'woocommerce_product_set_stock_status',   array( $this, 'on_status_change' ), 10, 3 );
@@ -23,30 +23,30 @@ class RSN_Stock_Monitor {
     private function notify( $product_id, $product ) {
         $is_var = $product->is_type( 'variation' );
         $subs   = $is_var
-            ? RSN_Database::get_waiting_for_product( $product->get_parent_id(), $product_id )
-            : RSN_Database::get_waiting_for_product( $product_id, 0 );
+            ? ShopOS_Restock_Database::get_waiting_for_product( $product->get_parent_id(), $product_id )
+            : ShopOS_Restock_Database::get_waiting_for_product( $product_id, 0 );
 
         if ( empty( $subs ) ) return;
 
         $c = 0;
         foreach ( $subs as $s ) {
-            if ( RSN_Email::send_notification( $s ) ) { RSN_Database::mark_notified( $s->id ); $c++; }
+            if ( ShopOS_Restock_Email::send_notification( $s ) ) { ShopOS_Restock_Database::mark_notified( $s->id ); $c++; }
         }
 
         if ( $c ) {
-            $log   = get_option( 'rsn_notification_log', array() );
+            $log   = get_option( 'shopos_restock_notification_log', array() );
             $log[] = array( 'product_id' => $product_id, 'count' => $c, 'date' => current_time('mysql') );
             if ( count($log) > 100 ) $log = array_slice( $log, -100 );
-            update_option( 'rsn_notification_log', $log );
+            update_option( 'shopos_restock_notification_log', $log );
         }
     }
 
     public static function manual_notify( $product_id, $variation_id = 0 ) {
-        $subs = RSN_Database::get_waiting_for_product( $product_id, $variation_id );
+        $subs = ShopOS_Restock_Database::get_waiting_for_product( $product_id, $variation_id );
         if ( empty($subs) ) return 0;
         $c = 0;
         foreach ( $subs as $s ) {
-            if ( RSN_Email::send_notification( $s ) ) { RSN_Database::mark_notified( $s->id ); $c++; }
+            if ( ShopOS_Restock_Email::send_notification( $s ) ) { ShopOS_Restock_Database::mark_notified( $s->id ); $c++; }
         }
         return $c;
     }

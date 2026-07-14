@@ -10,8 +10,8 @@ if (!defined('ABSPATH')) exit;
  * Stored as a regular (autoload=no) option so it doesn't balloon wp_options
  * memory on every page load.
  */
-class FD_Activity_Log {
-    const OPTION     = 'fd_activity_log';
+class ShopOS_Digital_Activity_Log {
+    const OPTION     = 'shopos_digital_activity_log';
     const MAX_ENTRIES = 200;
 
     /**

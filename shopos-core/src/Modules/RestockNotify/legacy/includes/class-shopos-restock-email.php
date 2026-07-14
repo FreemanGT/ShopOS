@@ -1,7 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class RSN_Email {
+class ShopOS_Restock_Email {
 
     private static function product_name( $subscriber ) {
         $parent = wc_get_product( $subscriber->product_id );
@@ -23,7 +23,7 @@ class RSN_Email {
             '{product_name}'    => $product_name,
             '{customer_name}'   => $subscriber->customer_name ?: __( 'לקוח/ה', 'shopos-core' ),
             '{product_url}'     => $parent ? $parent->get_permalink() : home_url(),
-            '{unsubscribe_url}' => add_query_arg( 'rsn_unsubscribe', $subscriber->unsubscribe_token, home_url() ),
+            '{unsubscribe_url}' => add_query_arg( 'shopos_restock_unsubscribe', $subscriber->unsubscribe_token, home_url() ),
             '{shop_url}'        => wc_get_page_permalink( 'shop' ),
             '{site_name}'       => get_bloginfo( 'name' ),
         );
@@ -37,9 +37,9 @@ class RSN_Email {
         $pname = self::product_name( $subscriber );
         $r     = self::replacements( $subscriber, $pname );
 
-        $subject = str_replace( array_keys($r), array_values($r), rsn_get_option( 'confirm_subject' ) );
-        $heading = str_replace( array_keys($r), array_values($r), rsn_get_option( 'confirm_heading' ) );
-        $body    = str_replace( array_keys($r), array_values($r), rsn_get_option( 'confirm_body' ) );
+        $subject = str_replace( array_keys($r), array_values($r), shopos_restock_get_option( 'confirm_subject' ) );
+        $heading = str_replace( array_keys($r), array_values($r), shopos_restock_get_option( 'confirm_heading' ) );
+        $body    = str_replace( array_keys($r), array_values($r), shopos_restock_get_option( 'confirm_body' ) );
 
         $html = self::build_html( array(
             'heading' => $heading, 'body' => $body, 'product_name' => $pname,
@@ -59,10 +59,10 @@ class RSN_Email {
         $pname = self::product_name( $subscriber );
         $r     = self::replacements( $subscriber, $pname );
 
-        $subject = str_replace( array_keys($r), array_values($r), rsn_get_option( 'notify_subject' ) );
-        $heading = str_replace( array_keys($r), array_values($r), rsn_get_option( 'notify_heading' ) );
-        $body    = str_replace( array_keys($r), array_values($r), rsn_get_option( 'notify_body' ) );
-        $btn_txt = str_replace( array_keys($r), array_values($r), rsn_get_option( 'notify_button_text' ) );
+        $subject = str_replace( array_keys($r), array_values($r), shopos_restock_get_option( 'notify_subject' ) );
+        $heading = str_replace( array_keys($r), array_values($r), shopos_restock_get_option( 'notify_heading' ) );
+        $body    = str_replace( array_keys($r), array_values($r), shopos_restock_get_option( 'notify_body' ) );
+        $btn_txt = str_replace( array_keys($r), array_values($r), shopos_restock_get_option( 'notify_button_text' ) );
 
         $html = self::build_html( array(
             'heading' => $heading, 'body' => $body, 'product_name' => $pname,
@@ -115,8 +115,8 @@ class RSN_Email {
     }
 
     private static function send( $to, $subject, $html ) {
-        $fn = (string) rsn_get_option( 'from_name' );
-        $fe = (string) rsn_get_option( 'from_email' );
+        $fn = (string) shopos_restock_get_option( 'from_name' );
+        $fe = (string) shopos_restock_get_option( 'from_email' );
 
         // Strip CR/LF/NUL from the display name so an admin who pastes a
         // newline-laced value can't inject extra headers (Bcc, Cc, …).

@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) exit;
  *  - adm_cache_author_counts
  *  - auto_convert_myisam (daily check)
  */
-class FD_Admin_Cache {
+class ShopOS_Digital_Admin_Cache {
     private $o;
 
     public function __construct($o) {
@@ -41,7 +41,7 @@ class FD_Admin_Cache {
 
         // Auto-convert MyISAM tables to InnoDB on the daily maintenance cron
         if (!empty($o['auto_convert_myisam'])) {
-            add_action('fd_daily_maintenance', array($this, 'auto_convert_myisam'));
+            add_action('shopos_digital_daily_maintenance', array($this, 'auto_convert_myisam'));
         }
     }
 
@@ -55,7 +55,7 @@ class FD_Admin_Cache {
         if ($result !== null) return $result;
 
         $blog_id = $site_id ?: get_current_blog_id();
-        $key = 'fd_user_counts_' . $blog_id . '_' . $strategy;
+        $key = 'shopos_digital_user_counts_' . $blog_id . '_' . $strategy;
         $cached = get_transient($key);
         if ($cached !== false) return $cached;
 
@@ -80,7 +80,7 @@ class FD_Admin_Cache {
      * Filter signature: get_usernumposts($count, $userid, $post_type, $public_only)
      */
     public function cached_author_count($count, $userid, $post_type = 'post', $public_only = false) {
-        $key = 'fd_author_count_' . $userid . '_' . md5(serialize($post_type)) . '_' . ($public_only ? '1' : '0');
+        $key = 'shopos_digital_author_count_' . $userid . '_' . md5(serialize($post_type)) . '_' . ($public_only ? '1' : '0');
         $cached = get_transient($key);
         if ($cached !== false) return (int) $cached;
 
@@ -101,7 +101,7 @@ class FD_Admin_Cache {
      * On a cache miss, hooks get_terms once to capture and store the result.
      *
      * The previous implementation used get_terms_args + terms_clauses but the hit path
-     * only stuffed $args['fd_cached_result'] and then did nothing with it — SQL ran anyway.
+     * only stuffed $args['shopos_digital_cached_result'] and then did nothing with it — SQL ran anyway.
      */
     public function maybe_serve_cat_cache($query) {
         // Only target the product category dropdown on the products list page
@@ -114,7 +114,7 @@ class FD_Admin_Cache {
         if (!in_array('product_cat', $taxonomies, true)) return;
 
         // Build a stable cache key from the query vars
-        $key = 'fd_cat_dropdown_' . md5(serialize($query->query_vars));
+        $key = 'shopos_digital_cat_dropdown_' . md5(serialize($query->query_vars));
 
         $cached = get_transient($key);
         if ($cached !== false && is_array($cached)) {

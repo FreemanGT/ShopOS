@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-class FD_Bloat {
+class ShopOS_Digital_Bloat {
     public function __construct($o) {
         if (!empty($o['bloat_disable_comments'])) {
             add_action('admin_init', function(){

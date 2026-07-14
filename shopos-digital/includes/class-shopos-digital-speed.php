@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-class FD_Speed {
+class ShopOS_Digital_Speed {
     private $o;
     public function __construct($o) {
         $this->o = $o;

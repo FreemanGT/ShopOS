@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-class FD_Security {
+class ShopOS_Digital_Security {
     public function __construct($o) {
         // XML-RPC: consolidate with pingbacks to avoid duplicate filter registration
         $disable_xmlrpc = !empty($o['sec_disable_xmlrpc']);

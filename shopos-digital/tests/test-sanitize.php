@@ -1,23 +1,23 @@
 <?php
 /**
- * @covers FD_Admin::sanitize
+ * @covers ShopOS_Digital_Admin::sanitize
  */
 class Test_FD_Sanitize extends WP_UnitTestCase {
 
-    /** @var FD_Admin */
+    /** @var ShopOS_Digital_Admin */
     private $admin;
 
     public function setUp(): void {
         parent::setUp();
-        $this->admin = new FD_Admin();
+        $this->admin = new ShopOS_Digital_Admin();
         // Seed defaults so sanitize() has a baseline to merge with.
-        update_option(FD_OPT, FD_Core::get_defaults());
+        update_option(SHOPOS_DIGITAL_OPT, ShopOS_Digital_Core::get_defaults());
     }
 
     public function test_sanitize_preserves_existing_values_on_partial_submit() {
-        $existing = get_option(FD_OPT);
+        $existing = get_option(SHOPOS_DIGITAL_OPT);
         $existing['wc_cache_post_counts'] = 1;
-        update_option(FD_OPT, $existing);
+        update_option(SHOPOS_DIGITAL_OPT, $existing);
 
         $result = $this->admin->sanitize(array(
             'qo_no_found_rows_front' => 0, // only one field submitted
@@ -28,9 +28,9 @@ class Test_FD_Sanitize extends WP_UnitTestCase {
     }
 
     public function test_sanitize_rejects_invalid_enum() {
-        $before = get_option(FD_OPT);
+        $before = get_option(SHOPOS_DIGITAL_OPT);
         $before['spd_heartbeat_control'] = 'reduce';
-        update_option(FD_OPT, $before);
+        update_option(SHOPOS_DIGITAL_OPT, $before);
 
         $result = $this->admin->sanitize(array(
             'spd_heartbeat_control' => 'badvalue',

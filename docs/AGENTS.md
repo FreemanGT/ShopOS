@@ -52,9 +52,9 @@ bash tools/release.sh both 2.0.0 "Breaking: renamed Swatches option keys to shop
 ## File / naming conventions
 
 - Modules live at `shopos-core/src/Modules/<PascalCase>/Module.php` and implement `ShopOS\Core\Core\Module_Interface`.
-- Legacy code ported from a standalone plugin lives under `shopos-core/src/Modules/<Module>/legacy/`. The `Module::boot()` method is responsible for defining any legacy constants (`SHOPOS_VS_DIR`, `RSN_PLUGIN_URL`, …) *before* requiring legacy class files.
+- Legacy code ported from a standalone plugin lives under `shopos-core/src/Modules/<Module>/legacy/`. The `Module::boot()` method is responsible for defining any legacy constants (`SHOPOS_VS_DIR`, `SHOPOS_RESTOCK_PLUGIN_URL`, …) *before* requiring legacy class files.
 - Assets under a module: `src/Modules/<Module>/assets/{css,js,images}/`. URL is built via `$this->asset_url( 'css/foo.css' )` in `Module_Base`.
-- Option keys are `shopos_core_<module_id>_<setting>` *unless* the module intentionally preserves a legacy key for zero-downtime migration (restock = `rsn_*`, swatches = `shopos_vs_*`). This is documented in each module's `HOOKS.md`.
+- Option keys are `shopos_core_<module_id>_<setting>` *unless* the module intentionally preserves a legacy key for zero-downtime migration (restock = `shopos_restock_*`, swatches = `shopos_vs_*`). This is documented in each module's `HOOKS.md`.
 - **Elementor widget names are frozen.** `Widget::get_name()` returns the underscored short form `shopos_<module>_slider` (e.g. `shopos_category_slider`, `shopos_product_slider`) rather than the canonical `shopos-core-<module>-slider`. This deviates from the kebab convention by design: Elementor persists the widget name into every saved page's data structure, so renaming silently orphans every existing instance. **Do not rename `get_name()` returns.** The asset handles registered for those widgets DO follow the canonical `shopos-core-*` form (since handles are not persisted).
 - Translations: `.pot` in `languages/`, `.po` per locale, compiled `.mo` committed alongside. `tools/build.sh` recompiles `.mo` from `.po` at release time so the shipped zip always has the freshest translations.
 

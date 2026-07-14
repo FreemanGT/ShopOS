@@ -2,9 +2,9 @@
 /**
  * Modern Email class for RestockNotify — Wave 2.3b.
  *
- * Replaces the legacy `\RSN_Email` class via `class_alias` in `Module::boot()`.
+ * Replaces the legacy `\ShopOS_Restock_Email` class via `class_alias` in `Module::boot()`.
  * Same static API as the legacy class so legacy callers
- * (`RSN_Ajax::handle_subscribe`, `RSN_Stock_Monitor::manual_notify`) work
+ * (`ShopOS_Restock_Ajax::handle_subscribe`, `ShopOS_Restock_Stock_Monitor::manual_notify`) work
  * unchanged after the alias resolves.
  *
  * Two changes vs legacy:
@@ -79,7 +79,7 @@ final class Email {
 			'{product_name}'    => $product_name,
 			'{customer_name}'   => $subscriber->customer_name ?: $cust_fallback,
 			'{product_url}'     => $parent ? $parent->get_permalink() : home_url(),
-			'{unsubscribe_url}' => add_query_arg( 'rsn_unsubscribe', $subscriber->unsubscribe_token, home_url() ),
+			'{unsubscribe_url}' => add_query_arg( 'shopos_restock_unsubscribe', $subscriber->unsubscribe_token, home_url() ),
 			'{shop_url}'        => wc_get_page_permalink( 'shop' ),
 			'{site_name}'       => get_bloginfo( 'name' ),
 		);
@@ -88,9 +88,9 @@ final class Email {
 	/**
 	 * Send the post-subscription confirmation email.
 	 *
-	 * Mirrors the legacy `\RSN_Email::send_confirmation()` static signature
+	 * Mirrors the legacy `\ShopOS_Restock_Email::send_confirmation()` static signature
 	 * so the `class_alias` swap in `Module::boot()` is transparent to existing
-	 * callers (`RSN_Ajax::handle_subscribe()`).
+	 * callers (`ShopOS_Restock_Ajax::handle_subscribe()`).
 	 *
 	 * @param object $subscriber Subscriber row.
 	 * @return bool wp_mail() return value.
@@ -108,9 +108,9 @@ final class Email {
 		$pname = self::product_name( $subscriber );
 		$r     = self::replacements( $subscriber, $pname, $cust_fallback );
 
-		$subject = str_replace( array_keys( $r ), array_values( $r ), (string) rsn_get_option( 'confirm_subject' ) );
-		$heading = str_replace( array_keys( $r ), array_values( $r ), (string) rsn_get_option( 'confirm_heading' ) );
-		$body    = str_replace( array_keys( $r ), array_values( $r ), (string) rsn_get_option( 'confirm_body' ) );
+		$subject = str_replace( array_keys( $r ), array_values( $r ), (string) shopos_restock_get_option( 'confirm_subject' ) );
+		$heading = str_replace( array_keys( $r ), array_values( $r ), (string) shopos_restock_get_option( 'confirm_heading' ) );
+		$body    = str_replace( array_keys( $r ), array_values( $r ), (string) shopos_restock_get_option( 'confirm_body' ) );
 
 		$args = array(
 			'heading'         => $heading,
@@ -145,10 +145,10 @@ final class Email {
 		$pname = self::product_name( $subscriber );
 		$r     = self::replacements( $subscriber, $pname, $cust_fallback );
 
-		$subject = str_replace( array_keys( $r ), array_values( $r ), (string) rsn_get_option( 'notify_subject' ) );
-		$heading = str_replace( array_keys( $r ), array_values( $r ), (string) rsn_get_option( 'notify_heading' ) );
-		$body    = str_replace( array_keys( $r ), array_values( $r ), (string) rsn_get_option( 'notify_body' ) );
-		$btn_txt = str_replace( array_keys( $r ), array_values( $r ), (string) rsn_get_option( 'notify_button_text' ) );
+		$subject = str_replace( array_keys( $r ), array_values( $r ), (string) shopos_restock_get_option( 'notify_subject' ) );
+		$heading = str_replace( array_keys( $r ), array_values( $r ), (string) shopos_restock_get_option( 'notify_heading' ) );
+		$body    = str_replace( array_keys( $r ), array_values( $r ), (string) shopos_restock_get_option( 'notify_body' ) );
+		$btn_txt = str_replace( array_keys( $r ), array_values( $r ), (string) shopos_restock_get_option( 'notify_button_text' ) );
 
 		$args = array(
 			'heading'         => $heading,
@@ -279,8 +279,8 @@ final class Email {
 	 * @return bool wp_mail return.
 	 */
 	private static function send( $to, $subject, $html, $subscriber ) {
-		$fn = (string) rsn_get_option( 'from_name' );
-		$fe = (string) rsn_get_option( 'from_email' );
+		$fn = (string) shopos_restock_get_option( 'from_name' );
+		$fe = (string) shopos_restock_get_option( 'from_email' );
 
 		// Strip CR/LF/NUL from the display name so an admin who pastes a
 		// newline-laced value can't inject extra headers (Bcc, Cc, …).

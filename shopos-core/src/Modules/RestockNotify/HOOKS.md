@@ -1,6 +1,6 @@
 # Restock Notify — Public API
 
-Bundled from the legacy `restock-notify` plugin. The original `rsn_*` hooks
+Bundled from the legacy `restock-notify` plugin. The original `shopos_restock_*` hooks
 are still emitted; new ShopOS Core hooks live under the `shopos_core/restock/`
 namespace.
 
@@ -18,7 +18,7 @@ apply_filters(
 Per-product gate for form injection. Fires inside `Frontend::maybe_render()`
 once per attempted render (across all 6 entry points: 4 WC template hooks +
 shortcode + stock-html filter + wp_footer fallback). Distinct from
-`rsn_should_enqueue` (which gates the asset load for the whole page); this
+`shopos_restock_should_enqueue` (which gates the asset load for the whole page); this
 one fires per-product and per-context.
 
 Return `false` to short-circuit the render. Useful for "no form for this
@@ -61,10 +61,10 @@ to actually suppress the send, listeners should use the WP `wp_mail` /
 
 ## Filters (legacy, still supported)
 
-- `rsn_notification_email_subject`
-- `rsn_notification_email_body`
-- `rsn_form_labels`
-- `rsn_rate_limit_seconds`
+- `shopos_restock_notification_email_subject`
+- `shopos_restock_notification_email_body`
+- `shopos_restock_form_labels`
+- `shopos_restock_rate_limit_seconds`
 
 ## Filters (ShopOS Core)
 
@@ -102,7 +102,7 @@ do_action( 'shopos_core/restock/notified', int $subscription_id, string $email, 
 Fires if `wp_mail()` returns false so admins can wire in a logging service.
 
 ## Custom table
-`{wpdb->prefix}rsn_subscriptions` — owned by the module. Schema is versioned;
+`{wpdb->prefix}shopos_restock_subscriptions` — owned by the module. Schema is versioned;
 migrations run automatically on plugin upgrade.
 
 ## AJAX endpoints

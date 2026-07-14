@@ -116,9 +116,9 @@ Wave 2.3 and the Wave 3.1 expansion below are committed work, approved 2026-04-2
 - Create `RestockNotify/locales/en_US.php` and `he_IL.php`
 - On activation: detect `get_locale()`, install matching defaults
 - **Existing installs**: do NOT overwrite their option values (check if values exist first)
-- Email-body **option** strings ship per locale; the email **shell** strings (greeting / unsubscribe link / suffix / customer-name fallback) stayed hardcoded Hebrew in `legacy/class-rsn-email.php` until Wave 2.3b's full bilingual fix
+- Email-body **option** strings ship per locale; the email **shell** strings (greeting / unsubscribe link / suffix / customer-name fallback) stayed hardcoded Hebrew in `legacy/class-shopos-restock-email.php` until Wave 2.3b's full bilingual fix
 - Reading A from pre-flight (no `legacy/` edits) — locale files = data; send path unchanged in 1.2
-- Q3 from pre-flight: NO retroactive change for installs that activated pre-1.11.2; their existing `rsn_*` option values stay untouched
+- Q3 from pre-flight: NO retroactive change for installs that activated pre-1.11.2; their existing `shopos_restock_*` option values stay untouched
 
 ---
 
@@ -155,17 +155,17 @@ Sub-PR statuses (to be updated as each ships):
 
 **2.3 — RestockNotify legacy migration (committed 2026-04-29)**
 
-Parallels Wave 2.2's VariationSwatches migration. Required before the three deferred Wave-1.1 RestockNotify hooks (`should_inject`, `email_args`, `before_send`) can be added — call sites live in `legacy/includes/class-rsn-*.php`, which hard rule #3 forbids editing without a migration plan.
+Parallels Wave 2.2's VariationSwatches migration. Required before the three deferred Wave-1.1 RestockNotify hooks (`should_inject`, `email_args`, `before_send`) can be added — call sites live in `legacy/includes/class-shopos-restock-*.php`, which hard rule #3 forbids editing without a migration plan.
 
 Master plan (approved 2026-04-29) split execution into 3 sub-PRs (2.3a → 2.3b → 2.3c); the originally-proposed 2.3d (Ajax + Admin) is **skipped indefinitely** per Q-B since neither surface has any extension demand.
 
-**2.3a** ✅ shipped 1.11.3 (#10, 2026-04-29) — modern `Subscribers` repository wrapping `\RSN_Database`. Pure groundwork (4-method static wrapper, no callers in this PR). Becomes canonical in 2.3b/c.
+**2.3a** ✅ shipped 1.11.3 (#10, 2026-04-29) — modern `Subscribers` repository wrapping `\ShopOS_Restock_Database`. Pure groundwork (4-method static wrapper, no callers in this PR). Becomes canonical in 2.3b/c.
 
 **2.3b** ✅ shipped 1.11.4 (#11, 2026-04-29) — modern `Email` + `Stock_Monitor` via `class_alias` swap in `Module::boot()`. Bilingual-email shell fix (4 Hebrew literals moved to `locales/<locale>.php` `shell_*` keys). 2 of the 3 deferred hooks land: `shopos_core/restock_notify/email_args` (filter) and `before_send` (action). The 3rd deferred hook (`should_inject`) waits for 2.3c.
 
-**2.3c** ✅ shipped 1.11.5 (this PR, 2026-04-29) — modern `Frontend` via `class_alias` swap. Lands the final deferred Wave-1.1 hook `shopos_core/restock_notify/should_inject` (per-product render gate, distinct from `rsn_should_enqueue`'s page-level asset gate) and moves 8 Hebrew literals into `locales/<locale>.php` (`js_*` for the `wp_localize_script` payload, `form_placeholder_*` for the inline form input placeholders). The 6-case `is_variation_truly_oos()` ladder copied verbatim from legacy with one unit test per branch. Browser-side JS-relocation parity for `footer_inject` is live-QA-only; PHPUnit locks the PHP-side output of all 4 injection paths.
+**2.3c** ✅ shipped 1.11.5 (this PR, 2026-04-29) — modern `Frontend` via `class_alias` swap. Lands the final deferred Wave-1.1 hook `shopos_core/restock_notify/should_inject` (per-product render gate, distinct from `shopos_restock_should_enqueue`'s page-level asset gate) and moves 8 Hebrew literals into `locales/<locale>.php` (`js_*` for the `wp_localize_script` payload, `form_placeholder_*` for the inline form input placeholders). The 6-case `is_variation_truly_oos()` ladder copied verbatim from legacy with one unit test per branch. Browser-side JS-relocation parity for `footer_inject` is live-QA-only; PHPUnit locks the PHP-side output of all 4 injection paths.
 
-Each sub-PR keeps `legacy/` files untouched; modern classes shadow via `class_alias`. Existing legacy filters (`rsn_should_enqueue`), AJAX action (`rsn_subscribe`), shortcode (`[restock_notify]`), unsubscribe URL pattern, transient cache key shape, asset handles, admin URLs, and the `{prefix}rsn_subscribers` table are all preserved verbatim across the migration.
+Each sub-PR keeps `legacy/` files untouched; modern classes shadow via `class_alias`. Existing legacy filters (`shopos_restock_should_enqueue`), AJAX action (`shopos_restock_subscribe`), shortcode (`[restock_notify]`), unsubscribe URL pattern, transient cache key shape, asset handles, admin URLs, and the `{prefix}shopos_restock_subscribers` table are all preserved verbatim across the migration.
 
 ---
 
@@ -213,8 +213,8 @@ Each item is its own PR with its own feature flag. Order within wave doesn't mat
 
 **4.1 — RestockNotify CSV export + GDPR (Roadmap #10) — ✅ shipped 1.11.37 (4.1a) + 1.11.38 (4.1b); split per Wave 3.1 precedent**
 
-- **4.1a** ✅ shipped 1.11.37 (#44, 2026-05-11) — WP_Privacy exporter + eraser registered under `shopos-core-restock-notify`. Exporter returns one item per matching subscription with all 9 column fields. Eraser nulls `customer_name`/`customer_email` (empty string — columns are NOT NULL) and flips `status` to `'unsubscribed'`; row preserved as audit trail. Unconditional — privacy hooks are a platform contract, not flag-gated (OS-5 decision call, 2026-05-11). Two new `Subscribers` methods (`find_by_email`, `erase_pii_by_email`) query `$wpdb` directly because no legacy `\RSN_Database` method offers exact-email lookup or PII null semantics, and Hard Rule #3 blocks adding to the legacy class.
-- **4.1b** ✅ shipped 1.11.38 (#TBD, 2026-05-11) — `Export Subscribers` submenu under the legacy `restock-notify` parent (OS-1); admin-post.php form + `manage_woocommerce` capability check (cap first, nonce second per WP convention); CSV streams the full `rsn_subscribers` table with UTF-8 BOM, comma delimiter, all 9 columns matching 4.1a Privacy exporter labels byte-for-byte, filename `restock-notify-subscribers-YYYY-MM-DD.csv`. Empty `notified_at` renders as empty cell; empty table emits headers-only CSV. Flag-gated behind `shopos_core_restock_notify_csv_export_enabled` (default off); defense-in-depth — flag-OFF means neither the submenu nor the `admin_post_*` listener attaches. `Subscribers::all()` reads the full table into memory; intended for expected merchant scale (≤ low tens of thousands), streaming variant deferred.
+- **4.1a** ✅ shipped 1.11.37 (#44, 2026-05-11) — WP_Privacy exporter + eraser registered under `shopos-core-restock-notify`. Exporter returns one item per matching subscription with all 9 column fields. Eraser nulls `customer_name`/`customer_email` (empty string — columns are NOT NULL) and flips `status` to `'unsubscribed'`; row preserved as audit trail. Unconditional — privacy hooks are a platform contract, not flag-gated (OS-5 decision call, 2026-05-11). Two new `Subscribers` methods (`find_by_email`, `erase_pii_by_email`) query `$wpdb` directly because no legacy `\ShopOS_Restock_Database` method offers exact-email lookup or PII null semantics, and Hard Rule #3 blocks adding to the legacy class.
+- **4.1b** ✅ shipped 1.11.38 (#TBD, 2026-05-11) — `Export Subscribers` submenu under the legacy `restock-notify` parent (OS-1); admin-post.php form + `manage_woocommerce` capability check (cap first, nonce second per WP convention); CSV streams the full `shopos_restock_subscribers` table with UTF-8 BOM, comma delimiter, all 9 columns matching 4.1a Privacy exporter labels byte-for-byte, filename `restock-notify-subscribers-YYYY-MM-DD.csv`. Empty `notified_at` renders as empty cell; empty table emits headers-only CSV. Flag-gated behind `shopos_core_restock_notify_csv_export_enabled` (default off); defense-in-depth — flag-OFF means neither the submenu nor the `admin_post_*` listener attaches. `Subscribers::all()` reads the full table into memory; intended for expected merchant scale (≤ low tens of thousands), streaming variant deferred.
 
 **4.2 — Slider design tokens as Elementor controls (Roadmap #11) — ✅ shipped 1.11.39 (#TBD, 2026-05-11); CategorySlider only**
 - 4 color controls (`cs_bg_color` / `cs_ink_color` / `cs_mute_color` / `cs_line_color`) emit `--cs-bg|ink|mute|line` overrides on `{{WRAPPER}} .cs`; empty default → Elementor omits selector → `.cs` block's existing `oklch()` declarations remain (byte-identical pre-4.2 render).

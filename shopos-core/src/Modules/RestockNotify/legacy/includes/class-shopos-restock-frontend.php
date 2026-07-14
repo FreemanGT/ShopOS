@@ -14,7 +14,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class RSN_Frontend {
+class ShopOS_Restock_Frontend {
 
     /** Track rendered product IDs to prevent duplicates. */
     private static $rendered = array();
@@ -31,7 +31,7 @@ class RSN_Frontend {
         add_shortcode( 'restock_notify', array( $this, 'shortcode' ) );
 
         // ── Auto-inject (multiple strategies) ──
-        if ( 'yes' === rsn_get_option( 'auto_inject' ) ) {
+        if ( 'yes' === shopos_restock_get_option( 'auto_inject' ) ) {
 
             // Strategy A: Standard WooCommerce template hooks.
             add_action( 'woocommerce_single_product_summary',   array( $this, 'hook_product_summary' ), 31 );
@@ -68,37 +68,37 @@ class RSN_Frontend {
          * shortcode. That covers every surface that could render the form
          * while keeping the rest of the site (blog, about, home) lean.
          *
-         * Return true from the `rsn_should_enqueue` filter to restore the
+         * Return true from the `shopos_restock_should_enqueue` filter to restore the
          * old "load everywhere" behaviour; return false to suppress.
          */
         $should = $this->should_enqueue_here();
-        $should = (bool) apply_filters( 'rsn_should_enqueue', $should );
+        $should = (bool) apply_filters( 'shopos_restock_should_enqueue', $should );
         if ( ! $should ) {
             return;
         }
 
-        $fs_base  = RSN_PLUGIN_DIR . 'assets/';
-        $url_base = RSN_PLUGIN_URL . 'assets/';
+        $fs_base  = SHOPOS_RESTOCK_PLUGIN_DIR . 'assets/';
+        $url_base = SHOPOS_RESTOCK_PLUGIN_URL . 'assets/';
         $pick     = array( '\\ShopOS\\Core\\Core\\Module_Base', 'pick_min_url' );
 
         wp_enqueue_style(
-            'rsn-frontend',
+            'shopos-restock-frontend',
             call_user_func( $pick, $fs_base, $url_base, 'css/frontend.css' ),
             array(),
-            RSN_VERSION
+            SHOPOS_RESTOCK_VERSION
         );
 
         wp_enqueue_script(
-            'rsn-frontend',
+            'shopos-restock-frontend',
             call_user_func( $pick, $fs_base, $url_base, 'js/frontend.js' ),
             array( 'jquery' ),
-            RSN_VERSION,
+            SHOPOS_RESTOCK_VERSION,
             true
         );
 
-        wp_localize_script( 'rsn-frontend', 'rsn_ajax', array(
+        wp_localize_script( 'shopos-restock-frontend', 'shopos_restock_ajax', array(
             'url'   => admin_url( 'admin-ajax.php' ),
-            'nonce' => wp_create_nonce( 'rsn_subscribe' ),
+            'nonce' => wp_create_nonce( 'shopos_restock_subscribe' ),
             'i18n'  => array(
                 'invalidEmail'   => __( 'יש להזין כתובת אימייל תקינה.', 'shopos-core' ),
                 'consentMissing' => __( 'יש לאשר את תיבת ההסכמה.', 'shopos-core' ),
@@ -231,11 +231,11 @@ class RSN_Frontend {
         if ( empty( $form ) ) return;
 
         // Output hidden container + JS relocation.
-        echo '<div id="rsn-footer-fallback" style="display:none !important;">' . $form . '</div>'; // phpcs:ignore
+        echo '<div id="shopos-restock-footer-fallback" style="display:none !important;">' . $form . '</div>'; // phpcs:ignore
         ?>
         <script>
         (function(){
-            var src = document.getElementById('rsn-footer-fallback');
+            var src = document.getElementById('shopos-restock-footer-fallback');
             if (!src || !src.innerHTML.trim()) return;
 
             var selectors = [
@@ -312,7 +312,7 @@ class RSN_Frontend {
             // cache version so any product/variation save busts it without
             // extra hook wiring. TTL is short (15 min) to bound staleness
             // against any stock change WC's cache-helper misses.
-            $cache_key = 'rsn_oos_' . $product->get_id();
+            $cache_key = 'shopos_restock_oos_' . $product->get_id();
             if ( class_exists( '\WC_Cache_Helper' ) ) {
                 $cache_key .= '_' . \WC_Cache_Helper::get_transient_version( 'product' );
             }
@@ -362,7 +362,7 @@ class RSN_Frontend {
                 'product_id'       => $product->get_id(),
             ) );
 
-            $inline_js = '<script>var rsn_variations = ' . $json . ';</script>';
+            $inline_js = '<script>var shopos_restock_variations = ' . $json . ';</script>';
 
             return $inline_js . $this->render_form( $product->get_id(), 0, true );
         }
@@ -384,16 +384,16 @@ class RSN_Frontend {
 
     private function render_form( $product_id, $variation_id = 0, $is_variable = false ) {
 
-        $heading     = rsn_get_option( 'form_heading' );
-        $description = rsn_get_option( 'form_description' );
-        $button_text = rsn_get_option( 'form_button_text' );
-        $success_msg = rsn_get_option( 'form_success_message' );
-        $enable_gdpr = 'yes' === rsn_get_option( 'enable_gdpr' );
-        $gdpr_text   = rsn_get_option( 'gdpr_text' );
+        $heading     = shopos_restock_get_option( 'form_heading' );
+        $description = shopos_restock_get_option( 'form_description' );
+        $button_text = shopos_restock_get_option( 'form_button_text' );
+        $success_msg = shopos_restock_get_option( 'form_success_message' );
+        $enable_gdpr = 'yes' === shopos_restock_get_option( 'enable_gdpr' );
+        $gdpr_text   = shopos_restock_get_option( 'gdpr_text' );
 
         $wrapper_class = $is_variable
-            ? 'rsn-form-wrap rsn-variable-product rsn-hidden'
-            : 'rsn-form-wrap';
+            ? 'shopos-restock-form-wrap shopos-restock-variable-product shopos-restock-hidden'
+            : 'shopos-restock-form-wrap';
 
         // Inline critical CSS (printed once) — guarantees visibility
         // even if the external stylesheet fails to load.
@@ -401,31 +401,31 @@ class RSN_Frontend {
         if ( ! self::$inline_css_printed ) {
             self::$inline_css_printed = true;
             $inline_style = '<style>
-                .rsn-form-wrap{margin:24px 0;direction:rtl;text-align:right}
-                .rsn-form-card{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:32px 28px;max-width:480px;direction:rtl;text-align:right;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-                .rsn-form-heading{margin:0 0 6px;font-size:18px;font-weight:600;color:#111}
-                .rsn-form-desc{margin:0 0 20px;font-size:14px;color:#666;line-height:1.6}
-                .rsn-form-fields{display:flex;flex-direction:column;gap:12px}
-                .rsn-field-row{display:flex;gap:10px}
-                .rsn-field{flex:1}
-                .rsn-input{display:block;width:100%;padding:11px 14px;font-size:14px;color:#111;background:#fafafa;border:1px solid #e0e0e0;border-radius:8px;outline:none;box-sizing:border-box;direction:rtl;text-align:right;font-family:inherit}
-                .rsn-input:focus{background:#fff;border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
-                .rsn-submit-btn{display:flex;align-items:center;justify-content:center;width:100%;padding:12px 20px;font-size:14px;font-weight:600;color:#fff;background:#111;border:none;border-radius:8px;cursor:pointer;font-family:inherit}
-                .rsn-submit-btn:hover{background:#333}
-                .rsn-hidden{display:none!important}
-                .rsn-form-icon{display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:#000;border-radius:50%;margin-bottom:16px;color:#fff}
-                .rsn-form-success{text-align:center;padding:8px 0}
-                .rsn-success-icon{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;background:#f0f0f0;border-radius:50%;margin-bottom:12px;color:#111}
-                .rsn-error-text{margin:0;padding:10px 14px;font-size:13px;color:#c00;background:#fff5f5;border:1px solid #fdd;border-radius:8px}
-                .rsn-gdpr-label{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:#666;cursor:pointer}
-                .rsn-btn-spinner{display:none}
-                .rsn-loading .rsn-btn-text{display:none}
-                .rsn-loading .rsn-btn-spinner{display:inline-flex;animation:rsnSpin .8s linear infinite}
-                .rsn-loading{pointer-events:none;opacity:.7}
+                .shopos-restock-form-wrap{margin:24px 0;direction:rtl;text-align:right}
+                .shopos-restock-form-card{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:32px 28px;max-width:480px;direction:rtl;text-align:right;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+                .shopos-restock-form-heading{margin:0 0 6px;font-size:18px;font-weight:600;color:#111}
+                .shopos-restock-form-desc{margin:0 0 20px;font-size:14px;color:#666;line-height:1.6}
+                .shopos-restock-form-fields{display:flex;flex-direction:column;gap:12px}
+                .shopos-restock-field-row{display:flex;gap:10px}
+                .shopos-restock-field{flex:1}
+                .shopos-restock-input{display:block;width:100%;padding:11px 14px;font-size:14px;color:#111;background:#fafafa;border:1px solid #e0e0e0;border-radius:8px;outline:none;box-sizing:border-box;direction:rtl;text-align:right;font-family:inherit}
+                .shopos-restock-input:focus{background:#fff;border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+                .shopos-restock-submit-btn{display:flex;align-items:center;justify-content:center;width:100%;padding:12px 20px;font-size:14px;font-weight:600;color:#fff;background:#111;border:none;border-radius:8px;cursor:pointer;font-family:inherit}
+                .shopos-restock-submit-btn:hover{background:#333}
+                .shopos-restock-hidden{display:none!important}
+                .shopos-restock-form-icon{display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:#000;border-radius:50%;margin-bottom:16px;color:#fff}
+                .shopos-restock-form-success{text-align:center;padding:8px 0}
+                .shopos-restock-success-icon{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;background:#f0f0f0;border-radius:50%;margin-bottom:12px;color:#111}
+                .shopos-restock-error-text{margin:0;padding:10px 14px;font-size:13px;color:#c00;background:#fff5f5;border:1px solid #fdd;border-radius:8px}
+                .shopos-restock-gdpr-label{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:#666;cursor:pointer}
+                .shopos-restock-btn-spinner{display:none}
+                .shopos-restock-loading .shopos-restock-btn-text{display:none}
+                .shopos-restock-loading .shopos-restock-btn-spinner{display:inline-flex;animation:rsnSpin .8s linear infinite}
+                .shopos-restock-loading{pointer-events:none;opacity:.7}
                 @keyframes rsnSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
                 @keyframes rsnFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-                .rsn-form-wrap{animation:rsnFadeIn .4s ease-out}
-                @media(max-width:480px){.rsn-field-row{flex-direction:column}.rsn-form-card{padding:24px 20px}}
+                .shopos-restock-form-wrap{animation:rsnFadeIn .4s ease-out}
+                @media(max-width:480px){.shopos-restock-field-row{flex-direction:column}.shopos-restock-form-card{padding:24px 20px}}
             </style>';
         }
 
@@ -433,39 +433,39 @@ class RSN_Frontend {
         echo $inline_style; // phpcs:ignore
         ?>
         <div class="<?php echo esc_attr( $wrapper_class ); ?>" dir="rtl" data-product-id="<?php echo esc_attr( $product_id ); ?>" data-variation-id="<?php echo esc_attr( $variation_id ); ?>">
-            <div class="rsn-form-card">
-                <div class="rsn-form-icon">
+            <div class="shopos-restock-form-card">
+                <div class="shopos-restock-form-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                     </svg>
                 </div>
-                <h4 class="rsn-form-heading"><?php echo esc_html( $heading ); ?></h4>
-                <p class="rsn-form-desc"><?php echo esc_html( $description ); ?></p>
+                <h4 class="shopos-restock-form-heading"><?php echo esc_html( $heading ); ?></h4>
+                <p class="shopos-restock-form-desc"><?php echo esc_html( $description ); ?></p>
 
-                <div class="rsn-form-fields">
-                    <div class="rsn-field-row">
-                        <div class="rsn-field">
-                            <input type="text" class="rsn-input rsn-name" placeholder="<?php esc_attr_e( 'שם מלא', 'shopos-core' ); ?>" autocomplete="name" />
+                <div class="shopos-restock-form-fields">
+                    <div class="shopos-restock-field-row">
+                        <div class="shopos-restock-field">
+                            <input type="text" class="shopos-restock-input shopos-restock-name" placeholder="<?php esc_attr_e( 'שם מלא', 'shopos-core' ); ?>" autocomplete="name" />
                         </div>
-                        <div class="rsn-field">
-                            <input type="email" class="rsn-input rsn-email" placeholder="<?php esc_attr_e( 'כתובת אימייל', 'shopos-core' ); ?>" autocomplete="email" required />
+                        <div class="shopos-restock-field">
+                            <input type="email" class="shopos-restock-input shopos-restock-email" placeholder="<?php esc_attr_e( 'כתובת אימייל', 'shopos-core' ); ?>" autocomplete="email" required />
                         </div>
                     </div>
 
                     <!-- honeypot: real users can't see this; bots fill it. -->
-                    <input type="text" name="_hp" class="rsn-hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" />
+                    <input type="text" name="_hp" class="shopos-restock-hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" />
 
                     <?php if ( $enable_gdpr ) : ?>
-                        <label class="rsn-gdpr-label">
-                            <input type="checkbox" class="rsn-gdpr-check" />
+                        <label class="shopos-restock-gdpr-label">
+                            <input type="checkbox" class="shopos-restock-gdpr-check" />
                             <span><?php echo esc_html( $gdpr_text ); ?></span>
                         </label>
                     <?php endif; ?>
 
-                    <button type="button" class="rsn-submit-btn">
-                        <span class="rsn-btn-text"><?php echo esc_html( $button_text ); ?></span>
-                        <span class="rsn-btn-spinner">
+                    <button type="button" class="shopos-restock-submit-btn">
+                        <span class="shopos-restock-btn-text"><?php echo esc_html( $button_text ); ?></span>
+                        <span class="shopos-restock-btn-spinner">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
                             </svg>
@@ -473,18 +473,18 @@ class RSN_Frontend {
                     </button>
                 </div>
 
-                <div class="rsn-form-success rsn-hidden">
-                    <div class="rsn-success-icon">
+                <div class="shopos-restock-form-success shopos-restock-hidden">
+                    <div class="shopos-restock-success-icon">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                             <polyline points="22 4 12 14.01 9 11.01"/>
                         </svg>
                     </div>
-                    <p class="rsn-success-text"><?php echo esc_html( $success_msg ); ?></p>
+                    <p class="shopos-restock-success-text"><?php echo esc_html( $success_msg ); ?></p>
                 </div>
 
-                <div class="rsn-form-error rsn-hidden">
-                    <p class="rsn-error-text"></p>
+                <div class="shopos-restock-form-error shopos-restock-hidden">
+                    <p class="shopos-restock-error-text"></p>
                 </div>
             </div>
         </div>
@@ -635,14 +635,14 @@ class RSN_Frontend {
        ================================================================= */
 
     public function handle_unsubscribe() {
-        if ( ! isset( $_GET['rsn_unsubscribe'] ) ) return;
+        if ( ! isset( $_GET['shopos_restock_unsubscribe'] ) ) return;
 
-        $token = sanitize_text_field( wp_unslash( $_GET['rsn_unsubscribe'] ) );
-        $sub   = RSN_Database::get_by_token( $token );
+        $token = sanitize_text_field( wp_unslash( $_GET['shopos_restock_unsubscribe'] ) );
+        $sub   = ShopOS_Restock_Database::get_by_token( $token );
 
         if ( $sub ) {
-            RSN_Database::unsubscribe( $sub->id );
-            wp_safe_redirect( add_query_arg( 'rsn_unsubscribed', '1', wc_get_page_permalink( 'shop' ) ) );
+            ShopOS_Restock_Database::unsubscribe( $sub->id );
+            wp_safe_redirect( add_query_arg( 'shopos_restock_unsubscribed', '1', wc_get_page_permalink( 'shop' ) ) );
             exit;
         }
 

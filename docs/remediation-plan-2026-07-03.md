@@ -3,7 +3,7 @@
 Companion to `docs/audit-2026-07-03.md`. Sequenced as small, individually-shippable PRs, each on its own branch, each respecting the Hard Rules (one concern per PR, ≤12 files / ≤3 modules, no legacy edits without approval, flags unless bugfix/additive). Every PR runs `tools/release.sh` on completion and updates the CLAUDE.md infra-state lines when tests or versions move.
 
 **Standing mechanics checklist per PR** (from CLAUDE.md §2 — listed once here, implied everywhere below):
-- Version bump = `shopos-core.php` + `Plugin.php` (core) / `style.css` + `functions.php` (theme, after PR-1) / header + `FD_VERSION` (digital).
+- Version bump = `shopos-core.php` + `Plugin.php` (core) / `style.css` + `functions.php` (theme, after PR-1) / header + `SHOPOS_DIGITAL_VERSION` (digital).
 - Touching a file containing `apply_filters`/`do_action` → regenerate `tests/baseline-hooks.txt`; new option literals → `baseline-options-declared.txt`; new user-facing strings → regenerate `.pot`.
 - New tests → update the reported `<tests> / <assertions>` totals in CLAUDE.md verbatim from `vendor/bin/phpunit`.
 - CSS/JS-only changes on the storefront → live QA on arba4 (check device Reduce Motion before judging animations).
@@ -23,7 +23,7 @@ The theme cache-bust bug and the stale readme are both release.sh blind spots; f
 ### PR-2 · CSV formula-injection fix (modern exporter) — `fix(shopos-core)` — size S
 - `RestockNotify/CSV_Exporter.php`: escape any field whose first char is `= + - @ \t \r` (prefix `'`) before `fputcsv` — new pure seam (e.g. `escape_csv_field()`) so it's unit-testable.
 - Tests: extend the RestockNotify suite — formula-prefixed name/email neutralized; benign values byte-identical.
-- **Legacy twin (`legacy/includes/class-rsn-admin.php:271`) is NOT touched** — see Blocked item B-1.
+- **Legacy twin (`legacy/includes/class-shopos-restock-admin.php:271`) is NOT touched** — see Blocked item B-1.
 - No flag (security bugfix). No hooks/options/strings → baselines + `.pot` unchanged.
 
 ---
@@ -36,7 +36,7 @@ The theme cache-bust bug and the stale readme are both release.sh blind spots; f
 - Live QA: strategy select on the settings page shows Cheapest / First in stock and persists.
 
 ### PR-4 · shopos-digital `function_exists` static-string bug — `fix(shopos-digital)` — size XS
-- `class-fd-indexes.php:287`: `function_exists('FD_Core::opts')` → `class_exists('FD_Core')` (or call `FD_Core::opts()` unconditionally — it's the same plugin, always loaded; prefer the direct call).
+- `class-shopos-digital-indexes.php:287`: `function_exists('ShopOS_Digital_Core::opts')` → `class_exists('ShopOS_Digital_Core')` (or call `ShopOS_Digital_Core::opts()` unconditionally — it's the same plugin, always loaded; prefer the direct call).
 - Tests: shopos-digital has its own harness (`tests/`) — add coverage if the seam is reachable; otherwise verified by review (one-line).
 
 ### PR-5 · ProductFeed silent-failure fix — `fix(shopos-core)` — size S
@@ -124,9 +124,9 @@ Mirrored change across the twin indexers (Search + ShopFilters — 2 modules, st
 - Comment/guard-only; baselines shift position-only if any guarded file carries hooks.
 
 ### PR-18 · shopos-digital hardening — `fix(shopos-digital)` — size S
-- `class-fd-indexes.php`: allowlist-validate index name (`/^[a-z0-9_]+$/i`) and column tokens before DDL interpolation (:416, :231), mirroring `ajax_convert_myisam`'s table check.
-- `class-fd-admin.php`: `esc_html()` on `:717`, `esc_attr()` on `:710/:714`.
-- `class-fd-frontend.php:158`: cdnjs preconnect behind its own toggle (default off) or folded into the `fe_preconnect_domains` default — pick toggle (no silent behavior change for sites relying on it… default **on** to preserve behavior, off is the eventual owner call — decide in review).
+- `class-shopos-digital-indexes.php`: allowlist-validate index name (`/^[a-z0-9_]+$/i`) and column tokens before DDL interpolation (:416, :231), mirroring `ajax_convert_myisam`'s table check.
+- `class-shopos-digital-admin.php`: `esc_html()` on `:717`, `esc_attr()` on `:710/:714`.
+- `class-shopos-digital-frontend.php:158`: cdnjs preconnect behind its own toggle (default off) or folded into the `fe_preconnect_domains` default — pick toggle (no silent behavior change for sites relying on it… default **on** to preserve behavior, off is the eventual owner call — decide in review).
 
 ### PR-19 · Additive tunability filters — `feat(shopos-core)` — size S
 All additive (Hard Rule #1 exception applies — no flags):
@@ -156,7 +156,7 @@ All additive (Hard Rule #1 exception applies — no flags):
 ## Blocked on owner decision — answer before the affected PRs
 
 **B-1 · Legacy touches (Hard Rule #3 — needs written migration note + approval).** Three legacy findings share one gate:
-  - CSV formula injection twin (`legacy/class-rsn-admin.php:271`) — *security*, highest urgency of the three. Question: is the legacy exporter reachable on the live store, or is the modern module fully in charge? If reachable, I'll write the one-page migration note covering just this line and request approval.
+  - CSV formula injection twin (`legacy/class-shopos-restock-admin.php:271`) — *security*, highest urgency of the three. Question: is the legacy exporter reachable on the live store, or is the modern module fully in charge? If reachable, I'll write the one-page migration note covering just this line and request approval.
   - VariationSwatches archive group-versioned transients (audit D1 — miss storms on a fast-moving store).
   - Legacy Hebrew-msgid strings (cosmetic until a non-Hebrew deployment).
   **Recommendation:** approve a narrow legacy PR for the CSV line now; fold D1 + msgids into the eventual legacy-retirement plan.

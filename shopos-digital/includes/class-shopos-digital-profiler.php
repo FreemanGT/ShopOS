@@ -8,9 +8,9 @@ if (!defined('ABSPATH')) exit;
  * and actionable recommendations. Runtime-toggleable so it only runs when
  * you need it (has performance overhead when active).
  */
-class FD_Profiler {
+class ShopOS_Digital_Profiler {
 
-    const TABLE = 'fd_slow_queries';
+    const TABLE = 'shopos_digital_slow_queries';
 
     public function __construct($o) {
         // Create table on first run if it doesn't exist
@@ -28,7 +28,7 @@ class FD_Profiler {
             }
 
             // Register nightly auto-prune to keep the table lean
-            add_action('fd_daily_maintenance', array(__CLASS__, 'prune_old_rows'));
+            add_action('shopos_digital_daily_maintenance', array(__CLASS__, 'prune_old_rows'));
         }
     }
 
@@ -70,30 +70,30 @@ class FD_Profiler {
     // ================================================================
 
     public static function is_active() {
-        $expires = (int) get_option('fd_profiler_expires', 0);
+        $expires = (int) get_option('shopos_digital_profiler_expires', 0);
         return $expires > time();
     }
 
     public static function get_expires() {
-        return (int) get_option('fd_profiler_expires', 0);
+        return (int) get_option('shopos_digital_profiler_expires', 0);
     }
 
     public static function get_threshold() {
-        return (float) get_option('fd_profiler_threshold', 0.05);
+        return (float) get_option('shopos_digital_profiler_threshold', 0.05);
     }
 
     public static function start($duration_minutes) {
         $minutes = max(1, min(60, (int) $duration_minutes));
-        update_option('fd_profiler_expires', time() + ($minutes * 60), false);
+        update_option('shopos_digital_profiler_expires', time() + ($minutes * 60), false);
     }
 
     public static function stop() {
-        delete_option('fd_profiler_expires');
+        delete_option('shopos_digital_profiler_expires');
     }
 
     public static function set_threshold($seconds) {
         $seconds = max(0.001, min(10, (float) $seconds));
-        update_option('fd_profiler_threshold', $seconds, false);
+        update_option('shopos_digital_profiler_threshold', $seconds, false);
     }
 
     public static function clear_data() {
@@ -106,13 +106,13 @@ class FD_Profiler {
      * row-count ceiling of `prof_max_rows` (default 50,000). Both settings are
      * clamped to safe bounds regardless of input so a misconfigured option
      * can't produce a DELETE that wipes the whole table or retains data forever.
-     * Hooked to fd_daily_maintenance cron while the profiler is active.
+     * Hooked to shopos_digital_daily_maintenance cron while the profiler is active.
      */
     public static function prune_old_rows() {
         global $wpdb;
         $table = $wpdb->prefix . self::TABLE;
 
-        $opts = get_option(FD_OPT, array());
+        $opts = get_option(SHOPOS_DIGITAL_OPT, array());
         $days = isset($opts['prof_retention_days']) ? (int) $opts['prof_retention_days'] : 7;
         $max  = isset($opts['prof_max_rows']) ? (int) $opts['prof_max_rows'] : 50000;
         if ($days < 1)   $days = 7;

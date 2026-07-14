@@ -983,129 +983,129 @@ msgstr ""
 msgid "לרכישה"
 msgstr "Buy now"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:15
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:88
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:15
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:88
 msgid "התראות מלאי"
 msgstr "Restock Alerts"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:17
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:17
 msgid "לוח בקרה"
 msgstr "Dashboard"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:18
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:140
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:18
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:140
 msgid "נרשמים"
 msgstr "Subscribers"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:19
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:193
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:19
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:193
 msgid "תבניות מייל"
 msgstr "Email templates"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:20
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:216
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:20
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:216
 msgid "הגדרות"
 msgstr "Settings"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:45
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:45
 msgid "ההגדרות נשמרו בהצלחה."
 msgstr "Settings saved."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:52
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:52
 msgid "תבניות המייל נשמרו בהצלחה."
 msgstr "Email templates saved."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:76
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:144
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:76
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:144
 msgid "ממתין"
 msgstr "Waiting"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:77
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:144
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:77
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:144
 msgid "עודכן"
 msgstr "Notified"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:78
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:144
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:78
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:144
 msgid "הוסר"
 msgstr "Unsubscribed"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:88
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:88
 msgid "לוח בקרה — התראות חזרה למלאי"
 msgstr "Dashboard — Back-in-stock notifications"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:90
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:97
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:90
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:97
 msgid "ממתינים"
 msgstr "Waiting"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:91
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:91
 msgid "עודכנו"
 msgstr "Notified"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:92
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:92
 msgid "מוצרים במעקב"
 msgstr "Products tracked"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:93
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:93
 msgid "נרשמו היום"
 msgstr "Signups today"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:96
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:96
 msgid "מוצרים מבוקשים"
 msgstr "Most-requested products"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:97
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:160
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:97
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:160
 msgid "מוצר"
 msgstr "Product"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:97
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:160
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:97
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:160
 msgid "וריאציה"
 msgstr "Variation"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:97
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:97
 msgid "סטטוס מלאי"
 msgstr "Stock status"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:97
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:97
 msgid "פעולה"
 msgstr "Action"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:109
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:109
 msgid "במלאי"
 msgstr "In stock"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:109
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:109
 #: src/Modules/VariationSwatches/legacy/includes/class-archive.php:532
 #: src/Modules/VariationSwatches/legacy/templates/shop-simple-pick.php:84
 #: src/Modules/VariationSwatches/legacy/templates/simple-buy-box.php:51
 msgid "אזל מהמלאי"
 msgstr "Out of stock"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:110
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:110
 msgid "לשלוח עדכון לכל הממתינים?"
 msgstr "Send a notification to everyone waiting?"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:110
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:110
 msgid "שלח עכשיו"
 msgstr "Send now"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:110
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:110
 msgid "ישלח אוטומטית"
 msgstr "Will be sent automatically"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:115
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:115
 msgid "אין נרשמים עדיין"
 msgstr "No subscribers yet"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:115
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:115
 msgid "כשלקוחות ירשמו להתראות על מוצרים שאזלו, הם יופיעו כאן."
 msgstr "When customers subscribe to back-in-stock notifications, they will appear here."
 
 #. translators: %d = number of subscribers deleted
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:132
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:132
 #, php-format
 msgid "%d נרשם נמחק."
 msgid_plural "%d נרשמים נמחקו."
@@ -1113,319 +1113,319 @@ msgstr[0] "%d subscriber deleted."
 msgstr[1] "%d subscribers deleted."
 
 #. translators: %d = number of notifications sent
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:136
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:136
 #, php-format
 msgid "נשלחה %d התראה."
 msgid_plural "נשלחו %d התראות."
 msgstr[0] "%d notification sent."
 msgstr[1] "%d notifications sent."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:140
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:140
 msgid "ייצוא CSV"
 msgstr "Export CSV"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:143
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:143
 msgid "חיפוש שם או אימייל…"
 msgstr "Search by name or email…"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:144
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:144
 msgid "כל הסטטוסים"
 msgstr "All statuses"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:145
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:145
 msgid "סינון"
 msgstr "Filter"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:150
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:150
 msgid "בחר הכל"
 msgstr "Select all"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:151
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:151
 msgid "פעולות מרובות"
 msgstr "Bulk actions"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:151
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:177
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:151
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:177
 msgid "מחיקה"
 msgstr "Delete"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:152
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:152
 msgid "בטוח?"
 msgstr "Are you sure?"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:152
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:152
 msgid "בצע"
 msgstr "Apply"
 
 #. translators: 1: total result count, 2: current page number, 3: total page count
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:156
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:156
 #, php-format
 msgid "%1$s תוצאות · עמוד %2$s מתוך %3$s"
 msgstr "%1$s results · page %2$s of %3$s"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:160
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:265
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:160
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:265
 msgid "שם"
 msgstr "Name"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:160
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:234
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:266
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:160
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:234
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:266
 msgid "אימייל"
 msgstr "Email"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:160
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:267
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:160
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:267
 msgid "סטטוס"
 msgstr "Status"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:160
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:268
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:160
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:268
 msgid "תאריך הרשמה"
 msgstr "Signup date"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:160
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:269
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:160
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:269
 msgid "תאריך עדכון"
 msgstr "Notification date"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:160
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:160
 msgid "פעולות"
 msgstr "Actions"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:162
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:162
 msgid "(נמחק)"
 msgstr "(deleted)"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:177
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:177
 msgid "למחוק נרשם זה?"
 msgstr "Delete this subscriber?"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:184
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:184
 msgid "לא נמצאו נרשמים"
 msgstr "No subscribers found"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:184
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:184
 msgid "נסו לשנות את הסינון או המתינו שלקוחות ירשמו."
 msgstr "Try changing the filter or wait for customers to subscribe."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:193
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:193
 msgid "התאימו את המיילים שנשלחים ללקוחות שלכם"
 msgstr "Customize the emails sent to your customers"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:195
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:195
 msgid "מייל אישור הרשמה"
 msgstr "Confirmation email"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:195
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:195
 msgid "נשלח כשלקוח נרשם להתראה על מוצר."
 msgstr "Sent when a customer subscribes to a notification for a product."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:196
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:202
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:196
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:202
 msgid "נושא"
 msgstr "Subject"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:197
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:203
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:197
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:203
 msgid "כותרת"
 msgstr "Heading"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:198
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:204
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:198
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:204
 msgid "תוכן"
 msgstr "Content"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:199
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:206
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:199
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:206
 msgid "משתנים זמינים:"
 msgstr "Available placeholders:"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:201
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:201
 msgid "מייל חזרה למלאי"
 msgstr "Back-in-stock email"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:201
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:201
 msgid "נשלח כשמוצר במעקב חוזר למלאי."
 msgstr "Sent when a tracked product is back in stock."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:205
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:230
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:205
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:230
 msgid "טקסט כפתור"
 msgstr "Button text"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:208
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:208
 msgid "שמירת תבניות מייל"
 msgstr "Save email templates"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:216
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:216
 msgid "הגדירו כיצד התראות מלאי עובד בחנות שלכם"
 msgstr "Configure how Restock Notify works in your store"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:218
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:218
 msgid "תצוגה"
 msgstr "Display"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:219
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:219
 msgid "הצגת טופס אוטומטית בעמודי מוצרים שאזלו מהמלאי"
 msgstr "Automatically show the form on out-of-stock product pages"
 
 #. translators: %s = literal shortcode tag (do not translate).
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:223
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:223
 #, php-format
 msgid "כשמושבת, השתמשו בשורטקוד %s למיקום ידני."
 msgstr "When disabled, use the %s shortcode to place it manually."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:228
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:228
 msgid "כותרת הטופס"
 msgstr "Form heading"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:229
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:229
 msgid "תיאור הטופס"
 msgstr "Form description"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:231
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:231
 msgid "הודעת הצלחה"
 msgstr "Success message"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:232
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:232
 msgid "הודעת כפילות"
 msgstr "Duplicate message"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:235
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:235
 msgid "שליחת מייל אישור בהרשמה"
 msgstr "Send a confirmation email on subscribe"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:236
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:236
 msgid "שם השולח"
 msgstr "Sender name"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:237
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:237
 msgid "אימייל השולח"
 msgstr "Sender email"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:239
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:239
 msgid "פרטיות"
 msgstr "Privacy"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:240
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:240
 msgid "הצגת תיבת הסכמה (GDPR)"
 msgstr "Show consent checkbox (GDPR)"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:241
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:241
 msgid "טקסט הסכמה"
 msgstr "Consent text"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:243
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:243
 msgid "שורטקוד"
 msgstr "Shortcode"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:244
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:244
 msgid "השתמשו בשורטקוד הבא כדי למקם את הטופס באופן ידני:"
 msgstr "Use the following shortcode to place the form manually:"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:246
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:246
 msgid "או ציינו מזהה מוצר:"
 msgstr "Or specify a product ID:"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:249
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:249
 msgid "שמירת הגדרות"
 msgstr "Save settings"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:262
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:262
 msgid "מזהה"
 msgstr "ID"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:263
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:263
 msgid "מזהה מוצר"
 msgstr "Product ID"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:264
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:264
 msgid "מזהה וריאציה"
 msgstr "Variation ID"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-admin.php:276
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-admin.php:276
 msgid "רשימת המתנה"
 msgstr "Waiting list"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:13
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php:13
 msgid "Security check failed. Please refresh the page and try again."
 msgstr "בדיקת אבטחה נכשלה. יש לרענן את הדף ולנסות שוב."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:28
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php:28
 msgid "Too many requests. Please try again later."
 msgstr "יותר מדי בקשות. נסו שוב מאוחר יותר."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:37
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php:37
 msgid "Invalid product."
 msgstr "מוצר לא תקין."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:40
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php:40
 msgid "Please enter a valid email address."
 msgstr "יש להזין כתובת אימייל תקינה."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:45
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php:45
 msgid "Product not found."
 msgstr "המוצר לא נמצא."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:50
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php:50
 msgid "Please confirm the consent checkbox to continue."
 msgstr "יש לאשר את תיבת ההסכמה כדי להמשיך."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:70
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php:70
 msgid "Something went wrong. Please try again."
 msgstr "משהו השתבש. נסו שוב."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-email.php:24
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-email.php:48
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-email.php:73
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-email.php:82
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-email.php:24
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-email.php:48
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-email.php:73
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-email.php:82
 msgid "לקוח/ה"
 msgstr "Customer"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-email.php:96
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-email.php:96
 msgid "הסרה מרשימת התפוצה"
 msgstr "Unsubscribe"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-email.php:96
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-email.php:96
 msgid "עבור מוצר זה."
 msgstr "for this product."
 
 #. translators: %s = customer name
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-email.php:107
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-email.php:107
 #, php-format
 msgid "היי %s,"
 msgstr "Hi %s,"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php:103
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php:103
 msgid "יש להזין כתובת אימייל תקינה."
 msgstr "Please enter a valid email address."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php:104
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php:104
 msgid "יש לאשר את תיבת ההסכמה."
 msgstr "Please tick the consent box."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php:105
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php:105
 msgid "שגיאה: מזהה מוצר חסר."
 msgstr "Error: product ID missing."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php:106
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php:106
 msgid "שגיאה: הסקריפט לא נטען כראוי. רענן את הדף."
 msgstr "Error: the script didn't load properly. Please refresh the page."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php:107
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php:107
 msgid "משהו השתבש. נסו שוב."
 msgstr "Something went wrong. Please try again."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php:108
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php:108
 msgid "שגיאת רשת. נסו שוב."
 msgstr "Network error. Please try again."
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php:449
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php:449
 msgid "שם מלא"
 msgstr "Full name"
 
-#: src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php:452
+#: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php:452
 msgid "כתובת אימייל"
 msgstr "Email address"
 

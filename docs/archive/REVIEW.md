@@ -17,11 +17,11 @@ Every finding is pinned to a file:line. Two claims from the initial scan were ve
 
 **Top 5 things to fix first** (risk × effort):
 
-1. 🔴 Email header injection in [class-rsn-email.php:124](shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-email.php#L124) — trivially exploitable if any admin account is compromised or any other plugin lets you write those options.
-2. 🔴 Unnamespaced legacy global classes (`RSN_*`, `ShopOS_VS_*`) instantiated without `class_exists` guards — fatal redeclare if any other plugin uses the same names. Fix with one-line guards.
+1. 🔴 Email header injection in [class-shopos-restock-email.php:124](shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-email.php#L124) — trivially exploitable if any admin account is compromised or any other plugin lets you write those options.
+2. 🔴 Unnamespaced legacy global classes (`ShopOS_Restock_*`, `ShopOS_VS_*`) instantiated without `class_exists` guards — fatal redeclare if any other plugin uses the same names. Fix with one-line guards.
 3. 🟠 N+1 variation fetches in `ProductFeed::write_feed()` — feed generation scales ~O(products × variations). One-query batch fix.
 4. 🟠 Unbounded 1000-post daily audit in `VariableStockFix` — WP-Cron timeout risk. Split into 50-post chunks chained via `wp_schedule_single_event`.
-5. 🟠 Hardcoded untranslatable Hebrew strings in `RSN_Ajax` — locks UI to Hebrew. 10 lines of `__()` wrapping + regenerate `.pot` / `.po` / `.mo`.
+5. 🟠 Hardcoded untranslatable Hebrew strings in `ShopOS_Restock_Ajax` — locks UI to Hebrew. 10 lines of `__()` wrapping + regenerate `.pot` / `.po` / `.mo`.
 
 **What's already good** (don't break these):
 - Centralized `Security` helper with nonce/cap/sanitize/rate-limit — cleaner than most WP plugins.
@@ -36,8 +36,8 @@ Every finding is pinned to a file:line. Two claims from the initial scan were ve
 - `dependencies_met()` gates PHP / Woo / Elementor version; `health()` surfaces via dashboard dots.
 
 **Claims dismissed after verification** (was in exploration output, is NOT a bug):
-- ❌ "RestockNotify CSRF bypass on nonce failure" — false. [class-rsn-ajax.php:12-14](shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php#L12-L14) calls `wp_send_json_error` which internally calls `wp_die()`, so execution stops on failure.
-- ❌ "innerHTML XSS in RestockNotify footer fallback" — false. The JSON at [class-rsn-frontend.php:286-290](shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php#L286-L290) contains only integer variation IDs + booleans, wrapped in `wp_json_encode()`.
+- ❌ "RestockNotify CSRF bypass on nonce failure" — false. [class-shopos-restock-ajax.php:12-14](shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php#L12-L14) calls `wp_send_json_error` which internally calls `wp_die()`, so execution stops on failure.
+- ❌ "innerHTML XSS in RestockNotify footer fallback" — false. The JSON at [class-shopos-restock-frontend.php:286-290](shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php#L286-L290) contains only integer variation IDs + booleans, wrapped in `wp_json_encode()`.
 - ❌ "`shopos_core_onboarded` never written" — false. Written at [Dashboard.php:229](shopos-core/src/Admin/Dashboard.php#L229) (skip link) and [Dashboard.php:237-242](shopos-core/src/Admin/Dashboard.php#L237-L242) (`update_option_shopos_core_modules` hook).
 
 ---
@@ -46,13 +46,13 @@ Every finding is pinned to a file:line. Two claims from the initial scan were ve
 
 ### 🔴 CRITICAL — 1 finding
 
-**S-01. Email header injection in `RSN_Email::send()`**
-[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-email.php:117-126`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-email.php#L117-L126)
+**S-01. Email header injection in `ShopOS_Restock_Email::send()`**
+[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-email.php:117-126`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-email.php#L117-L126)
 
 ```php
 private static function send( $to, $subject, $html ) {
-    $fn = rsn_get_option( 'from_name' );
-    $fe = rsn_get_option( 'from_email' );
+    $fn = shopos_restock_get_option( 'from_name' );
+    $fe = shopos_restock_get_option( 'from_email' );
     …
     return wp_mail( $to, $subject, $html, array(
         'Content-Type: text/html; charset=UTF-8',
@@ -61,7 +61,7 @@ private static function send( $to, $subject, $html ) {
 }
 ```
 
-Neither `$fn` nor `$fe` is passed through `sanitize_text_field()` / `sanitize_email()` before interpolation into a header. An admin who sets `from_name` to `Attacker\r\nBcc: victim@example.com` gets BCC injected into every restock email. Settings_Hub sanitizes on write for its own fields, but Restock's admin page predates Settings_Hub and writes via `update_option` directly in `class-rsn-admin.php`.
+Neither `$fn` nor `$fe` is passed through `sanitize_text_field()` / `sanitize_email()` before interpolation into a header. An admin who sets `from_name` to `Attacker\r\nBcc: victim@example.com` gets BCC injected into every restock email. Settings_Hub sanitizes on write for its own fields, but Restock's admin page predates Settings_Hub and writes via `update_option` directly in `class-shopos-restock-admin.php`.
 
 **Fix:** Strip `\r\n` / `\0` from `$fn`, run `$fe` through `sanitize_email()` and fall back to `get_option('admin_email')` if invalid. Or use `wp_mail_from` / `wp_mail_from_name` filters instead of raw header array.
 
@@ -70,11 +70,11 @@ Neither `$fn` nor `$fe` is passed through `sanitize_text_field()` / `sanitize_em
 **S-02. Unnamespaced legacy global classes — no `class_exists` guard**
 [`shopos-core/src/Modules/RestockNotify/Module.php:111-142`](shopos-core/src/Modules/RestockNotify/Module.php#L111-L142), [`shopos-core/src/Modules/VariationSwatches/Module.php:79-91`](shopos-core/src/Modules/VariationSwatches/Module.php#L79-L91)
 
-Classes named `RSN_Frontend`, `RSN_Ajax`, `RSN_Stock_Monitor`, `RSN_Email`, `RSN_Database`, `ShopOS_VS_Plugin`, `ShopOS_VS_Frontend`, `ShopOS_VS_Archive`, etc. live in the global namespace (no `namespace …;` line). When ShopOS Core requires these files and another plugin — including the original standalone one that ShopOS replaces — has the same class, PHP fatals with `Cannot declare class RSN_Frontend, because the name is already in use`.
+Classes named `ShopOS_Restock_Frontend`, `ShopOS_Restock_Ajax`, `ShopOS_Restock_Stock_Monitor`, `ShopOS_Restock_Email`, `ShopOS_Restock_Database`, `ShopOS_VS_Plugin`, `ShopOS_VS_Frontend`, `ShopOS_VS_Archive`, etc. live in the global namespace (no `namespace …;` line). When ShopOS Core requires these files and another plugin — including the original standalone one that ShopOS replaces — has the same class, PHP fatals with `Cannot declare class ShopOS_Restock_Frontend, because the name is already in use`.
 
 **Not a direct vuln** but a safety issue classified as security because it can bring the entire WP admin down hard at activation.
 
-**Fix:** Before `require_once` each legacy file, guard with `if ( ! class_exists( 'RSN_Frontend', false ) )` etc.; on conflict, set a transient admin notice and skip booting the module.
+**Fix:** Before `require_once` each legacy file, guard with `if ( ! class_exists( 'ShopOS_Restock_Frontend', false ) )` etc.; on conflict, set a transient admin notice and skip booting the module.
 
 **S-03. Public AJAX `wc_ajax_nopriv_shopos_shop_add_to_cart` — no membership check**
 [`shopos-core/src/Modules/VariationSwatches/legacy/includes/class-archive.php:65-66, 413-424`](shopos-core/src/Modules/VariationSwatches/legacy/includes/class-archive.php#L65-L66)
@@ -86,14 +86,14 @@ Nonce protects against CSRF, but there's no filter allowing a membership/B2B plu
 ### 🟡 MEDIUM — 3 findings
 
 **S-04. Spoofable forwarded-IP headers trusted for rate limiting**
-[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:76-83`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php#L76-L83)
+[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php:76-83`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php#L76-L83)
 
 `get_client_ip()` walks `HTTP_CF_CONNECTING_IP` → `HTTP_X_FORWARDED_FOR` → `HTTP_X_REAL_IP` → `REMOTE_ADDR`. On sites **not** behind a proxy, any client can send `X-Forwarded-For` and bypass the 5-requests-per-hour rate limit completely. (Note: `ShopOS\Core\Core\Security::rate_limit` at [Security.php:93-101](shopos-core/src/Core/Security.php#L93-L101) only uses `REMOTE_ADDR`, so it's already safer — the inconsistency is in the legacy RSN module.)
 
-**Fix:** Either use `Security::rate_limit('rsn_subscribe', 5, HOUR_IN_SECONDS)` directly, or add an allowlist setting so admins can opt into trusting `X-Forwarded-For` only when they know they're behind Cloudflare/Nginx proxy.
+**Fix:** Either use `Security::rate_limit('shopos_restock_subscribe', 5, HOUR_IN_SECONDS)` directly, or add an allowlist setting so admins can opt into trusting `X-Forwarded-For` only when they know they're behind Cloudflare/Nginx proxy.
 
 **S-05. No honeypot on public subscribe endpoint**
-[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:11-73`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php#L11-L73)
+[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php:11-73`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php#L11-L73)
 
 Rate limit is the only bot defense. A bot that rotates IPs will defeat it.
 
@@ -146,7 +146,7 @@ For each variable product, every child variation ID is resolved via a separate `
 **Estimated impact:** 300–800 ms faster shop/category TTFB on catalog pages.
 
 **P-04. Deep variation iteration on every variable product page render**
-[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php:256-271`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php#L256-L271)
+[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php:256-271`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php#L256-L271)
 
 Same story as P-03, but on the single-product page: `maybe_render()` loops every child via `wc_get_product()` and then runs `is_variation_truly_oos()` per variation. 50-variation products add 500–2000 ms on first load.
 
@@ -171,7 +171,7 @@ Same story as P-03, but on the single-product page: `maybe_render()` loops every
 **Fix:** Add a `minify_assets()` step to `build.sh` that runs between `stage_dir` and `zip`; emit `.min.js` / `.min.css` and enqueue them when `! WP_DEBUG && ! SCRIPT_DEBUG`.
 
 **P-06. RestockNotify assets enqueued on every frontend page**
-[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php:56-82`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php#L56-L82)
+[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php:56-82`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php#L56-L82)
 
 Comment labels this a "cannot fail" design — CSS/JS load on every non-admin, non-ajax, non-REST request so the form renders no matter what hook-ordering anomaly occurs. Reasonable, but conservative — easily ~5 KB on every page hit.
 
@@ -245,7 +245,7 @@ Each `Importer.php` has near-identical `detect()`, `delete_legacy_options()`, `m
 
 **Fix:** Switch legacy files to `'shopos-core'` text domain; regenerate `.pot` to include legacy strings. No user visible change.
 
-**ST-07. Legacy god classes `class-rsn-frontend.php` (576 lines) and `class-rsn-admin.php` (22 KB)**
+**ST-07. Legacy god classes `class-shopos-restock-frontend.php` (576 lines) and `class-shopos-restock-admin.php` (22 KB)**
 
 Flagged only. Legacy, large, out of scope for this review cycle. Refactor target for a future major.
 
@@ -256,7 +256,7 @@ Flagged only. Legacy, large, out of scope for this review cycle. Refactor target
 ### 🟠 HIGH — 3 findings
 
 **UX-01. Hardcoded Hebrew error messages, no `__()` wrapping**
-[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php:13-42`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-ajax.php#L13-L42)
+[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php:13-42`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php#L13-L42)
 
 Every error path sends raw Hebrew strings. No `__()`. No text-domain. Translators can't reach them. UI will always display Hebrew even on English installs.
 
@@ -311,7 +311,7 @@ Trusts every importer's `detect()` return value has `installed` / `active` / `fi
 **Fix:** Require the return to be a typed DTO (simple value object or strict array shape check with `ArrayAccess`).
 
 **UX-08. Inline style block printed multiple times on OOS pages**
-[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php:327-357`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-frontend.php#L327-L357)
+[`shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php:327-357`](shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php#L327-L357)
 
 Guarded by `self::$inline_css_printed` so only once per request — but defensive. Fine as-is for now.
 
@@ -359,7 +359,7 @@ Guarded by `self::$inline_css_printed` so only once per request — but defensiv
 | UX-07 | Typed `detect()` DTO in Legacy_Importer | 🔵 | S | **3** |
 
 **Out of scope** (flagged, not in any wave):
-- ST-07: God-class refactor of `class-rsn-frontend.php` / `class-rsn-admin.php` (separate major).
+- ST-07: God-class refactor of `class-shopos-restock-frontend.php` / `class-shopos-restock-admin.php` (separate major).
 - UX-06: PHPUnit harness + CI setup (separate major).
 - Full type-hint pass across the codebase.
 - Licensing / auto-update server integration.

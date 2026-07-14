@@ -1,9 +1,9 @@
 <?php
 /**
- * Shared `\RSN_Database` stub for unit tests.
+ * Shared `\ShopOS_Restock_Database` stub for unit tests.
  *
  * The real legacy class lives in
- * `shopos-core/src/Modules/RestockNotify/legacy/includes/class-rsn-database.php`
+ * `shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-database.php`
  * and is only loaded inside `Module::boot()` — which the tests never exercise.
  * This stub captures method calls into a public static array and lets the
  * caller drive return values via static properties.
@@ -12,7 +12,7 @@
  *   - tests/SubscribersTest.php (Wave 2.3a wrapper delegation)
  *   - tests/RestockNotifyStockMonitorTest.php (Wave 2.3b stock monitor)
  *
- * If you add a new test that touches `\RSN_Database`, require this file
+ * If you add a new test that touches `\ShopOS_Restock_Database`, require this file
  * first; do NOT redeclare the class inline (PHP forbids the redeclare and
  * test order becomes load-order-sensitive).
  *
@@ -21,9 +21,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( '\RSN_Database' ) ) {
+if ( ! class_exists( '\ShopOS_Restock_Database' ) ) {
 	// phpcs:ignore Generic.Files.OneObjectStructurePerFile.MultipleFound
-	class RSN_Database {
+	class ShopOS_Restock_Database {
 		public static array $calls                          = array();
 		public static $get_waiting_for_product_return       = array();
 		public static $mark_notified_return                  = 1;

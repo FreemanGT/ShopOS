@@ -34,9 +34,9 @@ return array(
 	'from_email'             => '',
 
 	// Email-shell strings — consumed directly by Modern \ShopOS\Core\Modules\
-	// RestockNotify\Email; NOT seeded into rsn_* options. See Module::OPTION_KEYS
+	// RestockNotify\Email; NOT seeded into shopos_restock_* options. See Module::OPTION_KEYS
 	// for the seeded subset. Pre-1.11.4 these were hardcoded literals inside
-	// legacy/includes/class-rsn-email.php — modern Email reads them from here.
+	// legacy/includes/class-shopos-restock-email.php — modern Email reads them from here.
 	'shell_customer_name_fallback' => 'לקוח/ה',
 	'shell_greeting'               => 'היי %s,',
 	'shell_unsubscribe_link_text'  => 'הסרה מרשימת התפוצה',
@@ -45,7 +45,7 @@ return array(
 	// Frontend strings (Wave 2.3c) — consumed by modern Frontend's
 	// wp_localize_script payload (js_*) and render_form() placeholders
 	// (form_placeholder_*). Pre-2.3c these were hardcoded literals at
-	// legacy/class-rsn-frontend.php:103-108 (js_*) and lines 449/452
+	// legacy/class-shopos-restock-frontend.php:103-108 (js_*) and lines 449/452
 	// (form_placeholder_*).
 	'js_invalid_email'             => 'יש להזין כתובת אימייל תקינה.',
 	'js_consent_missing'           => 'יש לאשר את תיבת ההסכמה.',

@@ -1,7 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class RSN_Ajax {
+class ShopOS_Restock_Ajax {
 
     public function __construct() {
         add_action( 'wp_ajax_rsn_subscribe', array( $this, 'handle_subscribe' ) );
@@ -9,7 +9,7 @@ class RSN_Ajax {
     }
 
     public function handle_subscribe() {
-        if ( ! check_ajax_referer( 'rsn_subscribe', 'nonce', false ) ) {
+        if ( ! check_ajax_referer( 'shopos_restock_subscribe', 'nonce', false ) ) {
             wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'shopos-core' ) ) );
         }
 
@@ -17,14 +17,14 @@ class RSN_Ajax {
         // Respond with a generic success to avoid signalling detection.
         if ( ! empty( $_POST['_hp'] ) ) {
             wp_send_json_success( array(
-                'message' => rsn_get_option( 'form_success_message' ),
+                'message' => shopos_restock_get_option( 'form_success_message' ),
             ) );
         }
 
         // Per-IP rate limit (REMOTE_ADDR only — not spoofable via proxy
         // headers). 5 submissions / hour shared with any other caller that
         // uses the same bucket.
-        if ( ! \ShopOS\Core\Core\Security::rate_limit( 'rsn_subscribe', 5, HOUR_IN_SECONDS ) ) {
+        if ( ! \ShopOS\Core\Core\Security::rate_limit( 'shopos_restock_subscribe', 5, HOUR_IN_SECONDS ) ) {
             wp_send_json_error( array( 'message' => __( 'Too many requests. Please try again later.', 'shopos-core' ) ) );
         }
 
@@ -45,20 +45,20 @@ class RSN_Ajax {
             wp_send_json_error( array( 'message' => __( 'Product not found.', 'shopos-core' ) ) );
         }
 
-        if ( 'yes' === rsn_get_option( 'enable_gdpr' ) ) {
+        if ( 'yes' === shopos_restock_get_option( 'enable_gdpr' ) ) {
             if ( empty( $_POST['gdpr'] ) || 'yes' !== $_POST['gdpr'] ) {
                 wp_send_json_error( array( 'message' => __( 'Please confirm the consent checkbox to continue.', 'shopos-core' ) ) );
             }
         }
 
-        if ( RSN_Database::exists( $email, $product_id, $variation_id ) ) {
+        if ( ShopOS_Restock_Database::exists( $email, $product_id, $variation_id ) ) {
             wp_send_json_error( array(
-                'message'   => rsn_get_option( 'form_duplicate_message' ),
+                'message'   => shopos_restock_get_option( 'form_duplicate_message' ),
                 'duplicate' => true,
             ) );
         }
 
-        $id = RSN_Database::insert( array(
+        $id = ShopOS_Restock_Database::insert( array(
             'product_id'     => $product_id,
             'variation_id'   => $variation_id,
             'customer_name'  => $name,
@@ -70,13 +70,13 @@ class RSN_Ajax {
             wp_send_json_error( array( 'message' => __( 'Something went wrong. Please try again.', 'shopos-core' ) ) );
         }
 
-        if ( 'yes' === rsn_get_option( 'enable_confirmation' ) ) {
-            $subscriber = RSN_Database::get( $id );
-            RSN_Email::send_confirmation( $subscriber );
+        if ( 'yes' === shopos_restock_get_option( 'enable_confirmation' ) ) {
+            $subscriber = ShopOS_Restock_Database::get( $id );
+            ShopOS_Restock_Email::send_confirmation( $subscriber );
         }
 
         wp_send_json_success( array(
-            'message' => rsn_get_option( 'form_success_message' ),
+            'message' => shopos_restock_get_option( 'form_success_message' ),
         ) );
     }
 }

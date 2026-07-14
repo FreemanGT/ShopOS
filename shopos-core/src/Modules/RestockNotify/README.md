@@ -13,7 +13,7 @@ Back-in-stock subscription system. Customers sign up on an out-of-stock product;
 
 Settings live in a top-level "Restock Notify" admin menu (preserved from the legacy plugin). Dashboard card includes a "Settings (legacy menu)" shortcut.
 
-Stored under `rsn_*` option keys:
+Stored under `shopos_restock_*` option keys:
 - `form_heading`, `form_description`, `form_button_text`, `form_success_message`, `form_duplicate_message`
 - `enable_confirmation` — send a confirmation email on signup
 - `enable_gdpr`, `gdpr_text` — opt-in consent checkbox
@@ -23,7 +23,7 @@ Stored under `rsn_*` option keys:
 
 ## Database
 
-Owns `{prefix}rsn_subscribers` (subscriber list). Version-stamped via `rsn_db_version`; `RSN_Database::create_tables()` runs on activation and on version-mismatch boot.
+Owns `{prefix}shopos_restock_subscribers` (subscriber list). Version-stamped via `shopos_restock_db_version`; `ShopOS_Restock_Database::create_tables()` runs on activation and on version-mismatch boot.
 
 ## Dependencies
 
@@ -36,7 +36,7 @@ Detects `restock-notify/restock-notify.php`. The module reuses the same option k
 
 ## Conflict guard
 
-If the legacy `RSN_Frontend` / `RSN_Ajax` / `RSN_Email` / `RSN_Database` class is already loaded when ShopOS Core boots (usually because the legacy plugin is still active), the module bails out of `boot()` and the ShopOS dashboard shows a red admin notice telling you to deactivate the legacy plugin. This prevents a fatal class-redeclare.
+If the legacy `ShopOS_Restock_Frontend` / `ShopOS_Restock_Ajax` / `ShopOS_Restock_Email` / `ShopOS_Restock_Database` class is already loaded when ShopOS Core boots (usually because the legacy plugin is still active), the module bails out of `boot()` and the ShopOS dashboard shows a red admin notice telling you to deactivate the legacy plugin. This prevents a fatal class-redeclare.
 
 ## Security
 
@@ -50,5 +50,5 @@ See [`HOOKS.md`](HOOKS.md).
 
 ## Known limitations
 
-- Large legacy classes (`RSN_Frontend` ~580 lines, `RSN_Admin` ~22 KB) retained verbatim from the legacy plugin; refactor is deferred.
+- Large legacy classes (`ShopOS_Restock_Frontend` ~580 lines, `ShopOS_Restock_Admin` ~22 KB) retained verbatim from the legacy plugin; refactor is deferred.
 - Assets currently enqueue on every frontend page by design ("cannot fail" visibility guarantee).

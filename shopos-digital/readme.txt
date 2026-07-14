@@ -87,11 +87,11 @@ Unlike general caching plugins (which this complements — works great alongside
 
 = 1.7.5 =
 * FEATURE: Frontend cdnjs preconnect hint is now gated behind a new `fe_preconnect_cdnjs` option (default ON). `opts()` merges defaults on every read, so existing installs still emit the hint — zero behavior change — but a site that doesn't use cdnjs can now switch it off from the "Add Preconnect Hints" admin card.
-* SECURITY: `FD_Indexes` DDL hardening (defense in depth) — allowlist-validate the table identifier, index name and column-list token before backtick-interpolating them into ALTER/DROP/CREATE INDEX, mirroring the existing MyISAM-convert table-name check. Reachable callers already gate these to static definitions behind nonce + `manage_options`, so this is belt-and-suspenders, not a live hole.
+* SECURITY: `ShopOS_Digital_Indexes` DDL hardening (defense in depth) — allowlist-validate the table identifier, index name and column-list token before backtick-interpolating them into ALTER/DROP/CREATE INDEX, mirroring the existing MyISAM-convert table-name check. Reachable callers already gate these to static definitions behind nonce + `manage_options`, so this is belt-and-suspenders, not a live hole.
 * FIX: `readme.txt` Stable tag bumped to 1.7.5 (had been stale since 1.7.4).
 
 = 1.7.4 =
-* CORRECTNESS: `apply_deep` now calls `FD_Core::opts()` directly instead of a `function_exists('FD_Core::opts')` ternary that never resolves for a `Class::method` string, so the `wp_parse_args` defaults merge runs. Previously, on stores that never saved FD settings, deep reindex read a missing `idx_enable_maintenance_mode` and silently ran without maintenance mode.
+* CORRECTNESS: `apply_deep` now calls `ShopOS_Digital_Core::opts()` directly instead of a `function_exists('ShopOS_Digital_Core::opts')` ternary that never resolves for a `Class::method` string, so the `wp_parse_args` defaults merge runs. Previously, on stores that never saved FD settings, deep reindex read a missing `idx_enable_maintenance_mode` and silently ran without maintenance mode.
 
 = 1.7.3 =
 * SECURITY: `wc_optimize_delete_options` DELETE rewriter now routes the captured LIKE pattern through `$wpdb->prepare()` with a `%s` placeholder instead of `esc_sql()`. No exploit vector was known (the LIKE patterns are always plugin/core-generated, never user input), but the prepared-statement form is the correct defensive pattern and removes a long-running audit flag.
@@ -116,7 +116,7 @@ Unlike general caching plugins (which this complements — works great alongside
 * PERFORMANCE: Deep reindex now optionally puts the site in maintenance mode for the duration of the ALTER TABLE. Controlled by `idx_enable_maintenance_mode` (default ON).
 * PERFORMANCE: Profiler now writes slow queries as a single multi-row INSERT at shutdown instead of N sequential INSERTs.
 * PERFORMANCE: Replaced the `@font-face` output-buffer rewrite (which wrapped every request) with a narrower, lower-overhead approach that only touches enqueued stylesheets.
-* PERFORMANCE: `fd_has_products` transient now invalidated on `save_post_product` / `deleted_post`.
+* PERFORMANCE: `shopos_digital_has_products` transient now invalidated on `save_post_product` / `deleted_post`.
 * PERFORMANCE: Months-dropdown cache now also invalidated on `wp_trash_post` and `bulk_edit_posts`.
 * SECURITY: Removed deprecated `X-XSS-Protection` header (OWASP recommends against it — known to introduce XSS bugs in older browsers).
 * SECURITY: Security headers now scoped to frontend requests only (admin, AJAX, and REST no longer receive `X-Frame-Options` / `Referrer-Policy` etc.).
@@ -126,7 +126,7 @@ Unlike general caching plugins (which this complements — works great alongside
 * FEATURE: Destructive UI buttons (deep reindex, drop indexes, fix autoload, MyISAM convert, optimize tables) now require confirming "I have a recent backup" before the action enables.
 * FEATURE: Database user's DDL capability (CREATE / ALTER) pre-flight checked at dashboard load. Shows red banner on managed hosts that lack privileges.
 * FEATURE: WP-CLI commands: `wp fd cleanup`, `wp fd reindex`, `wp fd autoload`, `wp fd profiler`, `wp fd export`, `wp fd import`.
-* FEATURE: Public extension hooks — `fd/before_run_cleanup`, `fd/after_run_cleanup`, `fd/cleanup_batch_size` filter, `fd/protected_autoload_options` filter.
+* FEATURE: Public extension hooks — `shopos_digital/before_run_cleanup`, `shopos_digital/after_run_cleanup`, `shopos_digital/cleanup_batch_size` filter, `shopos_digital/protected_autoload_options` filter.
 * QUALITY: Full i18n pass — user-facing strings wrapped in `__()` / `esc_html__()`. Empty `languages/shopos-digital.pot` shipped for translators.
 * QUALITY: WooCommerce minimum version (6.0) now enforced at runtime, not just in the plugin header.
 * QUALITY: PHPUnit smoke tests + GitHub Actions CI matrix (PHP 7.4 / 8.1 / 8.3) added.
@@ -135,14 +135,14 @@ Unlike general caching plugins (which this complements — works great alongside
 
 = 1.7.1 =
 * Fixed adm_cache_category_list (Cache Category Dropdown) — the cache was being written correctly but never actually served. The previous implementation tagged $args and registered a get_terms save hook, but the cache-hit path did nothing and SQL ran every time. Replaced with pre_get_terms (WP 4.6+) which short-circuits the query entirely on a hit. Added invalidation on created_product_cat, edited_product_cat, and delete_product_cat actions (previously only save_post_product and deleted_term_relationships).
-* Fixed 3 remaining DB_NAME raw string interpolations in class-fd-admin.php (dashboard db_size, dashboard myisam count, autoload tab myisam list) — all now use $wpdb->prepare().
+* Fixed 3 remaining DB_NAME raw string interpolations in class-shopos-digital-admin.php (dashboard db_size, dashboard myisam count, autoload tab myisam list) — all now use $wpdb->prepare().
 * Fixed 3 Quick Action hrefs in the dashboard missing esc_url() around admin_url() calls.
-* Fixed the one remaining unescaped SHOW TABLES LIKE in db_optimize_tables — now uses $wpdb->prepare() consistently with the rest of class-fd-database.php.
+* Fixed the one remaining unescaped SHOW TABLES LIKE in db_optimize_tables — now uses $wpdb->prepare() consistently with the rest of class-shopos-digital-database.php.
 * Fixed adm_cache_months_dropdown registering its hooks on all requests (front-end, REST) — added is_admin() guard. These filters only ever fire in admin; registering them site-wide was pointless overhead.
 * Fixed Profiler: wpdb->save_queries = true was being set on every request (including live customer browsing) while the profiler was active, saving all visitor queries into PHP memory. Now restricted to is_admin() and DOING_AJAX requests only.
-* Fixed Profiler: table grew unboundedly with no automatic cleanup. Added prune_old_rows() static method (hooked to fd_daily_maintenance) that deletes rows older than 7 days and enforces a hard cap of 50,000 rows.
+* Fixed Profiler: table grew unboundedly with no automatic cleanup. Added prune_old_rows() static method (hooked to shopos_digital_daily_maintenance) that deletes rows older than 7 days and enforces a hard cap of 50,000 rows.
 * Fixed Profiler: get_aggregated() had one non-parameterized WHERE clause (component_type != 'theme'). Now fully parameterized with a %s placeholder for consistency.
-* Fixed limit_attribute_terms() in FD_WooCommerce: replaced fragile debug_backtrace() save-context detection (would silently break if WooCommerce renames internal methods) with a simple POST/DOING_AJAX check.
+* Fixed limit_attribute_terms() in ShopOS_Digital_WooCommerce: replaced fragile debug_backtrace() save-context detection (would silently break if WooCommerce renames internal methods) with a simple POST/DOING_AJAX check.
 
 
 

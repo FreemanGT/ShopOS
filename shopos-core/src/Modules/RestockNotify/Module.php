@@ -4,7 +4,7 @@
  *
  * Hebrew-first back-in-stock notification system. Customers register for
  * out-of-stock products and get emailed as soon as stock returns. Owns a
- * custom DB table (`{prefix}rsn_subscribers`).
+ * custom DB table (`{prefix}shopos_restock_subscribers`).
  *
  * Ported from restock-notify v1.2.0. Legacy class bodies are bundled under
  * `legacy/includes/` to preserve behaviour; this Module wires them into the
@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
 final class Module extends Module_Base {
 
 	/**
-	 * The 18 `rsn_*` option keys seeded by `seed_locale_defaults()`.
+	 * The 18 `shopos_restock_*` option keys seeded by `seed_locale_defaults()`.
 	 *
 	 * Defined as a constant so non-option entries in `locales/<locale>.php`
 	 * (e.g. `shell_*` strings consumed by the modern Email class) don't get
@@ -114,14 +114,14 @@ final class Module extends Module_Base {
 	 */
 	public function on_activate() {
 		$this->define_legacy_constants();
-		require_once __DIR__ . '/legacy/includes/class-rsn-database.php';
-		\RSN_Database::create_tables();
-		update_option( 'rsn_db_version', SHOPOS_CORE_VERSION );
+		require_once __DIR__ . '/legacy/includes/class-shopos-restock-database.php';
+		\ShopOS_Restock_Database::create_tables();
+		update_option( 'shopos_restock_db_version', SHOPOS_CORE_VERSION );
 		$this->seed_locale_defaults();
 	}
 
 	/**
-	 * Seed any missing `rsn_*` options from the active locale's defaults.
+	 * Seed any missing `shopos_restock_*` options from the active locale's defaults.
 	 *
 	 * Existing values are NOT overwritten (per `/docs/decisions-2026-04-28.md`
 	 * §4.2): a Hebrew install that activated under the pre-1.11.2 hardcoded
@@ -129,7 +129,7 @@ final class Module extends Module_Base {
 	 * under a different locale.
 	 *
 	 * Extracted from `on_activate()` so tests can drive the seeding without
-	 * spinning up a real `$wpdb` for `RSN_Database::create_tables()`.
+	 * spinning up a real `$wpdb` for `ShopOS_Restock_Database::create_tables()`.
 	 *
 	 * @since 1.11.2
 	 */
@@ -139,8 +139,8 @@ final class Module extends Module_Base {
 			if ( ! array_key_exists( $key, $defaults ) ) {
 				continue;
 			}
-			if ( false === get_option( 'rsn_' . $key, false ) ) {
-				update_option( 'rsn_' . $key, $defaults[ $key ] );
+			if ( false === get_option( 'shopos_restock_' . $key, false ) ) {
+				update_option( 'shopos_restock_' . $key, $defaults[ $key ] );
 			}
 		}
 	}
@@ -149,7 +149,7 @@ final class Module extends Module_Base {
 	 * Deactivation — clear cron.
 	 */
 	public function on_deactivate() {
-		wp_clear_scheduled_hook( 'rsn_cleanup_old_entries' );
+		wp_clear_scheduled_hook( 'shopos_restock_cleanup_old_entries' );
 	}
 
 	/**
@@ -159,15 +159,15 @@ final class Module extends Module_Base {
 	public function on_uninstall() {
 		parent::on_uninstall();
 		foreach ( self::OPTION_KEYS as $key ) {
-			delete_option( 'rsn_' . $key );
+			delete_option( 'shopos_restock_' . $key );
 		}
-		delete_option( 'rsn_db_version' );
+		delete_option( 'shopos_restock_db_version' );
 	}
 
 	/**
 	 * Register the WP_Privacy exporter + eraser unconditionally — even when this
 	 * module is disabled (or WooCommerce is absent), so a privacy admin can
-	 * still export/erase subscriber PII that persists in the `rsn_subscribers`
+	 * still export/erase subscriber PII that persists in the `shopos_restock_subscribers`
 	 * table. Privacy hooks are a platform contract (OS-5(a)), not a feature to
 	 * gate behind module-enabled state. Called from Plugin::boot() for every
 	 * discovered module regardless of is_enabled().
@@ -190,7 +190,7 @@ final class Module extends Module_Base {
 		}
 
 		$conflicts = array_filter(
-			array( 'RSN_Frontend', 'RSN_Ajax', 'RSN_Email', 'RSN_Database', 'RSN_Stock_Monitor', 'RSN_Admin' ),
+			array( 'ShopOS_Restock_Frontend', 'ShopOS_Restock_Ajax', 'ShopOS_Restock_Email', 'ShopOS_Restock_Database', 'ShopOS_Restock_Stock_Monitor', 'ShopOS_Restock_Admin' ),
 			static function ( $c ) {
 				return class_exists( $c, false );
 			}
@@ -209,18 +209,18 @@ final class Module extends Module_Base {
 		require_once __DIR__ . '/legacy/helpers.php';
 
 		$dir = __DIR__ . '/legacy/includes/';
-		require_once $dir . 'class-rsn-database.php';
+		require_once $dir . 'class-shopos-restock-database.php';
 
-		$installed = get_option( 'rsn_db_version', '0' );
+		$installed = get_option( 'shopos_restock_db_version', '0' );
 		if ( version_compare( $installed, SHOPOS_CORE_VERSION, '<' ) ) {
-			\RSN_Database::create_tables();
-			update_option( 'rsn_db_version', SHOPOS_CORE_VERSION );
+			\ShopOS_Restock_Database::create_tables();
+			update_option( 'shopos_restock_db_version', SHOPOS_CORE_VERSION );
 		}
 
 		// Modern Email + Stock_Monitor (Wave 2.3b) — alias the legacy global
 		// names onto the modern PSR-4 classes so legacy callers
-		// (`RSN_Ajax::handle_subscribe()` calling `\RSN_Email::send_confirmation`,
-		// `RSN_Admin::handle_actions()` calling `\RSN_Stock_Monitor::manual_notify`)
+		// (`ShopOS_Restock_Ajax::handle_subscribe()` calling `\ShopOS_Restock_Email::send_confirmation`,
+		// `ShopOS_Restock_Admin::handle_actions()` calling `\ShopOS_Restock_Stock_Monitor::manual_notify`)
 		// resolve to the modern classes — bilingual-email shell fix and the
 		// `shopos_core/restock_notify/email_args` + `before_send` hooks apply
 		// universally, not only on the stock-change path.
@@ -228,23 +228,23 @@ final class Module extends Module_Base {
 		// IMPORTANT ordering:
 		//  - Aliases happen AFTER the `class_exists(..., false)` conflict check
 		//    above, so they don't trip the guard against ourselves.
-		//  - The legacy class-rsn-email.php and class-rsn-stock-monitor.php files
-		//    are NOT `require_once`'d — loading them would `class RSN_Email {}`
+		//  - The legacy class-shopos-restock-email.php and class-shopos-restock-stock-monitor.php files
+		//    are NOT `require_once`'d — loading them would `class ShopOS_Restock_Email {}`
 		//    against the alias and fatal.
-		class_alias( '\\ShopOS\\Core\\Modules\\RestockNotify\\Email',         'RSN_Email' );
-		class_alias( '\\ShopOS\\Core\\Modules\\RestockNotify\\Stock_Monitor', 'RSN_Stock_Monitor' );
+		class_alias( '\\ShopOS\\Core\\Modules\\RestockNotify\\Email',         'ShopOS_Restock_Email' );
+		class_alias( '\\ShopOS\\Core\\Modules\\RestockNotify\\Stock_Monitor', 'ShopOS_Restock_Stock_Monitor' );
 
 		// Wave 2.3c — same alias pattern for Frontend. Legacy callers that
-		// reference `\RSN_Frontend` (none currently — it's only instantiated
+		// reference `\ShopOS_Restock_Frontend` (none currently — it's only instantiated
 		// from this method) resolve to modern Frontend. The legacy
-		// class-rsn-frontend.php file is NOT `require_once`'d below — loading
-		// it would `class RSN_Frontend {}` against the alias and fatal.
-		class_alias( '\\ShopOS\\Core\\Modules\\RestockNotify\\Frontend',      'RSN_Frontend' );
+		// class-shopos-restock-frontend.php file is NOT `require_once`'d below — loading
+		// it would `class ShopOS_Restock_Frontend {}` against the alias and fatal.
+		class_alias( '\\ShopOS\\Core\\Modules\\RestockNotify\\Frontend',      'ShopOS_Restock_Frontend' );
 
-		require_once $dir . 'class-rsn-ajax.php';
+		require_once $dir . 'class-shopos-restock-ajax.php';
 
 		new \ShopOS\Core\Modules\RestockNotify\Frontend();
-		new \RSN_Ajax();
+		new \ShopOS_Restock_Ajax();
 		new \ShopOS\Core\Modules\RestockNotify\Stock_Monitor();
 
 		// WP_Privacy exporter + eraser are now registered unconditionally via
@@ -253,8 +253,8 @@ final class Module extends Module_Base {
 		// when this module is disabled.
 
 		if ( is_admin() ) {
-			require_once $dir . 'class-rsn-admin.php';
-			new \RSN_Admin();
+			require_once $dir . 'class-shopos-restock-admin.php';
+			new \ShopOS_Restock_Admin();
 
 			// Wave 4.1b — CSV export of subscribers; always-on since 1.23.0
 			// (the csv_export flag graduated). Capability + nonce checks
@@ -268,23 +268,23 @@ final class Module extends Module_Base {
 	 * Define the legacy constants the bundled classes expect.
 	 */
 	private function define_legacy_constants() {
-		if ( ! defined( 'RSN_VERSION' ) ) {
-			define( 'RSN_VERSION', SHOPOS_CORE_VERSION );
+		if ( ! defined( 'SHOPOS_RESTOCK_VERSION' ) ) {
+			define( 'SHOPOS_RESTOCK_VERSION', SHOPOS_CORE_VERSION );
 		}
-		if ( ! defined( 'RSN_PLUGIN_DIR' ) ) {
-			define( 'RSN_PLUGIN_DIR', trailingslashit( __DIR__ ) . 'legacy/' );
+		if ( ! defined( 'SHOPOS_RESTOCK_PLUGIN_DIR' ) ) {
+			define( 'SHOPOS_RESTOCK_PLUGIN_DIR', trailingslashit( __DIR__ ) . 'legacy/' );
 		}
-		if ( ! defined( 'RSN_PLUGIN_URL' ) ) {
-			define( 'RSN_PLUGIN_URL', trailingslashit( SHOPOS_CORE_URL . 'src/Modules/RestockNotify' ) );
+		if ( ! defined( 'SHOPOS_RESTOCK_PLUGIN_URL' ) ) {
+			define( 'SHOPOS_RESTOCK_PLUGIN_URL', trailingslashit( SHOPOS_CORE_URL . 'src/Modules/RestockNotify' ) );
 		}
-		if ( ! defined( 'RSN_PLUGIN_BASENAME' ) ) {
-			define( 'RSN_PLUGIN_BASENAME', plugin_basename( SHOPOS_CORE_FILE ) );
+		if ( ! defined( 'SHOPOS_RESTOCK_PLUGIN_BASENAME' ) ) {
+			define( 'SHOPOS_RESTOCK_PLUGIN_BASENAME', plugin_basename( SHOPOS_CORE_FILE ) );
 		}
 	}
 
 	/**
 	 * Static accessor for the per-locale defaults (used by the legacy
-	 * function shim `rsn_option_defaults()`).
+	 * function shim `shopos_restock_option_defaults()`).
 	 *
 	 * Returns the option-key → default-value map for the requested locale,
 	 * loaded from `locales/<locale>.php`. Falls back to `en_US.php` for any

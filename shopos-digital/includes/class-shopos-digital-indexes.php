@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) exit;
  * TIER 2: "Secondary Indexes" — adds indexes on tables Tier 1 doesn't cover
  *         (term_relationships, term_taxonomy, terms, WC sessions, etc.)
  */
-class FD_Indexes {
+class ShopOS_Digital_Indexes {
     public function __construct() {}
 
     /** Detect MySQL capabilities: Barracuda (full keys) vs Antelope (prefix-limited), DDL grants */
@@ -26,16 +26,16 @@ class FD_Indexes {
         $major = (int)($parts[0]??0); $minor = (int)($parts[1]??0);
 
         // Probe DDL grants (CREATE / DROP). Result cached for 1 hour so we don't run DDL every page.
-        $cached = get_transient('fd_can_ddl');
+        $cached = get_transient('shopos_digital_can_ddl');
         if ($cached === false) {
-            $probe = 'fd_ddl_probe_' . wp_generate_password(6, false, false);
+            $probe = 'shopos_digital_ddl_probe_' . wp_generate_password(6, false, false);
             $prev_error = $wpdb->hide_errors();
             $create_ok = $wpdb->query("CREATE TEMPORARY TABLE `{$probe}` (id INT)");
             $drop_ok   = ($create_ok !== false) ? $wpdb->query("DROP TABLE `{$probe}`") : false;
             if ($prev_error) $wpdb->show_errors();
             $r->can_ddl = ($create_ok !== false);
             $r->ddl_error = $r->can_ddl ? '' : (string) $wpdb->last_error;
-            set_transient('fd_can_ddl', array('can' => $r->can_ddl, 'err' => $r->ddl_error), HOUR_IN_SECONDS);
+            set_transient('shopos_digital_can_ddl', array('can' => $r->can_ddl, 'err' => $r->ddl_error), HOUR_IN_SECONDS);
         } else {
             $r->can_ddl = !empty($cached['can']);
             $r->ddl_error = isset($cached['err']) ? $cached['err'] : '';
@@ -207,7 +207,7 @@ class FD_Indexes {
         $cur = self::get_current_indexes($pf);
         $actions = array();
         $all = array_unique(array_merge(array_keys($target),array_keys($cur)));
-        $skip = array('woo_','crp_','yarpp_','fd_');
+        $skip = array('woo_','crp_','yarpp_','shopos_digital_');
         foreach ($all as $name) {
             $s=false; foreach($skip as $p) if(strpos($name,$p)===0){$s=true;break;} if($s)continue;
             // Defense in depth: never backtick-interpolate a non-identifier index name.
@@ -259,8 +259,8 @@ class FD_Indexes {
         $written = @file_put_contents($file, $content);
         if ($written === false) {
             $err = error_get_last();
-            if (class_exists('FD_Activity_Log')) {
-                FD_Activity_Log::record('maintenance_mode_enter_failed', array(
+            if (class_exists('ShopOS_Digital_Activity_Log')) {
+                ShopOS_Digital_Activity_Log::record('maintenance_mode_enter_failed', array(
                     'file'    => $file,
                     'reason'  => $err ? $err['message'] : 'unknown',
                 ));
@@ -276,8 +276,8 @@ class FD_Indexes {
         $ok = @unlink($file);
         if (!$ok) {
             $err = error_get_last();
-            if (class_exists('FD_Activity_Log')) {
-                FD_Activity_Log::record('maintenance_mode_leave_failed', array(
+            if (class_exists('ShopOS_Digital_Activity_Log')) {
+                ShopOS_Digital_Activity_Log::record('maintenance_mode_leave_failed', array(
                     'file'    => $file,
                     'reason'  => $err ? $err['message'] : 'unknown',
                 ));
@@ -290,7 +290,7 @@ class FD_Indexes {
         $defs = self::get_deep_definitions();
         $res = array();
 
-        $opts = FD_Core::opts();
+        $opts = ShopOS_Digital_Core::opts();
         $use_maintenance = !empty($opts['idx_enable_maintenance_mode']);
 
         if ($use_maintenance) {
@@ -308,8 +308,8 @@ class FD_Indexes {
             }
         }
 
-        if (class_exists('FD_Activity_Log')) {
-            FD_Activity_Log::record('deep_reindex_apply', array(
+        if (class_exists('ShopOS_Digital_Activity_Log')) {
+            ShopOS_Digital_Activity_Log::record('deep_reindex_apply', array(
                 'rows_affected' => count($res),
                 'tables'        => array_keys($res),
                 'results'       => $res,
@@ -333,7 +333,7 @@ class FD_Indexes {
             'wc_orders_meta'=>array('PRIMARY KEY'=>'ADD PRIMARY KEY (id)','meta_key_value'=>'ADD KEY meta_key_value (meta_key(191), meta_value(100))','order_id_meta_key_meta_value'=>'ADD KEY order_id_meta_key_meta_value (order_id, meta_key(191), meta_value(100))'),
         );
         $res = array();
-        $opts = get_option(FD_OPT, array());
+        $opts = get_option(SHOPOS_DIGITAL_OPT, array());
         $use_maintenance = !empty($opts['idx_enable_maintenance_mode']);
 
         if ($use_maintenance) {
@@ -349,8 +349,8 @@ class FD_Indexes {
             }
         }
 
-        if (class_exists('FD_Activity_Log')) {
-            FD_Activity_Log::record('deep_reindex_revert', array(
+        if (class_exists('ShopOS_Digital_Activity_Log')) {
+            ShopOS_Digital_Activity_Log::record('deep_reindex_revert', array(
                 'rows_affected' => count($res),
                 'tables'        => array_keys($res),
                 'results'       => $res,
@@ -381,24 +381,24 @@ class FD_Indexes {
     public static function get_definitions() {
         global $wpdb;
         $all = array(
-            array('name'=>'fd_p_date','table'=>'posts','columns'=>'post_type, post_status, post_date','notes'=>'Archive queries sorted by date.'),
-            array('name'=>'fd_p_modified','table'=>'posts','columns'=>'post_modified_gmt','notes'=>'Sitemap/cache modification checks.'),
-            array('name'=>'fd_p_title','table'=>'posts','columns'=>'post_title(50)','notes'=>'Title search queries.'),
-            array('name'=>'fd_p_sitemap','table'=>'posts','columns'=>'post_status(20), post_password(20), post_type(20), post_modified','notes'=>'Sitemap generation composite.'),
-            array('name'=>'fd_p_guid','table'=>'posts','columns'=>'guid(191)','notes'=>'GUID lookups (RSS).'),
-            array('name'=>'fd_p_mime','table'=>'posts','columns'=>'post_type, post_mime_type','notes'=>'Media library queries.'),
-            array('name'=>'fd_tr_tax','table'=>'term_relationships','columns'=>'term_taxonomy_id, object_id','notes'=>'Category/attribute filtering (critical WooCommerce).'),
-            array('name'=>'fd_tt_hier','table'=>'term_taxonomy','columns'=>'taxonomy, parent, term_taxonomy_id','notes'=>'Hierarchical category/breadcrumbs.'),
-            array('name'=>'fd_tt_lookup','table'=>'term_taxonomy','columns'=>'taxonomy, term_id, term_taxonomy_id','notes'=>'Term→taxonomy mapping.'),
-            array('name'=>'fd_tt_join','table'=>'term_taxonomy','columns'=>'term_taxonomy_id, taxonomy, term_id','notes'=>'Taxonomy JOIN optimization.'),
-            array('name'=>'fd_tt_parent','table'=>'term_taxonomy','columns'=>'parent, term_id','notes'=>'Ancestor/descendant queries.'),
-            array('name'=>'fd_t_name','table'=>'terms','columns'=>'term_id, name(50), slug(50)','notes'=>'Name/slug lookups for permalinks.'),
-            array('name'=>'fd_wc_sku','table'=>'wc_product_meta_lookup','columns'=>'sku','notes'=>'SKU search.'),
-            array('name'=>'fd_wc_oi','table'=>'woocommerce_order_items','columns'=>'order_id, order_item_type','notes'=>'Order item lookups.'),
-            array('name'=>'fd_wc_sess','table'=>'woocommerce_sessions','columns'=>'session_expiry','notes'=>'Session cleanup.'),
-            array('name'=>'fd_wc_dl','table'=>'woocommerce_downloadable_product_permissions','columns'=>'order_id, product_id','notes'=>'Download permission checks.'),
-            array('name'=>'fd_as_status','table'=>'actionscheduler_actions','columns'=>'status, last_attempt_gmt, action_id','notes'=>'AS queue processing.'),
-            array('name'=>'fd_as_hook','table'=>'actionscheduler_actions','columns'=>'hook, status, scheduled_date_gmt','notes'=>'AS hook lookups.'),
+            array('name'=>'shopos_digital_p_date','table'=>'posts','columns'=>'post_type, post_status, post_date','notes'=>'Archive queries sorted by date.'),
+            array('name'=>'shopos_digital_p_modified','table'=>'posts','columns'=>'post_modified_gmt','notes'=>'Sitemap/cache modification checks.'),
+            array('name'=>'shopos_digital_p_title','table'=>'posts','columns'=>'post_title(50)','notes'=>'Title search queries.'),
+            array('name'=>'shopos_digital_p_sitemap','table'=>'posts','columns'=>'post_status(20), post_password(20), post_type(20), post_modified','notes'=>'Sitemap generation composite.'),
+            array('name'=>'shopos_digital_p_guid','table'=>'posts','columns'=>'guid(191)','notes'=>'GUID lookups (RSS).'),
+            array('name'=>'shopos_digital_p_mime','table'=>'posts','columns'=>'post_type, post_mime_type','notes'=>'Media library queries.'),
+            array('name'=>'shopos_digital_tr_tax','table'=>'term_relationships','columns'=>'term_taxonomy_id, object_id','notes'=>'Category/attribute filtering (critical WooCommerce).'),
+            array('name'=>'shopos_digital_tt_hier','table'=>'term_taxonomy','columns'=>'taxonomy, parent, term_taxonomy_id','notes'=>'Hierarchical category/breadcrumbs.'),
+            array('name'=>'shopos_digital_tt_lookup','table'=>'term_taxonomy','columns'=>'taxonomy, term_id, term_taxonomy_id','notes'=>'Term→taxonomy mapping.'),
+            array('name'=>'shopos_digital_tt_join','table'=>'term_taxonomy','columns'=>'term_taxonomy_id, taxonomy, term_id','notes'=>'Taxonomy JOIN optimization.'),
+            array('name'=>'shopos_digital_tt_parent','table'=>'term_taxonomy','columns'=>'parent, term_id','notes'=>'Ancestor/descendant queries.'),
+            array('name'=>'shopos_digital_t_name','table'=>'terms','columns'=>'term_id, name(50), slug(50)','notes'=>'Name/slug lookups for permalinks.'),
+            array('name'=>'shopos_digital_wc_sku','table'=>'wc_product_meta_lookup','columns'=>'sku','notes'=>'SKU search.'),
+            array('name'=>'shopos_digital_wc_oi','table'=>'woocommerce_order_items','columns'=>'order_id, order_item_type','notes'=>'Order item lookups.'),
+            array('name'=>'shopos_digital_wc_sess','table'=>'woocommerce_sessions','columns'=>'session_expiry','notes'=>'Session cleanup.'),
+            array('name'=>'shopos_digital_wc_dl','table'=>'woocommerce_downloadable_product_permissions','columns'=>'order_id, product_id','notes'=>'Download permission checks.'),
+            array('name'=>'shopos_digital_as_status','table'=>'actionscheduler_actions','columns'=>'status, last_attempt_gmt, action_id','notes'=>'AS queue processing.'),
+            array('name'=>'shopos_digital_as_hook','table'=>'actionscheduler_actions','columns'=>'hook, status, scheduled_date_gmt','notes'=>'AS hook lookups.'),
         );
         $out = array();
         foreach ($all as $idx) {
@@ -411,7 +411,7 @@ class FD_Indexes {
 
     public static function get_created() {
         global $wpdb;
-        $r = $wpdb->get_results("SELECT DISTINCT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND INDEX_NAME LIKE 'fd_%' AND TABLE_NAME LIKE '{$wpdb->prefix}%'");
+        $r = $wpdb->get_results("SELECT DISTINCT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND INDEX_NAME LIKE 'shopos_digital_%' AND TABLE_NAME LIKE '{$wpdb->prefix}%'");
         return array_map(function($x){return $x->INDEX_NAME;},$r);
     }
 
@@ -422,8 +422,8 @@ class FD_Indexes {
         // and column list before backtick-interpolating them into DROP/CREATE INDEX.
         foreach($all as $i){if(!preg_match('/^[a-zA-Z0-9_]+$/',$i['name'])||!preg_match('/^[a-zA-Z0-9_]+$/',$i['table']))continue;if(!in_array($i['name'],$selected)){$tbl=$wpdb->prefix.$i['table'];if($wpdb->get_var($wpdb->prepare("SELECT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s AND INDEX_NAME=%s",$tbl,$i['name']))){$wpdb->query("DROP INDEX `{$i['name']}` ON `{$tbl}`");$dropped++;}}}
         foreach($all as $i){if(!preg_match('/^[a-zA-Z0-9_]+$/',$i['name'])||!preg_match('/^[a-zA-Z0-9_]+$/',$i['table'])||!preg_match('/^[a-zA-Z0-9_,()\s]+$/',$i['columns']))continue;if(in_array($i['name'],$selected)){$tbl=$wpdb->prefix.$i['table'];if(!$wpdb->get_var($wpdb->prepare("SELECT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s AND INDEX_NAME=%s",$tbl,$i['name']))){$wpdb->query("CREATE INDEX `{$i['name']}` ON `{$tbl}` ({$i['columns']})");$created++;}}}
-        if (class_exists('FD_Activity_Log')) {
-            FD_Activity_Log::record('secondary_indexes_update', array(
+        if (class_exists('ShopOS_Digital_Activity_Log')) {
+            ShopOS_Digital_Activity_Log::record('secondary_indexes_update', array(
                 'rows_affected' => $created + $dropped,
                 'created'       => $created,
                 'dropped'       => $dropped,
@@ -434,10 +434,10 @@ class FD_Indexes {
 
     public static function drop_all() {
         global $wpdb;
-        $idxs=$wpdb->get_results("SELECT INDEX_NAME,TABLE_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND INDEX_NAME LIKE 'fd_%'");
+        $idxs=$wpdb->get_results("SELECT INDEX_NAME,TABLE_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND INDEX_NAME LIKE 'shopos_digital_%'");
         foreach($idxs as $i) $wpdb->query("DROP INDEX `{$i->INDEX_NAME}` ON `{$i->TABLE_NAME}`");
-        if (class_exists('FD_Activity_Log')) {
-            FD_Activity_Log::record('secondary_indexes_drop_all', array(
+        if (class_exists('ShopOS_Digital_Activity_Log')) {
+            ShopOS_Digital_Activity_Log::record('secondary_indexes_drop_all', array(
                 'rows_affected' => is_array($idxs) ? count($idxs) : 0,
             ));
         }

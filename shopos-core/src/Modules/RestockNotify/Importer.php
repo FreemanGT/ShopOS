@@ -2,8 +2,8 @@
 /**
  * Legacy importer for restock-notify.
  *
- * The module reuses the legacy option keys (`rsn_*`) and table name
- * (`{prefix}rsn_subscribers`) so subscribers and settings are preserved when
+ * The module reuses the legacy option keys (`shopos_restock_*`) and table name
+ * (`{prefix}shopos_restock_subscribers`) so subscribers and settings are preserved when
  * the legacy plugin is deactivated. Import is therefore a detect-only step.
  *
  * @package ShopOSCore

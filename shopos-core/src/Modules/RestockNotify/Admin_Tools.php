@@ -3,7 +3,7 @@
  * RestockNotify — admin submenu for CSV export.
  *
  * Wave 4.1b. Registers an "Export Subscribers" submenu under the existing
- * `restock-notify` parent menu (registered by the legacy `RSN_Admin` class
+ * `restock-notify` parent menu (registered by the legacy `ShopOS_Restock_Admin` class
  * which Hard Rule #3 forbids editing). Renders a simple form that POSTs
  * to `admin-post.php` with the action handled by `CSV_Exporter`.
  *

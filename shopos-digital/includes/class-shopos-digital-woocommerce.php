@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-class FD_WooCommerce {
+class ShopOS_Digital_WooCommerce {
     const MIN_WC_VERSION = '6.0';
 
     private $o;
@@ -61,7 +61,7 @@ class FD_WooCommerce {
         if (!empty($o['wc_cache_post_counts']))
             add_filter('wp_count_posts', array($this, 'cache_counts'), 10, 3);
 
-        // Invalidate the `fd_has_products` transient whenever a product changes so the
+        // Invalidate the `shopos_digital_has_products` transient whenever a product changes so the
         // cached answer doesn't lie to WC admin notices for up to 24 hours.
         if (!empty($o['wc_fix_onboarding'])) {
             add_action('save_post_product', array(__CLASS__, 'invalidate_has_products_cache'));
@@ -76,7 +76,7 @@ class FD_WooCommerce {
             add_action('wp_loaded', array($this, 'maybe_defer_term_counting'), 5);
             add_action('shutdown', array($this, 'restore_term_counting'), 99);
         }
-        // Note: Action Scheduler cleanup is handled centrally by FD_Database::run_cleanup()
+        // Note: Action Scheduler cleanup is handled centrally by ShopOS_Digital_Database::run_cleanup()
         // via the db_clean_as_logs toggle. Removed duplicate handler here to avoid inconsistent limits.
 
         // Frontend
@@ -120,21 +120,21 @@ class FD_WooCommerce {
     }
 
     public function cached_has_products() {
-        $c = get_transient('fd_has_products');
+        $c = get_transient('shopos_digital_has_products');
         if ($c !== false) return (bool)$c;
         global $wpdb;
         $has = $wpdb->get_var("SELECT 1 FROM {$wpdb->posts} WHERE post_type='product' AND post_status='publish' LIMIT 1");
-        set_transient('fd_has_products', $has ? 1 : 0, DAY_IN_SECONDS);
+        set_transient('shopos_digital_has_products', $has ? 1 : 0, DAY_IN_SECONDS);
         return (bool)$has;
     }
 
     public static function invalidate_has_products_cache() {
-        delete_transient('fd_has_products');
+        delete_transient('shopos_digital_has_products');
     }
 
     public static function maybe_invalidate_has_products_cache($post_id) {
         if (get_post_type($post_id) === 'product') {
-            delete_transient('fd_has_products');
+            delete_transient('shopos_digital_has_products');
         }
     }
 
@@ -158,7 +158,7 @@ class FD_WooCommerce {
 
     public function cache_counts($counts, $type, $perm) {
         if ($type==='shop_order') return $counts;
-        $key = "fd_pc_{$type}";
+        $key = "shopos_digital_pc_{$type}";
         $c = get_transient($key);
         if ($c !== false) return $c;
         remove_filter('wp_count_posts', array($this,'cache_counts'), 10);
@@ -272,7 +272,7 @@ class FD_WooCommerce {
                 if (preg_match('/'.$rx.'/i',$url)) return $pre;
             }
         }
-        return new WP_Error('fd_blocked','Blocked by ShopOS Digital: '.$url);
+        return new WP_Error('shopos_digital_blocked','Blocked by ShopOS Digital: '.$url);
     }
 }
 

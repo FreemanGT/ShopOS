@@ -7,7 +7,7 @@ use ShopOS\Core\Modules\RestockNotify\Subscribers;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Wave 4.1b — Admin CSV export of rsn_subscribers.
+ * Wave 4.1b — Admin CSV export of shopos_restock_subscribers.
  *
  * Tests data-flow concerns (CSV format, BOM, header row, row mapping,
  * notified_at NULL → empty cell) and gating (Admin_Tools and CSV_Exporter

@@ -2,15 +2,15 @@
 /**
  * Modern Stock_Monitor for RestockNotify — Wave 2.3b.
  *
- * Replaces the legacy `\RSN_Stock_Monitor` class via `class_alias` in
+ * Replaces the legacy `\ShopOS_Restock_Stock_Monitor` class via `class_alias` in
  * `Module::boot()`. Same instance + static API so legacy callers
- * (`RSN_Admin::handle_actions()` calling `\RSN_Stock_Monitor::manual_notify`)
+ * (`ShopOS_Restock_Admin::handle_actions()` calling `\ShopOS_Restock_Stock_Monitor::manual_notify`)
  * keep working unchanged after the alias resolves.
  *
  * Behavior parity with the legacy class is the goal: WC stock-status /
  * quantity hooks fire `notify()`, which iterates waiting subscribers via the
  * `Subscribers` repository (Wave 2.3a) and dispatches via the modern `Email`
- * class. The `rsn_notification_log` option write — capped at 100 entries — is
+ * class. The `shopos_restock_notification_log` option write — capped at 100 entries — is
  * preserved verbatim so the admin dashboard's "recent notifications" widget
  * keeps working.
  *
@@ -62,10 +62,10 @@ final class Stock_Monitor {
 
 	/**
 	 * Iterate waiting subscribers for the given product/variation and send
-	 * notifications via `\RSN_Email::send_notification` (which after Wave
+	 * notifications via `\ShopOS_Restock_Email::send_notification` (which after Wave
 	 * 2.3b's `class_alias` resolves to the modern `Email::send_notification`).
 	 *
-	 * Logs the count to `rsn_notification_log` (capped at 100 entries) so the
+	 * Logs the count to `shopos_restock_notification_log` (capped at 100 entries) so the
 	 * admin dashboard's recent-notifications widget keeps working.
 	 *
 	 * @param int        $product_id Product / variation id.
@@ -90,7 +90,7 @@ final class Stock_Monitor {
 		}
 
 		if ( $c ) {
-			$log   = get_option( 'rsn_notification_log', array() );
+			$log   = get_option( 'shopos_restock_notification_log', array() );
 			$log[] = array(
 				'product_id' => $product_id,
 				'count'      => $c,
@@ -99,15 +99,15 @@ final class Stock_Monitor {
 			if ( count( $log ) > 100 ) {
 				$log = array_slice( $log, -100 );
 			}
-			update_option( 'rsn_notification_log', $log );
+			update_option( 'shopos_restock_notification_log', $log );
 		}
 	}
 
 	/**
 	 * Manual-notify trigger from the admin Subscribers page.
 	 *
-	 * Mirrors the legacy `\RSN_Stock_Monitor::manual_notify()` static
-	 * signature so `RSN_Admin::handle_actions()` keeps working unchanged
+	 * Mirrors the legacy `\ShopOS_Restock_Stock_Monitor::manual_notify()` static
+	 * signature so `ShopOS_Restock_Admin::handle_actions()` keeps working unchanged
 	 * after the `class_alias` swap.
 	 *
 	 * @param int $product_id   Product id.

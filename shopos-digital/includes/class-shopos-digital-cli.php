@@ -17,7 +17,7 @@ if (!defined('WP_CLI') || !WP_CLI) return;
  *   wp fd export [--path=<file>]
  *   wp fd import <file>
  */
-class FD_CLI {
+class ShopOS_Digital_CLI {
 
     /**
      * Run database cleanup.
@@ -31,8 +31,8 @@ class FD_CLI {
      */
     public function cleanup($args, $assoc) {
         $dry = !empty($assoc['dry-run']);
-        $opts = FD_Core::opts();
-        $db = new FD_Database($opts);
+        $opts = ShopOS_Digital_Core::opts();
+        $db = new ShopOS_Digital_Database($opts);
 
         if ($dry) {
             global $wpdb;
@@ -65,14 +65,14 @@ class FD_CLI {
      * @when after_wp_load
      */
     public function optimize_tables($args, $assoc) {
-        $opts = FD_Core::opts();
+        $opts = ShopOS_Digital_Core::opts();
         if (empty($opts['db_optimize_tables'])) {
             WP_CLI::error('db_optimize_tables is disabled in plugin settings. Enable it first (or edit wp_options directly).');
             return;
         }
         @set_time_limit(0);
         WP_CLI::log('Running OPTIMIZE TABLE — this may take several minutes on large stores.');
-        $r = (new FD_Database($opts))->run_optimize_tables();
+        $r = (new ShopOS_Digital_Database($opts))->run_optimize_tables();
         WP_CLI::success(sprintf('Optimized %d tables (%d errors).', isset($r['optimized']) ? (int) $r['optimized'] : 0, isset($r['errors']) ? count($r['errors']) : 0));
     }
 
@@ -94,17 +94,17 @@ class FD_CLI {
         if (!empty($assoc['tables'])) {
             $tables = array_filter(array_map('trim', explode(',', $assoc['tables'])));
         } else {
-            $tables = array_keys(FD_Indexes::get_deep_status());
+            $tables = array_keys(ShopOS_Digital_Indexes::get_deep_status());
         }
 
         @set_time_limit(0);
         if (!empty($assoc['revert'])) {
             WP_CLI::log('Reverting deep reindex on ' . count($tables) . ' table(s)...');
-            $r = FD_Indexes::revert_deep($tables);
+            $r = ShopOS_Digital_Indexes::revert_deep($tables);
             WP_CLI::success('Revert complete: ' . wp_json_encode($r));
         } else {
             WP_CLI::log('Applying deep reindex on ' . count($tables) . ' table(s)...');
-            $r = FD_Indexes::apply_deep($tables);
+            $r = ShopOS_Digital_Indexes::apply_deep($tables);
             WP_CLI::success('Apply complete: ' . wp_json_encode($r));
         }
     }
@@ -125,7 +125,7 @@ class FD_CLI {
     public function autoload($args, $assoc) {
         $sub = isset($args[0]) ? $args[0] : 'audit';
         global $wpdb;
-        $opts = FD_Core::opts();
+        $opts = ShopOS_Digital_Core::opts();
 
         if ($sub === 'audit') {
             $rows = $wpdb->get_results("SELECT option_name, ROUND(LENGTH(option_value)/1024,1) AS size_kb FROM {$wpdb->options} WHERE autoload IN ('yes','on','auto','auto-on') ORDER BY LENGTH(option_value) DESC LIMIT 30", ARRAY_A);
@@ -142,7 +142,7 @@ class FD_CLI {
         $threshold_kb = max(10, $threshold_kb);
         $threshold_bytes = $threshold_kb * 1024;
 
-        $protected = FD_Autoload::get_protected_options();
+        $protected = ShopOS_Digital_Autoload::get_protected_options();
         $placeholders = implode(',', array_fill(0, count($protected), '%s'));
         $fixed = $wpdb->query($wpdb->prepare(
             "UPDATE {$wpdb->options} SET autoload='no'
@@ -151,8 +151,8 @@ class FD_CLI {
              AND option_name NOT IN ($placeholders)",
             array_merge(array($threshold_bytes), $protected)
         ));
-        if (class_exists('FD_Activity_Log') && (int) $fixed > 0) {
-            FD_Activity_Log::record('autoload_manual_fix', array(
+        if (class_exists('ShopOS_Digital_Activity_Log') && (int) $fixed > 0) {
+            ShopOS_Digital_Activity_Log::record('autoload_manual_fix', array(
                 'rows_affected' => (int) $fixed,
                 'threshold_kb'  => $threshold_kb,
                 'source'        => 'wp-cli',
@@ -183,24 +183,24 @@ class FD_CLI {
             case 'start':
                 $dur = isset($assoc['duration']) ? (int) $assoc['duration'] : 15;
                 $thr = isset($assoc['threshold']) ? (float) $assoc['threshold'] : 0.05;
-                FD_Profiler::set_threshold($thr);
-                FD_Profiler::start($dur);
+                ShopOS_Digital_Profiler::set_threshold($thr);
+                ShopOS_Digital_Profiler::start($dur);
                 WP_CLI::success(sprintf('Profiler started for %d minutes (threshold %.3fs).', $dur, $thr));
                 break;
             case 'stop':
-                FD_Profiler::stop();
+                ShopOS_Digital_Profiler::stop();
                 WP_CLI::success('Profiler stopped.');
                 break;
             case 'clear':
-                FD_Profiler::clear_data();
+                ShopOS_Digital_Profiler::clear_data();
                 WP_CLI::success('Profiler data cleared.');
                 break;
             case 'status':
             default:
-                $stats = FD_Profiler::get_stats();
-                WP_CLI::log('Active:     ' . (FD_Profiler::is_active() ? 'yes' : 'no'));
-                WP_CLI::log('Threshold:  ' . FD_Profiler::get_threshold() . 's');
-                WP_CLI::log('Expires:    ' . date('c', FD_Profiler::get_expires()));
+                $stats = ShopOS_Digital_Profiler::get_stats();
+                WP_CLI::log('Active:     ' . (ShopOS_Digital_Profiler::is_active() ? 'yes' : 'no'));
+                WP_CLI::log('Threshold:  ' . ShopOS_Digital_Profiler::get_threshold() . 's');
+                WP_CLI::log('Expires:    ' . date('c', ShopOS_Digital_Profiler::get_expires()));
                 WP_CLI::log('Queries:    ' . (int) $stats['total_queries']);
                 WP_CLI::log('Unique:     ' . (int) $stats['unique_queries']);
                 break;
@@ -218,7 +218,7 @@ class FD_CLI {
      * @when after_wp_load
      */
     public function export($args, $assoc) {
-        $opts = FD_Core::opts();
+        $opts = ShopOS_Digital_Core::opts();
         $json = wp_json_encode($opts, JSON_PRETTY_PRINT);
         if (!empty($assoc['path'])) {
             if (file_put_contents($assoc['path'], $json) === false) {
@@ -255,17 +255,17 @@ class FD_CLI {
             WP_CLI::error('Invalid JSON.');
             return;
         }
-        // Borrow FD_Admin::sanitize() semantics. FD_Admin is admin-only, so it
+        // Borrow ShopOS_Digital_Admin::sanitize() semantics. ShopOS_Digital_Admin is admin-only, so it
         // may not be instantiated under WP-CLI — construct it manually.
-        if (!class_exists('FD_Admin')) {
-            WP_CLI::error('FD_Admin class not available.');
+        if (!class_exists('ShopOS_Digital_Admin')) {
+            WP_CLI::error('ShopOS_Digital_Admin class not available.');
             return;
         }
-        $admin = new FD_Admin();
+        $admin = new ShopOS_Digital_Admin();
         $sanitized = $admin->sanitize($data);
-        update_option(FD_OPT, $sanitized);
+        update_option(SHOPOS_DIGITAL_OPT, $sanitized);
         WP_CLI::success('Settings imported.');
     }
 }
 
-WP_CLI::add_command('fd', 'FD_CLI');
+WP_CLI::add_command('fd', 'ShopOS_Digital_CLI');

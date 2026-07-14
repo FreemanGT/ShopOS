@@ -29,7 +29,7 @@ final class RestockNotifyPrivacyTest extends TestCase {
 
 		$this->original_wpdb = $GLOBALS['wpdb'] ?? null;
 
-		// Inline $wpdb mock with an in-memory rsn_subscribers row store.
+		// Inline $wpdb mock with an in-memory shopos_restock_subscribers row store.
 		// Self-contained — does not leak into other tests (tearDown restores
 		// the prior global). Only supports the methods Wave 4.1a needs:
 		// prefix, prepare (best-effort %s/%d substitution), get_results,

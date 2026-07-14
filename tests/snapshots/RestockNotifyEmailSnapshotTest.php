@@ -20,7 +20,7 @@ if ( ! function_exists( 'wc_get_product' ) ) {
  * fixed the bilingual-email shell — these goldens are the post-fix reference.
  *
  * For the en_US goldens specifically: there is NO pre-2.3b equivalent because
- * legacy `\RSN_Email::build_html()` always rendered Hebrew shell strings
+ * legacy `\ShopOS_Restock_Email::build_html()` always rendered Hebrew shell strings
  * regardless of locale. The diff between "what English-locale users got
  * before 1.11.4" vs "what they get from 1.11.4 onward" is exactly the
  * intentional fix.
@@ -48,15 +48,15 @@ final class RestockNotifyEmailSnapshotTest extends TestCase {
 		// surfaces ONLY in the shell strings (greeting / unsubscribe link /
 		// suffix / customer-name fallback) — exactly the surface this wave
 		// changed.
-		update_option( 'rsn_confirm_subject',     'Subscribed: {product_name}' );
-		update_option( 'rsn_confirm_heading',     'Heading' );
-		update_option( 'rsn_confirm_body',        'Body for {product_name}.' );
-		update_option( 'rsn_notify_subject',      '{product_name} is back' );
-		update_option( 'rsn_notify_heading',      'Heading' );
-		update_option( 'rsn_notify_body',         'Body for {product_name}.' );
-		update_option( 'rsn_notify_button_text',  'CTA' );
-		update_option( 'rsn_from_name',           'Acme' );
-		update_option( 'rsn_from_email',          'shop@example.test' );
+		update_option( 'shopos_restock_confirm_subject',     'Subscribed: {product_name}' );
+		update_option( 'shopos_restock_confirm_heading',     'Heading' );
+		update_option( 'shopos_restock_confirm_body',        'Body for {product_name}.' );
+		update_option( 'shopos_restock_notify_subject',      '{product_name} is back' );
+		update_option( 'shopos_restock_notify_heading',      'Heading' );
+		update_option( 'shopos_restock_notify_body',         'Body for {product_name}.' );
+		update_option( 'shopos_restock_notify_button_text',  'CTA' );
+		update_option( 'shopos_restock_from_name',           'Acme' );
+		update_option( 'shopos_restock_from_email',          'shop@example.test' );
 	}
 
 	private function subscriber(): object {

@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-class FD_Core {
+class ShopOS_Digital_Core {
     private static $instance = null;
 
     public static function get_instance() {
@@ -11,38 +11,38 @@ class FD_Core {
 
     private function __construct() {
         $o = self::opts();
-        // Remove FD_Indexes - it's just a static class wrapper, no instance needed
-        if (is_admin()) new FD_Admin();
-        new FD_Query_Optimizer($o);
-        new FD_WooCommerce($o);
-        new FD_Security($o);
-        new FD_Speed($o);
-        new FD_Database($o);
-        new FD_Bloat($o);
-        new FD_Autoload($o);
-        new FD_Frontend($o);
-        new FD_Profiler($o);
-        new FD_Admin_Cache($o);
+        // Remove ShopOS_Digital_Indexes - it's just a static class wrapper, no instance needed
+        if (is_admin()) new ShopOS_Digital_Admin();
+        new ShopOS_Digital_Query_Optimizer($o);
+        new ShopOS_Digital_WooCommerce($o);
+        new ShopOS_Digital_Security($o);
+        new ShopOS_Digital_Speed($o);
+        new ShopOS_Digital_Database($o);
+        new ShopOS_Digital_Bloat($o);
+        new ShopOS_Digital_Autoload($o);
+        new ShopOS_Digital_Frontend($o);
+        new ShopOS_Digital_Profiler($o);
+        new ShopOS_Digital_Admin_Cache($o);
 
         // Invalidate month cache on any event that changes the set of published post dates.
         // Before 1.7.2 we only listened to save_post/deleted_post, missing trash + bulk-edit flows.
-        add_action('save_post', array('FD_Query_Optimizer', 'invalidate_months_cache'));
-        add_action('deleted_post', array('FD_Query_Optimizer', 'invalidate_months_cache'));
-        add_action('wp_trash_post', array('FD_Query_Optimizer', 'invalidate_months_cache'));
-        add_action('untrashed_post', array('FD_Query_Optimizer', 'invalidate_months_cache'));
-        add_action('bulk_edit_posts', array('FD_Query_Optimizer', 'invalidate_months_cache_bulk'), 10, 2);
+        add_action('save_post', array('ShopOS_Digital_Query_Optimizer', 'invalidate_months_cache'));
+        add_action('deleted_post', array('ShopOS_Digital_Query_Optimizer', 'invalidate_months_cache'));
+        add_action('wp_trash_post', array('ShopOS_Digital_Query_Optimizer', 'invalidate_months_cache'));
+        add_action('untrashed_post', array('ShopOS_Digital_Query_Optimizer', 'invalidate_months_cache'));
+        add_action('bulk_edit_posts', array('ShopOS_Digital_Query_Optimizer', 'invalidate_months_cache_bulk'), 10, 2);
 
-        // One-time cleanup: remove legacy fd_months_* option rows from pre-v1.7.0 versions
+        // One-time cleanup: remove legacy shopos_digital_months_* option rows from pre-v1.7.0 versions
         // (they were stored as options instead of transients and never cleaned up)
-        if (!get_option('fd_legacy_months_cleaned')) {
+        if (!get_option('shopos_digital_legacy_months_cleaned')) {
             global $wpdb;
-            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'fd_months_%' AND option_name NOT LIKE '_transient_%'");
-            update_option('fd_legacy_months_cleaned', 1, false);
+            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'shopos_digital_months_%' AND option_name NOT LIKE '_transient_%'");
+            update_option('shopos_digital_legacy_months_cleaned', 1, false);
         }
     }
 
     public static function opts() {
-        return wp_parse_args(get_option(FD_OPT, array()), self::get_defaults());
+        return wp_parse_args(get_option(SHOPOS_DIGITAL_OPT, array()), self::get_defaults());
     }
 
     public static function get_defaults() {

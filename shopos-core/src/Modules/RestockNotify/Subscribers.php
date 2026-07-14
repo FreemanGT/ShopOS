@@ -2,26 +2,26 @@
 /**
  * Modern subscribers repository for RestockNotify.
  *
- * Thin static wrapper around the legacy `\RSN_Database` class. Exists so
+ * Thin static wrapper around the legacy `\ShopOS_Restock_Database` class. Exists so
  * Wave 2.3b (modern `Stock_Monitor` + `Email`) and Wave 2.3c (modern
  * `Frontend`) can call against a `ShopOS\Core\Modules\RestockNotify\…`
- * surface instead of a global `RSN_Database::` static — without editing
+ * surface instead of a global `ShopOS_Restock_Database::` static — without editing
  * `legacy/` (forbidden by CLAUDE.md hard rule #3).
  *
  * No callers in 2.3a. The wrapper is intentional groundwork; it becomes
  * canonical when 2.3b/c land. The legacy class continues to exist
- * unchanged in `legacy/includes/class-rsn-database.php` and is what every
+ * unchanged in `legacy/includes/class-shopos-restock-database.php` and is what every
  * method here delegates into.
  *
  * Surface intentionally minimal: only the four operations Wave 2.3b and
- * 2.3c will need. The other ten `RSN_Database::*` methods stay called
- * directly from `legacy/` (`RSN_Ajax`, `RSN_Admin`) since 2.3d is skipped
+ * 2.3c will need. The other ten `ShopOS_Restock_Database::*` methods stay called
+ * directly from `legacy/` (`ShopOS_Restock_Ajax`, `ShopOS_Restock_Admin`) since 2.3d is skipped
  * — wrapping them speculatively would violate §2 (Simplicity First).
  *
  * Wave 4.1a adds two methods (`find_by_email`, `erase_pii_by_email`) that
  * deviate from the thin-wrapper pattern by querying `$wpdb` directly. The
  * deviation is forced: WP_Privacy needs exact-email lookup and PII null
- * semantics that no existing `\RSN_Database::*` method provides, and Hard
+ * semantics that no existing `\ShopOS_Restock_Database::*` method provides, and Hard
  * Rule #3 forbids adding methods to the legacy class.
  *
  * @package ShopOSCore
@@ -43,10 +43,10 @@ final class Subscribers {
 	 *
 	 * @param int $product_id   Parent product id.
 	 * @param int $variation_id Specific variation, or 0 for the parent-level subscription.
-	 * @return object[] Row objects from `{prefix}rsn_subscribers`.
+	 * @return object[] Row objects from `{prefix}shopos_restock_subscribers`.
 	 */
 	public static function get_waiting_for_product( $product_id, $variation_id = 0 ) {
-		return \RSN_Database::get_waiting_for_product( $product_id, $variation_id );
+		return \ShopOS_Restock_Database::get_waiting_for_product( $product_id, $variation_id );
 	}
 
 	/**
@@ -58,7 +58,7 @@ final class Subscribers {
 	 * @return int|false Rows affected, or false on error.
 	 */
 	public static function mark_notified( $id ) {
-		return \RSN_Database::mark_notified( $id );
+		return \ShopOS_Restock_Database::mark_notified( $id );
 	}
 
 	/**
@@ -70,7 +70,7 @@ final class Subscribers {
 	 * @return object|null Row object or null if not found.
 	 */
 	public static function get_by_token( $token ) {
-		return \RSN_Database::get_by_token( $token );
+		return \ShopOS_Restock_Database::get_by_token( $token );
 	}
 
 	/**
@@ -82,14 +82,14 @@ final class Subscribers {
 	 * @return int|false Rows affected, or false on error.
 	 */
 	public static function unsubscribe( $id ) {
-		return \RSN_Database::unsubscribe( $id );
+		return \ShopOS_Restock_Database::unsubscribe( $id );
 	}
 
 	/**
 	 * Find all subscriptions for an exact email address. Used by the
 	 * Wave 4.1a Privacy exporter.
 	 *
-	 * Queries `$wpdb` directly rather than delegating to `\RSN_Database`
+	 * Queries `$wpdb` directly rather than delegating to `\ShopOS_Restock_Database`
 	 * because no legacy method offers exact-email lookup and Hard Rule #3
 	 * blocks extending the legacy class.
 	 *
@@ -100,7 +100,7 @@ final class Subscribers {
 	 * @since 1.11.37
 	 *
 	 * @param string $email Customer email (exact match).
-	 * @return object[] Row objects from `{prefix}rsn_subscribers`.
+	 * @return object[] Row objects from `{prefix}shopos_restock_subscribers`.
 	 */
 	public static function find_by_email( $email ) {
 		$email = (string) $email;
@@ -108,7 +108,7 @@ final class Subscribers {
 			return array();
 		}
 		global $wpdb;
-		$table = $wpdb->prefix . 'rsn_subscribers';
+		$table = $wpdb->prefix . 'shopos_restock_subscribers';
 		$rows  = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT * FROM {$table} WHERE customer_email = %s",
@@ -144,7 +144,7 @@ final class Subscribers {
 			return 0;
 		}
 		global $wpdb;
-		$table   = $wpdb->prefix . 'rsn_subscribers';
+		$table   = $wpdb->prefix . 'shopos_restock_subscribers';
 		$updated = $wpdb->update(
 			$table,
 			array(
@@ -168,7 +168,7 @@ final class Subscribers {
 	 * an unfiltered full-table read, and the legacy class is off-limits.
 	 *
 	 * **Scale assumption:** returns the full table as an array. Intended
-	 * for admin export at expected merchant scale (`rsn_subscribers` is
+	 * for admin export at expected merchant scale (`shopos_restock_subscribers` is
 	 * one row per (email, product, variation, waiting/notified) tuple —
 	 * a few thousand on busy stores, low tens of thousands at the outer
 	 * end). A streaming `each(callable)` variant is deferred until a
@@ -177,11 +177,11 @@ final class Subscribers {
 	 *
 	 * @since 1.11.38
 	 *
-	 * @return object[] All rows from `{prefix}rsn_subscribers`.
+	 * @return object[] All rows from `{prefix}shopos_restock_subscribers`.
 	 */
 	public static function all() {
 		global $wpdb;
-		$table = $wpdb->prefix . 'rsn_subscribers';
+		$table = $wpdb->prefix . 'shopos_restock_subscribers';
 		$rows  = $wpdb->get_results( "SELECT * FROM {$table}" );
 		return is_array( $rows ) ? $rows : array();
 	}

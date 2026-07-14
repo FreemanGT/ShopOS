@@ -76,9 +76,9 @@ foreach (glob(\$base . '*.php') as \$inc) {
     require_once \$inc;
 }
 
-\$required = array('FD_Core','FD_Admin','FD_Database','FD_Autoload','FD_Indexes',
-    'FD_Query_Optimizer','FD_Profiler','FD_Woocommerce','FD_Frontend',
-    'FD_Activity_Log','FD_Admin_Cache');
+\$required = array('ShopOS_Digital_Core','ShopOS_Digital_Admin','ShopOS_Digital_Database','ShopOS_Digital_Autoload','ShopOS_Digital_Indexes',
+    'ShopOS_Digital_Query_Optimizer','ShopOS_Digital_Profiler','ShopOS_Digital_Woocommerce','ShopOS_Digital_Frontend',
+    'ShopOS_Digital_Activity_Log','ShopOS_Digital_Admin_Cache');
 foreach (\$required as \$c) {
     if (!class_exists(\$c)) { fwrite(STDERR, \"MISSING CLASS: \$c\n\"); exit(1); }
 }

@@ -1,11 +1,11 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class RSN_Database {
+class ShopOS_Restock_Database {
 
     public static function table_name() {
         global $wpdb;
-        return $wpdb->prefix . 'rsn_subscribers';
+        return $wpdb->prefix . 'shopos_restock_subscribers';
     }
 
     public static function create_tables() {

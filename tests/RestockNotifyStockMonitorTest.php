@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../shopos-core/src/Modules/RestockNotify/legacy/helpers.php';
 require_once __DIR__ . '/snapshots/__fixtures__/wc_product_stub.php';
-require_once __DIR__ . '/__stubs__/rsn_database_stub.php';
+require_once __DIR__ . '/__stubs__/shopos_restock_database_stub.php';
 
 use ShopOS\Core\Modules\RestockNotify\Stock_Monitor;
 use PHPUnit\Framework\TestCase;
@@ -47,17 +47,17 @@ final class RestockNotifyStockMonitorTest extends TestCase {
 		$GLOBALS['fr_wc_get_product_return']    = new \WC_Product();
 		$GLOBALS['fr_blogname']                 = 'Acme Shop';
 
-		\RSN_Database::$calls                          = array();
-		\RSN_Database::$get_waiting_for_product_return = array();
-		\RSN_Database::$mark_notified_return           = 1;
+		\ShopOS_Restock_Database::$calls                          = array();
+		\ShopOS_Restock_Database::$get_waiting_for_product_return = array();
+		\ShopOS_Restock_Database::$mark_notified_return           = 1;
 
 		// Email needs these to render without errors.
-		update_option( 'rsn_notify_subject',     '{product_name} is back' );
-		update_option( 'rsn_notify_heading',     "It's back!" );
-		update_option( 'rsn_notify_body',        '<strong>{product_name}</strong> is back.' );
-		update_option( 'rsn_notify_button_text', 'Buy now' );
-		update_option( 'rsn_from_name',          'Acme' );
-		update_option( 'rsn_from_email',         'shop@example.test' );
+		update_option( 'shopos_restock_notify_subject',     '{product_name} is back' );
+		update_option( 'shopos_restock_notify_heading',     "It's back!" );
+		update_option( 'shopos_restock_notify_body',        '<strong>{product_name}</strong> is back.' );
+		update_option( 'shopos_restock_notify_button_text', 'Buy now' );
+		update_option( 'shopos_restock_from_name',          'Acme' );
+		update_option( 'shopos_restock_from_email',         'shop@example.test' );
 		update_option( 'admin_email',            'admin@example.test' );
 	}
 
@@ -71,7 +71,7 @@ final class RestockNotifyStockMonitorTest extends TestCase {
 	}
 
 	public function test_on_status_change_to_instock_triggers_notify(): void {
-		\RSN_Database::$get_waiting_for_product_return = array(
+		\ShopOS_Restock_Database::$get_waiting_for_product_return = array(
 			(object) array( 'id' => 11, 'product_id' => 42, 'variation_id' => 0, 'customer_name' => 'A', 'customer_email' => 'a@x.test', 'unsubscribe_token' => 'tok11' ),
 		);
 		$product = new TestStockMonitorProduct();
@@ -80,12 +80,12 @@ final class RestockNotifyStockMonitorTest extends TestCase {
 
 		$this->assertCount( 1, $GLOBALS['fr_wp_mail_calls'], 'One subscriber → one wp_mail call' );
 		// mark_notified was called for the same subscription id.
-		$marked = array_filter( \RSN_Database::$calls, static fn( $c ) => 'mark_notified' === $c['method'] );
+		$marked = array_filter( \ShopOS_Restock_Database::$calls, static fn( $c ) => 'mark_notified' === $c['method'] );
 		$this->assertSame( array( 11 ), reset( $marked )['args'] );
 	}
 
 	public function test_on_status_change_to_outofstock_does_nothing(): void {
-		\RSN_Database::$get_waiting_for_product_return = array(
+		\ShopOS_Restock_Database::$get_waiting_for_product_return = array(
 			(object) array( 'id' => 11, 'product_id' => 42, 'variation_id' => 0, 'customer_name' => 'A', 'customer_email' => 'a@x.test', 'unsubscribe_token' => 'tok11' ),
 		);
 		$product = new TestStockMonitorProduct();
@@ -93,7 +93,7 @@ final class RestockNotifyStockMonitorTest extends TestCase {
 		( new Stock_Monitor() )->on_status_change( 42, 'outofstock', $product );
 
 		$this->assertCount( 0, $GLOBALS['fr_wp_mail_calls'] );
-		$this->assertCount( 0, \RSN_Database::$calls, 'Subscribers query must not even run on outofstock' );
+		$this->assertCount( 0, \ShopOS_Restock_Database::$calls, 'Subscribers query must not even run on outofstock' );
 	}
 
 	public function test_on_qty_change_with_zero_quantity_does_nothing(): void {
@@ -107,7 +107,7 @@ final class RestockNotifyStockMonitorTest extends TestCase {
 	}
 
 	public function test_on_qty_change_with_positive_quantity_triggers_notify(): void {
-		\RSN_Database::$get_waiting_for_product_return = array(
+		\ShopOS_Restock_Database::$get_waiting_for_product_return = array(
 			(object) array( 'id' => 22, 'product_id' => 42, 'variation_id' => 0, 'customer_name' => 'B', 'customer_email' => 'b@x.test', 'unsubscribe_token' => 'tok22' ),
 		);
 		$product            = new TestStockMonitorProduct();
@@ -120,7 +120,7 @@ final class RestockNotifyStockMonitorTest extends TestCase {
 	}
 
 	public function test_manual_notify_returns_count_and_marks_notified(): void {
-		\RSN_Database::$get_waiting_for_product_return = array(
+		\ShopOS_Restock_Database::$get_waiting_for_product_return = array(
 			(object) array( 'id' => 31, 'product_id' => 42, 'variation_id' => 0, 'customer_name' => 'C', 'customer_email' => 'c@x.test', 'unsubscribe_token' => 'tok31' ),
 			(object) array( 'id' => 32, 'product_id' => 42, 'variation_id' => 0, 'customer_name' => 'D', 'customer_email' => 'd@x.test', 'unsubscribe_token' => 'tok32' ),
 		);
@@ -129,7 +129,7 @@ final class RestockNotifyStockMonitorTest extends TestCase {
 
 		$this->assertSame( 2, $count );
 		$this->assertCount( 2, $GLOBALS['fr_wp_mail_calls'] );
-		$marked = array_filter( \RSN_Database::$calls, static fn( $c ) => 'mark_notified' === $c['method'] );
+		$marked = array_filter( \ShopOS_Restock_Database::$calls, static fn( $c ) => 'mark_notified' === $c['method'] );
 		$this->assertCount( 2, $marked );
 	}
 
@@ -137,16 +137,16 @@ final class RestockNotifyStockMonitorTest extends TestCase {
 		// Pre-seed with 100 entries — next notify() call should still result
 		// in array of exactly 100 (oldest dropped).
 		$preset = array_fill( 0, 100, array( 'product_id' => 1, 'count' => 1, 'date' => '2024-01-01 00:00:00' ) );
-		update_option( 'rsn_notification_log', $preset );
+		update_option( 'shopos_restock_notification_log', $preset );
 
-		\RSN_Database::$get_waiting_for_product_return = array(
+		\ShopOS_Restock_Database::$get_waiting_for_product_return = array(
 			(object) array( 'id' => 99, 'product_id' => 42, 'variation_id' => 0, 'customer_name' => 'E', 'customer_email' => 'e@x.test', 'unsubscribe_token' => 'tok99' ),
 		);
 		$product = new TestStockMonitorProduct();
 
 		( new Stock_Monitor() )->on_status_change( 42, 'instock', $product );
 
-		$log = get_option( 'rsn_notification_log', array() );
+		$log = get_option( 'shopos_restock_notification_log', array() );
 		$this->assertCount( 100, $log, 'Log capped at 100 entries' );
 		$this->assertSame( 42, $log[99]['product_id'], 'Newest entry appended at the end' );
 	}

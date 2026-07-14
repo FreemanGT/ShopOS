@@ -1,6 +1,6 @@
 <?php
 /**
- * RestockNotify — CSV export of the rsn_subscribers table.
+ * RestockNotify — CSV export of the shopos_restock_subscribers table.
  *
  * Wave 4.1b. Pairs with `Admin_Tools` (which renders the submit form on a
  * submenu page) to deliver a downloadable subscribers CSV. Always-on since

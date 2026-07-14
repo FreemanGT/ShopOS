@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-// Email needs the legacy `rsn_get_option()` shim to read configurable options.
+// Email needs the legacy `shopos_restock_get_option()` shim to read configurable options.
 // Loading helpers.php is side-effect-free (just defines two functions if they
 // aren't already defined).
 require_once __DIR__ . '/../shopos-core/src/Modules/RestockNotify/legacy/helpers.php';
@@ -36,18 +36,18 @@ final class RestockNotifyEmailTest extends TestCase {
 		$GLOBALS['fr_wc_get_product_return'] = new \WC_Product();
 		$GLOBALS['fr_blogname']         = 'Acme Shop';
 
-		// Pre-seed the email-content options so rsn_get_option() doesn't fall
+		// Pre-seed the email-content options so shopos_restock_get_option() doesn't fall
 		// through to seeded defaults (and also doesn't trigger spurious
 		// update_option calls from the legacy helper's side-effect path).
-		update_option( 'rsn_confirm_subject',     'Subscribed: {product_name}' );
-		update_option( 'rsn_confirm_heading',     "We'll let you know" );
-		update_option( 'rsn_confirm_body',        'Hi {customer_name}, you are subscribed for {product_name}.' );
-		update_option( 'rsn_notify_subject',      '{product_name} is back in stock' );
-		update_option( 'rsn_notify_heading',      "It's back!" );
-		update_option( 'rsn_notify_body',         '<strong>{product_name}</strong> is back!' );
-		update_option( 'rsn_notify_button_text',  'Buy now' );
-		update_option( 'rsn_from_name',           'Acme' );
-		update_option( 'rsn_from_email',          'shop@example.test' );
+		update_option( 'shopos_restock_confirm_subject',     'Subscribed: {product_name}' );
+		update_option( 'shopos_restock_confirm_heading',     "We'll let you know" );
+		update_option( 'shopos_restock_confirm_body',        'Hi {customer_name}, you are subscribed for {product_name}.' );
+		update_option( 'shopos_restock_notify_subject',      '{product_name} is back in stock' );
+		update_option( 'shopos_restock_notify_heading',      "It's back!" );
+		update_option( 'shopos_restock_notify_body',         '<strong>{product_name}</strong> is back!' );
+		update_option( 'shopos_restock_notify_button_text',  'Buy now' );
+		update_option( 'shopos_restock_from_name',           'Acme' );
+		update_option( 'shopos_restock_from_email',          'shop@example.test' );
 		update_option( 'admin_email',             'admin@example.test' );
 	}
 
@@ -168,7 +168,7 @@ final class RestockNotifyEmailTest extends TestCase {
 	}
 
 	public function test_send_falls_back_to_admin_email_when_from_email_is_invalid(): void {
-		update_option( 'rsn_from_email', 'not-an-email' );
+		update_option( 'shopos_restock_from_email', 'not-an-email' );
 
 		Email::send_confirmation( $this->subscriber() );
 

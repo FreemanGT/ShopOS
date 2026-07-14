@@ -510,7 +510,7 @@
 
 ## [1.11.38] — 2026-05-11
 
-- Wave 4.1b — RestockNotify CSV export admin button. Adds an Export Subscribers submenu under the legacy restock-notify parent menu and an admin-post.php handler that streams the rsn_subscribers table as a UTF-8 BOM CSV with all 9 columns and a date-stamped filename. Gated behind shopos_core_restock_notify_csv_export_enabled (default off). Defense-in-depth: flag-OFF means neither the submenu nor the admin_post listener attaches. Closes Wave 4.1.
+- Wave 4.1b — RestockNotify CSV export admin button. Adds an Export Subscribers submenu under the legacy restock-notify parent menu and an admin-post.php handler that streams the shopos_restock_subscribers table as a UTF-8 BOM CSV with all 9 columns and a date-stamped filename. Gated behind shopos_core_restock_notify_csv_export_enabled (default off). Defense-in-depth: flag-OFF means neither the submenu nor the admin_post listener attaches. Closes Wave 4.1.
 
 ## [1.11.37] — 2026-05-11
 
@@ -602,7 +602,7 @@
 
 ## [1.11.3] — 2026-04-29
 
-- Wave 2.3a: add Subscribers repository - thin static wrapper around RSN_Database with 4 methods, no callers yet, groundwork for 2.3b/c
+- Wave 2.3a: add Subscribers repository - thin static wrapper around ShopOS_Restock_Database with 4 methods, no callers yet, groundwork for 2.3b/c
 
 ## [1.11.2] — 2026-04-29
 
@@ -854,7 +854,7 @@
 
 ## [1.3.0] — 2026-04-22
 
-- Deferred items: RestockNotify assets now load only on product/shop/cart/checkout/shortcode pages (filter: rsn_should_enqueue); Swatches legacy strings migrated from shopos-vs to shopos-core text-domain, .pot + he_IL.po updated; typed Detection_Result value object returned from every Base_Importer::detect() — Legacy_Importer::scan() now coerces + logs on shape mismatch instead of silently going blank
+- Deferred items: RestockNotify assets now load only on product/shop/cart/checkout/shortcode pages (filter: shopos_restock_should_enqueue); Swatches legacy strings migrated from shopos-vs to shopos-core text-domain, .pot + he_IL.po updated; typed Detection_Result value object returned from every Base_Importer::detect() — Legacy_Importer::scan() now coerces + logs on shape mismatch instead of silently going blank
 
 ## [1.2.1] — 2026-04-22
 

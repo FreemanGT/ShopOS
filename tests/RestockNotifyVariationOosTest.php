@@ -52,7 +52,7 @@ final class TestVariableParent extends \WC_Product {
  * @covers \ShopOS\Core\Modules\RestockNotify\Frontend
  *
  * One test per case in the 6-case ladder at Frontend::is_variation_truly_oos().
- * The ladder was copied verbatim from legacy/class-rsn-frontend.php:513-564 —
+ * The ladder was copied verbatim from legacy/class-shopos-restock-frontend.php:513-564 —
  * these tests lock the per-case behavior so a future edit (intentional or
  * accidental) surfaces as a clear failure.
  */

@@ -1,1 +1,1 @@
-shopos-digital/includes/class-fd-cli.php:271:WP_CLI::add_command('fd', 'FD_CLI');
+shopos-digital/includes/class-shopos-digital-cli.php:271:WP_CLI::add_command('fd', 'ShopOS_Digital_CLI');

@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-class FD_Query_Optimizer {
+class ShopOS_Digital_Query_Optimizer {
     private $o;
 
     public function __construct($o) {
@@ -174,7 +174,7 @@ class FD_Query_Optimizer {
     }
     private function cached_months($pt) {
         global $wpdb;
-        $key = "fd_months_{$pt}";
+        $key = "shopos_digital_months_{$pt}";
         $m = get_transient($key);
         if (is_array($m)) return $m;
         $extra = ($pt !== 'attachment') ? " AND post_status NOT IN ('auto-draft','trash')" : '';
@@ -185,13 +185,13 @@ class FD_Query_Optimizer {
 
     /**
      * Invalidate month caches when posts are published/updated/trashed/deleted.
-     * Called from FD_Core's save_post / deleted_post / wp_trash_post / untrashed_post actions.
+     * Called from ShopOS_Digital_Core's save_post / deleted_post / wp_trash_post / untrashed_post actions.
      */
     public static function invalidate_months_cache($post_id) {
         if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) return;
         $post_type = get_post_type($post_id);
         if ($post_type) {
-            delete_transient("fd_months_{$post_type}");
+            delete_transient("shopos_digital_months_{$post_type}");
         }
     }
 
@@ -205,7 +205,7 @@ class FD_Query_Optimizer {
         foreach ($updated_ids as $id) {
             $type = get_post_type($id);
             if ($type && !isset($seen[$type])) {
-                delete_transient("fd_months_{$type}");
+                delete_transient("shopos_digital_months_{$type}");
                 $seen[$type] = true;
             }
         }

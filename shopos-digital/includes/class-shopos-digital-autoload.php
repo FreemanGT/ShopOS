@@ -1,13 +1,13 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-class FD_Autoload {
+class ShopOS_Digital_Autoload {
     private $o;
 
     public function __construct($o) {
         $this->o = $o;
         if (!empty($o['auto_audit_enabled'])) {
-            add_action('fd_daily_maintenance', array($this, 'daily_check'));
+            add_action('shopos_digital_daily_maintenance', array($this, 'daily_check'));
         }
     }
 
@@ -30,7 +30,7 @@ class FD_Autoload {
         $size = (int) $wpdb->get_var("SELECT SUM(LENGTH(option_value)) FROM {$wpdb->options} WHERE autoload IN ('yes','on','auto','auto-on')");
         if ($ceiling_bytes > 0 && $size <= $ceiling_bytes) return;
 
-        $protected = apply_filters('fd/protected_autoload_options', self::get_protected_options());
+        $protected = apply_filters('shopos_digital/protected_autoload_options', self::get_protected_options());
         $placeholders = implode(',', array_fill(0, count($protected), '%s'));
 
         $sql = $wpdb->prepare(
@@ -42,8 +42,8 @@ class FD_Autoload {
         );
         $fixed = $wpdb->query($sql);
 
-        if (class_exists('FD_Activity_Log') && (int) $fixed > 0) {
-            FD_Activity_Log::record('autoload_auto_fix', array(
+        if (class_exists('ShopOS_Digital_Activity_Log') && (int) $fixed > 0) {
+            ShopOS_Digital_Activity_Log::record('autoload_auto_fix', array(
                 'rows_affected' => (int) $fixed,
                 'threshold_kb'  => $threshold_kb,
                 'ceiling_mb'    => $ceiling_mb,
@@ -83,7 +83,7 @@ class FD_Autoload {
             'WPLANG', 'new_admin_email', 'recently_activated', 'auto_update_core_dev',
             'auto_update_core_minor', 'auto_update_core_major', 'wp_force_deactivated_plugins',
             'finished_splitting_shared_terms', 'site_icon', 'fresh_site',
-            'fd_settings', 'fd_profiler_expires', 'fd_profiler_threshold',
+            'shopos_digital_settings', 'shopos_digital_profiler_expires', 'shopos_digital_profiler_threshold',
         );
     }
 }
