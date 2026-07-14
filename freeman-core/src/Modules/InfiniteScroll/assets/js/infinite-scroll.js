@@ -748,18 +748,50 @@
         state.nextUrl = null; state.stopped = false; state.isLoading = false;
     }
 
-    function makeSkeletonCard() {
+    // Measure a real product card in the grid so skeletons match the live
+    // card geometry exactly (total height, image height, side padding). The
+    // stylesheet's 3/4-aspect guess is only the fallback for a grid with no
+    // card to measure — hardcoded estimates drift as the card's lower stack
+    // (title, price, buttons, swatches) varies per site and setting.
+    function measureCard() {
+        if (!state.container || !state.itemSelector) return null;
+        var items = state.container.querySelectorAll(state.itemSelector);
+        for (var i = items.length - 1; i >= 0; i--) {
+            var card = items[i];
+            if (card.classList && card.classList.contains('bookomers-skeleton')) continue;
+            var rect = card.getBoundingClientRect();
+            if (rect.height <= 0) continue;
+            var img = card.querySelector('img');
+            var imgH = img ? img.getBoundingClientRect().height : 0;
+            var pad = '';
+            try { pad = window.getComputedStyle(card).padding || ''; } catch (e) { /* best-effort */ }
+            return { height: rect.height, imgHeight: imgH, padding: pad };
+        }
+        return null;
+    }
+
+    function makeSkeletonCard(measure) {
         var tag = state.container.tagName === 'UL' ? 'li' : 'div';
         var skel = document.createElement(tag);
         skel.className = 'product bookomers-skeleton wc-block-grid__product';
         skel.setAttribute('aria-hidden', 'true');
         skel.innerHTML = '<div class="bookomers-skel-image"></div><div class="bookomers-skel-line short"></div><div class="bookomers-skel-line"></div><div class="bookomers-skel-line price"></div>';
+        if (measure) {
+            skel.style.minHeight = measure.height + 'px';
+            if (measure.padding) skel.style.padding = measure.padding;
+            if (measure.imgHeight > 0) {
+                var img = skel.firstChild;
+                img.style.height = measure.imgHeight + 'px';
+                img.style.aspectRatio = 'auto';
+            }
+        }
         return skel;
     }
 
     function showSkeletons() {
         if (!state.container) return;
-        for (var i = 0; i < OPTS.skeletonCount; i++) state.container.appendChild(makeSkeletonCard());
+        var measure = measureCard();
+        for (var i = 0; i < OPTS.skeletonCount; i++) state.container.appendChild(makeSkeletonCard(measure));
     }
 
     function removeSkeletons() {

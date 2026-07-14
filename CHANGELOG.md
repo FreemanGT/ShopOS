@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.24.11] — 2026-07-14
+
+- Fix storefront flash of unstyled Shop Filters panel and product-grid cards (stylesheets now head-enqueued before first paint) and make InfiniteScroll loading skeletons measure a real product card so they match the live card size
+
 ## [1.24.10] — 2026-07-14
 
 - fix(freeman-core): Search + Shop Filters — filtered search rendered a blank grid (slice-before-intersect); widget now slices the composed id set after all constrainers, and search ordering got a deterministic tiebreak

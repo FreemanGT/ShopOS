@@ -46,6 +46,18 @@ final class CategorySliderModuleTest extends TestCase {
 		);
 	}
 
+	public function test_boot_head_enqueues_the_front_style(): void {
+		// The widget CSS must load from wp_enqueue_scripts (<head>) — Elementor
+		// resolves get_style_depends() at widget render time, which prints the
+		// stylesheet in the footer → unstyled first paint on every page load.
+		$GLOBALS['fr_hooks'] = array();
+		( new Module() )->boot();
+
+		$this->assertNotFalse( has_action( 'wp_enqueue_scripts' ) );
+		// Elementor's own registration path stays wired (editor + render dedupe).
+		$this->assertNotFalse( has_action( 'elementor/frontend/after_register_styles' ) );
+	}
+
 	public function test_assets_exist_on_disk(): void {
 		$base = FREEMAN_CORE_PATH . 'src/Modules/CategorySlider/assets/';
 		$this->assertFileExists( $base . 'css/category-slider.css' );

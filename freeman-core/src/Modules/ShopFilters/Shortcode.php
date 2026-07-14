@@ -34,6 +34,34 @@ final class Shortcode {
 	 */
 	public function register() {
 		add_shortcode( self::TAG, array( $this, 'render' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_style' ) );
+	}
+
+	/**
+	 * Head-enqueue the panel stylesheet on every front-end page.
+	 *
+	 * The shortcode renders in the page body (an Elementor shortcode element),
+	 * after wp_head has printed — a style first enqueued at render time prints
+	 * in the footer, so the panel painted unstyled and snapped into place once
+	 * the footer CSS arrived, on every page load / filter reload. Enqueueing
+	 * here puts the CSS in <head> before first paint regardless of where (or
+	 * whether) the panel renders; enqueue_assets() keeps its call as a dedupe
+	 * no-op safety net for contexts that skip wp_enqueue_scripts.
+	 */
+	public function enqueue_style() {
+		if ( is_admin() || is_feed() ) {
+			return;
+		}
+
+		$fs_base  = FREEMAN_CORE_PATH . 'src/Modules/ShopFilters/assets/';
+		$url_base = FREEMAN_CORE_URL . 'src/Modules/ShopFilters/assets/';
+
+		wp_enqueue_style(
+			self::STYLE_HANDLE,
+			Module_Base::pick_min_url( $fs_base, $url_base, 'css/shop-filters.css' ),
+			array(),
+			FREEMAN_CORE_VERSION
+		);
 	}
 
 	/**

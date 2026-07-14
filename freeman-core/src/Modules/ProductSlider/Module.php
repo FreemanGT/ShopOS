@@ -82,6 +82,8 @@ final class Module extends Module_Base {
 		add_action( 'elementor/frontend/after_register_scripts', array( $this, 'register_scripts' ) );
 		// Editor preview also needs the assets.
 		add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'enqueue_editor_style' ) );
+		// Head-enqueue the stylesheets before first paint — see enqueue_front_styles().
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_styles' ), 20 );
 	}
 
 	/**
@@ -168,6 +170,38 @@ final class Module extends Module_Base {
 				true
 			);
 		}
+	}
+
+	/**
+	 * Head-enqueue both stylesheets on the front end.
+	 *
+	 * Elementor resolves the widget's get_style_depends() at widget render
+	 * time — in the page body, after wp_head — so the CSS printed in the
+	 * footer and the card grid painted as unstyled WooCommerce defaults
+	 * before snapping into the slider design on every page load. Enqueueing
+	 * in <head> removes that flash; Elementor's render-time enqueue becomes
+	 * a handle-level no-op.
+	 */
+	public function enqueue_front_styles() {
+		if ( is_admin() || is_feed() || ! did_action( 'elementor/loaded' ) ) {
+			return;
+		}
+
+		$slider_fs  = FREEMAN_CORE_PATH . 'src/Modules/CategorySlider/assets/';
+		$slider_url = FREEMAN_CORE_URL . 'src/Modules/CategorySlider/assets/';
+
+		wp_enqueue_style(
+			'freeman-core-category-slider',
+			Module_Base::pick_min_url( $slider_fs, $slider_url, 'css/category-slider.css' ),
+			array(),
+			FREEMAN_CORE_VERSION
+		);
+		wp_enqueue_style(
+			'freeman-core-product-slider',
+			$this->asset_min_url( 'css/product-slider.css' ),
+			array( 'freeman-core-category-slider' ),
+			FREEMAN_CORE_VERSION
+		);
 	}
 
 	/**

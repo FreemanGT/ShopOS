@@ -55,9 +55,9 @@ freeman-core/src/Modules/ShopFilters/Query_Builder.php:1141:		return (int) apply
 freeman-core/src/Modules/ShopFilters/Query_Builder.php:658:			$ttl = (int) apply_filters( 'freeman_core/shop_filters/facet_cache_ttl', 5 * MINUTE_IN_SECONDS );
 freeman-core/src/Modules/ShopFilters/Query_Builder.php:810:		$pre = apply_filters( 'freeman_core/shop_filters/pre_search_product_ids', null, (string) $term );
 freeman-core/src/Modules/ShopFilters/Query_Builder.php:839:		return array_map( 'intval', (array) apply_filters( 'freeman_core/shop_filters/search_product_ids', $ids, (string) $term ) );
-freeman-core/src/Modules/ShopFilters/Shortcode.php:61:		do_action( 'freeman_core/shop_filters/before_render', $context_id );
-freeman-core/src/Modules/ShopFilters/Shortcode.php:78:		do_action( 'freeman_core/shop_filters/after_render', $context_id );
-freeman-core/src/Modules/ShopFilters/Shortcode.php:90:		return (string) apply_filters( 'freeman_core/shop_filters/panel_html', $html, $context_id );
+freeman-core/src/Modules/ShopFilters/Shortcode.php:106:		do_action( 'freeman_core/shop_filters/after_render', $context_id );
+freeman-core/src/Modules/ShopFilters/Shortcode.php:118:		return (string) apply_filters( 'freeman_core/shop_filters/panel_html', $html, $context_id );
+freeman-core/src/Modules/ShopFilters/Shortcode.php:89:		do_action( 'freeman_core/shop_filters/before_render', $context_id );
 freeman-core/src/Modules/VariableStockFix/Module.php:294:		if ( ! apply_filters( 'freeman_core/variable_stock_fix/should_check', true, $product ) ) {
 freeman-core/src/Modules/VariationSwatches/Color_Sampler.php:197:		$value   = apply_filters(
 freeman-core/src/Modules/VariationSwatches/Sampler_Scheduler.php:192:		$batch_size = (int) apply_filters( self::BATCH_SIZE_FILTER, self::DEFAULT_BATCH_SIZE );

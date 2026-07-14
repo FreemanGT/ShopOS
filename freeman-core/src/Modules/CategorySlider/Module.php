@@ -77,6 +77,8 @@ final class Module extends Module_Base {
 		add_action( 'elementor/frontend/after_register_scripts', array( $this, 'register_scripts' ) );
 		// Editor preview also needs the assets.
 		add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'enqueue_editor_style' ) );
+		// Head-enqueue the stylesheet before first paint — see enqueue_front_style().
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_style' ), 20 );
 	}
 
 	/**
@@ -137,6 +139,29 @@ final class Module extends Module_Base {
 				true
 			);
 		}
+	}
+
+	/**
+	 * Head-enqueue the stylesheet on the front end.
+	 *
+	 * Elementor resolves the widget's get_style_depends() at widget render
+	 * time — in the page body, after wp_head — so the CSS printed in the
+	 * footer and the slider painted unstyled before snapping into place on
+	 * every page load. Enqueueing in <head> removes that flash; Elementor's
+	 * render-time enqueue becomes a handle-level no-op. WP de-dupes by
+	 * handle, so this composes with the Product Slider module's twin.
+	 */
+	public function enqueue_front_style() {
+		if ( is_admin() || is_feed() || ! did_action( 'elementor/loaded' ) ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'freeman-core-category-slider',
+			$this->asset_min_url( 'css/category-slider.css' ),
+			array(),
+			FREEMAN_CORE_VERSION
+		);
 	}
 
 	/**
