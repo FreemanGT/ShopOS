@@ -37,6 +37,20 @@ use Elementor\Widget_Base;
  */
 final class Widget extends Widget_Base {
 
+	/**
+	 * Page count of the composed id constraint, when a query_args listener
+	 * (the Search engine and/or Shop Filters) supplied the grid's id set this
+	 * request. The listeners inject FULL match sets — composition (intersecting
+	 * a search with a facet selection) has to happen on whole sets, so the
+	 * widget, which owns pagination, slices the final list to the current page
+	 * and remembers the real page count here for render()'s paginate_links.
+	 * Null when no listener constrained the query (genuine archives read the
+	 * main query's max_num_pages instead).
+	 *
+	 * @var int|null
+	 */
+	private $constrained_grid_pages = null;
+
 	public function get_name() {
 		return 'freeman_product_slider';
 	}
@@ -875,6 +889,8 @@ final class Widget extends Widget_Base {
 			$args['exclude'] = $exclude;
 		}
 
+		$pre_filter_include = ( isset( $args['include'] ) && is_array( $args['include'] ) ) ? $args['include'] : null;
+
 		/**
 		 * Filter the `wc_get_products()` args used by the Product Slider widget.
 		 *
@@ -889,6 +905,35 @@ final class Widget extends Widget_Base {
 		 * @param array $settings Resolved widget settings.
 		 */
 		$args = (array) apply_filters( 'freeman_core/product_slider/query_args', $args, $s );
+
+		// A listener injected (or reshaped) an id constraint — the Search
+		// engine's matches, Shop Filters' in-stock selection, or their
+		// intersection. Listeners supply FULL sets: composing a search with a
+		// facet selection is only correct on whole sets (pre-1.24.10 the Search
+		// listener injected one page slice, so Shop Filters intersected against
+		// 10 ids instead of ~300 and a filtered search rendered blank while the
+		// facet panel counted the real total). Pagination is this widget's job:
+		// slice the composed list to the current page (paginating current-query
+		// grids) or the widget's own cap (sliders / fixed-source grids), before
+		// wc_get_products() hydrates anything.
+		$post_filter_include = ( isset( $args['include'] ) && is_array( $args['include'] ) ) ? $args['include'] : null;
+		if ( null !== $post_filter_include && $post_filter_include !== $pre_filter_include ) {
+			$paginates = ( ( $s['display_mode'] ?? 'slider' ) === 'grid' ) && 'current_query' === ( $s['source'] ?? '' );
+			$paged     = max( 1, (int) get_query_var( 'paged' ), (int) get_query_var( 'page' ) );
+			$sliced    = self::slice_constrained_include(
+				$post_filter_include,
+				$paginates,
+				$paged,
+				$this->grid_per_page(),
+				$limit
+			);
+
+			$args['include'] = $sliced['include'];
+			$args['limit']   = count( $sliced['include'] );
+			if ( null !== $sliced['pages'] ) {
+				$this->constrained_grid_pages = $sliced['pages'];
+			}
+		}
 
 		// Popularity / rating / price: bypass `wc_get_products()`'s INNER JOIN
 		// on the sort meta. WC translates `orderby=popularity` → `meta_value_num`
@@ -916,6 +961,67 @@ final class Widget extends Widget_Base {
 				}
 			)
 		);
+	}
+
+	/**
+	 * Slice a listener-composed include list to what this widget renders (pure).
+	 *
+	 * A paginating grid gets the current page's window plus the real page count
+	 * derived from the FULL composed set; anything else (a slider row, a
+	 * fixed-source grid with no pagination UI) is capped at the widget's own
+	 * product limit with no page count. An empty window — no matches, or a page
+	 * past the end — becomes [0], wc_get_products' "no results" (an empty
+	 * include list would mean "no constraint" and render the whole catalog).
+	 *
+	 * @param int[] $include   Composed id constraint, in final render order.
+	 * @param bool  $paginates Whether this widget paginates (current-query grid).
+	 * @param int   $paged     1-based current page.
+	 * @param int   $per_page  Products per grid page.
+	 * @param int   $cap       The widget's own product limit (non-paginating).
+	 * @return array{include: int[], pages: int|null}
+	 */
+	public static function slice_constrained_include( array $include, $paginates, $paged, $per_page, $cap ) {
+		$ids = array_values( array_filter( array_map( 'intval', $include ) ) );
+		if ( empty( $ids ) ) {
+			return array(
+				'include' => array( 0 ),
+				'pages'   => $paginates ? 1 : null,
+			);
+		}
+		if ( ! $paginates ) {
+			$slice = array_slice( $ids, 0, max( 1, (int) $cap ) );
+			return array(
+				'include' => $slice,
+				'pages'   => null,
+			);
+		}
+		$paged    = max( 1, (int) $paged );
+		$per_page = max( 1, (int) $per_page );
+		$slice    = array_slice( $ids, ( $paged - 1 ) * $per_page, $per_page );
+		return array(
+			'include' => empty( $slice ) ? array( 0 ) : $slice,
+			'pages'   => max( 1, (int) ceil( count( $ids ) / $per_page ) ),
+		);
+	}
+
+	/**
+	 * Products per grid page — the WooCommerce shop grid size when available,
+	 * else the blog per-page, else 12. The same ladder Shop Filters'
+	 * Query_Builder::resolve_per_page() uses (deliberate small duplicate — the
+	 * modules stay independent), so the page slice, the pagination links, and
+	 * the facet panel's advisory count all agree on page size.
+	 *
+	 * @return int
+	 */
+	private function grid_per_page() {
+		$per_page = 0;
+		if ( function_exists( 'wc_get_default_products_per_page' ) ) {
+			$per_page = (int) apply_filters( 'loop_shop_per_page', wc_get_default_products_per_page() );
+		}
+		if ( $per_page <= 0 ) {
+			$per_page = (int) get_option( 'posts_per_page', 12 );
+		}
+		return $per_page > 0 ? $per_page : 12;
 	}
 
 	/**
@@ -1360,22 +1466,30 @@ final class Widget extends Widget_Base {
 			// wc_setup_loop() (which woocommerce_pagination() depends on).
 			// main_query() reads $wp_the_query to survive that swap.
 			if ( ! $is_slider && 'current_query' === ( $s['source'] ?? '' ) && function_exists( 'paginate_links' ) ) {
-				$main      = $this->main_query();
-				$max_pages = ( $main instanceof \WP_Query && ! empty( $main->max_num_pages ) ) ? (int) $main->max_num_pages : 1;
+				if ( null !== $this->constrained_grid_pages ) {
+					// A query_args listener composed this grid's id set (search
+					// engine matches ∩ facet selection) — the page count derived
+					// from that composed set in fetch_products() is the only
+					// correct one. The main query object visible here may be a
+					// different, unconstrained instance on an Elementor archive
+					// template (the 1.21.5 diagnostic), and the grid_max_pages
+					// filter's engine total ignores the facet intersection.
+					$max_pages = $this->constrained_grid_pages;
+				} else {
+					$main      = $this->main_query();
+					$max_pages = ( $main instanceof \WP_Query && ! empty( $main->max_num_pages ) ) ? (int) $main->max_num_pages : 1;
 
-				/**
-				 * Page count for a current-query grid. On a product search the
-				 * grid is fed by the search engine through the query_args
-				 * filter (one page slice per request since 1.21.20), and the
-				 * main query object visible here may be a different,
-				 * unconstrained instance on an Elementor archive template — so
-				 * the Search module overrides the count with the real engine
-				 * match count. Genuine archives keep the main query's value.
-				 *
-				 * @param int   $max_pages Page count from the main query.
-				 * @param array $s         Widget settings.
-				 */
-				$max_pages = max( 1, (int) apply_filters( 'freeman_core/product_slider/grid_max_pages', $max_pages, $s ) );
+					/**
+					 * Page count for a current-query grid whose id set no
+					 * listener composed (since 1.24.10 a constrained grid's
+					 * count is derived from the composed set above). Fallback
+					 * seam for feeds the widget can't derive a count from.
+					 *
+					 * @param int   $max_pages Page count from the main query.
+					 * @param array $s         Widget settings.
+					 */
+					$max_pages = max( 1, (int) apply_filters( 'freeman_core/product_slider/grid_max_pages', $max_pages, $s ) );
+				}
 				if ( $max_pages > 1 ) {
 					$paged = max( 1, (int) get_query_var( 'paged' ), (int) get_query_var( 'page' ) );
 					$links = paginate_links(

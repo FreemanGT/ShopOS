@@ -108,24 +108,6 @@ final class Results_Query {
 		return empty( $ids ) ? array( 0 ) : $ids;
 	}
 
-	/**
-	 * One page of engine ids for the widget grid (rank order preserved). An
-	 * empty slice — no matches, or a page past the end — becomes [0] so
-	 * wc_get_products renders an empty grid rather than "no constraint".
-	 *
-	 * @param int[] $ids      Ranked engine ids.
-	 * @param int   $paged    1-based page number.
-	 * @param int   $per_page Products per page.
-	 * @return int[]
-	 */
-	public static function paginate_ids( array $ids, $paged, $per_page ) {
-		$ids      = array_values( array_filter( array_map( 'intval', $ids ) ) );
-		$paged    = max( 1, (int) $paged );
-		$per_page = max( 1, (int) $per_page );
-		$slice    = array_slice( $ids, ( $paged - 1 ) * $per_page, $per_page );
-		return empty( $slice ) ? array( 0 ) : $slice;
-	}
-
 	/* -----------------------------------------------------------------
 	 * WP adapters (integration / live QA)
 	 * ----------------------------------------------------------------- */
@@ -241,26 +223,32 @@ final class Results_Query {
 		}
 
 		// wc_get_products() uses `include` (+ orderby=include to keep rank).
-		// Only the current page's slice is hydrated — pre-1.21.20 this passed
-		// every match with limit=-1, which on a broad term meant hundreds of
-		// WC_Product objects in one request. [0] (no matches / page past the
-		// end) forces an empty grid (engine authoritative once indexed).
-		$slice = self::paginate_ids( $this->repo->search( $term, -1, true ), self::current_page(), self::per_page() );
+		// The FULL ranked match set is injected: Shop Filters intersects its
+		// facet selection into this list at priority 20, and composing the two
+		// is only correct on whole sets (pre-1.24.10 this injected one page
+		// slice, so a filtered search intersected against ~10 ids instead of
+		// the whole match set and rendered blank while the facet panel counted
+		// the real total). The widget slices the composed list to the current
+		// page AFTER all listeners ran — before hydration, so a broad term
+		// still doesn't build hundreds of WC_Product objects. [0] (no matches)
+		// forces an empty grid (engine authoritative once indexed).
+		$ids = self::plan_ids( $this->repo->search( $term, -1, true ) );
 
-		$args['include'] = $slice;
+		$args['include'] = $ids;
 		$args['orderby'] = 'include';
-		$args['limit']   = count( $slice );
+		$args['limit']   = count( $ids );
 		return $args;
 	}
 
 	/**
-	 * Page count for a current-query grid on a search page. The widget's own
-	 * count comes from the main query's max_num_pages — but on an Elementor
-	 * archive template the query object the widget can see may be a different,
-	 * unconstrained instance (the 1.21.5 diagnostic), so the engine, which
-	 * actually feeds the grid through constrain_slider_query(), supplies the
-	 * real match count here. Same guards as the grid constraint; the repeated
-	 * search() read is served from the repository's per-request memo.
+	 * Page count for a current-query grid on a search page — dormant fallback
+	 * since 1.24.10: whenever these guards pass, constrain_slider_query() also
+	 * injected the full match set, and the widget derives the (facet-aware)
+	 * page count from the composed include list itself, so it no longer
+	 * consults this filter. Kept registered as the safety net for a grid the
+	 * widget couldn't derive a count for; note the engine total here ignores
+	 * any Shop Filters intersection. The repeated search() read is served from
+	 * the repository's per-request memo.
 	 *
 	 * @param int   $max_pages Page count from the main query.
 	 * @param array $settings  Widget settings.
@@ -280,16 +268,6 @@ final class Results_Query {
 		}
 		$total = count( $this->repo->search( $term, -1, true ) );
 		return max( 1, (int) ceil( $total / self::per_page() ) );
-	}
-
-	/**
-	 * The current 1-based page (both pagination query vars, like the widget's
-	 * own pagination block reads them).
-	 *
-	 * @return int
-	 */
-	private static function current_page() {
-		return max( 1, (int) get_query_var( 'paged' ), (int) get_query_var( 'page' ) );
 	}
 
 	/**

@@ -81,7 +81,9 @@ final class SearchQueryEngineTest extends TestCase {
 		// The LIKE substring fallback that rescues short / non-Latin tokens.
 		$this->assertStringContainsString( 'OR search_text LIKE %s', $sql );
 		$this->assertStringContainsString( 'FROM wp_freeman_search_index', $sql );
-		$this->assertStringContainsString( 'ORDER BY score DESC', $sql );
+		// Deterministic tiebreak: broad terms tie many rows at the same score,
+		// and an unstable order flaps page membership between requests.
+		$this->assertStringContainsString( 'ORDER BY score DESC, product_id DESC', $sql );
 		$this->assertStringContainsString( 'LIMIT %d', $sql );
 	}
 

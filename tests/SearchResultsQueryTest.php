@@ -44,27 +44,6 @@ final class SearchResultsQueryTest extends TestCase {
 		$this->assertSame( array( 9, 4, 7 ), Results_Query::plan_ids( array( 9, 4, 7 ) ) );
 	}
 
-	/**
-	 * @dataProvider paginate_cases
-	 */
-	public function test_paginate_ids_slices_and_bounds( array $ids, int $paged, int $per_page, array $expected ): void {
-		$this->assertSame( $expected, Results_Query::paginate_ids( $ids, $paged, $per_page ) );
-	}
-
-	public static function paginate_cases(): array {
-		// [ids, paged, per_page, expected slice]
-		return array(
-			'page 1 slice, rank kept'  => array( array( 9, 4, 7, 2, 5 ), 1, 2, array( 9, 4 ) ),
-			'page 2 slice'             => array( array( 9, 4, 7, 2, 5 ), 2, 2, array( 7, 2 ) ),
-			'last partial page'        => array( array( 9, 4, 7, 2, 5 ), 3, 2, array( 5 ) ),
-			'page past the end = [0]'  => array( array( 9, 4, 7 ), 4, 2, array( 0 ) ),
-			'no matches = [0]'         => array( array(), 1, 12, array( 0 ) ),
-			'paged floors to 1'        => array( array( 9, 4 ), 0, 2, array( 9, 4 ) ),
-			'per_page floors to 1'     => array( array( 9, 4 ), 1, 0, array( 9 ) ),
-			'zero ids filtered first'  => array( array( 0, 9, 0, 4 ), 1, 2, array( 9, 4 ) ),
-		);
-	}
-
 	public function test_grid_max_pages_passes_through_for_uncontrolled_widgets(): void {
 		// Curated sources (and malformed settings) keep the main query's count.
 		$rq = new Results_Query();

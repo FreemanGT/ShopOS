@@ -19,6 +19,15 @@ settings array.
 `source = 'related'` (delegates to `wc_get_related_products()`) bypass this
 filter — those code paths never build `$args`.
 
+**Injecting an `include` id constraint (since 1.24.10):** supply the FULL
+match set, never a page slice — later listeners compose into it (e.g. Shop
+Filters intersects its facet selection into the Search engine's matches at
+priority 20), and composition is only correct on whole sets. After all
+listeners run, the widget itself slices the composed list to the current
+page (paginating current-query grids — it also derives the pagination page
+count from the composed total) or to its own product cap (sliders and
+fixed-source grids), before `wc_get_products()` hydrates anything.
+
 ### `freeman_core/product_slider/archive_thumbnail_size` (filter, since 1.21.40)
 ```php
 apply_filters(

@@ -36,9 +36,10 @@ freeman-core/src/Modules/ProductPage/templates/single-product.php:55:			do_actio
 freeman-core/src/Modules/ProductPage/templates/single-product.php:64:						do_action( 'woocommerce_before_single_product_summary' );
 freeman-core/src/Modules/ProductPage/templates/single-product.php:72:							do_action( 'woocommerce_single_product_summary' );
 freeman-core/src/Modules/ProductPage/templates/single-product.php:86:					$fm_tabs = apply_filters( 'woocommerce_product_tabs', array() );
-freeman-core/src/Modules/ProductSlider/Widget.php:1266:			return apply_filters( 'freeman_core/product_slider/archive_thumbnail_size', 'large' );
-freeman-core/src/Modules/ProductSlider/Widget.php:1378:				$max_pages = max( 1, (int) apply_filters( 'freeman_core/product_slider/grid_max_pages', $max_pages, $s ) );
-freeman-core/src/Modules/ProductSlider/Widget.php:891:		$args = (array) apply_filters( 'freeman_core/product_slider/query_args', $args, $s );
+freeman-core/src/Modules/ProductSlider/Widget.php:1019:			$per_page = (int) apply_filters( 'loop_shop_per_page', wc_get_default_products_per_page() );
+freeman-core/src/Modules/ProductSlider/Widget.php:1372:			return apply_filters( 'freeman_core/product_slider/archive_thumbnail_size', 'large' );
+freeman-core/src/Modules/ProductSlider/Widget.php:1491:					$max_pages = max( 1, (int) apply_filters( 'freeman_core/product_slider/grid_max_pages', $max_pages, $s ) );
+freeman-core/src/Modules/ProductSlider/Widget.php:907:		$args = (array) apply_filters( 'freeman_core/product_slider/query_args', $args, $s );
 freeman-core/src/Modules/QuickView/Ajax.php:78:		$html = (string) apply_filters( 'freeman_core/quick_view/drawer_html', $html, $product_id );
 freeman-core/src/Modules/QuickView/Frontend.php:142:		if ( ! apply_filters( 'freeman_core/quick_view/show_trigger', true, $product ) ) {
 freeman-core/src/Modules/QuickView/templates/drawer-content.php:55:		do_action( 'woocommerce_single_product_summary' );

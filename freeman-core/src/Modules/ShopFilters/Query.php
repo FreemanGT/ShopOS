@@ -297,24 +297,15 @@ final class Query {
 		$existing = ( isset( $args['include'] ) && is_array( $args['include'] ) ) ? $args['include'] : null;
 		$include  = self::compose_include( $existing, $this->instock_product_ids( $filters ) );
 
-		// A current-query grid paginates (the widget renders paginate_links off
-		// the — now constrained — main query), so hand it the current page's
-		// slice; a fixed-source grid has no pagination and keeps its own limit.
-		// Only when we are the sole constrainer: an existing include means the
-		// Search engine (priority 10) already sliced to the current page, and
-		// slicing its page again would empty every page after the first.
-		if ( null === $existing && 'current_query' === $source && $is_grid ) {
-			// Match the WooCommerce shop grid size (loop_shop_per_page) rather than
-			// the blog posts-per-page, so the page slice lines up with how many
-			// products the storefront grid actually shows per page.
-			$per_page = Query_Builder::resolve_per_page( Query_Builder::wc_grid_per_page(), (int) get_option( 'posts_per_page', 12 ) );
-			$paged    = max( 1, (int) get_query_var( 'paged' ), (int) get_query_var( 'page' ) );
-			$slice    = array_slice( $include, ( $paged - 1 ) * $per_page, $per_page );
-			$include  = empty( $slice ) ? array( 0 ) : $slice;
-			$args['limit'] = count( $include );
-		}
-
+		// The FULL composed set is handed back — never a page slice. Slicing
+		// here broke the two-constrainer case both ways (the Search engine at
+		// priority 10 used to inject one page slice, which this intersect then
+		// starved — the "facet says 8, grid renders blank" bug); since 1.24.10
+		// every query_args listener composes whole sets and the widget itself
+		// slices the final list to the current page / its own cap, before
+		// hydration, deriving the real page count from the composed total.
 		$args['include'] = $include;
+		$args['limit']   = count( $include );
 		return $args;
 	}
 

@@ -78,6 +78,11 @@ final class Query_Engine {
 	 * so the infix additions are score-only. NATURAL LANGUAGE MODE: no operator
 	 * syntax reaches the placeholder.
 	 *
+	 * `product_id DESC` breaks score ties deterministically — a broad term ties
+	 * many rows at the same score, and without a stable order MySQL may return
+	 * them differently per query, so page membership flapped between requests
+	 * (and a facet intersection against page 1 flapped with it).
+	 *
 	 * Placeholder order (must match search_args()): term, term, term, sku-prefix,
 	 * sku-infix, infix-boost, text-infix, infix-boost, term, term, sku-prefix,
 	 * text-infix, limit.
@@ -103,7 +108,7 @@ final class Query_Engine {
 				OR sku LIKE %s
 				OR search_text LIKE %s
 			){$stock}
-			ORDER BY score DESC
+			ORDER BY score DESC, product_id DESC
 			LIMIT %d";
 	}
 
