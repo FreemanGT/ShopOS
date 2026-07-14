@@ -95,6 +95,10 @@
 
 	function navigate() {
 		panel.classList.add('freeman-sf--loading');
+		// Soft dependency on the PageTransitions module: full-page loading
+		// overlay while the filtered reload is in flight (no-op when that
+		// module is disabled).
+		if (window.FreemanPageTransitions) { window.FreemanPageTransitions.show(); }
 		location.assign(buildUrl(readSelection()));
 	}
 

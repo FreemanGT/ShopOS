@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.25.0] — 2026-07-14
+
+- New Page Transitions module (default off): a loading overlay with spinner on shop-filter, search and pagination interactions plus a cross-document fade between pages in supporting browsers; enable it under Freeman - Modules
+
 ## [1.24.12] — 2026-07-14
 
 - InfiniteScroll skeletons now clone the real card width as well as height (WooCommerce float-layout width rules were shrinking them to a sliver in the ProductSlider grid) with a CSS stretch fallback for unmeasured grids
