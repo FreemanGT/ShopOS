@@ -403,6 +403,12 @@
    the full card height so the loading boxes line up with real cards. */
 .cs.cs-products.cs-grid-mode .bookomers-skeleton {
 	min-height: calc(var(--cs-card-h) + 140px);
+	/* WooCommerce's float-layout `ul.products li.product { width: 30.75% }`
+	   hits the skeleton <li class="product"> (real cards override it via
+	   their own .cs-card rules) and shrinks it to a sliver inside the grid
+	   track. Stretch to the track; the JS measurement (1.24.12) inlines the
+	   real card's pixel width on top of this fallback. */
+	width: auto;
 }
 .cs.cs-products.cs-grid-mode .bookomers-skel-image {
 	aspect-ratio: auto;

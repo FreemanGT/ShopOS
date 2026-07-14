@@ -765,7 +765,13 @@
             var imgH = img ? img.getBoundingClientRect().height : 0;
             var pad = '';
             try { pad = window.getComputedStyle(card).padding || ''; } catch (e) { /* best-effort */ }
-            return { height: rect.height, imgHeight: imgH, padding: pad };
+            // Width matters as much as height: theme/Woo float-layout rules
+            // (e.g. `ul.products li.product { width: 30.75% }`) hit the
+            // skeleton <li class="product"> but not the real cards (whose own
+            // card CSS overrides them), leaving a skinny sliver in a grid
+            // track. Cloning the real card's pixel width sidesteps any such
+            // stylesheet mismatch.
+            return { height: rect.height, width: rect.width, imgHeight: imgH, padding: pad };
         }
         return null;
     }
@@ -778,6 +784,7 @@
         skel.innerHTML = '<div class="bookomers-skel-image"></div><div class="bookomers-skel-line short"></div><div class="bookomers-skel-line"></div><div class="bookomers-skel-line price"></div>';
         if (measure) {
             skel.style.minHeight = measure.height + 'px';
+            if (measure.width > 0) skel.style.width = measure.width + 'px';
             if (measure.padding) skel.style.padding = measure.padding;
             if (measure.imgHeight > 0) {
                 var img = skel.firstChild;

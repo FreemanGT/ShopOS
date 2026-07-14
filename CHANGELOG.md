@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.24.12] — 2026-07-14
+
+- InfiniteScroll skeletons now clone the real card width as well as height (WooCommerce float-layout width rules were shrinking them to a sliver in the ProductSlider grid) with a CSS stretch fallback for unmeasured grids
+
 ## [1.24.11] — 2026-07-14
 
 - Fix storefront flash of unstyled Shop Filters panel and product-grid cards (stylesheets now head-enqueued before first paint) and make InfiniteScroll loading skeletons measure a real product card so they match the live card size
