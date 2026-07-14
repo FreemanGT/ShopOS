@@ -1,5 +1,9 @@
 # Freeman Core — Changelog
 
+## [1.25.1] — 2026-07-14
+
+- Page Transitions live-QA round: the cross-fade now waits for the new page content (render-blocking expect marker) so it no longer lands on a white frame, Shop Filters category links trigger the loading overlay too, and the fade is skipped on back/forward so it cannot fight the infinite-scroll position restore
+
 ## [1.25.0] — 2026-07-14
 
 - New Page Transitions module (default off): a loading overlay with spinner on shop-filter, search and pagination interactions plus a cross-document fade between pages in supporting browsers; enable it under Freeman - Modules

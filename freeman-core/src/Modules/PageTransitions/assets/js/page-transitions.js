@@ -29,7 +29,10 @@
         '.elementor-pagination a[href]',
         '.wc-block-pagination a[href]',
         '.wp-block-query-pagination a[href]',
-        'ul.page-numbers a[href]'
+        'ul.page-numbers a[href]',
+        // Shop Filters panel links (category tree) — plain server-rendered
+        // <a>s that reload just like a facet tick does.
+        '.freeman-sf a[href]'
     ].join(', ');
 
     var SEARCH_FORM_SELECTOR = 'form.fc-search-form, form[role="search"]';
@@ -103,6 +106,21 @@
     // including a visible overlay. Hide it so Back never lands on a scrim.
     window.addEventListener('pageshow', function (e) {
         if (e.persisted) { hide(); }
+    });
+
+    // Skip the cross-document fade on back/forward traversals: it freezes
+    // rendering while InfiniteScroll's scroll/grid restore is replaying, so
+    // Back landed on a blank region until the transition settled. Only fresh
+    // navigations (filter/search/pagination/product clicks) animate.
+    window.addEventListener('pageswap', function (e) {
+        if (e.viewTransition && e.activation && e.activation.navigationType === 'traverse') {
+            e.viewTransition.skipTransition();
+        }
+    });
+    window.addEventListener('pagereveal', function (e) {
+        if (!e.viewTransition) { return; }
+        var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+        if (nav && nav.type === 'back_forward') { e.viewTransition.skipTransition(); }
     });
 
     window.FreemanPageTransitions = { show: show, hide: hide };

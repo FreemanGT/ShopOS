@@ -44,6 +44,28 @@ final class PageTransitionsModuleTest extends TestCase {
 		( new Module() )->boot();
 
 		$this->assertNotFalse( has_action( 'wp_enqueue_scripts' ) );
+		// The render-blocking expect link + its end-of-body marker (the fade
+		// must capture the new page only after its content parsed).
+		$this->assertNotFalse( has_action( 'wp_head' ) );
+		$this->assertNotFalse( has_action( 'wp_footer' ) );
+	}
+
+	public function test_expect_link_and_ready_marker_pair_up(): void {
+		$module = new Module();
+
+		ob_start();
+		$module->print_expect_link();
+		$link = ob_get_clean();
+
+		ob_start();
+		$module->print_ready_marker();
+		$marker = ob_get_clean();
+
+		$this->assertStringContainsString( 'rel="expect"', $link );
+		$this->assertStringContainsString( 'blocking="render"', $link );
+		$this->assertStringContainsString( 'href="#fpt-ready"', $link );
+		$this->assertStringContainsString( 'id="fpt-ready"', $marker );
+		$this->assertStringContainsString( 'hidden', $marker );
 	}
 
 	public function test_localized_payload_falls_back_to_english_default(): void {

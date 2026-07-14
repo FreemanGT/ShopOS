@@ -90,6 +90,36 @@ final class Module extends Module_Base {
 	 */
 	public function boot() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
+		add_action( 'wp_head', array( $this, 'print_expect_link' ), 1 );
+		add_action( 'wp_footer', array( $this, 'print_ready_marker' ), 9999 );
+	}
+
+	/**
+	 * Print a render-blocking `rel=expect` link (Chrome 124+; other browsers
+	 * ignore it). Without it the cross-document fade captures the new page at
+	 * its FIRST paint — often before the product grid has rendered — so the
+	 * animation landed on a mostly-white frame and the content popped in
+	 * after. Blocking the first paint until the end-of-body marker (below)
+	 * is parsed makes the fade land on real content; during the wait the
+	 * browser keeps showing the frozen old page (dimmed under the overlay).
+	 */
+	public function print_expect_link() {
+		if ( is_admin() || is_feed() ) {
+			return;
+		}
+		echo '<link rel="expect" href="#fpt-ready" blocking="render">' . "\n";
+	}
+
+	/**
+	 * The end-of-body marker `print_expect_link()` waits for. Parsing it
+	 * releases the render block; if anything strips it, the block is
+	 * released at end-of-parse anyway (spec behaviour) — no hang risk.
+	 */
+	public function print_ready_marker() {
+		if ( is_admin() || is_feed() ) {
+			return;
+		}
+		echo '<div id="fpt-ready" hidden></div>' . "\n";
 	}
 
 	/**
