@@ -247,6 +247,13 @@ final class Module extends Module_Base {
 		new \ShopOS_Restock_Ajax();
 		new \ShopOS\Core\Modules\RestockNotify\Stock_Monitor();
 
+		// Elementor: register the back-in-stock form widget. The action only
+		// fires with Elementor active, so no module-level `elementor` dependency
+		// is added — the module keeps booting (shortcode + auto-inject) on an
+		// Elementor-less store. Registered here, after the Woo + legacy-conflict
+		// guards above, so the widget is available exactly where the shortcode is.
+		add_action( 'elementor/widgets/register', array( $this, 'register_widget' ) );
+
 		// WP_Privacy exporter + eraser are now registered unconditionally via
 		// register_persistent_hooks() (called from Plugin::boot() regardless of
 		// module-enabled state), so persisted subscriber PII stays covered even
@@ -262,6 +269,16 @@ final class Module extends Module_Base {
 			( new \ShopOS\Core\Modules\RestockNotify\Admin_Tools() )->register();
 			( new \ShopOS\Core\Modules\RestockNotify\CSV_Exporter() )->register();
 		}
+	}
+
+	/**
+	 * Register the RestockNotify Elementor widget. Fired on
+	 * `elementor/widgets/register` (Elementor-active only).
+	 *
+	 * @param \Elementor\Widgets_Manager $widgets_manager
+	 */
+	public function register_widget( $widgets_manager ) {
+		$widgets_manager->register( new Widget( array(), array( 'shopos_module' => $this ) ) );
 	}
 
 	/**

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ShopOS Core 1.31.0\n"
+"Project-Id-Version: ShopOS Core 1.32.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shopos-core\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-15T15:55:29+00:00\n"
+"POT-Creation-Date: 2026-07-15T16:36:41+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: shopos-core\n"
@@ -45,6 +45,7 @@ msgstr ""
 
 #: src/Admin/Dashboard.php:93
 #: src/Modules/RestockNotify/Module.php:73
+#: src/Modules/RestockNotify/Widget.php:80
 msgid "Restock Notify"
 msgstr ""
 
@@ -1646,6 +1647,7 @@ msgstr ""
 
 #: src/Modules/RestockNotify/CSV_Exporter.php:123
 #: src/Modules/RestockNotify/Privacy.php:101
+#: src/Modules/RestockNotify/Widget.php:88
 msgid "Product ID"
 msgstr ""
 
@@ -2130,6 +2132,22 @@ msgstr ""
 #: src/Modules/RestockNotify/Privacy.php:71
 #: src/Modules/RestockNotify/Privacy.php:97
 msgid "Restock Notify subscriptions"
+msgstr ""
+
+#: src/Modules/RestockNotify/Widget.php:53
+msgid "ShopOS Restock Notify"
+msgstr ""
+
+#: src/Modules/RestockNotify/Widget.php:91
+msgid "Leave blank to use the current product (the same auto-detection the shortcode uses)."
+msgstr ""
+
+#: src/Modules/RestockNotify/Widget.php:99
+msgid "Form heading, button text and wording are configured under Restock Notify. The form shows on a product page when the product (or every variation) is out of stock."
+msgstr ""
+
+#: src/Modules/RestockNotify/Widget.php:136
+msgid "Restock Notify form — shows on a product page when the product is out of stock."
 msgstr ""
 
 #. translators: 1: indexed product count, 2: last refresh time, 3: scheduled state

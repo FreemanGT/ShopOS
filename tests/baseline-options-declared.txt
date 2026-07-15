@@ -148,6 +148,7 @@ shopos_restock_get_option
 shopos_restock_ids
 shopos_restock_manual_notify
 shopos_restock_notification_log
+shopos_restock_notify
 shopos_restock_notify_csv_export
 shopos_restock_oos_
 shopos_restock_option_defaults
