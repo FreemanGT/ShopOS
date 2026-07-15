@@ -144,7 +144,7 @@ abstract class Module_Base implements Module_Interface {
 	 * loops those modules ship, so adopting it is a pure refactor.
 	 *
 	 * @param array<string,array{label:string,default:string}> $defaults Labels::defaults() map.
-	 * @param string                                            $intro    Sentence prepended to the first field's description ('' = none).
+	 * @param string                                           $intro    Sentence prepended to the first field's description ('' = none).
 	 * @return array<string,array> `label_<key>` => field schema.
 	 */
 	public function label_fields( array $defaults, $intro = '' ) {
