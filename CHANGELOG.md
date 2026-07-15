@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.29.0] — 2026-07-15
+
+- shopos-core: DRY the Labels resolver + label-field loop (Phase-1 foundation, caller-free / additive) — new abstract `Labels_Base` holds the byte-identical option-backed `get()` shared by QuickView / ShopFilters / Search / ProductPage, and `Module_Base::label_fields( $defaults, $intro )` reproduces their `label_<key>` settings loop exactly. No module adopts either yet (per-module follow-up PRs), so behaviour is unchanged; VariationSwatches' locale-switch Labels stays separate. `LabelsBaseTest` + `ModuleBaseLabelFieldsTest` added (826 tests / 2284 assertions green)
+
 ## [shopos-theme 1.11.28] — 2026-07-15
 
 - shopos-theme: theme.json → `--shopos-ui-*` token bridge — new `inc/design-tokens.php` reads the merged Global Settings and re-emits the palette / spacing / radius / motion values as `--shopos-ui-*` custom properties inline after `shopos-tokens.css`, making theme.json the single source of truth for those token values. `shopos-tokens.css` stays the semantic + fallback layer, so with today's matching theme.json the render is byte-identical. Purely additive (no flag; kill switch is the `shopos_theme_design_tokens_enabled` filter). Typography, the semantic colour layer and accent presets are deliberately not bridged. This is the theme.json → CSS direction (front-end render), distinct from the block-editor direction dropped in decisions §4.3
