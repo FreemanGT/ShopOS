@@ -2,15 +2,15 @@ shopos-core/src/Core/Feature_Flags.php:60:		return (bool) apply_filters( "shopos
 shopos-core/src/Core/Logger.php:47:		$filtered = apply_filters( 'shopos_core/logger/entry', $entry, (string) $message, $level );
 shopos-core/src/Core/Logger.php:72:		do_action( 'shopos_core/logger/written', $entry, $log );
 shopos-core/src/Core/Module_Registry.php:81:		$this->modules = apply_filters( 'shopos_core/modules', $this->modules );
-shopos-core/src/Core/Plugin.php:173:		do_action( 'shopos_core/booted', $this );
+shopos-core/src/Core/Plugin.php:177:		do_action( 'shopos_core/booted', $this );
 shopos-core/src/Core/Security.php:101:		$defaults = apply_filters( 'shopos_core/rate_limit_defaults', array( 'max' => $max, 'window' => $window ), $bucket );
-shopos-core/src/Core/Settings_Hub.php:321:		do_action( 'shopos_core/module_page/' . $module->id(), $module );
+shopos-core/src/Core/Settings_Hub.php:435:		do_action( 'shopos_core/module_page/' . $module->id(), $module );
 shopos-core/src/Core/Settings_Tools.php:154:		$skip_backup = (bool) apply_filters( 'shopos_core/tools/import/skip_backup', false, $envelope );
 shopos-core/src/Core/Settings_Tools.php:161:		do_action( 'shopos_core/tools/import/before_write', $envelope );
 shopos-core/src/Core/Settings_Tools.php:185:		do_action( 'shopos_core/tools/import/after_write', $envelope, array( 'written' => $written, 'total' => $total ) );
 shopos-core/src/Core/Settings_Tools.php:89:		$envelope['options'] = (array) apply_filters( 'shopos_core/tools/export/options', $envelope['options'], $envelope );
-shopos-core/src/Modules/CategorySlider/Widget.php:699:		$args = (array) apply_filters( 'shopos_core/category_slider/query_args', $args, $s );
-shopos-core/src/Modules/CategorySlider/Widget.php:946:					echo apply_filters(
+shopos-core/src/Modules/CategorySlider/Widget.php:666:		$args = (array) apply_filters( 'shopos_core/category_slider/query_args', $args, $s );
+shopos-core/src/Modules/CategorySlider/Widget.php:862:					echo apply_filters(
 shopos-core/src/Modules/CheapestDefaultVariation/Module.php:131:		$should_apply = apply_filters( 'shopos_core/cheapest_variation/should_apply', true, $product, $default_attributes );
 shopos-core/src/Modules/CheapestDefaultVariation/Module.php:186:		$cheapest = apply_filters( 'shopos_core/cheapest_variation/chosen', $cheapest, $product, $variations );
 shopos-core/src/Modules/CheapestDefaultVariation/Module.php:234:		$strategy = (string) apply_filters( 'shopos_core/cheapest_variation/strategy', $strategy, $product );
@@ -36,10 +36,10 @@ shopos-core/src/Modules/ProductPage/templates/single-product.php:55:			do_action
 shopos-core/src/Modules/ProductPage/templates/single-product.php:64:						do_action( 'woocommerce_before_single_product_summary' );
 shopos-core/src/Modules/ProductPage/templates/single-product.php:72:							do_action( 'woocommerce_single_product_summary' );
 shopos-core/src/Modules/ProductPage/templates/single-product.php:86:					$shopos_tabs = apply_filters( 'woocommerce_product_tabs', array() );
-shopos-core/src/Modules/ProductSlider/Widget.php:1019:			$per_page = (int) apply_filters( 'loop_shop_per_page', wc_get_default_products_per_page() );
-shopos-core/src/Modules/ProductSlider/Widget.php:1372:			return apply_filters( 'shopos_core/product_slider/archive_thumbnail_size', 'large' );
-shopos-core/src/Modules/ProductSlider/Widget.php:1491:					$max_pages = max( 1, (int) apply_filters( 'shopos_core/product_slider/grid_max_pages', $max_pages, $s ) );
-shopos-core/src/Modules/ProductSlider/Widget.php:907:		$args = (array) apply_filters( 'shopos_core/product_slider/query_args', $args, $s );
+shopos-core/src/Modules/ProductSlider/Widget.php:1276:			return apply_filters( 'shopos_core/product_slider/archive_thumbnail_size', 'large' );
+shopos-core/src/Modules/ProductSlider/Widget.php:1395:					$max_pages = max( 1, (int) apply_filters( 'shopos_core/product_slider/grid_max_pages', $max_pages, $s ) );
+shopos-core/src/Modules/ProductSlider/Widget.php:811:		$args = (array) apply_filters( 'shopos_core/product_slider/query_args', $args, $s );
+shopos-core/src/Modules/ProductSlider/Widget.php:923:			$per_page = (int) apply_filters( 'loop_shop_per_page', wc_get_default_products_per_page() );
 shopos-core/src/Modules/QuickView/Ajax.php:78:		$html = (string) apply_filters( 'shopos_core/quick_view/drawer_html', $html, $product_id );
 shopos-core/src/Modules/QuickView/Frontend.php:142:		if ( ! apply_filters( 'shopos_core/quick_view/show_trigger', true, $product ) ) {
 shopos-core/src/Modules/QuickView/templates/drawer-content.php:55:		do_action( 'woocommerce_single_product_summary' );

@@ -226,6 +226,15 @@ if ( ! function_exists( 'checked' ) ) {
 		return $result;
 	}
 }
+if ( ! function_exists( 'selected' ) ) {
+	function selected( $selected, $current = true, $display = true ) {
+		$result = ( (string) $selected === (string) $current ) ? ' selected="selected"' : '';
+		if ( $display ) {
+			echo $result;
+		}
+		return $result;
+	}
+}
 if ( ! function_exists( 'wp_upload_dir' ) ) {
 	function wp_upload_dir() {
 		return array(
@@ -711,6 +720,11 @@ if ( ! function_exists( 'wc_get_page_permalink' ) ) {
 if ( ! function_exists( 'wp_get_attachment_url' ) ) {
 	function wp_get_attachment_url( $id ) {
 		return $GLOBALS['fr_attachment_url'] ?? '';
+	}
+}
+if ( ! function_exists( 'wp_get_attachment_image_url' ) ) {
+	function wp_get_attachment_image_url( $id, $size = 'thumbnail' ) {
+		return $GLOBALS['fr_attachment_image_url'] ?? '';
 	}
 }
 if ( ! function_exists( 'get_bloginfo' ) ) {

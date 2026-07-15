@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
-use Elementor\Widget_Base;
+use ShopOS\Core\Core\Elementor\Widget_Base;
 
 /**
  * Widget.
@@ -32,10 +32,6 @@ final class Widget extends Widget_Base {
 
 	public function get_icon() {
 		return 'eicon-products-archive';
-	}
-
-	public function get_categories() {
-		return array( 'woocommerce-elements', 'general' );
 	}
 
 	public function get_keywords() {
@@ -603,35 +599,6 @@ final class Widget extends Widget_Base {
 	}
 
 	/**
-	 * Build the term options list for include/exclude/child_of selects.
-	 * Returns id => name. Capped at 200 terms — anything bigger should
-	 * really be using the taxonomy archive, not a slider widget.
-	 *
-	 * @return array<int,string>
-	 */
-	private function get_term_options() {
-		if ( ! function_exists( 'taxonomy_exists' ) || ! taxonomy_exists( 'product_cat' ) ) {
-			return array();
-		}
-		$terms = get_terms(
-			array(
-				'taxonomy'   => 'product_cat',
-				'hide_empty' => false,
-				'number'     => 200,
-				'orderby'    => 'name',
-			)
-		);
-		if ( is_wp_error( $terms ) || empty( $terms ) ) {
-			return array();
-		}
-		$opts = array();
-		foreach ( $terms as $t ) {
-			$opts[ (int) $t->term_id ] = $t->name;
-		}
-		return $opts;
-	}
-
-	/**
 	 * Coerce a setting value into an array of positive integer IDs.
 	 *
 	 * @param mixed $raw
@@ -703,57 +670,6 @@ final class Widget extends Widget_Base {
 			return array();
 		}
 		return $terms;
-	}
-
-	/**
-	 * Read a SLIDER control value as int. Elementor stores sliders as
-	 * ['size' => N, 'unit' => '...']; older saved values may still be plain
-	 * scalars, so we handle both shapes.
-	 *
-	 * @param mixed $raw
-	 * @param int   $default
-	 * @return int
-	 */
-	private function slider_int( $raw, $default ) {
-		if ( is_array( $raw ) && isset( $raw['size'] ) && '' !== $raw['size'] ) {
-			return (int) $raw['size'];
-		}
-		if ( is_scalar( $raw ) && '' !== $raw ) {
-			return (int) $raw;
-		}
-		return $default;
-	}
-
-	/**
-	 * Are we rendering inside the Elementor editor preview?
-	 *
-	 * @return bool
-	 */
-	private function is_elementor_edit_mode() {
-		if ( ! class_exists( '\\Elementor\\Plugin' ) ) {
-			return false;
-		}
-		$plugin = \Elementor\Plugin::$instance;
-		if ( ! $plugin || empty( $plugin->editor ) ) {
-			return false;
-		}
-		return (bool) $plugin->editor->is_edit_mode();
-	}
-
-	/**
-	 * Resolve the Direction control to the actual direction string.
-	 *
-	 * @param string $setting auto|ltr|rtl
-	 * @return string ltr|rtl
-	 */
-	private function resolve_direction( $setting ) {
-		if ( 'rtl' === $setting ) {
-			return 'rtl';
-		}
-		if ( 'ltr' === $setting ) {
-			return 'ltr';
-		}
-		return ( function_exists( 'is_rtl' ) && is_rtl() ) ? 'rtl' : 'ltr';
 	}
 
 	/**

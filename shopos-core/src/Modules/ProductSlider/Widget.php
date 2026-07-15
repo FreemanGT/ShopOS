@@ -30,7 +30,7 @@ defined( 'ABSPATH' ) || exit;
 
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
-use Elementor\Widget_Base;
+use ShopOS\Core\Core\Elementor\Widget_Base;
 
 /**
  * Widget.
@@ -61,10 +61,6 @@ final class Widget extends Widget_Base {
 
 	public function get_icon() {
 		return 'eicon-woocommerce';
-	}
-
-	public function get_categories() {
-		return array( 'woocommerce-elements', 'general' );
 	}
 
 	public function get_keywords() {
@@ -628,35 +624,6 @@ final class Widget extends Widget_Base {
 	}
 
 	/**
-	 * Build a term-id => name map for SELECT2 controls. Capped at 200 to
-	 * keep the editor responsive on stores with very large taxonomies.
-	 *
-	 * @param string $taxonomy
-	 * @return array<int,string>
-	 */
-	private function get_term_options( $taxonomy ) {
-		if ( ! function_exists( 'taxonomy_exists' ) || ! taxonomy_exists( $taxonomy ) ) {
-			return array();
-		}
-		$terms = get_terms(
-			array(
-				'taxonomy'   => $taxonomy,
-				'hide_empty' => false,
-				'number'     => 200,
-				'orderby'    => 'name',
-			)
-		);
-		if ( is_wp_error( $terms ) || empty( $terms ) ) {
-			return array();
-		}
-		$opts = array();
-		foreach ( $terms as $t ) {
-			$opts[ (int) $t->term_id ] = $t->name;
-		}
-		return $opts;
-	}
-
-	/**
 	 * Coerce a setting into a list of positive integers.
 	 *
 	 * @param mixed $raw
@@ -680,69 +647,6 @@ final class Widget extends Widget_Base {
 			}
 		}
 		return array_values( array_unique( $out ) );
-	}
-
-	/**
-	 * Read a SLIDER control as int (handles both array+scalar shapes).
-	 *
-	 * @param mixed $raw
-	 * @param int   $default
-	 * @return int
-	 */
-	private function slider_int( $raw, $default ) {
-		if ( is_array( $raw ) && isset( $raw['size'] ) && '' !== $raw['size'] ) {
-			return (int) $raw['size'];
-		}
-		if ( is_scalar( $raw ) && '' !== $raw ) {
-			return (int) $raw;
-		}
-		return $default;
-	}
-
-	/**
-	 * Float variant for SLIDER controls that allow fractional steps —
-	 * notably `per_view_mobile` (1.4 = one card with peek of next).
-	 *
-	 * @param mixed $raw
-	 * @param float $default
-	 * @return float
-	 */
-	private function slider_float( $raw, $default ) {
-		if ( is_array( $raw ) && isset( $raw['size'] ) && '' !== $raw['size'] ) {
-			return (float) $raw['size'];
-		}
-		if ( is_scalar( $raw ) && '' !== $raw ) {
-			return (float) $raw;
-		}
-		return $default;
-	}
-
-	/**
-	 * @return bool
-	 */
-	private function is_elementor_edit_mode() {
-		if ( ! class_exists( '\\Elementor\\Plugin' ) ) {
-			return false;
-		}
-		$plugin = \Elementor\Plugin::$instance;
-		if ( ! $plugin || empty( $plugin->editor ) ) {
-			return false;
-		}
-		return (bool) $plugin->editor->is_edit_mode();
-	}
-
-	/**
-	 * @param string $setting
-	 * @return string ltr|rtl
-	 */
-	private function resolve_direction( $setting ) {
-		if ( 'rtl' === $setting ) {
-			return 'rtl';
-		}
-		if ( 'ltr' === $setting ) {
-			return 'ltr';
-		}
-		return ( function_exists( 'is_rtl' ) && is_rtl() ) ? 'rtl' : 'ltr';
 	}
 
 	/**

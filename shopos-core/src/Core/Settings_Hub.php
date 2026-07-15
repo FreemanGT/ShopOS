@@ -70,6 +70,85 @@ final class Settings_Hub {
 			array(),
 			SHOPOS_CORE_VERSION
 		);
+
+		// Wire wp-color-picker onto every `color`-typed field. The `color`
+		// renderer emits the `.shopos-color-field` class already; without this
+		// enqueue the picker script never loaded, so colours showed as bare hex
+		// text (ProductPage button_color, InfiniteScroll shimmer_*).
+		wp_enqueue_style( 'wp-color-picker' );
+		wp_enqueue_script( 'wp-color-picker' );
+		wp_add_inline_script(
+			'wp-color-picker',
+			'jQuery(function($){ $(".shopos-color-field").wpColorPicker(); });'
+		);
+
+		// The media picker is heavy, so it is only pulled in when a module
+		// actually declares a `media`-typed field. No module does today, so
+		// this is a no-op on every current screen.
+		if ( $this->schema_has_type( 'media' ) ) {
+			wp_enqueue_media();
+			wp_enqueue_script( 'jquery' );
+			wp_add_inline_script( 'jquery', $this->media_picker_inline_script() );
+		}
+	}
+
+	/**
+	 * Whether any registered module's settings schema declares a field of the
+	 * given control type. Lets us enqueue heavy assets only on screens that
+	 * need them.
+	 *
+	 * @param string $type Control type.
+	 * @return bool
+	 */
+	private function schema_has_type( $type ) {
+		foreach ( $this->registry->all() as $module ) {
+			foreach ( $module->settings_schema() as $def ) {
+				if ( isset( $def['type'] ) && $type === $def['type'] ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Inline JS wiring the `.shopos-image-field` media control to wp.media().
+	 * One frame is reused across open/cancel cycles; the hidden input stores
+	 * the attachment ID and the preview <img> mirrors the thumbnail URL. Mirrors
+	 * the term-screen swatch uploader in VariationSwatches/legacy.
+	 *
+	 * @return string
+	 */
+	private function media_picker_inline_script() {
+		return <<<'JS'
+jQuery(function($) {
+	var frame = null;
+	$(document).on('click', '.shopos-image-field-pick', function(e) {
+		e.preventDefault();
+		var $wrap = $(this).closest('.shopos-image-field-wrap');
+		var $id   = $wrap.find('.shopos-image-field-id');
+		var $prev = $wrap.find('.shopos-image-field-preview');
+		if (frame) { frame.off('select'); } else {
+			frame = wp.media({ multiple: false });
+		}
+		frame.on('select', function() {
+			var att = frame.state().get('selection').first().toJSON();
+			$id.val(att.id);
+			var url = (att.sizes && att.sizes.thumbnail) ? att.sizes.thumbnail.url : att.url;
+			$prev.attr('src', url).css('display', '');
+			$wrap.find('.shopos-image-field-clear').css('display', '');
+		});
+		frame.open();
+	});
+	$(document).on('click', '.shopos-image-field-clear', function(e) {
+		e.preventDefault();
+		var $wrap = $(this).closest('.shopos-image-field-wrap');
+		$wrap.find('.shopos-image-field-id').val('0');
+		$wrap.find('.shopos-image-field-preview').attr('src', '').css('display', 'none');
+		$(this).css('display', 'none');
+	});
+});
+JS;
 	}
 
 	/**
@@ -201,6 +280,41 @@ final class Settings_Hub {
 			case 'color':
 				return static function ( $v ) {
 					return preg_match( '/^#[0-9a-fA-F]{3,8}$/', (string) $v ) ? $v : '';
+				};
+			case 'range':
+				return static function ( $v ) use ( $def ) {
+					$n = is_numeric( $v ) ? $v + 0 : 0;
+					if ( isset( $def['min'] ) && $n < $def['min'] ) {
+						$n = $def['min'] + 0;
+					}
+					if ( isset( $def['max'] ) && $n > $def['max'] ) {
+						$n = $def['max'] + 0;
+					}
+					return $n;
+				};
+			case 'media':
+				return 'absint';
+			case 'typography-select':
+				return static function ( $v ) use ( $def ) {
+					$choices = isset( $def['choices'] ) ? $def['choices'] : array();
+					$v       = sanitize_text_field( (string) $v );
+					if ( array_key_exists( $v, $choices ) ) {
+						return $v;
+					}
+					return isset( $def['default'] ) ? $def['default'] : '';
+				};
+			case 'multiselect':
+				return static function ( $v ) use ( $def ) {
+					$choices = isset( $def['choices'] ) ? $def['choices'] : array();
+					$v       = is_array( $v ) ? $v : array();
+					$out     = array();
+					foreach ( $v as $item ) {
+						$item = sanitize_text_field( (string) $item );
+						if ( array_key_exists( $item, $choices ) ) {
+							$out[] = $item;
+						}
+					}
+					return $out;
 				};
 			default:
 				return 'sanitize_text_field';
@@ -381,6 +495,75 @@ final class Settings_Hub {
 					esc_attr( $option ),
 					esc_attr( (string) $value )
 				);
+				break;
+			case 'range':
+				$min  = isset( $def['min'] ) ? $def['min'] : 0;
+				$max  = isset( $def['max'] ) ? $def['max'] : 100;
+				$step = isset( $def['step'] ) ? $def['step'] : 1;
+				$unit = isset( $def['unit'] ) ? $def['unit'] : '';
+				printf(
+					'<input type="range" id="%1$s" name="%1$s" value="%2$s" min="%3$s" max="%4$s" step="%5$s" class="shopos-range-field"/> <output class="shopos-range-value" for="%1$s">%2$s%6$s</output>',
+					esc_attr( $option ),
+					esc_attr( (string) $value ),
+					esc_attr( (string) $min ),
+					esc_attr( (string) $max ),
+					esc_attr( (string) $step ),
+					'' !== (string) $unit ? ' ' . esc_html( (string) $unit ) : ''
+				);
+				break;
+			case 'media':
+				$att_id     = absint( $value );
+				$img_url    = $att_id ? wp_get_attachment_image_url( $att_id, 'thumbnail' ) : '';
+				$select_txt = isset( $def['button_label'] ) ? $def['button_label'] : __( 'Select image', 'shopos-core' );
+				echo '<span class="shopos-image-field-wrap">';
+				printf(
+					'<input type="hidden" id="%1$s" name="%1$s" value="%2$s" class="shopos-image-field-id"/>',
+					esc_attr( $option ),
+					esc_attr( (string) $att_id )
+				);
+				printf(
+					'<img src="%1$s" alt="" class="shopos-image-field-preview" style="max-width:80px;height:auto;vertical-align:middle;%2$s"/> ',
+					esc_url( (string) $img_url ),
+					$img_url ? '' : 'display:none'
+				);
+				printf(
+					'<button type="button" class="button shopos-image-field-pick">%1$s</button> ',
+					esc_html( $select_txt )
+				);
+				printf(
+					'<button type="button" class="button-link shopos-image-field-clear" style="%1$s">%2$s</button>',
+					$att_id ? '' : 'display:none',
+					esc_html__( 'Remove', 'shopos-core' )
+				);
+				echo '</span>';
+				break;
+			case 'typography-select':
+				$choices = isset( $def['choices'] ) ? $def['choices'] : array();
+				echo '<select id="' . esc_attr( $option ) . '" name="' . esc_attr( $option ) . '" class="shopos-typography-select">';
+				foreach ( $choices as $val => $label2 ) {
+					printf(
+						'<option value="%1$s" style="font-family:%2$s" %3$s>%4$s</option>',
+						esc_attr( $val ),
+						esc_attr( (string) $val ),
+						selected( $value, $val, false ),
+						esc_html( $label2 )
+					);
+				}
+				echo '</select>';
+				break;
+			case 'multiselect':
+				$choices  = isset( $def['choices'] ) ? $def['choices'] : array();
+				$selected = is_array( $value ) ? array_map( 'strval', $value ) : array();
+				echo '<select id="' . esc_attr( $option ) . '" name="' . esc_attr( $option ) . '[]" multiple class="shopos-multiselect">';
+				foreach ( $choices as $val => $label2 ) {
+					printf(
+						'<option value="%1$s"%2$s>%3$s</option>',
+						esc_attr( $val ),
+						in_array( (string) $val, $selected, true ) ? ' selected="selected"' : '',
+						esc_html( $label2 )
+					);
+				}
+				echo '</select>';
 				break;
 			default:
 				printf(

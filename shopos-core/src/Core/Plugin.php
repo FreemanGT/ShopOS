@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Plugin {
 
-	const VERSION = '1.25.1';
+	const VERSION = '1.28.0';
 
 	/**
 	 * Singleton instance.
@@ -159,6 +159,10 @@ final class Plugin {
 		} else {
 			delete_transient( 'shopos_core_boot_failures' );
 		}
+
+		// Register the ShopOS Elementor widget category (a no-op when Elementor
+		// is absent — the categories_registered hook only fires once it loads).
+		( new Elementor\Category() )->boot();
 
 		// Admin-only components.
 		if ( is_admin() ) {

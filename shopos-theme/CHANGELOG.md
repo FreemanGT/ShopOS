@@ -1,5 +1,9 @@
 # ShopOS Theme — Changelog
 
+## [1.11.28] — 2026-07-15
+
+- theme.json → `--shopos-ui-*` token bridge: new `inc/design-tokens.php` reads the merged Global Settings (`wp_get_global_settings()` — theme.json presets plus any user Global-Styles override) and re-emits the palette / spacing / radius / motion values as `--shopos-ui-*` custom properties inline, right after `shopos-tokens.css` (on `wp_enqueue_scripts` priority 21, via `wp_add_inline_style('shopos-tokens', …)`). This makes theme.json the single source of truth for those token values instead of hand-syncing them into `shopos-tokens.css` a second time; that file stays the semantic + fallback layer, so with today's matching theme.json the render is byte-identical. The three bridged motion tokens additionally re-emit the `@media (prefers-reduced-motion: reduce)` → `0ms` collapse inside the inline block, because that block prints after `shopos-tokens.css` and would otherwise override its reduced-motion reset (equal specificity, later source order) — so the accessibility preference is preserved. Purely additive (no feature flag — new CSS variables with backward-compatible fallbacks); kill switch is the `shopos_theme_design_tokens_enabled` filter (return false → empties the block → the CSS fallbacks render). Deliberately not bridged: typography (the hand-tuned `clamp()` scale + the `sk_type_*` Elementor-global bridge stay), the semantic `--shopos-ui-color-*` layer and `.is-accent-*` presets (they reference the raw palette and flow through), and tokens with no theme.json source (`palette-black`/`palette-sand`, `radius-round`, `motion-instant`, the eases). This is the theme.json → CSS direction (front-end render), distinct from the block-editor-picker direction dropped in decisions §4.3 (ex-Roadmap #7)
+
 ## [1.11.27] — 2026-07-05
 
 - Release tooling truth fixes: SHOPOS_THEME_VERSION now bumped in lockstep with style.css (cache-bust fix), core Stable tag stamped on release

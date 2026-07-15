@@ -2,6 +2,22 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [shopos-theme 1.11.28] — 2026-07-15
+
+- shopos-theme: theme.json → `--shopos-ui-*` token bridge — new `inc/design-tokens.php` reads the merged Global Settings and re-emits the palette / spacing / radius / motion values as `--shopos-ui-*` custom properties inline after `shopos-tokens.css`, making theme.json the single source of truth for those token values. `shopos-tokens.css` stays the semantic + fallback layer, so with today's matching theme.json the render is byte-identical. Purely additive (no flag; kill switch is the `shopos_theme_design_tokens_enabled` filter). Typography, the semantic colour layer and accent presets are deliberately not bridged. This is the theme.json → CSS direction (front-end render), distinct from the block-editor direction dropped in decisions §4.3
+
+## [1.28.0] — 2026-07-15
+
+- shopos-core: settings field API gains four additive control types (`range`, `media`, `typography-select`, `multiselect`) for the upcoming Design panel; the existing six types render and sanitize byte-identically, and the media picker only enqueues `wp.media()` when a module declares a `media` field. Also enqueues `wp-color-picker` for `color` fields, fixing bare-hex-box rendering (ProductPage buy-button colour, Infinite Scroll shimmer colours)
+
+## [1.27.0] — 2026-07-15
+
+- shopos-core: new "ShopOS" Elementor panel category — the Category Slider and Product Slider widgets now also appear under a dedicated **ShopOS** group in the Elementor editor (existing WooCommerce/General placements kept). Purely additive
+
+## [1.26.0] — 2026-07-15
+
+- shopos-core: extracted a shared `ShopOS\Core\Core\Elementor\Widget_Base` that the Category Slider and Product Slider widgets now extend, so future ShopOS Elementor widgets inherit the common setting-coercion, direction and term-option helpers instead of re-implementing them. Behaviour is unchanged (byte-identical render)
+
 ## [1.25.1] — 2026-07-14
 
 - Page Transitions live-QA round: the cross-fade now waits for the new page content (render-blocking expect marker) so it no longer lands on a white frame, Shop Filters category links trigger the loading overlay too, and the fade is skipped on back/forward so it cannot fight the infinite-scroll position restore

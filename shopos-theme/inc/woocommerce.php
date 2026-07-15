@@ -32,7 +32,7 @@ add_action(
 // widget containers — their wrapper also carries `.woocommerce`, and the
 // forced grid would break the slider's flex track and override the
 // widget's per-instance mobile column control (grid parity audit G2,
-// /docs in shopos-core repo root: grid-parity-audit-2026-06-11.md).
+// /docs in shopos-core repo root: archive/grid-parity-audit-2026-06-11.md).
 add_action(
 	'wp_head',
 	static function () {

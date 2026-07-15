@@ -43,10 +43,10 @@ The pattern: **A-grades above the fold, F-grades where the money changes hands.*
 ## Seven hard truths
 
 1. **The suite optimizes the funnel's top and abandons its bottom.** A shopper who loves the filters still checks out through unstyled default Woo. One PDP/cart/checkout wave each will move revenue more than the last eight browse waves combined.
-2. **Store #2 does not exist, even on paper.** PRODUCT.md literally describes arba4 (Hebrew-first fashion). Every QA cycle, bug, and design call has one tenant. Until a second store with a different vertical, locale, and brand runs the suite, "I build websites with this" is untested — and arba4-isms will keep fossilizing into core.
+2. **Store #2 does not exist, even on paper.** PRODUCT.md literally describes a single owned store (Hebrew-first fashion). Every QA cycle, bug, and design call has one tenant. Until a second store with a different vertical, locale, and brand runs the suite, "I build websites with this" is untested — and single-store-isms will keep fossilizing into core.
 3. **The theme is not a theme — it's a skin.** Zero PHP templates, zero Woo template overrides. Header, footer, archive, PDP, checkout: all Elementor Pro, rebuilt by hand per site. The single biggest obstacle to both the "only my plugin and theme" claim and to repeatability.
 4. **Trust surfaces are absent in a trust business.** Fashion buyers need reviews, size confidence, shipping/returns clarity. The brand promise is "a confident decision" — the suite currently provides confidence via typography alone.
-5. **Discipline is eroding at the edges.** Three modules graduated with kill-switches hard-removed, hard rules overridden per wave, two deployed fixes with QA still pending, readme.txt stale at "1.8.3" while shipping 1.21.24+, and live conversion surfaces broken right now (on-sale facet dead on arba4 via the stale `onsale` lookup; shop-grid blowout root cause unconfirmed). Fine for one owned store; fatal habits for client stores.
+5. **Discipline is eroding at the edges.** Three modules graduated with kill-switches hard-removed, hard rules overridden per wave, two deployed fixes with QA still pending, readme.txt stale at "1.8.3" while shipping 1.21.24+, and live conversion surfaces broken right now (on-sale facet dead on a live store via the stale `onsale` lookup; shop-grid blowout root cause unconfirmed). Fine for one owned store; fatal habits for client stores.
 6. **The business runs on one head, manual zips, and no staging.** No client-site update mechanism, no docs a hire or VA could onboard from. shopos-digital — the perf pillar — has 4 smoke tests behind a CI gate that cannot fail (`|| true`).
 7. **"Internal-only" (§4.1) keeps getting re-litigated one feature at a time.** Quick View came back six weeks after being dropped; Wishlist will be next. The thesis needs restating once, formally, instead of eroding ad hoc.
 
@@ -65,7 +65,7 @@ Also settle the identity question once: **this is an agency weapon, not a market
 ### Wave 9 — Measure & Mend *(small, do first)*
 Buy the scoreboard before investing quarters into conversion surfaces; close the open sores so the foundation is clean.
 - **First-party event ledger** (partially reverses §4.8, needs a decisions addendum): privacy-light counters for the funnel already owned — search → click, zero-result terms, filter-apply → ATC, quick-view → ATC, PDP → ATC. A small KPI panel on the ShopOS dashboard. Not a GA clone; module-level proof.
-- **Mend:** fix the arba4 on-sale lookup (a conversion surface is dark today), confirm the shop-grid-blowout root cause, close the two pending deployed-fix QAs, add a `/product-feed` auth token (the entire catalog + pricing is publicly scrapeable), fix the "8 modules / 1.8.3" metadata drift.
+- **Mend:** fix the live on-sale lookup (a conversion surface is dark today), confirm the shop-grid-blowout root cause, close the two pending deployed-fix QAs, add a `/product-feed` auth token (the entire catalog + pricing is publicly scrapeable), fix the "8 modules / 1.8.3" metadata drift.
 
 ### Wave 10 — PDP ownership *(the highest-leverage conversion wave)*
 Mostly assembling assets that already exist: the card-slider gallery component, the per-variation stock index, the token system, the labels-editor pattern.

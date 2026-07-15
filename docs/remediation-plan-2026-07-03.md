@@ -6,7 +6,7 @@ Companion to `docs/audit-2026-07-03.md`. Sequenced as small, individually-shippa
 - Version bump = `shopos-core.php` + `Plugin.php` (core) / `style.css` + `functions.php` (theme, after PR-1) / header + `SHOPOS_DIGITAL_VERSION` (digital).
 - Touching a file containing `apply_filters`/`do_action` → regenerate `tests/baseline-hooks.txt`; new option literals → `baseline-options-declared.txt`; new user-facing strings → regenerate `.pot`.
 - New tests → update the reported `<tests> / <assertions>` totals in CLAUDE.md verbatim from `vendor/bin/phpunit`.
-- CSS/JS-only changes on the storefront → live QA on arba4 (check device Reduce Motion before judging animations).
+- CSS/JS-only changes on the storefront → live QA on a live store (check device Reduce Motion before judging animations).
 
 ---
 
@@ -53,7 +53,7 @@ Replaces the whole-catalog postmeta load (audit C1, the largest per-pageview cos
 - `ProductSlider/Widget.php` `fetch_products_by_meta_orderby()`: one indexed query against `wc_product_meta_lookup` (`total_sales` / `average_rating` / `min_price`) with `ORDER BY … LIMIT N`, honouring the existing include/exclude/source constraints; drop `update_meta_cache` priming.
 - **Behavior delta to accept:** price sort keys on `min_price` (WC's canonical) instead of raw `_price` postmeta — for variable products this is the standard WC semantic but may reorder edge cases. Flagged here for explicit owner sign-off in review.
 - Tests: the 1.11.42 orderby tests must keep passing; add tie-break parity cases against the old PHP-sort semantics where they matter.
-- No flag (internal optimization, same outputs); rollback = git revert. Live QA: homepage best-seller sliders on arba4 + query-count spot check.
+- No flag (internal optimization, same outputs); rollback = git revert. Live QA: homepage best-seller sliders on a live store + query-count spot check.
 
 ### PR-7 · Short-circuit the dead native search query — `perf(shopos-core)` — size S
 - `ShopFilters/Query_Builder.php search_product_ids()`: add a `null`-default **pre-filter** (`shopos_core/shop_filters/pre_search_product_ids`) consulted before the `WP_Query`; `Search/Results_Query.php` supplies engine ids there (keeps the existing post-filter for back-compat — Hard Rule #2).
@@ -87,7 +87,7 @@ Mirrored change across the twin indexers (Search + ShopFilters — 2 modules, st
 
 ### PR-12 · Grid per-page source of truth — `fix(shopos-core)` — size S
 - `ShopFilters/Query.php:297` (grid slice — the consequential one) and `Query_Builder.php:955` (advisory): prefer `loop_shop_per_page` filter output / WC default over blog `posts_per_page`, fallback chain preserved.
-- Tests: per-page resolution matrix. Behavior change on stores where blog ≠ shop page size — on arba4 verify the grid page size is unchanged.
+- Tests: per-page resolution matrix. Behavior change on stores where blog ≠ shop page size — on a live store verify the grid page size is unchanged.
 
 ---
 
@@ -96,7 +96,7 @@ Mirrored change across the twin indexers (Search + ShopFilters — 2 modules, st
 ### PR-13 · VariationSwatches JS strings through Labels — `fix(shopos-core)` — size S
 - `shopos-swatches.js:219`: read `out_of_stock`/`unavailable` from the localized payload (keys already exist in `Labels.php`); extend the module's `wp_localize_script` payload accordingly.
 - Hebrew *fallback* strings in the same file stay as-is (owner's He/En Labels design is documented); only the bypass is fixed.
-- Tests: payload-shape test (localized labels present). Live QA: tooltips on arba4 still Hebrew.
+- Tests: payload-shape test (localized labels present). Live QA: tooltips on a live store still Hebrew.
 
 ### PR-14 · RestockNotify locale correctness — `fix(shopos-core)` — size S
 - `Email.php:232-233`: derive `lang` from `get_locale()` and direction from `is_rtl()` (module's locale system already selects the strings).
@@ -106,7 +106,7 @@ Mirrored change across the twin indexers (Search + ShopFilters — 2 modules, st
 ### PR-15 · Font-token routing (kill `sk_type_*` in plugin CSS) — `fix(shopos-core)` + `fix(shopos-theme)` — size S
 - `shopos-theme/assets/css/shopos-tokens.css`: `--shopos-ui-font-body`/`--shopos-ui-font-heading` wrap the kit variables (single mapping point — already partially true).
 - `VariationSwatches/assets/css/shopos-*.css` (5 sites): `var(--e-global-typography-sk_type_12-…)` → `var(--shopos-ui-font-body, inherit)`.
-- Theme touched → bump `SHOPOS_THEME_VERSION` (PR-1's fixed tooling handles it). Live QA: typography unchanged on arba4.
+- Theme touched → bump `SHOPOS_THEME_VERSION` (PR-1's fixed tooling handles it). Live QA: typography unchanged on a live store.
 
 ---
 
@@ -114,7 +114,7 @@ Mirrored change across the twin indexers (Search + ShopFilters — 2 modules, st
 
 ### PR-16 · Z-index token adoption — `fix(shopos-core)` — size S — CSS-only
 - Migrate VariationSwatches (`9999!important`, `10000`), ShopFilters (`99998/99999`), QuickView (`100000`) to `var(--shopos-ui-z-modal/--shopos-ui-z-max, <current-literal>)` fallback form (Search is the template). Fallback values = current literals, so non-theme sites are byte-equivalent.
-- Live QA: QuickView drawer over ShopFilters drawer over sticky header on arba4, mobile + desktop.
+- Live QA: QuickView drawer over ShopFilters drawer over sticky header on a live store, mobile + desktop.
 
 ### PR-17 · Guard & comment sweep — `chore(shopos-core)` — size XS — no behavior
 - ABSPATH guards on the 6 bare files (`Sampler_Scheduler`, `Subscribers`, `CSV_Exporter`, `RestockNotify/Frontend`, `Search/Results_Query`, `HoverSwap/Module`).

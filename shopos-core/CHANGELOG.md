@@ -1,5 +1,17 @@
 # ShopOS Core — Changelog
 
+## [1.28.0] — 2026-07-15
+
+- Settings field API extended additively with four new control types — `range` (slider with min/max/step and a value readout), `media` (WordPress media-library picker storing an attachment ID), `typography-select` (font-family dropdown that previews each stack in-list), and `multiselect` — so the upcoming Design panel can declare richer fields. The existing six control types render and sanitize byte-identically; the media picker's `wp.media()` script is only enqueued when a module actually declares a `media` field. Separately, `wp-color-picker` is now wired onto every `color` field — previously the picker script was never enqueued, so colours showed as bare hex text (ProductPage buy-button colour, Infinite Scroll shimmer colours)
+
+## [1.27.0] — 2026-07-15
+
+- New "ShopOS" Elementor panel category: the Category Slider and Product Slider widgets now also appear under a dedicated **ShopOS** group in the Elementor editor's widget panel (their existing WooCommerce/General placements are kept), so ShopOS widgets are easier to find. Purely additive — nothing moves or disappears
+
+## [1.26.0] — 2026-07-15
+
+- Internal: extracted a shared `ShopOS\Core\Core\Elementor\Widget_Base` that the Category Slider and Product Slider widgets now extend, so future ShopOS Elementor widgets inherit the common setting-coercion (`slider_int`/`slider_float`), direction and term-option helpers instead of re-implementing them. Behaviour is unchanged (byte-identical render)
+
 ## [1.25.1] — 2026-07-14
 
 - Page Transitions live-QA round: the cross-fade now waits for the new page content (render-blocking expect marker) so it no longer lands on a white frame, Shop Filters category links trigger the loading overlay too, and the fade is skipped on back/forward so it cannot fight the infinite-scroll position restore
