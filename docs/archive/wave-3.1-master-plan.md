@@ -3,7 +3,7 @@
 **Date approved**: 2026-05-04 (decisions PR), code PRs TBD
 **Owner**: Yiftach
 **Roadmap item**: #5 (P1)
-**Reflects decisions in**: [/docs/decisions-2026-04-28.md](decisions-2026-04-28.md) — none directly. Wave 3.1 is a P1 functional improvement with no §4.x decision dependency.
+**Reflects decisions in**: [/docs/decisions-2026-04-28.md](../decisions-2026-04-28.md) — none directly. Wave 3.1 is a P1 functional improvement with no §4.x decision dependency.
 **Branch off**: `main` post-1.11.32 (decisions PR cuts a doc-only branch; code PRs cut from main post-decisions-merge)
 **Sub-PRs**: 2 — `3.1a → 3.1b`, sharing flag `shopos_core_infinite_scroll_trigger_modes_enabled` (precedent: Wave 3.2a/b)
 
@@ -19,7 +19,7 @@ This section captures what the module *actually is* today, not what its docs cla
 
 [shopos-core/src/Modules/InfiniteScroll/Module.php](../shopos-core/src/Modules/InfiniteScroll/Module.php) (135 lines) does two things only: registers `wp_enqueue_scripts` ([Module.php:83](../shopos-core/src/Modules/InfiniteScroll/Module.php#L83)) and enqueues style + script + a localized `ShopOSInfiniteScroll` config object. There is **no `render()`, no shortcode, no widget, no template, no `apply_filters`, no `do_action`**. Verified by `grep -n "apply_filters\|do_action" shopos-core/src/Modules/InfiniteScroll/*.php` returning zero hits.
 
-The 3 deferred Wave-1.1 hooks (`selector`, `before_render`, `after_render`) named in [docs/audit-2026-04-28.md:228-229](audit-2026-04-28.md) and [docs/roadmap.md:186-188](roadmap.md) **exist only in roadmap text, not in code**. Wave 3.1 introduces them.
+The 3 deferred Wave-1.1 hooks (`selector`, `before_render`, `after_render`) named in [docs/audit-2026-04-28.md:228-229](audit-2026-04-28.md) and [docs/roadmap.md:186-188](../roadmap.md) **exist only in roadmap text, not in code**. Wave 3.1 introduces them.
 
 ### 1.2 Existing trigger logic is already a hybrid (under the hood)
 
@@ -39,14 +39,14 @@ This is **internal trigger-detection redundancy** ("triple-stack hybrid"). It is
 
 ### 1.4 HOOKS.md describes 4 extension points that don't exist
 
-[shopos-core/src/Modules/InfiniteScroll/HOOKS.md](../shopos-core/src/Modules/InfiniteScroll/HOOKS.md) (43 lines) and [README.md](../shopos-core/src/Modules/InfiniteScroll/README.md) document a public API that is not in code:
+[shopos-core/src/Modules/InfiniteScroll/HOOKS.md](../../shopos-core/src/Modules/InfiniteScroll/HOOKS.md) (43 lines) and [README.md](../../shopos-core/src/Modules/InfiniteScroll/README.md) document a public API that is not in code:
 
 | Documented | HOOKS.md location | In code? |
 |---|---|---|
-| `shopos_core/infinite_scroll/config` filter | [HOOKS.md:5-22](../shopos-core/src/Modules/InfiniteScroll/HOOKS.md) | **No** |
-| `shopos_core/infinite_scroll/should_enable` filter | [HOOKS.md:24-28](../shopos-core/src/Modules/InfiniteScroll/HOOKS.md) | **No** |
-| `shopos:infinite-scroll:page-loaded` JS event | [HOOKS.md:32-39](../shopos-core/src/Modules/InfiniteScroll/HOOKS.md) | **No** — `dispatchEvent` / `CustomEvent` grep zero hits |
-| `shopos_core/infinite_scroll/config.skeletonMarkup` filter | [HOOKS.md:41-43](../shopos-core/src/Modules/InfiniteScroll/HOOKS.md) | **No** |
+| `shopos_core/infinite_scroll/config` filter | [HOOKS.md:5-22](../../shopos-core/src/Modules/InfiniteScroll/HOOKS.md) | **No** |
+| `shopos_core/infinite_scroll/should_enable` filter | [HOOKS.md:24-28](../../shopos-core/src/Modules/InfiniteScroll/HOOKS.md) | **No** |
+| `shopos:infinite-scroll:page-loaded` JS event | [HOOKS.md:32-39](../../shopos-core/src/Modules/InfiniteScroll/HOOKS.md) | **No** — `dispatchEvent` / `CustomEvent` grep zero hits |
+| `shopos_core/infinite_scroll/config.skeletonMarkup` filter | [HOOKS.md:41-43](../../shopos-core/src/Modules/InfiniteScroll/HOOKS.md) | **No** |
 
 This drift is its own decision (§4-D-extra). Cleanup ships in this decisions PR, not in the code PRs.
 
@@ -81,7 +81,7 @@ None from `/docs/decisions-2026-04-28.md`. Wave 3.1 is a P1 functional improveme
 | 6 | No DB schema changes | None. |
 | 7 | Logger stays `final` | Untouched. |
 | 8 | Use `ShopOS\Core\Core\Logger` | New code paths log via Logger only. |
-| 9 | Roadmap update in same PR | This master-plan PR updates [/docs/roadmap.md](roadmap.md) with the scope amendment (§3 below). Each code sub-PR ships its own roadmap shipped-marker. Wave 3.1's parent shipped-marker lands with 3.1b (the last sub-PR). |
+| 9 | Roadmap update in same PR | This master-plan PR updates [/docs/roadmap.md](../roadmap.md) with the scope amendment (§3 below). Each code sub-PR ships its own roadmap shipped-marker. Wave 3.1's parent shipped-marker lands with 3.1b (the last sub-PR). |
 
 ### File/module ceiling
 
@@ -91,7 +91,7 @@ Project-wide 12 file ceiling applies. No Wave 3.1 calibration request — see §
 
 ## 3. Roadmap delta (scope amendment)
 
-The current roadmap entry at [docs/roadmap.md:182-189](roadmap.md) reads:
+The current roadmap entry at [docs/roadmap.md:182-189](../roadmap.md) reads:
 
 > **3.1 — InfiniteScroll trigger modes (Roadmap #5) — expanded scope (committed 2026-04-29)**
 > - Setting: `auto` / `button` / `hybrid` (auto first 2 pages, button after)
@@ -337,12 +337,12 @@ One flag, two sub-PRs, precedent Wave 3.2a/b.
 
 ## 7. HOOKS.md cleanup — exact deletions + replacement state
 
-[shopos-core/src/Modules/InfiniteScroll/HOOKS.md](../shopos-core/src/Modules/InfiniteScroll/HOOKS.md) replaced with a 60-word accurate-but-empty stub plus a forward-pointer to this master plan. The replacement file body:
+[shopos-core/src/Modules/InfiniteScroll/HOOKS.md](../../shopos-core/src/Modules/InfiniteScroll/HOOKS.md) replaced with a 60-word accurate-but-empty stub plus a forward-pointer to this master plan. The replacement file body:
 
 ```markdown
 # Infinite Scroll — Public API
 
-The module currently exposes no PHP or JS extension hooks. Extension hooks for selector override (`shopos_core/infinite_scroll/selector`) and render-bracket actions (`shopos_core/infinite_scroll/before_render`, `shopos_core/infinite_scroll/after_render`) are planned for Wave 3.1b — see [/docs/wave-3.1-master-plan.md](../../../../docs/wave-3.1-master-plan.md) §4-D7 for the resolved signatures. Documentation will land in this file when the hooks ship.
+The module currently exposes no PHP or JS extension hooks. Extension hooks for selector override (`shopos_core/infinite_scroll/selector`) and render-bracket actions (`shopos_core/infinite_scroll/before_render`, `shopos_core/infinite_scroll/after_render`) are planned for Wave 3.1b — see [/docs/archive/wave-3.1-master-plan.md](../../../../docs/archive/wave-3.1-master-plan.md) §4-D7 for the resolved signatures. Documentation will land in this file when the hooks ship.
 
 ## Template overrides
 
@@ -364,7 +364,7 @@ Skeleton card markup is inline in `assets/js/infinite-scroll.js` (`makeSkeletonC
 - **Pure deletion to empty file** drops the "Template overrides" stub, which despite being inaccurate today (no filter exists) does communicate a real fact about where skeleton markup lives.
 - **Accurate-but-empty + pointer to master plan** signals "this module is being actively extended; here's the source of truth for what's coming" without claiming surface exists yet. The same template-overrides paragraph is preserved with the false filter claim removed.
 
-[README.md](../shopos-core/src/Modules/InfiniteScroll/README.md) **not in the decisions-PR file list** — verified L36-38 contains only a pointer to HOOKS.md, no hook names. Once HOOKS.md is accurate, the README's pointer is correct. No README edits needed.
+[README.md](../../shopos-core/src/Modules/InfiniteScroll/README.md) **not in the decisions-PR file list** — verified L36-38 contains only a pointer to HOOKS.md, no hook names. Once HOOKS.md is accurate, the README's pointer is correct. No README edits needed.
 
 ---
 

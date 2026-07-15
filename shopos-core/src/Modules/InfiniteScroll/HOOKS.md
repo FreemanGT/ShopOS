@@ -18,7 +18,7 @@ and read once when the observer is constructed.
 The selector-override (`shopos_core/infinite_scroll/selector`) and
 render-bracket (`shopos_core/infinite_scroll/before_render`,
 `shopos_core/infinite_scroll/after_render`) hooks also ship — see
-[/docs/wave-3.1-master-plan.md](../../../../docs/wave-3.1-master-plan.md) §4-D7
+[/docs/archive/wave-3.1-master-plan.md](../../../../docs/archive/wave-3.1-master-plan.md) §4-D7
 and `tests/baseline-hooks.txt` for their signatures.
 
 ## Template overrides

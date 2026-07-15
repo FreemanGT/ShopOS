@@ -134,6 +134,40 @@ abstract class Module_Base implements Module_Interface {
 	}
 
 	/**
+	 * Build the `label_<key>` text-field block for a settings schema from a
+	 * Labels defaults map (the QuickView / ShopFilters / Search pattern).
+	 *
+	 * Each entry becomes a `text` field named `label_<key>` with an empty
+	 * default (blank → the resolver falls back to the English default) and a
+	 * "Default: <wording>" description; the first field is prefixed with the
+	 * optional $intro sentence. Output is byte-identical to the hand-rolled
+	 * loops those modules ship, so adopting it is a pure refactor.
+	 *
+	 * @param array<string,array{label:string,default:string}> $defaults Labels::defaults() map.
+	 * @param string                                           $intro    Sentence prepended to the first field's description ('' = none).
+	 * @return array<string,array> `label_<key>` => field schema.
+	 */
+	public function label_fields( array $defaults, $intro = '' ) {
+		$fields = array();
+		$first  = true;
+		foreach ( $defaults as $key => $def ) {
+			/* translators: %s: the English default wording for this field. */
+			$desc = sprintf( __( 'Default: %s', 'shopos-core' ), $def['default'] );
+			if ( $first && '' !== (string) $intro ) {
+				$desc = (string) $intro . ' ' . $desc;
+			}
+			$fields[ 'label_' . $key ] = array(
+				'label'       => $def['label'],
+				'type'        => 'text',
+				'default'     => '',
+				'description' => $desc,
+			);
+			$first = false;
+		}
+		return $fields;
+	}
+
+	/**
 	 * Modules whose settings still live in a legacy admin menu (because they
 	 * predate Settings_Hub and we preserve the menu for familiarity) can
 	 * override this to return the admin URL the Dashboard "Settings" button

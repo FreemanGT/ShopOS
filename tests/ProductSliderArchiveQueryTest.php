@@ -157,7 +157,7 @@ final class ProductSliderArchiveQueryTest extends TestCase {
 	 * The current_query grid reads the archive query for a genuine archive, but a
 	 * product *search* rendered through an archive template must fall through to
 	 * the wc_get_products() path (where the search-results filter constrains it) —
-	 * else the unconstrained main query renders the whole catalog (the arba4 bug).
+	 * else the unconstrained main query renders the whole catalog (the archive-grid bug).
 	 *
 	 * @dataProvider archive_routing_cases
 	 */

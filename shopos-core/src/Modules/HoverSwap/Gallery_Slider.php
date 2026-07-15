@@ -7,7 +7,7 @@
  * default `woocommerce_template_loop_product_thumbnail` for its own render on
  * the same hook, so the slider lands inside the product-link anchor exactly
  * where the thumbnail was — on every loop card site-wide. (Deliberately not
- * gated by `is_shop()` / `is_product_taxonomy()`: arba4's Elementor archive
+ * gated by `is_shop()` / `is_product_taxonomy()`: the live store's Elementor archive
  * grid runs on a swapped query where those conditional tags lie.)
  *
  * Single-image products fall back to a plain image (no slider chrome). The

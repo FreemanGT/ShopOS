@@ -180,7 +180,7 @@ final class Results_Query {
 	 * - `all` in *grid* mode: an Elementor archive template's products grid is
 	 *   frequently configured with the fixed `all products` source rather than
 	 *   `current query`; in grid mode it is the results grid, so a search must
-	 *   narrow it too — otherwise the whole catalog renders (the live arba4 bug).
+	 *   narrow it too — otherwise the whole catalog renders (the live archive-grid bug).
 	 *
 	 * Other fixed sources (`featured`/`category`/`tag`/`related`/`manual`) and a
 	 * slider-mode `all` carousel are intentional curations and left untouched.

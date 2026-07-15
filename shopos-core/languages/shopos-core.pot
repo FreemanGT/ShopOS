@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ShopOS Core 1.24.12\n"
+"Project-Id-Version: ShopOS Core 1.28.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shopos-core\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-14T10:40:25+00:00\n"
+"POT-Creation-Date: 2026-07-15T11:03:55+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: shopos-core\n"
@@ -67,8 +67,9 @@ msgid "Deactivate the legacy plugin in Plugins → Installed Plugins (or run Sho
 msgstr ""
 
 #: src/Admin/Dashboard.php:130
-#: src/Core/Settings_Hub.php:80
-#: src/Core/Settings_Hub.php:81
+#: src/Core/Elementor/Category.php:50
+#: src/Core/Settings_Hub.php:159
+#: src/Core/Settings_Hub.php:160
 msgid "ShopOS"
 msgstr ""
 
@@ -121,8 +122,8 @@ msgid "Open the dashboard"
 msgstr ""
 
 #: src/Admin/views/feature-flags.php:27
-#: src/Core/Settings_Hub.php:114
-#: src/Core/Settings_Hub.php:115
+#: src/Core/Settings_Hub.php:193
+#: src/Core/Settings_Hub.php:194
 msgid "Feature Flags"
 msgstr ""
 
@@ -236,7 +237,7 @@ msgid "Timestamp (UTC)"
 msgstr ""
 
 #: src/Admin/views/settings-tools-section.php:95
-#: src/Modules/ProductSlider/Widget.php:177
+#: src/Modules/ProductSlider/Widget.php:173
 msgid "Source"
 msgstr ""
 
@@ -397,22 +398,30 @@ msgstr ""
 msgid "Insufficient permissions."
 msgstr ""
 
-#: src/Core/Settings_Hub.php:91
-#: src/Core/Settings_Hub.php:92
+#: src/Core/Settings_Hub.php:170
+#: src/Core/Settings_Hub.php:171
 msgid "Dashboard"
 msgstr ""
 
-#: src/Core/Settings_Hub.php:123
-#: src/Core/Settings_Hub.php:124
+#: src/Core/Settings_Hub.php:202
+#: src/Core/Settings_Hub.php:203
 msgid "Tools"
 msgstr ""
 
-#: src/Core/Settings_Hub.php:294
+#: src/Core/Settings_Hub.php:408
 msgid "This module is disabled. Enable it from the Dashboard."
 msgstr ""
 
-#: src/Core/Settings_Hub.php:304
+#: src/Core/Settings_Hub.php:418
 msgid "General"
+msgstr ""
+
+#: src/Core/Settings_Hub.php:517
+msgid "Select image"
+msgstr ""
+
+#: src/Core/Settings_Hub.php:536
+msgid "Remove"
 msgstr ""
 
 #: src/Modules/CategorySlider/Module.php:35
@@ -427,379 +436,379 @@ msgstr ""
 msgid "ShopOS Category Slider"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:57
-#: src/Modules/ProductSlider/Widget.php:87
+#: src/Modules/CategorySlider/Widget.php:53
+#: src/Modules/ProductSlider/Widget.php:83
 msgid "Content"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:65
-#: src/Modules/CategorySlider/Widget.php:441
-#: src/Modules/ProductSlider/Widget.php:95
-#: src/Modules/ProductSlider/Widget.php:415
+#: src/Modules/CategorySlider/Widget.php:61
+#: src/Modules/CategorySlider/Widget.php:437
+#: src/Modules/ProductSlider/Widget.php:91
+#: src/Modules/ProductSlider/Widget.php:411
 msgid "Eyebrow"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:67
+#: src/Modules/CategorySlider/Widget.php:63
 msgid "Shop by category"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:74
-#: src/Modules/CategorySlider/Widget.php:450
-#: src/Modules/ProductSlider/Widget.php:104
-#: src/Modules/ProductSlider/Widget.php:424
+#: src/Modules/CategorySlider/Widget.php:70
+#: src/Modules/CategorySlider/Widget.php:446
+#: src/Modules/ProductSlider/Widget.php:100
+#: src/Modules/ProductSlider/Widget.php:420
 msgid "Headline"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:76
+#: src/Modules/CategorySlider/Widget.php:72
 msgid "The Spring Edit."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:83
-#: src/Modules/ProductSlider/Widget.php:113
+#: src/Modules/CategorySlider/Widget.php:79
+#: src/Modules/ProductSlider/Widget.php:109
 msgid "Headline subtext"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:85
+#: src/Modules/CategorySlider/Widget.php:81
 msgid "Curated essentials, season-led."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:92
+#: src/Modules/CategorySlider/Widget.php:88
 msgid "Max categories"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:103
-#: src/Modules/ProductSlider/Widget.php:145
+#: src/Modules/CategorySlider/Widget.php:99
+#: src/Modules/ProductSlider/Widget.php:141
 msgid "Order by"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:107
+#: src/Modules/CategorySlider/Widget.php:103
 msgid "Name"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:108
+#: src/Modules/CategorySlider/Widget.php:104
 msgid "Product count"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:109
+#: src/Modules/CategorySlider/Widget.php:105
 msgid "Slug"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:110
-#: src/Modules/ProductSlider/Widget.php:153
+#: src/Modules/CategorySlider/Widget.php:106
+#: src/Modules/ProductSlider/Widget.php:149
 msgid "Menu order"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:118
-#: src/Modules/ProductSlider/Widget.php:163
+#: src/Modules/CategorySlider/Widget.php:114
+#: src/Modules/ProductSlider/Widget.php:159
 #: src/Modules/ShopFilters/templates/admin-facet-config.php:36
 msgid "Order"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:123
-#: src/Modules/ProductSlider/Widget.php:168
+#: src/Modules/CategorySlider/Widget.php:119
+#: src/Modules/ProductSlider/Widget.php:164
 msgid "Ascending"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:124
-#: src/Modules/ProductSlider/Widget.php:169
+#: src/Modules/CategorySlider/Widget.php:120
+#: src/Modules/ProductSlider/Widget.php:165
 msgid "Descending"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:132
+#: src/Modules/CategorySlider/Widget.php:128
 msgid "Hide empty categories"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:142
+#: src/Modules/CategorySlider/Widget.php:138
 msgid "Top-level only"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:146
+#: src/Modules/CategorySlider/Widget.php:142
 msgid "Ignored if \"Child of\" or \"Include only\" is set."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:155
+#: src/Modules/CategorySlider/Widget.php:151
 msgid "Child of"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:158
+#: src/Modules/CategorySlider/Widget.php:154
 msgid "— Any —"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:159
+#: src/Modules/CategorySlider/Widget.php:155
 msgid "Show only sub-categories of this parent term."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:167
+#: src/Modules/CategorySlider/Widget.php:163
 msgid "Include only these"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:173
+#: src/Modules/CategorySlider/Widget.php:169
 msgid "When set, only these categories appear (overrides Top-level / Child of)."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:180
+#: src/Modules/CategorySlider/Widget.php:176
 msgid "Exclude these"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:195
-#: src/Modules/ProductSlider/Widget.php:269
+#: src/Modules/CategorySlider/Widget.php:191
+#: src/Modules/ProductSlider/Widget.php:265
 msgid "Layout"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:203
-#: src/Modules/ProductSlider/Widget.php:277
+#: src/Modules/CategorySlider/Widget.php:199
+#: src/Modules/ProductSlider/Widget.php:273
 msgid "Cards per view"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:214
-#: src/Modules/ProductSlider/Widget.php:288
+#: src/Modules/CategorySlider/Widget.php:210
+#: src/Modules/ProductSlider/Widget.php:284
 msgid "Cards per view (tablet)"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:225
-#: src/Modules/ProductSlider/Widget.php:299
+#: src/Modules/CategorySlider/Widget.php:221
+#: src/Modules/ProductSlider/Widget.php:295
 msgid "Cards per view (mobile)"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:236
-#: src/Modules/ProductSlider/Widget.php:311
+#: src/Modules/CategorySlider/Widget.php:232
+#: src/Modules/ProductSlider/Widget.php:307
 msgid "Gap"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:247
+#: src/Modules/CategorySlider/Widget.php:243
 msgid "Card height"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:261
-#: src/Modules/ProductSlider/Widget.php:337
+#: src/Modules/CategorySlider/Widget.php:257
+#: src/Modules/ProductSlider/Widget.php:333
 msgid "Card style"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:269
+#: src/Modules/CategorySlider/Widget.php:265
 msgid "Shape"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:274
+#: src/Modules/CategorySlider/Widget.php:270
 msgid "Circle"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:275
-#: src/Modules/ProductSlider/Widget.php:350
+#: src/Modules/CategorySlider/Widget.php:271
+#: src/Modules/ProductSlider/Widget.php:346
 msgid "Soft"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:276
-#: src/Modules/ProductSlider/Widget.php:351
+#: src/Modules/CategorySlider/Widget.php:272
+#: src/Modules/ProductSlider/Widget.php:347
 msgid "Rect"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:277
+#: src/Modules/CategorySlider/Widget.php:273
 msgid "Pill"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:285
+#: src/Modules/CategorySlider/Widget.php:281
 msgid "Show product count"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:290
+#: src/Modules/CategorySlider/Widget.php:286
 msgid "On hover"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:291
+#: src/Modules/CategorySlider/Widget.php:287
 msgid "Always"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:292
-#: src/Modules/CategorySlider/Widget.php:551
-#: src/Modules/ProductSlider/Widget.php:567
+#: src/Modules/CategorySlider/Widget.php:288
+#: src/Modules/CategorySlider/Widget.php:547
+#: src/Modules/ProductSlider/Widget.php:563
 msgid "Hidden"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:300
-#: src/Modules/ProductSlider/Widget.php:380
+#: src/Modules/CategorySlider/Widget.php:296
+#: src/Modules/ProductSlider/Widget.php:376
 msgid "Accent color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:312
-#: src/Modules/ProductSlider/Widget.php:392
+#: src/Modules/CategorySlider/Widget.php:308
+#: src/Modules/ProductSlider/Widget.php:388
 msgid "Hover ring color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:315
-#: src/Modules/ProductSlider/Widget.php:395
+#: src/Modules/CategorySlider/Widget.php:311
+#: src/Modules/ProductSlider/Widget.php:391
 msgid "Outline drawn around a card on hover."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:331
+#: src/Modules/CategorySlider/Widget.php:327
 msgid "Background color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:343
+#: src/Modules/CategorySlider/Widget.php:339
 msgid "Text color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:355
+#: src/Modules/CategorySlider/Widget.php:351
 msgid "Muted text color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:367
+#: src/Modules/CategorySlider/Widget.php:363
 msgid "Divider / outline color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:382
+#: src/Modules/CategorySlider/Widget.php:378
 msgid "Arrow button size"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:398
+#: src/Modules/CategorySlider/Widget.php:394
 msgid "Arrow button radius"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:415
+#: src/Modules/CategorySlider/Widget.php:411
 msgid "Arrow hover transition duration"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:431
-#: src/Modules/ProductSlider/Widget.php:405
+#: src/Modules/CategorySlider/Widget.php:427
+#: src/Modules/ProductSlider/Widget.php:401
 msgid "Typography"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:459
+#: src/Modules/CategorySlider/Widget.php:455
 msgid "Card name"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:467
+#: src/Modules/CategorySlider/Widget.php:463
 msgid "Card name color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:481
-#: src/Modules/ProductSlider/Widget.php:475
+#: src/Modules/CategorySlider/Widget.php:477
+#: src/Modules/ProductSlider/Widget.php:471
 msgid "Behavior"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:489
-#: src/Modules/ProductSlider/Widget.php:498
+#: src/Modules/CategorySlider/Widget.php:485
+#: src/Modules/ProductSlider/Widget.php:494
 msgid "Direction"
+msgstr ""
+
+#: src/Modules/CategorySlider/Widget.php:490
+#: src/Modules/ProductSlider/Widget.php:499
+msgid "Auto (follow site)"
+msgstr ""
+
+#: src/Modules/CategorySlider/Widget.php:491
+#: src/Modules/ProductSlider/Widget.php:500
+msgid "Force LTR"
+msgstr ""
+
+#: src/Modules/CategorySlider/Widget.php:492
+#: src/Modules/ProductSlider/Widget.php:501
+msgid "Force RTL"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:494
 #: src/Modules/ProductSlider/Widget.php:503
-msgid "Auto (follow site)"
-msgstr ""
-
-#: src/Modules/CategorySlider/Widget.php:495
-#: src/Modules/ProductSlider/Widget.php:504
-msgid "Force LTR"
-msgstr ""
-
-#: src/Modules/CategorySlider/Widget.php:496
-#: src/Modules/ProductSlider/Widget.php:505
-msgid "Force RTL"
-msgstr ""
-
-#: src/Modules/CategorySlider/Widget.php:498
-#: src/Modules/ProductSlider/Widget.php:507
 msgid "RTL flips arrows, drag direction, and progress bar."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:505
-#: src/Modules/ProductSlider/Widget.php:515
+#: src/Modules/CategorySlider/Widget.php:501
+#: src/Modules/ProductSlider/Widget.php:511
 msgid "Scroll snap"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:510
-#: src/Modules/ProductSlider/Widget.php:520
+#: src/Modules/CategorySlider/Widget.php:506
+#: src/Modules/ProductSlider/Widget.php:516
 msgid "Free-scroll"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:511
-#: src/Modules/ProductSlider/Widget.php:521
+#: src/Modules/CategorySlider/Widget.php:507
+#: src/Modules/ProductSlider/Widget.php:517
 msgid "Per card"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:512
-#: src/Modules/ProductSlider/Widget.php:522
+#: src/Modules/CategorySlider/Widget.php:508
+#: src/Modules/ProductSlider/Widget.php:518
 msgid "Per page"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:520
-#: src/Modules/ProductSlider/Widget.php:531
+#: src/Modules/CategorySlider/Widget.php:516
+#: src/Modules/ProductSlider/Widget.php:527
 msgid "Enable mouse drag"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:524
+#: src/Modules/CategorySlider/Widget.php:520
 msgid "Drag cards left or right to scroll the row. Clicks still navigate normally — drag only engages after a deliberate horizontal motion. Turn off for pure click behavior."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:531
-#: src/Modules/ProductSlider/Widget.php:543
+#: src/Modules/CategorySlider/Widget.php:527
+#: src/Modules/ProductSlider/Widget.php:539
 msgid "Show arrow buttons"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:544
-#: src/Modules/ProductSlider/Widget.php:560
+#: src/Modules/CategorySlider/Widget.php:540
+#: src/Modules/ProductSlider/Widget.php:556
 msgid "Indicator"
+msgstr ""
+
+#: src/Modules/CategorySlider/Widget.php:545
+#: src/Modules/ProductSlider/Widget.php:561
+msgid "Progress bar"
+msgstr ""
+
+#: src/Modules/CategorySlider/Widget.php:546
+#: src/Modules/ProductSlider/Widget.php:562
+msgid "Pagination dots"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:549
 #: src/Modules/ProductSlider/Widget.php:565
-msgid "Progress bar"
-msgstr ""
-
-#: src/Modules/CategorySlider/Widget.php:550
-#: src/Modules/ProductSlider/Widget.php:566
-msgid "Pagination dots"
-msgstr ""
-
-#: src/Modules/CategorySlider/Widget.php:553
-#: src/Modules/ProductSlider/Widget.php:569
 msgid "Replaces the legacy \"Show progress bar\" toggle. When unset on pre-existing widgets, the legacy value is honored."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:560
-#: src/Modules/ProductSlider/Widget.php:577
+#: src/Modules/CategorySlider/Widget.php:556
+#: src/Modules/ProductSlider/Widget.php:573
 msgid "Show progress bar"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:570
-#: src/Modules/ProductSlider/Widget.php:588
+#: src/Modules/CategorySlider/Widget.php:566
+#: src/Modules/ProductSlider/Widget.php:584
 msgid "Autoplay"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:581
-#: src/Modules/ProductSlider/Widget.php:600
+#: src/Modules/CategorySlider/Widget.php:577
+#: src/Modules/ProductSlider/Widget.php:596
 msgid "Autoplay delay (ms)"
+msgstr ""
+
+#: src/Modules/CategorySlider/Widget.php:589
+#: src/Modules/ProductSlider/Widget.php:611
+msgid "Loop"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:593
 #: src/Modules/ProductSlider/Widget.php:615
-msgid "Loop"
-msgstr ""
-
-#: src/Modules/CategorySlider/Widget.php:597
-#: src/Modules/ProductSlider/Widget.php:619
 msgid "When the autoplay reaches the end, smoothly wrap back to the start. Drag-past-end-wraps is intentionally out of scope."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:822
+#: src/Modules/CategorySlider/Widget.php:738
 msgid "No product categories found. Adjust the Query controls or add a thumbnail to a category."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:880
+#: src/Modules/CategorySlider/Widget.php:796
 msgid "Scroll categories"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:881
-#: src/Modules/ProductSlider/Widget.php:1426
+#: src/Modules/CategorySlider/Widget.php:797
+#: src/Modules/ProductSlider/Widget.php:1330
 msgid "Previous"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:884
-#: src/Modules/ProductSlider/Widget.php:1429
+#: src/Modules/CategorySlider/Widget.php:800
+#: src/Modules/ProductSlider/Widget.php:1333
 msgid "Next"
 msgstr ""
 
 #. translators: 1: category name, 2: product count
-#: src/Modules/CategorySlider/Widget.php:905
+#: src/Modules/CategorySlider/Widget.php:821
 #, php-format
 msgid "%1$s — %2$s item"
 msgid_plural "%1$s — %2$s items"
@@ -807,21 +816,21 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s = product count
-#: src/Modules/CategorySlider/Widget.php:927
+#: src/Modules/CategorySlider/Widget.php:843
 #, php-format
 msgid "%s item"
 msgid_plural "%s items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Modules/CategorySlider/Widget.php:976
-#: src/Modules/ProductSlider/Widget.php:1524
+#: src/Modules/CategorySlider/Widget.php:892
+#: src/Modules/ProductSlider/Widget.php:1428
 msgid "Slide navigation"
 msgstr ""
 
 #. translators: %d page index, 1-based
-#: src/Modules/CategorySlider/Widget.php:978
-#: src/Modules/ProductSlider/Widget.php:1526
+#: src/Modules/CategorySlider/Widget.php:894
+#: src/Modules/ProductSlider/Widget.php:1430
 #, php-format
 msgid "Page %d"
 msgstr ""
@@ -1310,192 +1319,192 @@ msgstr ""
 msgid "ShopOS Product Slider"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:97
+#: src/Modules/ProductSlider/Widget.php:93
 msgid "Featured"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:106
+#: src/Modules/ProductSlider/Widget.php:102
 msgid "New arrivals."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:115
+#: src/Modules/ProductSlider/Widget.php:111
 msgid "Hand-picked for the season."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:125
+#: src/Modules/ProductSlider/Widget.php:121
 msgid "Query"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:133
+#: src/Modules/ProductSlider/Widget.php:129
 msgid "Max products"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:138
+#: src/Modules/ProductSlider/Widget.php:134
 msgid "Ignored when Source is \"Current query (archive)\" in Grid mode — there the widget shows the full archive page and paginates."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:149
+#: src/Modules/ProductSlider/Widget.php:145
 msgid "Date"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:150
-#: src/Modules/ProductSlider/Widget.php:442
+#: src/Modules/ProductSlider/Widget.php:146
+#: src/Modules/ProductSlider/Widget.php:438
 #: src/Modules/ShopFilters/Labels.php:60
 msgid "Price"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:151
+#: src/Modules/ProductSlider/Widget.php:147
 #: src/Modules/ShopFilters/Module.php:122
 msgid "Popularity"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:152
+#: src/Modules/ProductSlider/Widget.php:148
 msgid "Rating"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:154
+#: src/Modules/ProductSlider/Widget.php:150
 msgid "Title"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:155
+#: src/Modules/ProductSlider/Widget.php:151
 msgid "Random"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:181
+#: src/Modules/ProductSlider/Widget.php:177
 msgid "All published products"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:182
+#: src/Modules/ProductSlider/Widget.php:178
 msgid "Featured only"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:183
+#: src/Modules/ProductSlider/Widget.php:179
 msgid "On-sale only"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:184
+#: src/Modules/ProductSlider/Widget.php:180
 msgid "By category"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:185
+#: src/Modules/ProductSlider/Widget.php:181
 msgid "By tag"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:186
+#: src/Modules/ProductSlider/Widget.php:182
 msgid "Manual selection"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:187
+#: src/Modules/ProductSlider/Widget.php:183
 msgid "Current query (archive)"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:188
+#: src/Modules/ProductSlider/Widget.php:184
 msgid "Related products (single)"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:197
+#: src/Modules/ProductSlider/Widget.php:193
 #: src/Modules/ShopFilters/Admin_Config_Page.php:127
 #: src/Modules/ShopFilters/Labels.php:56
 msgid "Categories"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:211
+#: src/Modules/ProductSlider/Widget.php:207
 msgid "Tags"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:224
+#: src/Modules/ProductSlider/Widget.php:220
 msgid "Product IDs"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:227
+#: src/Modules/ProductSlider/Widget.php:223
 msgid "Comma-separated product IDs. Order is preserved."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:235
+#: src/Modules/ProductSlider/Widget.php:231
 msgid "Exclude product IDs"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:238
+#: src/Modules/ProductSlider/Widget.php:234
 msgid "Comma-separated product IDs to exclude."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:245
+#: src/Modules/ProductSlider/Widget.php:241
 msgid "Hide free products"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:255
+#: src/Modules/ProductSlider/Widget.php:251
 msgid "Hide out-of-stock"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:259
+#: src/Modules/ProductSlider/Widget.php:255
 msgid "When off, the WooCommerce global \"Hide out of stock items from the catalog\" setting still applies."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:304
+#: src/Modules/ProductSlider/Widget.php:300
 msgid "Fractional values let the next card peek (e.g. 1.4 = one full card with ~30% of the next showing)."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:322
+#: src/Modules/ProductSlider/Widget.php:318
 msgid "Image height"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:327
+#: src/Modules/ProductSlider/Widget.php:323
 msgid "Height of the image area. Meta and cart button stack below at natural height."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:345
+#: src/Modules/ProductSlider/Widget.php:341
 msgid "Image shape"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:359
+#: src/Modules/ProductSlider/Widget.php:355
 msgid "Show add-to-cart button"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:369
+#: src/Modules/ProductSlider/Widget.php:365
 msgid "Show sale badge"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:373
+#: src/Modules/ProductSlider/Widget.php:369
 msgid "Toggles WooCommerce's standard sale flash on each card. Plugins that replace the sale flash respect this toggle automatically."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:433
+#: src/Modules/ProductSlider/Widget.php:429
 msgid "Product name"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:450
+#: src/Modules/ProductSlider/Widget.php:446
 msgid "Product name color"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:461
+#: src/Modules/ProductSlider/Widget.php:457
 msgid "Price color"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:483
+#: src/Modules/ProductSlider/Widget.php:479
 msgid "Display as"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:488
+#: src/Modules/ProductSlider/Widget.php:484
 msgid "Slider"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:489
+#: src/Modules/ProductSlider/Widget.php:485
 msgid "Grid"
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:491
+#: src/Modules/ProductSlider/Widget.php:487
 msgid "Slider = draggable horizontal row with progress bar. Grid = static layout (no drag, no arrows)."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:535
+#: src/Modules/ProductSlider/Widget.php:531
 msgid "Drag cards left or right to scroll the row. Clicks still navigate normally — drag only engages after a deliberate horizontal motion."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:1258
+#: src/Modules/ProductSlider/Widget.php:1162
 msgid "No products match the current Query settings."
 msgstr ""
 
-#: src/Modules/ProductSlider/Widget.php:1425
+#: src/Modules/ProductSlider/Widget.php:1329
 msgid "Scroll products"
 msgstr ""
 

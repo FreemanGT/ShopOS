@@ -3,7 +3,7 @@
 **Date approved**: 2026-05-03
 **Owner**: Yiftach
 **Roadmap item**: #4 (P0)
-**Reflects decisions in**: [/docs/decisions-2026-04-28.md](decisions-2026-04-28.md) §4.5 (legacy migration), §4.1 (competitor-parity tension — see §1 below)
+**Reflects decisions in**: [/docs/decisions-2026-04-28.md](../decisions-2026-04-28.md) §4.5 (legacy migration), §4.1 (competitor-parity tension — see §1 below)
 **Branch off**: `main` post-1.11.20
 **Sub-PRs**: 6 (ship order: `4a → 4f → 4b → 4c → 4d → 4e`)
 
@@ -92,7 +92,7 @@ This master plan **expands the scope** to six sub-PRs. The additions:
 - **4e — Auto-color fallback wiring** (renders sampled color in the swatch render path when manual term-meta color is unset)
 - **4f — Variation-image-on-card swap** (shop-listing swatch click swaps the card's main image to the matching variation's image; shopper stays on the listing)
 
-This expansion is roadmap-of-record edit, not silent drift. The roadmap PR (this PR) reflects the new sub-PR list. §4.1 tension noted above; the audit (`/docs/audit-2026-04-28.md`) **does not** cover 4d/4e/4f — those came from the pre-flight, not the audit.
+This expansion is roadmap-of-record edit, not silent drift. The roadmap PR (this PR) reflects the new sub-PR list. §4.1 tension noted above; the audit (`/docs/archive/audit-2026-04-28.md`) **does not** cover 4d/4e/4f — those came from the pre-flight, not the audit.
 
 ---
 
