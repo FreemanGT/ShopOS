@@ -8,6 +8,8 @@ shopos_core_
 shopos_core_boot_failures
 shopos_core_db_version
 shopos_core_delete_done_
+shopos_core_design_
+shopos_core_design_group
 shopos_core_import_done_
 shopos_core_legacy_imported
 shopos_core_log

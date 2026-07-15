@@ -1,9 +1,10 @@
 shopos-core/src/Core/Cache.php:124:		return (bool) apply_filters( 'shopos_core/cache/use_object_cache', $default );
+shopos-core/src/Core/Design.php:242:		if ( ! apply_filters( 'shopos_core/design/tokens_css_enabled', true ) ) {
 shopos-core/src/Core/Feature_Flags.php:60:		return (bool) apply_filters( "shopos_core/feature_flag/{$module}/{$feature}", $enabled, $module, $feature );
 shopos-core/src/Core/Logger.php:47:		$filtered = apply_filters( 'shopos_core/logger/entry', $entry, (string) $message, $level );
 shopos-core/src/Core/Logger.php:72:		do_action( 'shopos_core/logger/written', $entry, $log );
 shopos-core/src/Core/Module_Registry.php:81:		$this->modules = apply_filters( 'shopos_core/modules', $this->modules );
-shopos-core/src/Core/Plugin.php:177:		do_action( 'shopos_core/booted', $this );
+shopos-core/src/Core/Plugin.php:184:		do_action( 'shopos_core/booted', $this );
 shopos-core/src/Core/Security.php:101:		$defaults = apply_filters( 'shopos_core/rate_limit_defaults', array( 'max' => $max, 'window' => $window ), $bucket );
 shopos-core/src/Core/Settings_Hub.php:435:		do_action( 'shopos_core/module_page/' . $module->id(), $module );
 shopos-core/src/Core/Settings_Tools.php:154:		$skip_backup = (bool) apply_filters( 'shopos_core/tools/import/skip_backup', false, $envelope );
