@@ -411,6 +411,27 @@ if ( ! function_exists( 'set_transient' ) ) {
 if ( ! function_exists( 'delete_transient' ) ) {
 	function delete_transient( $k ) { unset( $GLOBALS['fr_transients'][ $k ] ); return true; }
 }
+// Object-cache stubs (back Core\Cache). Off by default so `wp_using_ext_object_cache()`
+// is false → Cache uses the transient store above; a test flips `fr_ext_cache` to
+// exercise the wp_cache_* path. Store is keyed "group\0key" so groups are distinct.
+$GLOBALS['fr_ext_cache']    = $GLOBALS['fr_ext_cache']    ?? false;
+$GLOBALS['fr_object_cache'] = $GLOBALS['fr_object_cache'] ?? array();
+if ( ! function_exists( 'wp_using_ext_object_cache' ) ) {
+	function wp_using_ext_object_cache() { return (bool) ( $GLOBALS['fr_ext_cache'] ?? false ); }
+}
+if ( ! function_exists( 'wp_cache_get' ) ) {
+	function wp_cache_get( $k, $group = '', $force = false, &$found = null ) {
+		$ck    = $group . "\0" . $k;
+		$found = array_key_exists( $ck, $GLOBALS['fr_object_cache'] );
+		return $found ? $GLOBALS['fr_object_cache'][ $ck ] : false;
+	}
+}
+if ( ! function_exists( 'wp_cache_set' ) ) {
+	function wp_cache_set( $k, $v, $group = '', $ttl = 0 ) { $GLOBALS['fr_object_cache'][ $group . "\0" . $k ] = $v; return true; }
+}
+if ( ! function_exists( 'wp_cache_delete' ) ) {
+	function wp_cache_delete( $k, $group = '' ) { unset( $GLOBALS['fr_object_cache'][ $group . "\0" . $k ] ); return true; }
+}
 if ( ! function_exists( 'get_plugins' ) ) {
 	function get_plugins() { return array(); }
 }

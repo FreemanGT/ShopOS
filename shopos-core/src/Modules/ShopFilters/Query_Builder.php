@@ -16,6 +16,8 @@
 
 namespace ShopOS\Core\Modules\ShopFilters;
 
+use ShopOS\Core\Core\Cache;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -28,6 +30,13 @@ final class Query_Builder {
 	 * to cover a build, short enough to self-heal if a request dies mid-build.
 	 */
 	const REBUILD_LOCK_TTL = 30;
+
+	/**
+	 * Object-cache group for the facet-response cache + its rebuild locks. Only
+	 * distinguishes storage on an external object cache; the transient fallback
+	 * keys off the already-namespaced `shopos_core_sf_q_*` names verbatim.
+	 */
+	const CACHE_GROUP = 'shopos_shop_filters';
 
 	/**
 	 * Index repository.
@@ -527,7 +536,7 @@ final class Query_Builder {
 				SHOPOS_CORE_VERSION,
 				$available
 			);
-			$cached = get_transient( $cache_key );
+			$cached = Cache::get( $cache_key, self::CACHE_GROUP );
 			if ( is_array( $cached ) ) {
 				return $this->with_pagination( $cached, $context_id, $state, $paged, $per_page );
 			}
@@ -656,7 +665,7 @@ final class Query_Builder {
 		if ( '' !== $cache_key && self::should_store_state( $filters, $active ) && self::acquire_rebuild_lock( $cache_key ) ) {
 			/** Filter the facet-response cache TTL, in seconds. @since 1.21.40 */
 			$ttl = (int) apply_filters( 'shopos_core/shop_filters/facet_cache_ttl', 5 * MINUTE_IN_SECONDS );
-			set_transient( $cache_key, $payload, $ttl );
+			Cache::set( $cache_key, $payload, $ttl, self::CACHE_GROUP );
 			self::release_rebuild_lock( $cache_key );
 		}
 
@@ -710,10 +719,10 @@ final class Query_Builder {
 	 */
 	public static function acquire_rebuild_lock( $cache_key ) {
 		$lock = $cache_key . '_lock';
-		if ( false !== get_transient( $lock ) ) {
+		if ( false !== Cache::get( $lock, self::CACHE_GROUP ) ) {
 			return false;
 		}
-		set_transient( $lock, 1, self::REBUILD_LOCK_TTL );
+		Cache::set( $lock, 1, self::REBUILD_LOCK_TTL, self::CACHE_GROUP );
 		return true;
 	}
 
@@ -724,7 +733,7 @@ final class Query_Builder {
 	 * @return void
 	 */
 	public static function release_rebuild_lock( $cache_key ) {
-		delete_transient( $cache_key . '_lock' );
+		Cache::delete( $cache_key . '_lock', self::CACHE_GROUP );
 	}
 
 	/**
