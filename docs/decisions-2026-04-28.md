@@ -158,6 +158,14 @@ This is a **deliberate owner-approved override** of:
 
 **Consequence — no option-based rollback.** There is no `wp option update … 0` kill-switch; rolling the module back means disabling it via the modules registry, or reverting the release. The module-registry enable/disable remains the only coarse switch.
 
+### §5.9 §5.4 reversed — Elementor widget added (added 2026-07-15)
+
+**§5.4's "No Elementor widget in v1"** is **reversed** (owner-approved 2026-07-15), shipped as the Phase-2 widget fan-out's item 4 (shopos-core 1.33.0). Shop Filters gains a first-class Elementor widget (`ShopFilters\Widget`, `get_name()` frozen `shopos_shop_filters`) in the `shopos` panel category, mirroring the Search / ProductPage / RestockNotify widgets (items 1–3). §5.4 was scope-control during the Wave 6 build, not a permanent architectural line like §4.3 (Elementor-only) — the reversal is **narrow and additive**:
+
+- The `[shopos_shop_filters]` shortcode is **unchanged** (Hard Rule #2); the widget is a *second* placement surface, not a replacement. §5.5 (AJAX transport), §5.6 (filtered-URL SEO) and §5.8 (always-on) are untouched.
+- The widget is a thin shell delegating to the existing `Shortcode::render()` (a throwaway instance — that render registers no deferred hooks), so it inherits the shortcode's context resolution verbatim and adds no new query-context handling. It carries no per-instance controls (the panel is driven by page context + the module's global settings).
+- Purely additive → **no feature flag** (Hard Rule #1 additive exception; the slider / items-1–3 widget precedent). Rollback is git-revert; the module-registry toggle is the coarse switch.
+
 ---
 
 ## §6 Quick-View module — A2 re-opened (added 2026-06-11)
