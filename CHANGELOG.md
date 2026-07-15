@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.30.0] — 2026-07-15
+
+- shopos-core: Phase-2 fan-out (item 1) — new **ShopOS Search** Elementor widget, a thin shell over the Search module's already-shipped `Frontend::render_form()` (dragging it onto a page = placing the `[shopos_search]` shortcode). Two optional text controls (placeholder / button) fall through to the module Labels defaults when blank; the globally head-enqueued search assets enhance it into the live dropdown, so it declares no asset dependencies. Wired via `elementor/widgets/register` inside the existing `boot()` (fires only with Elementor active → the module still boots Elementor-free). `get_name()` frozen at `shopos_search`. Purely additive (no flag — inert until placed, slider-widget precedent). `SearchWidgetTest` added (832 tests / 2291 assertions green)
+
 ## [1.29.0] — 2026-07-15
 
 - shopos-core: DRY the Labels resolver + label-field loop (Phase-1 foundation, caller-free / additive) — new abstract `Labels_Base` holds the byte-identical option-backed `get()` shared by QuickView / ShopFilters / Search / ProductPage, and `Module_Base::label_fields( $defaults, $intro )` reproduces their `label_<key>` settings loop exactly. No module adopts either yet (per-module follow-up PRs), so behaviour is unchanged; VariationSwatches' locale-switch Labels stays separate. `LabelsBaseTest` + `ModuleBaseLabelFieldsTest` added (826 tests / 2284 assertions green)

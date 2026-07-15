@@ -10,3 +10,6 @@ dist/
 .phpunit.result.cache
 coverage/
 .impeccable/
+
+# phpcs result cache (local build artifact)
+.phpcs.cache
