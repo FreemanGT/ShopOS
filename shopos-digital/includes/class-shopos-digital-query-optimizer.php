@@ -72,7 +72,20 @@ class ShopOS_Digital_Query_Optimizer {
         // under every renderer. (This hook runs at 100 — after WC_Query at
         // 10 has already rewritten the shop page into a product post-type
         // archive, so is_post_type_archive('product') covers the shop page.)
-        if ($this->is_product_archive_query($q)) return;
+        /**
+         * Filters whether this main query is exempt from no_found_rows
+         * forcing. Default: WooCommerce product archives (they consume the
+         * counts in classic renders — see above). Lets a store exempt other
+         * classically rendered paginated archives (e.g. a blog index) that
+         * would otherwise hit the same empty-pagination failure shape,
+         * without disabling the optimization site-wide.
+         *
+         * @since 1.7.7
+         *
+         * @param bool     $exempt Whether to skip forcing no_found_rows.
+         * @param WP_Query $q      The main query.
+         */
+        if (apply_filters('shopos_digital/qo_no_found_rows_exempt', $this->is_product_archive_query($q), $q)) return;
         $q->set('no_found_rows', true);
     }
 
@@ -83,8 +96,9 @@ class ShopOS_Digital_Query_Optimizer {
      */
     private function is_product_archive_query($q) {
         if ($q->is_post_type_archive('product')) return true;
-        if (!function_exists('get_object_taxonomies')) return false;
         $taxonomies = get_object_taxonomies('product');
+        // The !empty guard is load-bearing: is_tax(array()) matches ANY
+        // taxonomy archive.
         return !empty($taxonomies) && $q->is_tax($taxonomies);
     }
     public function no_found_rows_admin($q) {
