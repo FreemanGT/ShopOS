@@ -1,5 +1,9 @@
 # ShopOS Core — Changelog
 
+## [1.44.0] — 2026-07-17
+
+- Theme PLP flag: shopos_core_theme_template_plp_enabled registry entry — §11.4 row 5 (permanent kill-switch; resolved by the theme's shared loader)
+
 ## [1.43.0] — 2026-07-16
 
 - ShopOS Line §11.4 row 4 — theme/template_pdp permanent kill-switch in Feature_Flags::registry() + flag-gated theme-copy rung in ProductPage Template_Loader::template_file() (theme copy at templates/woo/single-product.php; public override still wins; missing-copy fallback logs once; Ruling-10 fonts_selfhost warning)
