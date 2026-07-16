@@ -6,7 +6,9 @@ WordPress/WooCommerce multi-store suite: custom theme + custom plugins, PHP 8.3.
 
 ## Skills
 
-This repo ships agent skills in `.claude/skills/` — each `<name>/SKILL.md` (plus `references/`) contains vetted, current guidance. **Before working in an area below, read the matching SKILL.md and follow it.** Claude Code loads them automatically; other agents (Cursor, Codex, …) should open the files directly.
+This repo ships agent skills in `.claude/skills/` — each `<name>/SKILL.md` (plus `references/`) contains vetted, current guidance.
+
+**Protocol — at the start of EVERY task:** check the table below, pick the best-fitting skill(s), and read the SKILL.md before writing code. Prefer the most specific match (`wordpress-elementor-dev` beats `wp-plugin-development` for widget work); combine skills when a task spans areas (e.g. an Elementor widget handling user input → `wordpress-elementor-dev` + `wp-security-review`). If nothing fits, say so and proceed — but the check itself is not optional. Claude Code auto-loads these skills; Cursor/Codex agents must open the files directly.
 
 | When working on | Read |
 |---|---|

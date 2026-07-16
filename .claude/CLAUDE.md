@@ -11,6 +11,6 @@ If there is no `.codegraph/` directory, skip CodeGraph entirely — indexing is 
 
 ## Skills
 
-Project skills live in `.claude/skills/` — the topic → skill map is in `AGENTS.md` ("Skills"). Before WordPress/WooCommerce/PHP/frontend work, invoke the matching skill: `wordpress-router` classifies WP tasks; `wp-project-triage` produces the repo report other `wp-*` skills expect as input.
+**At the start of every task, check the project skills and invoke the best-fitting one(s)** — the topic → skill map is in `AGENTS.md` ("Skills"). Prefer the most specific skill; combine when a task spans areas (e.g. `wordpress-elementor-dev` + `wp-security-review` for a widget handling user input). `wordpress-router` classifies ambiguous WP tasks; `wp-project-triage` produces the repo report other `wp-*` skills expect as input. Skipping the skill check is not an option for WordPress/WooCommerce/Elementor/PHP/frontend work.
 
 **Elementor only — no Gutenberg.** Never write block-editor code (custom blocks, block.json, theme.json workflows, block-based cart/checkout).
