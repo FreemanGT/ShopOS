@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.41.0] — 2026-07-16
+
+- shopos-core: Phase-1 leftover, part 2 of 2 — **ProductPage `Labels_Base` adoption (resolver only)**. The last of the four modules; Phase 1 fully drained. Its sectioned settings label loop is not `label_fields()`-compatible and stays, test-pinned. Baselines + `.pot` unchanged (935 tests / 2669 assertions green)
+
 ## [1.40.0] — 2026-07-16
 
 - shopos-core: Phase-1 leftover — **`Labels_Base` + `label_fields()` adoption (QuickView + ShopFilters + Search)**. The three modules drop their hand-rolled `Labels::get()` for the shared `Core\Labels_Base` (1.29.0, until now caller-free) and swap their `settings_schema()` label loops for `Module_Base::label_fields()`. Pure refactor, byte-identity pinned by `LabelsAdoptionTest`; ProductPage follows in its own PR (resolver only). Baselines + `.pot` strings unchanged (933 tests / 2639 assertions green)

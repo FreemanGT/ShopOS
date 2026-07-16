@@ -16,7 +16,8 @@
  * Behaviour is byte-identical to the hand-rolled `get()` — same option name,
  * same non-empty-trim override rule, same default fallback — so adoption is a
  * pure refactor. QuickView, ShopFilters and Search adopted in 1.40.0 (one PR,
- * within the ≤3-module gate); ProductPage follows in its own PR.
+ * within the ≤3-module gate); ProductPage adopted the resolver in 1.41.0
+ * (its sectioned settings loop is not label_fields()-compatible and stays).
  *
  * VariationSwatches' `Labels` is deliberately NOT a subclass: it is a
  * locale-switch resolver (he()/en(), no admin options) — a different contract.
