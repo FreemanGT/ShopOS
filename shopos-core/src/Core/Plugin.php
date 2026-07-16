@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Plugin {
 
-	const VERSION = '1.35.0';
+	const VERSION = '1.36.0';
 
 	/**
 	 * Singleton instance.
@@ -170,6 +170,9 @@ final class Plugin {
 		if ( Feature_Flags::is_enabled( 'design', 'panel' ) ) {
 			( new Design() )->boot();
 		}
+
+		// Scoped `wp shopos` CLI surface — a no-op unless WP-CLI is running.
+		CLI::register();
 
 		// Admin-only components.
 		if ( is_admin() ) {

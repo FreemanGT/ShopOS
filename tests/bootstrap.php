@@ -825,6 +825,33 @@ if ( ! function_exists( 'nocache_headers' ) ) {
 	function nocache_headers() {}
 }
 
+// WP-CLI stubs (Phase 3 / 1.36.0 — CliTest). Recording doubles, not fakes of
+// WP-CLI's control flow: real WP_CLI::error() exits the process, these only
+// append to $GLOBALS['fr_cli'] so tests can assert the message sequence
+// (Core\CLI already `return`s after every error() for exactly this reason).
+// The WP_CLI constant is deliberately NOT defined — CLI::register() must
+// no-op without it, and command methods don't need it.
+if ( ! class_exists( 'WP_CLI' ) ) {
+	eval( '
+		class WP_CLI {
+			public static function add_command( $name, $callable ) { $GLOBALS["fr_cli"]["commands"][ $name ] = $callable; }
+			public static function log( $msg )     { $GLOBALS["fr_cli"]["log"][]     = (string) $msg; }
+			public static function line( $msg )    { $GLOBALS["fr_cli"]["log"][]     = (string) $msg; }
+			public static function success( $msg ) { $GLOBALS["fr_cli"]["success"][] = (string) $msg; }
+			public static function warning( $msg ) { $GLOBALS["fr_cli"]["warning"][] = (string) $msg; }
+			public static function error( $msg )   { $GLOBALS["fr_cli"]["error"][]   = (string) $msg; }
+		}
+	' );
+}
+if ( ! function_exists( '\\WP_CLI\\Utils\\format_items' ) ) {
+	eval( '
+		namespace WP_CLI\\Utils;
+		function format_items( $format, $items, $fields ) {
+			$GLOBALS["fr_cli"]["tables"][] = array( "format" => $format, "items" => $items, "fields" => $fields );
+		}
+	' );
+}
+
 // PSR-4 autoloader mirroring the plugin's own.
 spl_autoload_register(
 	static function ( $class ) {

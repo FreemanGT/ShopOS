@@ -2,6 +2,22 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.36.0] — 2026-07-16
+
+- shopos-core: Phase-3 (mechanisms) — scoped **`wp shopos` CLI** (`Core\CLI`, registered behind the `WP_CLI` constant → inert on every web request). `wp shopos reindex <search|shop-filters>` drives the module's own `Indexer::reindex_batch()` in the admin tools' 50-product steps (byte-identical, incl. the final watermark-parking call); `wp shopos flags list` tables every `Feature_Flags::registry()` entry with its effective state + forced-by-filter column; `wp shopos flags set <module.feature> <on|off>` writes the admin page's exact option shape, validated against the registry, warning when a code-level filter overrides. Purely additive → no flag. `CliTest` + WP-CLI bootstrap stubs added (885 tests / 2440 assertions green)
+
+## [1.35.0] — 2026-07-15
+
+- shopos-core: Phase-3 (settings) — **ShopOS Design panel** (decisions §9, owner-approved): new `Core\Design` **ShopOS → Design** admin page — accent-preset picker + a curated 8-token allow-list (six `--shopos-ui-palette-*` colours + one `--shopos-ui-radius-md`) emitting as an inline `:root{…}` block after the theme token bridge so overrides win suite-wide; `--e-global-*` Style-Kit values stay the fallback. Gated by `shopos_core_design_panel_enabled` (default off) + `shopos_core/design/tokens_css_enabled` kill-switch filter; even flag-on is inert until something is changed. `DesignPanelTest` added (869 tests / 2384 assertions green)
+
+## [1.34.0] — 2026-07-15
+
+- shopos-core: Phase-3 (mechanisms) — new **`Core\Cache`** object-cache abstraction (`get`/`set`/`delete` + TTL + group): routes through `wp_cache_*` when a persistent object cache is installed, degrades byte-identically to the same `*_transient()` calls otherwise; `shopos_core/cache/use_object_cache` filter as kill-switch. Repointed the ShopFilters facet-response cache + rebuild lock onto the facade (group `shopos_shop_filters`). Purely additive → no flag. `CacheTest` added (856 tests / 2342 assertions green)
+
+## [1.33.0] — 2026-07-15
+
+- shopos-core: Phase-2 fan-out (item 4) — new **ShopOS Shop Filters** Elementor widget (`shopos_shop_filters`), a thin shell over the module's `[shopos_shop_filters]` shortcode (Search/ProductPage recipe: throwaway `new Shortcode()` → pure `render()`; no deferred hooks, so no double-inject). Reverses decision §5.4 (owner-approved, recorded as §5.9); shortcode unchanged, widget is a second placement surface. Purely additive → no flag. `ShopFiltersWidgetTest` added (849 tests / 2324 assertions green)
+
 ## [1.32.0] — 2026-07-15
 
 - shopos-core: Phase-2 fan-out (item 3) — new **ShopOS Restock Notify** Elementor widget (`shopos_restock_notify`), a thin shell over the RestockNotify module's already-shipped `[restock_notify]` shortcode, so dropping it onto a hook-bypassing Elementor-built or Theme-Builder product page places the back-in-stock subscribe form where the WooCommerce summary/variation auto-inject hooks never fire. One optional **Product ID** control (blank → the same auto-detection the shortcode uses) plus an info note (form wording lives in the Restock Notify admin); no asset deps (the module already enqueues its ~3 KB front-end assets). Unlike the Search / ProductPage widgets it delegates via `do_shortcode()` rather than a throwaway `new Frontend()` — the RestockNotify `Frontend` constructor registers deferred `wp_footer` / `woocommerce_get_stock_html` hooks (when `auto_inject` is on), and a second instance would double-register them; `do_shortcode()` reuses the booted instance's callback and shares its per-product dedup guard, so it never doubles a form the auto-inject path already placed. Wired via `elementor/widgets/register` inside the existing `boot()` (fires only with Elementor active → the module still boots Elementor-free). `get_name()` frozen at `shopos_restock_notify`. Purely additive → no flag. `RestockNotifyWidgetTest` added (845 tests / 2317 assertions green)
