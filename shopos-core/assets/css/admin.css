@@ -124,3 +124,51 @@
     font-size: 12px;
     line-height: 1.5;
 }
+
+/* Dashboard search (module-card filter + jump-to-setting) */
+.shopos-dash-search {
+    position: relative;
+    max-width: 480px;
+    margin: 16px 0 0;
+}
+.shopos-dash-search input[type="search"] {
+    width: 100%;
+}
+.shopos-dash-search-results {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    margin: 4px 0 0;
+    padding: 4px 0;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    max-height: 320px;
+    overflow: auto;
+}
+.shopos-dash-search-results li {
+    padding: 6px 12px;
+}
+.shopos-dash-search-results a {
+    display: block;
+    text-decoration: none;
+    font-weight: 600;
+}
+.shopos-dash-search-meta {
+    display: block;
+    font-size: 12px;
+    color: #646970;
+}
+.shopos-dash-search-empty {
+    color: #646970;
+    font-style: italic;
+}
+
+/* Highlight the field a jump-to-setting deep link landed on (#<option_name>). */
+.form-table :target {
+    outline: 2px solid #2271b1;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
