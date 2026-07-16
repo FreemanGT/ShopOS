@@ -69,14 +69,17 @@ jobs:
       - name: Install WordPress test suite
         env:
           WP_VERSION: ${{ matrix.wp }}
+          # The script's update-check reads $0 — via `bash <(curl …)` that
+          # DRAINS the rest of the script from the pipe, so it silently did
+          # nothing (the failure the dead workflow's `|| true` masked). Run
+          # the vendored copy from a real path and skip the self-check.
+          WP_INSTALL_TESTS_SKIP_UPDATE_CHECK: 'true'
         run: |
           set -e
-          # NOTE: the old `master` URL is a deprecated stub that warns and does
-          # nothing — the dead workflow's `|| true` + svn fallback was papering
-          # over exactly that. Use `main`, then hard-verify the lib landed so a
-          # silent no-op fails HERE, not at phpunit time.
-          bash <(curl -fsSL https://raw.githubusercontent.com/wp-cli/scaffold-command/main/templates/install-wp-tests.sh) \
+          bash shopos-digital/bin/install-wp-tests.sh \
             wordpress_test root root 127.0.0.1 "$WP_VERSION"
+          # Hard-verify the lib landed so a silent no-op fails HERE, not at
+          # phpunit time.
           test -f /tmp/wordpress-tests-lib/includes/functions.php
 
       - name: Install PHPUnit + polyfills
