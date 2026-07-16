@@ -1,5 +1,9 @@
 # ShopOS Core — Changelog
 
+## [1.42.2] — 2026-07-16
+
+- Theme fonts_selfhost flag + kit-slot de-hardcode (§11.4 row 3b): new theme/fonts_selfhost entry in Feature_Flags::registry() (the §11 Ruling-4 frozen name shopos_core_theme_fonts_selfhost_enabled; permanent kill-switch; Blueprint coverage auto-derives from the registry) + Design::kit_slots() — the sk_type_12/sk_type_2 Style-Kit slot mapping de-hardcoded behind the shopos_core_theme_kit_slots Core option with the shopos_core/theme/kit_slots filter, no UI, defaults byte-identical (Ruling 8). FeatureFlagsAdminTest scan roots extended to shopos-theme/ (bidirectional assertions intact)
+
 ## [1.42.1] — 2026-07-16
 
 - Updater: manifest cache 6h → 5min for near-instant dashboard updates

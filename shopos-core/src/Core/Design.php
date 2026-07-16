@@ -104,6 +104,54 @@ final class Design {
 	const RADIUS_MIN = 0;
 	const RADIUS_MAX = 24;
 
+	/**
+	 * Default Style Kits typography slots feeding the theme's two font tokens
+	 * (`--shopos-ui-font-body` / `--shopos-ui-font-display`). Must match the
+	 * `--e-global-typography-<slot>-font-family` slot ids hardcoded in
+	 * shopos-theme/assets/css/shopos-tokens.css.
+	 */
+	const KIT_SLOT_DEFAULTS = array(
+		'body'    => 'sk_type_12',
+		'display' => 'sk_type_2',
+	);
+
+	/**
+	 * Resolved Style Kits typography slot ids (decisions §11 Ruling 8).
+	 *
+	 * De-hardcodes the sk_type_12/sk_type_2 mapping behind a Core option
+	 * (`shopos_core_theme_kit_slots`, no UI) with a filterable value — the
+	 * default ships current behaviour, so a store that never touches either
+	 * lever changes nothing. Consumed by the theme's design-tokens bridge
+	 * through a guarded `class_exists` read (Core absent ⇒ defaults ⇒ the
+	 * bridge emits no re-map). Values are clamped to option-name-safe slugs
+	 * because they are interpolated into inline CSS. Static on purpose —
+	 * callable whether or not the design-panel flag booted this class
+	 * (the Blueprint precedent).
+	 *
+	 * @return array{body:string,display:string}
+	 */
+	public static function kit_slots() {
+		$value = get_option( 'shopos_core_theme_kit_slots', self::KIT_SLOT_DEFAULTS );
+		$value = wp_parse_args( is_array( $value ) ? $value : array(), self::KIT_SLOT_DEFAULTS );
+
+		/**
+		 * Filters the Style Kits typography slot ids the theme maps to
+		 * `--shopos-ui-font-body` / `--shopos-ui-font-display`.
+		 *
+		 * @param array{body:string,display:string} $value Slot ids.
+		 */
+		$value = apply_filters( 'shopos_core/theme/kit_slots', $value );
+
+		$out = array();
+		foreach ( self::KIT_SLOT_DEFAULTS as $key => $default ) {
+			$slot        = isset( $value[ $key ] ) && is_string( $value[ $key ] )
+				? preg_replace( '/[^a-z0-9_]/', '', strtolower( $value[ $key ] ) )
+				: '';
+			$out[ $key ] = '' !== $slot ? $slot : $default;
+		}
+		return $out;
+	}
+
 	/* -----------------------------------------------------------------
 	 * Boot — register admin page + settings + the front-end emit.
 	 * ----------------------------------------------------------------- */

@@ -26,28 +26,41 @@ final class FeatureFlagsAdminTest extends TestCase {
 		return $keys;
 	}
 
-	/** Scan shopos-core/src for is_enabled( 'module', 'feature' ) call sites. */
+	/**
+	 * Scan the flag-consuming source roots for is_enabled( 'module', 'feature' )
+	 * call sites. shopos-theme joined the roots with the §11 `theme` virtual
+	 * module (Ruling 4 pre-authorized this extension): theme flags have their
+	 * call sites theme-side via the pinned `class_exists( Feature_Flags ) ?
+	 * is_enabled(...) : false` read path, which this regex matches the same
+	 * as a core call. The bidirectional assertions below stay intact.
+	 */
 	private function source_referenced_keys(): array {
-		$root  = realpath( __DIR__ . '/../shopos-core/src' );
-		$this->assertNotFalse( $root, 'shopos-core/src must exist' );
+		$roots = array(
+			realpath( __DIR__ . '/../shopos-core/src' ),
+			realpath( __DIR__ . '/../shopos-theme' ),
+		);
 
 		$found = array();
-		$it    = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $root, FilesystemIterator::SKIP_DOTS ) );
-		foreach ( $it as $file ) {
-			if ( ! $file->isFile() || 'php' !== strtolower( $file->getExtension() ) ) {
-				continue;
-			}
-			// Migrations may read a *retired* flag's option to decide an
-			// upgrade path (e.g. the Wave 4g re-sync checks the retired
-			// settings_hub flag); those are intentionally absent from the
-			// registry, so don't treat a Migrations.php hit as a missing entry.
-			if ( false !== strpos( str_replace( '\\', '/', $file->getPathname() ), 'Core/Migrations.php' ) ) {
-				continue;
-			}
-			$src = (string) file_get_contents( $file->getPathname() );
-			if ( preg_match_all( "/is_enabled\\(\\s*'([a-z0-9_]+)'\\s*,\\s*'([a-z0-9_]+)'\\s*\\)/", $src, $m, PREG_SET_ORDER ) ) {
-				foreach ( $m as $hit ) {
-					$found[ $hit[1] . '/' . $hit[2] ] = true;
+		foreach ( $roots as $root ) {
+			$this->assertNotFalse( $root, 'flag scan root must exist' );
+
+			$it = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $root, FilesystemIterator::SKIP_DOTS ) );
+			foreach ( $it as $file ) {
+				if ( ! $file->isFile() || 'php' !== strtolower( $file->getExtension() ) ) {
+					continue;
+				}
+				// Migrations may read a *retired* flag's option to decide an
+				// upgrade path (e.g. the Wave 4g re-sync checks the retired
+				// settings_hub flag); those are intentionally absent from the
+				// registry, so don't treat a Migrations.php hit as a missing entry.
+				if ( false !== strpos( str_replace( '\\', '/', $file->getPathname() ), 'Core/Migrations.php' ) ) {
+					continue;
+				}
+				$src = (string) file_get_contents( $file->getPathname() );
+				if ( preg_match_all( "/is_enabled\\(\\s*'([a-z0-9_]+)'\\s*,\\s*'([a-z0-9_]+)'\\s*\\)/", $src, $m, PREG_SET_ORDER ) ) {
+					foreach ( $m as $hit ) {
+						$found[ $hit[1] . '/' . $hit[2] ] = true;
+					}
 				}
 			}
 		}

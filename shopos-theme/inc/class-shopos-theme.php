@@ -70,6 +70,26 @@ final class ShopOS_Theme {
 	 * Enqueue theme stylesheets and scripts.
 	 */
 	public function enqueue_assets() {
+		// ShopOS Line typography (decisions §11.4 row 3): serve the
+		// self-hosted Heebo/Assistant/Rubik faces and drop the Elementor
+		// kit's Google Fonts. Pinned read path per §11 Ruling 4, spelled as
+		// an FQCN — the theme is unnamespaced, so a bare Feature_Flags::class
+		// would resolve to \Feature_Flags and silently read false forever.
+		// Core absent ⇒ hard false ⇒ today's kit-loaded fonts.
+		if ( class_exists( '\ShopOS\Core\Core\Feature_Flags' )
+			&& \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'fonts_selfhost' ) ) {
+			wp_enqueue_style(
+				'shopos-fonts',
+				SHOPOS_THEME_ASSETS . '/css/shopos-fonts.css',
+				array(),
+				SHOPOS_THEME_VERSION
+			);
+			// Without this the kit still prints Google Fonts CSS and the
+			// row's recorded value delta — fonts without the kit dependency
+			// (§11.4 row 3) — silently isn't delivered.
+			add_filter( 'elementor/frontend/print_google_fonts', '__return_false' );
+		}
+
 		// Hello Elementor registers its stylesheet at wp_enqueue_scripts:10
 		// (we run at 20), but the parent enqueue can be absent — the
 		// hello_elementor_enqueue_style filter / "hide theme style" setting
