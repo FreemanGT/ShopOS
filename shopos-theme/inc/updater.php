@@ -22,7 +22,8 @@ const SHOPOS_THEME_UPDATE_MANIFEST = 'https://raw.githubusercontent.com/FreemanG
 const SHOPOS_THEME_UPDATE_CACHE = 'shopos_theme_update_manifest';
 
 /**
- * Fetch the "shopos-theme" entry from the release manifest, cached for 6 h.
+ * Fetch the "shopos-theme" entry from the release manifest, cached for 5 min
+ * (GitHub's raw CDN caches ~5 min, so a shorter TTL buys nothing).
  *
  * A failed lookup caches a short-lived sentinel so a down endpoint can't
  * slow every admin page load with a blocking HTTP request.
@@ -54,8 +55,8 @@ function shopos_theme_update_manifest() {
 		}
 	}
 
-	// Cache the miss briefly ('' sentinel), a hit for 6 hours.
-	set_site_transient( SHOPOS_THEME_UPDATE_CACHE, $entry ? $entry : '', $entry ? 6 * HOUR_IN_SECONDS : 15 * MINUTE_IN_SECONDS );
+	// Cache hit and miss ('' sentinel) alike for 5 minutes.
+	set_site_transient( SHOPOS_THEME_UPDATE_CACHE, $entry ? $entry : '', 5 * MINUTE_IN_SECONDS );
 
 	return $entry;
 }

@@ -1,5 +1,9 @@
 # ShopOS Core — Changelog
 
+## [1.42.1] — 2026-07-16
+
+- Updater: manifest cache 6h → 5min for near-instant dashboard updates
+
 ## [1.42.0] — 2026-07-16
 
 - Dashboard self-updates via ShopOS release channel (Updater service)
