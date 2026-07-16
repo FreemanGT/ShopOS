@@ -18,6 +18,22 @@ This is the aggregated changelog across all three packages. See each package's o
 
 - Theme fonts_selfhost flag + kit-slot de-hardcode (§11.4 row 3b): new theme/fonts_selfhost entry in Feature_Flags::registry() (the §11 Ruling-4 frozen name shopos_core_theme_fonts_selfhost_enabled; permanent kill-switch; Blueprint coverage auto-derives from the registry) + Design::kit_slots() — the sk_type_12/sk_type_2 Style-Kit slot mapping de-hardcoded behind the shopos_core_theme_kit_slots Core option with the shopos_core/theme/kit_slots filter, no UI, defaults byte-identical (Ruling 8). FeatureFlagsAdminTest scan roots extended to shopos-theme/ (bidirectional assertions intact)
 
+## [1.42.1] — 2026-07-16
+
+- Updater: manifest cache 6h → 5min for near-instant dashboard updates
+
+## [1.12.1] — 2026-07-16
+
+- Updater: manifest cache 6h → 5min for near-instant dashboard updates
+
+## [1.42.0] — 2026-07-16
+
+- Dashboard self-updates via ShopOS release channel (Updater service)
+
+## [1.12.0] — 2026-07-16
+
+- Dashboard self-updates via ShopOS release channel; add theme screenshot
+
 ## [1.11.30] — 2026-07-16
 
 - Self-hosted storefront webfonts (§11.4 row 3a): Heebo/Assistant/Rubik shipped as variable-weight woff2 (hebrew+latin subsets, Google Fonts' own subset splits and unicode-ranges, font-display swap) under assets/fonts/ + assets/css/shopos-fonts.css, with OFL licenses. INERT — nothing enqueues the file until the shopos_core_theme_fonts_selfhost_enabled flag ships (row 3b), so the render is unchanged
