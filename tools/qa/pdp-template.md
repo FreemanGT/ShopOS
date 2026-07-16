@@ -72,8 +72,11 @@ $WP eval 'var_dump( ( new \ShopOS\Core\Modules\ProductPage\Template_Loader( new 
 #    flag on + theme file renamed away → module copy + one 'info' Logger row
 
 # 7. Perf (R7.4): flag-on (fonts on) must pass the existing `product` budget;
-#    `product_pdp_on` is the committed flag-on key.
-php tools/perf-budget.php check
+#    `product_pdp_on` is the committed flag-on key. (Interface: arg 1 is the
+#    base URL — an earlier revision of this doc recorded a bare `check`
+#    argument, which the script would treat as the base URL and fail.)
+wp shopos flags set perf.probe on
+php tools/perf-budget.php "$ENV_URL" tools/perf-budgets.json
 
 # 8. Warning path (Ruling 10): template_pdp on + fonts_selfhost off for one
 #    request → exactly one 'warning' row in shopos_core_log; once per request.

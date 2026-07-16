@@ -1,0 +1,137 @@
+# PLP template QA — hook checklist + wp-env script (§11 Ruling 7.1 / 7.3)
+
+The committed per-template acceptance artifact for §11.4 row 5 (`shopos-theme/templates/woo/archive-product.php` behind `shopos_core_theme_template_plp_enabled`, resolved by the shared theme loader `shopos-theme/inc/class-shopos-template-loader.php`). The harness (`tools/qa/hook-listener.php`) is shared with the PDP file; it scopes its census per surface (`surface: "plp"` in the report).
+
+## Hook-firing checklist
+
+The theme PLP template must render the standard WooCommerce product-archive hook stacks so QuickView, HoverSwap, InfiniteScroll's wrapper, ShopFilters' query bridge, and WC's own breadcrumb / result count / catalog ordering / pagination light up unaided (the §7.2/§6.2 precedent). Flag-on and flag-off callback censuses must be **identical** (the loader registers unconditionally; flag-off behavior lives inside the callback).
+
+Counts below assume the reference wp-env catalog (6 published products, one page, no paging).
+
+| Hook | Kind | Must fire | Notes |
+|---|---|---|---|
+| `woocommerce_before_main_content` | action | 1× | wrapper 10 / breadcrumb 20 / WC_Structured_Data website data |
+| `woocommerce_shop_loop_header` | action | 1× | taxonomy archive header 10 |
+| `woocommerce_before_shop_loop` | action | 1× | notices 10 / result_count 20 / catalog_ordering 30; InfiniteScroll's `.shopos-is-wrapper` opens here |
+| `woocommerce_shop_loop` | action | 6× | once per product |
+| `woocommerce_before_shop_loop_item` | action | 6× | loop link open |
+| `woocommerce_before_shop_loop_item_title` | action | 6× | sale flash 10 + thumbnail 10 (HoverSwap rides here) |
+| `woocommerce_shop_loop_item_title` | action | 6× | |
+| `woocommerce_after_shop_loop_item_title` | action | 6× | rating 5 + price 10 |
+| `woocommerce_after_shop_loop_item` | action | 6× | link close 5 + add-to-cart 10 (QuickView trigger 15) |
+| `woocommerce_after_shop_loop` | action | 1× | pagination 10 |
+| `woocommerce_no_products_found` | action | 0× | fires instead of the loop on empty results only |
+| `woocommerce_after_main_content` | action | 1× | |
+| `woocommerce_sidebar` | action | 1× | kept for hook parity (owner ask 8, 2026-07-17) — judge the visual at R7.5; claim-scoped `remove_action` is the recorded fallback |
+
+## QA state pins (record with every run)
+
+- All **flag-on** runs pin the only Ruling-10-legal production configuration: `theme.fonts_selfhost` ON as well.
+- The shared harness's PDP determinism pins stay active (they are inert on archives — no related/upsell loops, no quantity inputs in the loop). **No archive-specific pin is committed**: WooCommerce's default catalog ordering (`menu_order title`) is deterministic. If a render-diff pair flakes anyway, the first candidates to pin for the window are `woocommerce_default_catalog_orderby` and any `?orderby=` request arg — budget a discovery loop (every PDP pin was found the hard way) and add the pin to the harness, both sides of the diff.
+- **Search carve-out (binding, Ruling 2):** the loader must never claim `is_search()` requests *or* any product main query with a request search term (`$_GET['s']`) — the live search page is an Elementor product archive where `is_search()` is FALSE and the term lives only in the URL (`Results_Query.php`), while native product search has `is_shop()` AND `is_search()` both true. Both shapes are asserted below.
+
+## wp-env gotchas (carried from pdp-template.md + row-5 additions)
+
+1. **WooCommerce Coming Soon mode** intercepts logged-out storefront requests: the page 200s with the "coming soon" screen and zero archive hooks fire. Check `wp option get woocommerce_coming_soon` first; set `no` for the QA window and restore.
+2. **Server identity**: pidfile's process must be the LISTENING pid's parent (`lsof -nP -iTCP:8888 -sTCP:LISTEN -t` → `ps -o ppid=`); kill squatters. No `?ver=` markers exist in this env.
+3. **SQLite read flake**: assert from the RECORDED artifacts (census report `flags`/`surface` + saved snapshots), never an extra ad-hoc fetch.
+4. **Assertion ordering**: a `wp eval` that constructs the loader and resolves the template writes its own log rows (fresh CLI process = fresh once-per-request guards). Clear `shopos_core_log` AFTER seam checks, BEFORE counting request-driven rows.
+5. **`.shopos-is-wrapper` renders in BOTH flag states in wp-env** — WC's own `archive-product.php` (the Elementor-free fallback) fires `woocommerce_before_shop_loop` too. It is a flag-ON delta only against the staging-with-Pro Elementor archive render. Do not read it as a leak.
+6. **Seed data**: the reference env ships one product_cat ('Uncategorized', 6 products) and zero tags. Taxonomy-archive QA needs `qa-cat` (3 products) and `qa-tag` seeded first; they stay seeded and are recorded here (shared env — declared QA window, restore-as-found otherwise).
+7. **The `shop` perf path is `/?page_id=5`** (plain permalinks; valid while the env's shop page ID is 5). `shop`/`category` budgets were seeded at 1.38.0 and were NOT part of the chain-merge byte reseed (only `product`/`product_pdp_on` were) — pre-measure flags-off on the pre-PR checkout to separate seeded-bytes drift from a real PLP regression.
+8. **Blueprint-import skew (recorded per owner ask 10b, 2026-07-17):** importing `template_plp = 1` onto a theme ≤ 1.13.x is a **silent no-op** — the loader itself ships with the template in 1.14.0, so nothing exists to log (Ruling 8's log-fallback wording holds only for PDP). The template then goes live the day the theme updates to ≥ 1.14.0 (fonts warning appears then if fonts are off). The flag remains an instant kill either way.
+
+## wp-env script
+
+```sh
+WP="wp --path=<wp-env docroot>"                     # the local env's WP-CLI invocation
+ENV_URL="http://localhost:<port>"
+SHOP_PATH="/?page_id=5"                             # canonical: 302s to /?post_type=product — snapshot the target
+CAT_PATH="/?product_cat=qa-cat"
+
+# 0. Declared QA window: point the wp-env symlinks at the row-5 checkout,
+#    install the harness, disable coming-soon, seed taxonomy (gotcha 6),
+#    verify server identity (gotcha 2).
+cp tools/qa/hook-listener.php <wp-env docroot>/wp-content/mu-plugins/
+$WP option update woocommerce_coming_soon no
+$WP term create product_cat qa-cat; $WP term create product_tag qa-tag   # + assign 3 products
+
+# 1. Flag-off baseline: census + snapshots on BOTH paths, on the pre-PR
+#    checkout AND the PR checkout.
+$WP shopos flags set theme.template_plp off
+curl -sL "$ENV_URL$SHOP_PATH" > /dev/null
+cp <wp-env docroot>/wp-content/shopos-qa-hook-report.json /tmp/plp-census-off-shop.json
+bash tools/render-diff.sh snapshot "$ENV_URL$SHOP_PATH" /tmp/plp-off-shop.html
+#    (repeat for CAT_PATH)
+
+# 2. R7.3(a): flag-off render identity across the PR — pre vs post snapshots
+#    byte-identical on both paths; zero Logger rows; callback census identical.
+bash tools/render-diff.sh diff /tmp/plp-off-shop-pre.html /tmp/plp-off-shop-post.html
+
+# 3. Flag-on: fonts first (Ruling 10), then the template flag.
+$WP shopos flags set theme.fonts_selfhost on
+$WP shopos flags set theme.template_plp on
+curl -sL "$ENV_URL$SHOP_PATH" > /dev/null
+cp <wp-env docroot>/wp-content/shopos-qa-hook-report.json /tmp/plp-census-on-shop.json
+bash tools/render-diff.sh snapshot "$ENV_URL$SHOP_PATH" /tmp/plp-on-shop.html
+#    (repeat for CAT_PATH)
+
+# 4. Census: every checklist hook fires at its listed count (fired block);
+#    callback census identical flag-on/off (loader registers unconditionally).
+#    NOTE — unlike row 4, flag-on vs flag-off BYTE parity is NOT expected
+#    (different render engines): assert hooks + census, record the flag-on
+#    snapshot for the R7.5 screenshot review instead of diffing it.
+diff <(jq -S '.census' /tmp/plp-census-off-shop.json) \
+     <(jq -S '.census' /tmp/plp-census-on-shop.json)
+jq '.fired' /tmp/plp-census-on-shop.json     # counts per the checklist table
+
+# 5. Search carve-out (BINDING): with the flag still ON —
+curl -sL "$ENV_URL/?s=test&post_type=product" > /dev/null
+jq '.surface, .template' <wp-env docroot>/wp-content/shopos-qa-hook-report.json
+#    → template must be WooCommerce's own archive-product.php (NOT the theme
+#      copy). Also assert the pure seam over the full matrix (both search
+#      shapes) via a fresh CLI process:
+$WP eval 'var_dump(
+  ShopOS_Theme_Template_Loader::should_claim_plp( false, true, true,  false, true,  "test" ), // native search: false
+  ShopOS_Theme_Template_Loader::should_claim_plp( false, true, true,  false, false, "test" ), // Elementor-search shape: false
+  ShopOS_Theme_Template_Loader::should_claim_plp( false, true, true,  false, false, "" ),     // shop: true
+  ShopOS_Theme_Template_Loader::should_claim_plp( false, true, false, true,  false, "" )      // taxonomy: true
+);'
+
+# 6. Resolution seam via a fresh CLI process (gotcha 4 — run BEFORE log counts):
+$WP eval '$l = new ShopOS_Theme_Template_Loader(); var_dump( $l->maybe_load_template( "/fallback.php" ) );'
+#    flag on  → <theme>/templates/woo/archive-product.php   (context "plp")
+#    flag off → "/fallback.php" untouched                    (context "")
+#    flag on + theme file renamed away → "/fallback.php" + one 'info' row
+
+# 7. R7.2 sibling asserts:
+#    - shopos-shop-cols-mobile <style> present with the theme_mod set, flag ON and OFF
+#    - QuickView trigger + HoverSwap overlay present in the flag-on HTML
+#    - .shopos-is-wrapper present in BOTH states (gotcha 5)
+#    - no shared-JS detector file in the PR diff; flag-OFF pass = the R7.3(a) run
+#    - updater seam (PR #24 rider): $WP eval 'var_dump( has_filter( "pre_set_site_transient_update_themes", "shopos_theme_check_update" ) );'
+
+# 8. Perf (R7.4): flag-on (fonts on) must pass shop_plp_on + category_plp_on
+#    (byte-copies of the committed flag-off budgets — never --seed).
+$WP shopos flags set perf.probe on
+php tools/perf-budget.php "$ENV_URL" tools/perf-budgets.json
+
+# 9. Ruling-10 warning path: template_plp on + fonts_selfhost off for one
+#    request → exactly one 'warning' row naming fonts_selfhost; once per request.
+$WP shopos flags set theme.fonts_selfhost off
+curl -sL "$ENV_URL$SHOP_PATH" > /dev/null
+$WP option get shopos_core_log --format=json | jq '.[0]'
+
+# 10. Restore the env as found: flags off, coming-soon restored, harness removed,
+#     symlinks back. qa-cat/qa-tag stay seeded (gotcha 6 records them).
+$WP shopos flags set theme.template_plp off
+$WP shopos flags set theme.fonts_selfhost off
+$WP shopos flags set perf.probe off
+rm <wp-env docroot>/wp-content/mu-plugins/hook-listener.php
+```
+
+Sibling checks recorded alongside (Ruling 7.2): InfiniteScroll's selector lists already match classic markup (`ul.products` / `li.product` / `nav.woocommerce-pagination a.next` are existing fallback entries) — the row-5 PR touches **no detector file**; if a container mis-detection ever surfaces flag-on, the recorded fix is the server-side `shopos_core/infinite_scroll/selector` filter gated on `ShopOS_Theme_Template_Loader::context() === 'plp'`, never a JS-list reorder (the 1.23.0→1.24.8 failure shape). The `Results_Query` search exclusion is asserted in step 5.
+
+## Results — §11.4 row 5 PR
+
+*(filled by the PR-B QA run)*
