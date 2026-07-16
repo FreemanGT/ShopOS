@@ -73,7 +73,7 @@ The guidelines above apply universally. The rules below are specific to this rep
 ## Repo state
 
 - Path: `/Users/freemansmain/Ai Projects/ShopOS/`
-- Packages: `shopos-core` (v1.38.0), `shopos-digital` (v1.7.5), `shopos-theme` (v1.11.28)
+- Packages: `shopos-core` (v1.38.0), `shopos-digital` (v1.7.6), `shopos-theme` (v1.11.28)
 - Audit: `/docs/archive/audit-2026-04-28.md` (feature-gap audit at v1.10.12; latest maturity audit: `/docs/audit-2026-07-03.md`)
 - Decisions: `/docs/decisions-2026-04-28.md` — read this before any roadmap work
 - Roadmap: `/docs/roadmap.md`

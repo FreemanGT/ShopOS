@@ -3,7 +3,7 @@
  * Plugin Name: ShopOS Digital
  * Plugin URI: https://shopos.digital
  * Description: All-in-one WordPress & WooCommerce optimization — database indexes, query tuning, autoload optimizer, security hardening, speed tuning, transient management, and bloat removal. Built for Elementor + WooCommerce stores.
- * Version: 1.7.5
+ * Version: 1.7.6
  * Author: ShopOS Digital
  * Author URI: https://shopos.digital
  * License: GPL v3
@@ -15,7 +15,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-define('SHOPOS_DIGITAL_VERSION', '1.7.5');
+define('SHOPOS_DIGITAL_VERSION', '1.7.6');
 define('SHOPOS_DIGITAL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SHOPOS_DIGITAL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('SHOPOS_DIGITAL_PLUGIN_FILE', __FILE__);

@@ -45,10 +45,16 @@ class ShopOS_Digital_Database {
 
         if (!empty($o['db_clean_revisions'])) {
             $r['revisions'] = $this->chunked_delete(
+                // MySQL forbids LIMIT on a multi-table DELETE, so the batch is
+                // bounded by a derived-table ID subquery instead (the inner
+                // SELECT must be wrapped in a derived table to reference the
+                // same table being deleted from). The old direct-LIMIT form
+                // errored on every run — swallowed as false — so this cleanup
+                // silently never deleted anything (caught by un-masked CI).
                 "DELETE a,b,c FROM {$wpdb->posts} a
                  LEFT JOIN {$wpdb->term_relationships} b ON a.ID=b.object_id
                  LEFT JOIN {$wpdb->postmeta} c ON a.ID=c.post_id
-                 WHERE a.post_type='revision' LIMIT {BATCH}"
+                 WHERE a.ID IN (SELECT ID FROM (SELECT ID FROM {$wpdb->posts} WHERE post_type='revision' LIMIT {BATCH}) batch)"
             );
         }
         if (!empty($o['db_clean_auto_drafts'])) {
@@ -58,10 +64,12 @@ class ShopOS_Digital_Database {
         }
         if (!empty($o['db_clean_trashed_posts'])) {
             $r['trashed_posts'] = $this->chunked_delete(
+                // Same derived-table batching as the revisions cleanup above
+                // (multi-table DELETE + LIMIT is invalid MySQL).
                 "DELETE a,b,c FROM {$wpdb->posts} a
                  LEFT JOIN {$wpdb->term_relationships} b ON a.ID=b.object_id
                  LEFT JOIN {$wpdb->postmeta} c ON a.ID=c.post_id
-                 WHERE a.post_status='trash' LIMIT {BATCH}"
+                 WHERE a.ID IN (SELECT ID FROM (SELECT ID FROM {$wpdb->posts} WHERE post_status='trash' LIMIT {BATCH}) batch)"
             );
         }
         if (!empty($o['db_clean_spam_comments'])) {

@@ -4,6 +4,7 @@ This is the aggregated changelog across all three packages. See each package's o
 
 ## [1.38.0] — 2026-07-16
 
+- shopos-digital **1.7.6**: fix uncovered by the un-masked CI — "Clean Revisions"/"Clean Trashed Posts" never deleted anything (multi-table `DELETE … LIMIT` is invalid MySQL; every run errored silently). Batch now bounded by a derived-table ID subquery. Plus a stale-transient-key fix in the months-cache tests.
 - shopos-core + repo CI: Phase-3 (mechanisms) — **Perf-budget tooling + un-masked shopos-digital CI**. (A) New root `.github/workflows/shopos-digital-ci.yml` (path-filtered; MySQL + WP test suite + PHPUnit ^9 on PHP 8.1/8.3; **no `|| true`**) replacing the nested workflow that never ran (wrong location) and was masked anyway; dead file deleted. (B) New gated `Core\Perf` probe (`shopos_core_perf_probe_enabled`, default off): `?shopos_perf=1` storefront requests respond with `X-ShopOS-Queries`/`X-ShopOS-Render-Ms`/`X-ShopOS-Mem-MB`; `tools/perf-budget.php` checks each template in `tools/perf-budgets.json` against budget (exit-code gate, `--seed` mode with ×1.25 headroom) — a local/staging gate, not CI (repo CI has no WordPress). `PerfProbeTest` added (897 tests / 2495 assertions green)
 
 ## [1.37.0] — 2026-07-16

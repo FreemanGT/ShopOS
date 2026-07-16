@@ -9,13 +9,13 @@ class Test_FD_Query_Optimizer extends WP_UnitTestCase {
         $opts['qo_cache_post_months'] = 1;
         update_option(SHOPOS_DIGITAL_OPT, $opts);
 
-        set_transient('shopos_digital_months_post_posts', 'seeded', HOUR_IN_SECONDS);
-        $this->assertNotFalse(get_transient('shopos_digital_months_post_posts'));
+        set_transient('shopos_digital_months_post', 'seeded', HOUR_IN_SECONDS);
+        $this->assertNotFalse(get_transient('shopos_digital_months_post'));
 
         self::factory()->post->create(array('post_status' => 'publish'));
 
         // Invalidation should have nuked the transient.
-        $this->assertFalse(get_transient('shopos_digital_months_post_posts'));
+        $this->assertFalse(get_transient('shopos_digital_months_post'));
     }
 
     public function test_months_cache_invalidated_on_trash() {
@@ -24,11 +24,11 @@ class Test_FD_Query_Optimizer extends WP_UnitTestCase {
         update_option(SHOPOS_DIGITAL_OPT, $opts);
 
         $post_id = self::factory()->post->create(array('post_status' => 'publish'));
-        set_transient('shopos_digital_months_post_posts', 'seeded', HOUR_IN_SECONDS);
+        set_transient('shopos_digital_months_post', 'seeded', HOUR_IN_SECONDS);
 
         wp_trash_post($post_id);
 
-        $this->assertFalse(get_transient('shopos_digital_months_post_posts'));
+        $this->assertFalse(get_transient('shopos_digital_months_post'));
     }
 
     public function test_remove_sort_strips_orderby_when_enabled() {
