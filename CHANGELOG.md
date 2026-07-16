@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.44.1] — 2026-07-17
+
+- Design panel: fix the Design admin page 403ing on click — submenu registered before the parent `shopos` menu existed, so the page hook was filed under `admin_page_*` and never resolved; register at `admin_menu` priority 11
+
 ## [1.13.0] — 2026-07-16
 
 - ShopOS Line §11.4 row 4 — ship the theme-owned PDP template at templates/woo/single-product.php (verbatim copy of the Core module template; resolved only by Core's flag-gated loader when shopos_core_theme_template_pdp_enabled is on; inert by file presence)

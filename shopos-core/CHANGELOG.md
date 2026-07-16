@@ -1,5 +1,9 @@
 # ShopOS Core — Changelog
 
+## [1.44.1] — 2026-07-17
+
+- Design panel: fix the Design admin page dying with "Sorry, you are not allowed to access this page" — the submenu registered on `admin_menu` before the Settings Hub created the parent `shopos` menu, so WordPress filed the page hook under `admin_page_*` instead of `shopos_page_*`; the menu link rendered but the page never resolved. Register the submenu at priority 11 (hub parent registers at 10).
+
 ## [1.43.0] — 2026-07-16
 
 - ShopOS Line §11.4 row 4 — theme/template_pdp permanent kill-switch in Feature_Flags::registry() + flag-gated theme-copy rung in ProductPage Template_Loader::template_file() (theme copy at templates/woo/single-product.php; public override still wins; missing-copy fallback logs once; Ruling-10 fonts_selfhost warning)

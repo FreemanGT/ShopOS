@@ -162,7 +162,12 @@ final class Design {
 	 */
 	public function boot() {
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array( $this, 'register_menu' ) );
+			// Priority 11: the Settings Hub registers the parent `shopos` menu at
+			// the default 10, and Design boots before the hub in Plugin::boot().
+			// Adding this submenu before its parent exists makes WordPress file
+			// the page hook under `admin_page_*` instead of `shopos_page_*`, so
+			// the menu entry renders but the page itself 403s.
+			add_action( 'admin_menu', array( $this, 'register_menu' ), 11 );
 			add_action( 'admin_init', array( $this, 'register_settings' ) );
 		}
 		// Priority 30: after the theme token bridge's prio-21 emit, so overrides win.
