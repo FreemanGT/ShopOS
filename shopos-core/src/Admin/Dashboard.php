@@ -131,6 +131,8 @@ final class Dashboard {
 
 		$this->render_health_bar( $health_bar );
 
+		$this->render_search( $modules );
+
 		if ( ! $onboarded ) {
 			$this->render_onboarding();
 		}
@@ -142,6 +144,75 @@ final class Dashboard {
 		echo '</div>';
 
 		echo '</div>';
+	}
+
+	/**
+	 * Build the "jump to setting" index: one row per settings-schema entry
+	 * across the given modules. Each row deep-links to the module's settings
+	 * page with the option name as the URL fragment — every field renders
+	 * with `id="<option_name>"` (Settings_Hub::render_field), so the browser
+	 * scrolls straight to it and the admin.css `:target` rule highlights it.
+	 *
+	 * Row keys are deliberately terse (this ships as embedded JSON):
+	 * `s` setting label, `m` module label, `c` section, `u` url,
+	 * `h` raw match haystack (lowercased client-side so Hebrew/non-ASCII
+	 * labels fold the same way the query does).
+	 *
+	 * @param \ShopOS\Core\Core\Module_Interface[] $modules Modules.
+	 * @return array<int,array<string,string>>
+	 */
+	public static function settings_index( array $modules ) {
+		$index = array();
+		foreach ( $modules as $module ) {
+			$schema = $module->settings_schema();
+			if ( empty( $schema ) ) {
+				continue;
+			}
+			$page_url = admin_url( 'admin.php?page=shopos-' . $module->id() );
+			foreach ( $schema as $key => $def ) {
+				$label   = isset( $def['label'] ) && '' !== $def['label'] ? (string) $def['label'] : (string) $key;
+				$section = isset( $def['section'] ) ? (string) $def['section'] : '';
+				$index[] = array(
+					's' => $label,
+					'm' => (string) $module->label(),
+					'c' => $section,
+					'u' => $page_url . '#' . $module->option_name( $key ),
+					'h' => $label . ' ' . $key . ' ' . $section . ' ' . $module->label(),
+				);
+			}
+		}
+		return $index;
+	}
+
+	/**
+	 * Render the dashboard search: one box that live-filters the module cards
+	 * AND surfaces "jump to setting" deep links from the embedded index. Pure
+	 * client-side — the index is inlined as JSON at render time, no AJAX/REST.
+	 *
+	 * @param \ShopOS\Core\Core\Module_Interface[] $modules Modules.
+	 */
+	private function render_search( $modules ) {
+		$index = self::settings_index( $modules );
+
+		echo '<div class="shopos-dash-search">';
+		printf(
+			'<input type="search" id="shopos-dash-search" placeholder="%s" autocomplete="off"/>',
+			esc_attr__( 'Search modules & settings…', 'shopos-core' )
+		);
+		echo '<ul id="shopos-dash-search-results" class="shopos-dash-search-results" style="display:none"></ul>';
+		// JSON_HEX_TAG escapes </> so an embedded "</script>" cannot break out.
+		printf(
+			'<script type="application/json" id="shopos-dash-search-index">%s</script>',
+			wp_json_encode( $index, JSON_HEX_TAG | JSON_UNESCAPED_UNICODE )
+		);
+		echo '</div>';
+
+		// Same inline-script precedent as the onboarding-dismiss handler above:
+		// tiny, page-specific, builds DOM via textContent only (no HTML strings).
+		printf(
+			'<script>(function(){var i=document.getElementById("shopos-dash-search");if(!i)return;var l=document.getElementById("shopos-dash-search-results");var x=[];try{x=JSON.parse(document.getElementById("shopos-dash-search-index").textContent||"[]");}catch(e){}x.forEach(function(r){r.h=(r.h||"").toLowerCase();});var none=%s;function cards(){return document.querySelectorAll(".shopos-modules-grid .shopos-module-card");}i.addEventListener("input",function(){var q=i.value.trim().toLowerCase();cards().forEach(function(c){c.style.display=(!q||(c.getAttribute("data-shopos-card")||"").toLowerCase().indexOf(q)!==-1)?"":"none";});l.textContent="";if(!q){l.style.display="none";return;}var hits=x.filter(function(r){return r.h.indexOf(q)!==-1;}).slice(0,10);hits.forEach(function(r){var li=document.createElement("li"),a=document.createElement("a"),m=document.createElement("span");a.href=r.u;a.textContent=r.s;m.className="shopos-dash-search-meta";m.textContent=r.m+(r.c?" — "+r.c:"");li.appendChild(a);li.appendChild(m);l.appendChild(li);});if(!hits.length){var li=document.createElement("li");li.className="shopos-dash-search-empty";li.textContent=none;l.appendChild(li);}l.style.display="";});})();</script>', // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
+			wp_json_encode( __( 'No matching settings', 'shopos-core' ) )
+		);
 	}
 
 	/**
@@ -157,7 +228,8 @@ final class Dashboard {
 		$settings_url  = admin_url( 'admin.php?page=shopos-' . $module->id() );
 		$schema        = $module->settings_schema();
 
-		echo '<div class="shopos-module-card">';
+		// data-shopos-card = the dashboard search's card-filter haystack.
+		echo '<div class="shopos-module-card" data-shopos-card="' . esc_attr( $module->label() . ' ' . $module->description() ) . '">';
 		echo '<div class="shopos-module-head">';
 		echo '<h2 class="shopos-module-title">' . esc_html( $module->label() ) . '</h2>';
 		echo '<span class="shopos-dot ' . esc_attr( $level_class ) . '" title="' . esc_attr( $health['message'] ) . '"></span>';

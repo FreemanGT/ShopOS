@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.37.0] — 2026-07-16
+
+- shopos-core: Phase-3 (settings) — **Dashboard overview search + jump-to-setting**: one search box on the ShopOS dashboard that live-filters the module cards and deep-links matching settings (`Dashboard::settings_index()` — one row per schema entry, linking to the module page + `#<option_name>` fragment; fields render with that id, and a new `:target` CSS rule highlights the landing field). Client-side only over embedded JSON — no AJAX/REST. Admin-only, purely additive → no flag. `DashboardSearchTest` added (890 tests / 2457 assertions green)
+
 ## [1.36.0] — 2026-07-16
 
 - shopos-core: Phase-3 (mechanisms) — scoped **`wp shopos` CLI** (`Core\CLI`, registered behind the `WP_CLI` constant → inert on every web request). `wp shopos reindex <search|shop-filters>` drives the module's own `Indexer::reindex_batch()` in the admin tools' 50-product steps (byte-identical, incl. the final watermark-parking call); `wp shopos flags list` tables every `Feature_Flags::registry()` entry with its effective state + forced-by-filter column; `wp shopos flags set <module.feature> <on|off>` writes the admin page's exact option shape, validated against the registry, warning when a code-level filter overrides. Purely additive → no flag. `CliTest` + WP-CLI bootstrap stubs added (885 tests / 2440 assertions green)
