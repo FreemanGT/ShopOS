@@ -8,6 +8,10 @@
 
 - Dashboard self-updates via ShopOS release channel (Updater service)
 
+## [1.41.0] — 2026-07-16
+
+- Phase-1 leftover, part 2 of 2 — **ProductPage `Labels_Base` adoption (resolver only)**: ProductPage drops its hand-rolled `Labels::get()` for the shared `Core\Labels_Base` resolver — the last of the four modules, closing the Phase-1 DRY item. Resolver semantics byte-identical (same `shopos_core_product_page_label_<key>` options, non-empty-trim override rule, English-default fallback, empty-default trust lines stay hidden). Deliberately **not** adopting `Module_Base::label_fields()`: the module's settings label loop routes each key to a per-prefix section, words descriptions differently ("Leave blank to use the default: %s") and special-cases the empty-default trust lines — none reproducible by the helper; the custom loop stays, pinned untouched by `LabelsAdoptionTest`. No hook/option/string changes: baselines + `.pot` unchanged, Blueprint keys unaffected (935 tests / 2669 assertions green)
+
 ## [1.40.0] — 2026-07-16
 
 - Phase-1 leftover — **`Labels_Base` + `label_fields()` adoption (QuickView + ShopFilters + Search)**: the three modules drop their hand-rolled `Labels::get()` for the shared `Core\Labels_Base` resolver (1.29.0, until now caller-free; late static binding on each subclass's `OPTION_PREFIX` + `defaults()`) and replace their `settings_schema()` label loops with `Module_Base::label_fields()` + the module's intro sentence. A pure refactor — same option names, same non-empty-trim override rule, same English-default fallback, same schema arrays — pinned by the new `LabelsAdoptionTest` (each schema label block `===` a verbatim replica of the pre-adoption loop; resolver override / blank-falls-back / default parity per module prefix; `count_text()` still rides the inherited resolver). ProductPage adopts the resolver in its own follow-up PR (≤3-module gate; its sectioned label loop is not `label_fields()`-compatible). No hook, option, or string changes: baselines unchanged, `.pot` regenerated reference-only, Blueprint's 35 label keys unaffected (933 tests / 2639 assertions green)

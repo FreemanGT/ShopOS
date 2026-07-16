@@ -20,12 +20,21 @@
 
 namespace ShopOS\Core\Modules\ProductPage;
 
+use ShopOS\Core\Core\Labels_Base;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Label resolver.
+ * Label resolver. Resolution (option override → English default) lives in
+ * Labels_Base::get(); this class only owns the prefix + canonical map.
+ *
+ * Unlike QuickView/ShopFilters/Search, the module's settings_schema() does
+ * NOT use Module_Base::label_fields(): its label loop routes each key to a
+ * per-prefix settings section, words descriptions differently ("Leave blank
+ * to use the default: %s") and special-cases the empty-default trust lines —
+ * none of which label_fields() reproduces. The custom loop stays.
  */
-final class Labels {
+final class Labels extends Labels_Base {
 
 	const OPTION_PREFIX = 'shopos_core_product_page_label_';
 
@@ -66,21 +75,5 @@ final class Labels {
 				'default' => '',
 			),
 		);
-	}
-
-	/**
-	 * Resolve a label by short key. Returns the saved override when non-empty,
-	 * otherwise the English default.
-	 *
-	 * @param string $key Short key (e.g. 'coupon_intro').
-	 * @return string
-	 */
-	public static function get( $key ) {
-		$key      = (string) $key;
-		$defaults = self::defaults();
-		$default  = isset( $defaults[ $key ] ) ? (string) $defaults[ $key ]['default'] : '';
-
-		$value = (string) get_option( self::OPTION_PREFIX . $key, '' );
-		return '' !== trim( $value ) ? $value : $default;
 	}
 }
