@@ -67,25 +67,12 @@ final class Module extends Module_Base {
 	 * @return array
 	 */
 	public function settings_schema() {
-		$schema = array();
-
-		$first = true;
-		foreach ( Labels::defaults() as $key => $def ) {
-			/* translators: %s: the English default wording for this field. */
-			$desc = sprintf( __( 'Default: %s', 'shopos-core' ), $def['default'] );
-			if ( $first ) {
-				$desc = __( 'Quick-view wording — leave a field blank to use its English default.', 'shopos-core' ) . ' ' . $desc;
-			}
-			$schema[ 'label_' . $key ] = array(
-				'label'       => $def['label'],
-				'type'        => 'text',
-				'default'     => '',
-				'description' => $desc,
-			);
-			$first = false;
-		}
-
-		return $schema;
+		// One text field per storefront string, built by the shared helper
+		// (byte-identical to the loop this replaced).
+		return $this->label_fields(
+			Labels::defaults(),
+			__( 'Quick-view wording — leave a field blank to use its English default.', 'shopos-core' )
+		);
 	}
 
 	/**

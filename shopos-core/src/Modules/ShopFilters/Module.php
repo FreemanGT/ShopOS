@@ -56,26 +56,14 @@ final class Module extends Module_Base {
 	 * @return array
 	 */
 	public function settings_schema() {
-		$schema = array();
-
-		// Storefront label overrides: one text field per panel string. Blank = the
-		// English default (Labels::get() falls back), so leaving these empty keeps
-		// the current output. Lets the site set Hebrew wording without code.
-		$first = true;
-		foreach ( Labels::defaults() as $key => $def ) {
-			/* translators: %s: the English default wording for this field. */
-			$desc = sprintf( __( 'Default: %s', 'shopos-core' ), $def['default'] );
-			if ( $first ) {
-				$desc = __( 'Filter panel wording — leave a field blank to use its English default.', 'shopos-core' ) . ' ' . $desc;
-			}
-			$schema[ 'label_' . $key ] = array(
-				'label'       => $def['label'],
-				'type'        => 'text',
-				'default'     => '',
-				'description' => $desc,
-			);
-			$first = false;
-		}
+		// Storefront label overrides: one text field per panel string, built by
+		// the shared helper (byte-identical to the loop this replaced). Blank =
+		// the English default (Labels::get() falls back), so leaving these empty
+		// keeps the current output. Lets the site set Hebrew wording without code.
+		$schema = $this->label_fields(
+			Labels::defaults(),
+			__( 'Filter panel wording — leave a field blank to use its English default.', 'shopos-core' )
+		);
 
 		$schema['price_bands'] = array(
 			'label'       => __( 'Price bands', 'shopos-core' ),

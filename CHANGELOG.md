@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.40.0] — 2026-07-16
+
+- shopos-core: Phase-1 leftover — **`Labels_Base` + `label_fields()` adoption (QuickView + ShopFilters + Search)**. The three modules drop their hand-rolled `Labels::get()` for the shared `Core\Labels_Base` (1.29.0, until now caller-free) and swap their `settings_schema()` label loops for `Module_Base::label_fields()`. Pure refactor, byte-identity pinned by `LabelsAdoptionTest`; ProductPage follows in its own PR (resolver only). Baselines + `.pot` strings unchanged (933 tests / 2639 assertions green)
+
 ## [1.39.0] — 2026-07-16
 
 - shopos-core: Phase-3 (mechanisms) — **Store Blueprint (settings-as-code)** (decisions **§10**, owner-approved; last Phase-3 item): `Core\Blueprint` + `wp shopos blueprint export|diff|import`. A named, versioned JSON preset of the five behavioural surfaces (modules map, all registry flags, the four modules' labels, facet config, design tokens — 52 code-enumerated keys). The file is a valid Wave 0.3 envelope + a `blueprint` block, so it also imports via ShopOS → Tools and shares the rolling-5 auto-backup/Restore. Apply is strict (typo ⇒ zero writes), idempotent (unchanged-skip), merges the modules map by id, keeps not-yet-indexed facet taxonomies with a warning, and auto-backs-up first. Flagless-additive (WP_CLI-guarded, operator-invoked). `BlueprintTest` + CLI coverage added (928 tests / 2621 assertions green)
