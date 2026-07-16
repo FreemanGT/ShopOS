@@ -234,6 +234,29 @@ function shopos_theme_design_tokens_css() {
 		}
 	}
 
+	// --- Style Kits typography slots (decisions §11 Ruling 8) ---.
+	// Core's Design::kit_slots() de-hardcodes which --e-global-typography-*
+	// slots feed the two font tokens; the defaults match shopos-tokens.css
+	// verbatim, so a re-map is emitted ONLY when a store re-points a slot
+	// (option or filter). Core absent ⇒ defaults ⇒ no emit. Slot values are
+	// sanitised to [a-z0-9_] by kit_slots() before this interpolation.
+	// method_exists guard: kit_slots() arrived in core 1.42.0 — a theme zip
+	// updated ahead of core must not fatal the storefront (§11.5).
+	if ( class_exists( '\ShopOS\Core\Core\Design' )
+		&& method_exists( '\ShopOS\Core\Core\Design', 'kit_slots' ) ) {
+		$fr_slots  = \ShopOS\Core\Core\Design::kit_slots();
+		$fr_stacks = array(
+			'body'    => array( '--shopos-ui-font-body', "'Heebo', 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" ),
+			'display' => array( '--shopos-ui-font-display', "'Assistant', var(--shopos-ui-font-body)" ),
+		);
+		foreach ( \ShopOS\Core\Core\Design::KIT_SLOT_DEFAULTS as $fr_key => $fr_default ) {
+			if ( isset( $fr_slots[ $fr_key ] ) && $fr_slots[ $fr_key ] !== $fr_default ) {
+				list( $fr_var, $fr_fallback ) = $fr_stacks[ $fr_key ];
+				$decls[]                      = "{$fr_var}:var(--e-global-typography-{$fr_slots[$fr_key]}-font-family, {$fr_fallback});";
+			}
+		}
+	}
+
 	if ( array() === $decls ) {
 		return '';
 	}

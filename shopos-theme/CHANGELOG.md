@@ -1,5 +1,9 @@
 # ShopOS Theme — Changelog
 
+## [1.11.31] — 2026-07-16
+
+- Wire the fonts_selfhost flag (§11.4 row 3b): flag ON enqueues the 1.11.30 self-hosted shopos-fonts.css and suppresses the Elementor kit Google Fonts print; flag OFF/Core-absent byte-identical (pinned FQCN read path — the theme is unnamespaced). design-tokens bridge gains the kit-slot re-map: emits --shopos-ui-font-body/display only when Design::kit_slots() differs from the defaults
+
 ## [1.11.30] — 2026-07-16
 
 - Self-hosted storefront webfonts (§11.4 row 3a): Heebo/Assistant/Rubik shipped as variable-weight woff2 (hebrew+latin subsets, Google Fonts' own subset splits and unicode-ranges, font-display swap) under assets/fonts/ + assets/css/shopos-fonts.css, with OFL licenses. INERT — nothing enqueues the file until the shopos_core_theme_fonts_selfhost_enabled flag ships (row 3b), so the render is unchanged

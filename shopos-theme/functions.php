@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SHOPOS_THEME_VERSION',   '1.11.30' );
+define( 'SHOPOS_THEME_VERSION',   '1.11.31' );
 define( 'SHOPOS_THEME_PATH',      get_stylesheet_directory() );
 define( 'SHOPOS_THEME_URL',       get_stylesheet_directory_uri() );
 define( 'SHOPOS_THEME_ASSETS',    SHOPOS_THEME_URL . '/assets' );

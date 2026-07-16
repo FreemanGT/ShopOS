@@ -94,4 +94,44 @@ final class DesignPanelTest extends TestCase {
 		$this->assertStringContainsString( '--shopos-ui-radius-md:6px;', $css );
 		$this->assertStringStartsWith( ':root{', $css );
 	}
+
+	/* -------- kit_slots (§11 Ruling 8 — Core-option default, filterable, no UI) -------- */
+
+	public function test_kit_slots_default_to_the_hardcoded_style_kit_slots(): void {
+		unset( $GLOBALS['fr_opts']['shopos_core_theme_kit_slots'] );
+		$this->assertSame( array( 'body' => 'sk_type_12', 'display' => 'sk_type_2' ), Design::kit_slots() );
+		$this->assertSame( Design::KIT_SLOT_DEFAULTS, Design::kit_slots() );
+	}
+
+	public function test_kit_slots_option_overrides_and_merges_with_defaults(): void {
+		$GLOBALS['fr_opts']['shopos_core_theme_kit_slots'] = array( 'body' => 'sk_type_3' );
+		$this->assertSame( array( 'body' => 'sk_type_3', 'display' => 'sk_type_2' ), Design::kit_slots() );
+		unset( $GLOBALS['fr_opts']['shopos_core_theme_kit_slots'] );
+	}
+
+	public function test_kit_slots_filter_overrides_the_option(): void {
+		$GLOBALS['fr_opts']['shopos_core_theme_kit_slots'] = array( 'body' => 'sk_type_3' );
+		add_filter(
+			'shopos_core/theme/kit_slots',
+			static function ( $slots ) {
+				$slots['body'] = 'sk_type_9';
+				return $slots;
+			}
+		);
+		$this->assertSame( 'sk_type_9', Design::kit_slots()['body'] );
+		unset( $GLOBALS['fr_opts']['shopos_core_theme_kit_slots'], $GLOBALS['fr_hooks']['shopos_core/theme/kit_slots'] );
+	}
+
+	public function test_kit_slots_sanitises_unsafe_values_back_to_defaults(): void {
+		// Slot ids are interpolated into inline CSS, so anything outside
+		// [a-z0-9_] is stripped; an emptied slot falls back to its default.
+		$GLOBALS['fr_opts']['shopos_core_theme_kit_slots'] = array(
+			'body'    => 'sk_type_5;}body{display:none',
+			'display' => ');url(evil',
+		);
+		$this->assertSame( array( 'body' => 'sk_type_5bodydisplaynone', 'display' => 'urlevil' ), Design::kit_slots() );
+		$GLOBALS['fr_opts']['shopos_core_theme_kit_slots'] = array( 'body' => '<<<>>>', 'display' => 42 );
+		$this->assertSame( Design::KIT_SLOT_DEFAULTS, Design::kit_slots() );
+		unset( $GLOBALS['fr_opts']['shopos_core_theme_kit_slots'] );
+	}
 }

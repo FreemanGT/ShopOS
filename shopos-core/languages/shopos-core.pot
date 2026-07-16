@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-16T13:44:43+00:00\n"
+"POT-Creation-Date: 2026-07-16T14:22:27+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: shopos-core\n"
@@ -389,33 +389,33 @@ msgstr ""
 msgid "Borders"
 msgstr ""
 
-#: src/Core/Design.php:283
-#: src/Core/Design.php:284
-#: src/Core/Design.php:344
+#: src/Core/Design.php:331
+#: src/Core/Design.php:332
+#: src/Core/Design.php:392
 msgid "Design"
 msgstr ""
 
-#: src/Core/Design.php:345
+#: src/Core/Design.php:393
 msgid "Set the store accent and a few core surfaces. Changes flow to every ShopOS module through the shared design tokens; leave a field blank to inherit the theme."
 msgstr ""
 
-#: src/Core/Design.php:355
+#: src/Core/Design.php:403
 msgid "Accent preset"
 msgstr ""
 
-#: src/Core/Design.php:366
+#: src/Core/Design.php:414
 msgid "Repaints the accent colour. Override it below to fine-tune."
 msgstr ""
 
-#: src/Core/Design.php:378
+#: src/Core/Design.php:426
 msgid "inherit"
 msgstr ""
 
-#: src/Core/Design.php:386
+#: src/Core/Design.php:434
 msgid "Corner radius"
 msgstr ""
 
-#: src/Core/Design.php:394
+#: src/Core/Design.php:442
 msgid "Blank inherits the theme radius."
 msgstr ""
 
@@ -473,6 +473,14 @@ msgstr ""
 
 #: src/Core/Feature_Flags.php:148
 msgid "When on, storefront requests carrying ?shopos_perf=1 respond with X-ShopOS-Queries / X-ShopOS-Render-Ms / X-ShopOS-Mem-MB headers, read by the tools/perf-budget.php per-template budget check. Off = no listeners, no headers. Numbers only — nothing sensitive."
+msgstr ""
+
+#: src/Core/Feature_Flags.php:155
+msgid "Theme — self-hosted storefront fonts"
+msgstr ""
+
+#: src/Core/Feature_Flags.php:156
+msgid "When on, the ShopOS theme serves Heebo / Assistant / Rubik from its own @font-face files (woff2) and suppresses the Elementor kit's Google Fonts, so storefront typography no longer depends on the kit loading. Off = today's kit-loaded fonts, byte-identical. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Needs the ShopOS theme active; without Core the theme reads this as hard false."
 msgstr ""
 
 #. translators: %s: the English default wording for this field.
