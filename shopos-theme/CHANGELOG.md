@@ -1,5 +1,13 @@
 # ShopOS Theme — Changelog
 
+## [1.12.1] — 2026-07-16
+
+- Updater: manifest cache 6h → 5min for near-instant dashboard updates
+
+## [1.12.0] — 2026-07-16
+
+- Dashboard self-updates via ShopOS release channel; add theme screenshot
+
 ## [1.11.29] — 2026-07-16
 
 - CSS-chain robustness (§11.4 row 2 / Ruling 6.2): shopos-tokens hard-depended on the parent hello-elementor-theme-style handle, so a store where the parent enqueue is absent (hello_elementor_enqueue_style filter / hide-theme-style setting / renamed handle after a parent update) silently lost the entire ShopOS CSS chain — tokens, theme, RTL and every inline block attached to the shopos-tokens handle (design-token bridge, Design panel). enqueue_assets() now depends on the parent handle only when it is registered at our wp_enqueue_scripts:20 slot (parent registers at 10) and falls back to a no-dependency enqueue otherwise; print order with the parent present is unchanged
