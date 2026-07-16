@@ -12,9 +12,9 @@ class Test_FD_Cleanup_Chunks extends WP_UnitTestCase {
         });
 
         $opts = ShopOS_Digital_Core::get_defaults();
-        $opts['db_cleanup_revisions']   = 1;
-        $opts['db_cleanup_auto_drafts'] = 1;
-        $opts['db_cleanup_trash_posts'] = 1;
+        $opts['db_clean_revisions']   = 1;
+        $opts['db_clean_auto_drafts'] = 1;
+        $opts['db_clean_trashed_posts'] = 1;
         update_option(SHOPOS_DIGITAL_OPT, $opts);
 
         $db = new ShopOS_Digital_Database($opts);
@@ -60,7 +60,7 @@ class Test_FD_Cleanup_Chunks extends WP_UnitTestCase {
         $this->assertGreaterThan(0, $rev_count_before);
 
         $opts = ShopOS_Digital_Core::get_defaults();
-        $opts['db_cleanup_revisions'] = 1;
+        $opts['db_clean_revisions'] = 1;
         update_option(SHOPOS_DIGITAL_OPT, $opts);
 
         $db = new ShopOS_Digital_Database($opts);
