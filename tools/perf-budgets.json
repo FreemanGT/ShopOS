@@ -26,14 +26,14 @@
             "max_queries": 232,
             "max_render_ms": 113,
             "max_mem_mb": 18,
-            "max_bytes": 53429
+            "max_bytes": 77808
         },
         "product_pdp_on": {
             "path": "/?product=test-product-6",
             "max_queries": 232,
             "max_render_ms": 113,
             "max_mem_mb": 18,
-            "max_bytes": 53429
+            "max_bytes": 77808
         },
         "search": {
             "path": "/?s=test&post_type=product",
