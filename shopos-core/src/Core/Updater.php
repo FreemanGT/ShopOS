@@ -34,7 +34,8 @@ final class Updater {
 	}
 
 	/**
-	 * Fetch the "shopos-core" entry from the release manifest, cached for 6 h.
+	 * Fetch the "shopos-core" entry from the release manifest, cached for 5 min
+	 * (GitHub's raw CDN caches ~5 min, so a shorter TTL buys nothing).
 	 * A failed lookup caches a short-lived sentinel so a down endpoint can't
 	 * add a blocking HTTP request to every update check.
 	 *
@@ -65,7 +66,7 @@ final class Updater {
 			}
 		}
 
-		set_site_transient( self::CACHE_KEY, $entry ? $entry : '', $entry ? 6 * HOUR_IN_SECONDS : 15 * MINUTE_IN_SECONDS );
+		set_site_transient( self::CACHE_KEY, $entry ? $entry : '', 5 * MINUTE_IN_SECONDS );
 
 		return $entry;
 	}

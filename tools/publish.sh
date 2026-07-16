@@ -114,4 +114,4 @@ if [[ "${TARGET}" == "core" || "${TARGET}" == "both" ]]; then
     publish_one "shopos-core" "${v}" "${DIST}/shopos-core-${v}.zip" "${ROOT}/shopos-core/CHANGELOG.md"
 fi
 
-log "Done. Sites will see the update within 6 h (or immediately via Dashboard → Updates → Check Again)."
+log "Done. Sites see the update within ~5 min (or instantly via Dashboard → Updates → Check Again)."

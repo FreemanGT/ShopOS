@@ -2,6 +2,14 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.42.1] — 2026-07-16
+
+- Updater: manifest cache 6h → 5min for near-instant dashboard updates
+
+## [1.12.1] — 2026-07-16
+
+- Updater: manifest cache 6h → 5min for near-instant dashboard updates
+
 ## [1.42.0] — 2026-07-16
 
 - Dashboard self-updates via ShopOS release channel (Updater service)
