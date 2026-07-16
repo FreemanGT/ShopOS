@@ -1,5 +1,13 @@
 # ShopOS Core — Changelog
 
+## [1.42.1] — 2026-07-16
+
+- Updater: manifest cache 6h → 5min for near-instant dashboard updates
+
+## [1.42.0] — 2026-07-16
+
+- Dashboard self-updates via ShopOS release channel (Updater service)
+
 ## [1.41.0] — 2026-07-16
 
 - Phase-1 leftover, part 2 of 2 — **ProductPage `Labels_Base` adoption (resolver only)**: ProductPage drops its hand-rolled `Labels::get()` for the shared `Core\Labels_Base` resolver — the last of the four modules, closing the Phase-1 DRY item. Resolver semantics byte-identical (same `shopos_core_product_page_label_<key>` options, non-empty-trim override rule, English-default fallback, empty-default trust lines stay hidden). Deliberately **not** adopting `Module_Base::label_fields()`: the module's settings label loop routes each key to a per-prefix section, words descriptions differently ("Leave blank to use the default: %s") and special-cases the empty-default trust lines — none reproducible by the helper; the custom loop stays, pinned untouched by `LabelsAdoptionTest`. No hook/option/string changes: baselines + `.pot` unchanged, Blueprint keys unaffected (935 tests / 2669 assertions green)
