@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       ShopOS Core
  * Plugin URI:        https://shoposdigital.com/shopos-core
- * Description:       Unified WooCommerce functionality for the ShopOS Theme. Hosts eight independently togglable modules: Variation Swatches, Restock Notify, Variable Stock Fix, Product Feed, Infinite Scroll, Cheapest Default Variation, Category Slider, Product Slider. Owns all data and business logic so features survive a theme switch.
+ * Description:       Unified WooCommerce functionality for the ShopOS suite. Hosts all storefront features as independently togglable modules, auto-discovered from src/Modules/. Data, options, and module behavior survive a theme switch; the designed buy-path rendering deliberately does not (the ShopOS Line, decisions §11).
  * Version:           1.42.1
  * Author:            ShopOS Digital
  * Author URI:        https://shoposdigital.com

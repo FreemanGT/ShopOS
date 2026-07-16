@@ -4,7 +4,7 @@
 
 ## Packages
 
-- **`shopos-theme/`** — child theme of [Hello Elementor](https://wordpress.org/themes/hello-elementor/). Presentation only: design tokens, typography, RTL, WooCommerce template overrides.
+- **`shopos-theme/`** — child theme of [Hello Elementor](https://wordpress.org/themes/hello-elementor/). Design tokens, typography, RTL, WooCommerce presentation refinements — plus, behind permanent default-off ShopOS Core feature flags, the buy-path templates at `shopos-theme/templates/woo/` (the ShopOS Line, decisions §11).
 - **`shopos-core/`** — single plugin containing all storefront features as independently togglable modules. New modules are auto-discovered from `src/Modules/`.
 - **`shopos-digital/`** — standalone WordPress/WooCommerce performance plugin: database indexes, query tuning, autoload optimizer, security hardening, speed tuning, transient management, bloat removal.
 
