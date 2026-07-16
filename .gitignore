@@ -5,7 +5,10 @@ dist/
 .DS_Store
 .idea/
 .vscode/
-.claude/
+# .claude: commit skills + project instructions; keep local state/settings out
+.claude/*
+!.claude/skills/
+!.claude/CLAUDE.md
 *.zip
 .phpunit.result.cache
 coverage/
