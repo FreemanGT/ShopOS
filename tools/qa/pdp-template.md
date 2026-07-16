@@ -18,7 +18,14 @@ The theme PDP template must render the standard WooCommerce single-product hook 
 ## QA state pins (record with every run)
 
 - All **flag-on** runs pin the only Ruling-10-legal production configuration: `theme.fonts_selfhost` ON as well.
-- The harness pins loop determinism (related shuffle off, upsells orderby `title`) — required for every render-diff pair; without it WC randomizes related/upsell order per request and the zero-diff bar is unmeetable. The same pinning applies to the staging run if the Elementor PDP renders related products.
+- The harness pins render determinism — required for every render-diff pair; without ALL of these the zero-diff bar is unmeetable by design (found the hard way): (a) related-product selection shuffle OFF, (b) related/upsell **display** orderby pinned (`orderby=rand` on the output args is independent of the selection shuffle), (c) the `uniqid()` quantity input id pinned per product. The same pinning applies to the staging run if the Elementor PDP renders related products.
+
+## wp-env gotchas (each cost a debugging round — check BEFORE trusting any run)
+
+1. **WooCommerce Coming Soon mode** intercepts logged-out storefront requests (store-pages-only mode included): the page 200s with the "coming soon" screen, zero product hooks fire, and the census looks plausible while testing nothing. Check `wp option get woocommerce_coming_soon` first; set `no` for the QA window and restore.
+2. **Server identity**: `shopos-env.sh start` can silently lose the port to a stale php process from an earlier session while your curls "work" against old code. Before every run set: pidfile's process must be the LISTENING pid's parent (`lsof -nP -iTCP:8888 -sTCP:LISTEN -t` → `ps -o ppid=`), and kill any squatter. Asset `?ver=` markers are NOT available in this env (version query args are stripped).
+3. **SQLite read flake**: under rapid CLI-write→HTTP-read alternation an occasional request reads a just-written option as absent. Assert from the RECORDED artifacts (the census report's `flags` block + the saved snapshot), never from an extra ad-hoc fetch.
+4. **Assertion ordering**: a `wp eval` that constructs `Template_Loader` and calls `template_file()` writes its own log rows (fresh CLI process = fresh once-per-request guard). Clear `shopos_core_log` AFTER seam checks, BEFORE counting request-driven rows.
 
 ## wp-env script
 

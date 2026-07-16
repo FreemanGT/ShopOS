@@ -26,14 +26,43 @@
 
 defined( 'ABSPATH' ) || exit;
 
-// ---- Job 2: pin loop order (must load for BOTH sides of every diff run) ----
+// ---- Job 2: pin request-varying render noise (must load for BOTH sides ----
+// of every diff run). Three independent sources, all found the hard way:
 
+// (a) Related-product SELECTION: WC shuffles the related-ids pool per request.
 add_filter( 'woocommerce_product_related_posts_shuffle', '__return_false' );
+
+// (b) Related/upsell DISPLAY order: independent of (a) — both loops default
+// orderby=rand (related via wc_products_array_orderby on the output args,
+// upsells via woocommerce_upsell_display's $orderby). Priority 10001 so the
+// pin lands after any template-level args filter (the PDP template pins
+// posts_per_page/columns at 9999 and deliberately leaves orderby alone).
+add_filter(
+	'woocommerce_output_related_products_args',
+	static function ( $args ) {
+		$args['orderby'] = 'title';
+		$args['order']   = 'asc';
+		return $args;
+	},
+	10001
+);
 add_filter(
 	'woocommerce_upsells_orderby',
 	static function () {
 		return 'title';
 	}
+);
+
+// (c) The quantity input id is uniqid()-generated per request — pin it to a
+// deterministic per-product id.
+add_filter(
+	'woocommerce_quantity_input_args',
+	static function ( $args, $product ) {
+		$args['input_id'] = 'quantity_qa_' . ( $product instanceof WC_Product ? $product->get_id() : '0' );
+		return $args;
+	},
+	10,
+	2
 );
 
 // ---- Job 1: hook-firing census ----
