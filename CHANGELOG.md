@@ -2,6 +2,22 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.42.1] — 2026-07-16
+
+- Updater: manifest cache 6h → 5min for near-instant dashboard updates
+
+## [1.12.1] — 2026-07-16
+
+- Updater: manifest cache 6h → 5min for near-instant dashboard updates
+
+## [1.42.0] — 2026-07-16
+
+- Dashboard self-updates via ShopOS release channel (Updater service)
+
+## [1.12.0] — 2026-07-16
+
+- Dashboard self-updates via ShopOS release channel; add theme screenshot
+
 ## [1.41.0] — 2026-07-16
 
 - shopos-core: Phase-1 leftover, part 2 of 2 — **ProductPage `Labels_Base` adoption (resolver only)**. The last of the four modules; Phase 1 fully drained. Its sectioned settings label loop is not `label_fields()`-compatible and stays, test-pinned. Baselines + `.pot` unchanged (935 tests / 2669 assertions green)
