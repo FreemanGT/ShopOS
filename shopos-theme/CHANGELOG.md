@@ -1,5 +1,13 @@
 # ShopOS Theme — Changelog
 
+## [1.12.1] — 2026-07-16
+
+- Updater: manifest cache 6h → 5min for near-instant dashboard updates
+
+## [1.12.0] — 2026-07-16
+
+- Dashboard self-updates via ShopOS release channel; add theme screenshot
+
 ## [1.11.31] — 2026-07-16
 
 - Wire the fonts_selfhost flag (§11.4 row 3b): flag ON enqueues the 1.11.30 self-hosted shopos-fonts.css and suppresses the Elementor kit Google Fonts print; flag OFF/Core-absent byte-identical (pinned FQCN read path — the theme is unnamespaced). design-tokens bridge gains the kit-slot re-map: emits --shopos-ui-font-body/display only when Design::kit_slots() differs from the defaults
