@@ -1,0 +1,39 @@
+{
+    "templates": {
+        "home": {
+            "path": "/",
+            "max_queries": 220,
+            "max_render_ms": 137,
+            "max_mem_mb": 18,
+            "max_bytes": 47213
+        },
+        "shop": {
+            "path": "/?page_id=5",
+            "max_queries": 123,
+            "max_render_ms": 56,
+            "max_mem_mb": 15,
+            "max_bytes": 50605
+        },
+        "category": {
+            "path": "/?product_cat=uncategorized",
+            "max_queries": 240,
+            "max_render_ms": 117,
+            "max_mem_mb": 18,
+            "max_bytes": 50622
+        },
+        "product": {
+            "path": "/?product=test-product-6",
+            "max_queries": 232,
+            "max_render_ms": 113,
+            "max_mem_mb": 18,
+            "max_bytes": 53429
+        },
+        "search": {
+            "path": "/?s=test&post_type=product",
+            "max_queries": 235,
+            "max_render_ms": 118,
+            "max_mem_mb": 18,
+            "max_bytes": 50695
+        }
+    }
+}

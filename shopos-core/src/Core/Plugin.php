@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Plugin {
 
-	const VERSION = '1.37.0';
+	const VERSION = '1.38.0';
 
 	/**
 	 * Singleton instance.
@@ -173,6 +173,13 @@ final class Plugin {
 
 		// Scoped `wp shopos` CLI surface — a no-op unless WP-CLI is running.
 		CLI::register();
+
+		// Perf probe (gated, default off): diagnostic response headers for
+		// tools/perf-budget.php. Even flag-on registers nothing unless the
+		// request carries ?shopos_perf=1.
+		if ( Feature_Flags::is_enabled( 'perf', 'probe' ) ) {
+			( new Perf() )->boot();
+		}
 
 		// Admin-only components.
 		if ( is_admin() ) {

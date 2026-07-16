@@ -1,0 +1,96 @@
+# ShopOS Digital CI — the UNMASKED successor to the dead nested workflow that
+# lived at shopos-digital/.github/workflows/ (GitHub only registers workflows
+# from the repo root, so that file never ran; and even its phpunit step ended
+# in `|| true`). This one actually gates: the PHPUnit step has no mask.
+#
+# Path-filtered — runs only when shopos-digital/** (or this file) changes.
+# PHP 7.4 lane dropped along with the rest of the repo (2026-05-03 / 1.11.22).
+name: ShopOS Digital CI
+
+on:
+  push:
+    paths:
+      - 'shopos-digital/**'
+      - '.github/workflows/shopos-digital-ci.yml'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'shopos-digital/**'
+      - '.github/workflows/shopos-digital-ci.yml'
+  workflow_dispatch:
+
+jobs:
+  phpunit:
+    name: PHPUnit (PHP ${{ matrix.php }}, WP ${{ matrix.wp }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.1'
+            wp: 'latest'
+          - php: '8.3'
+            wp: 'latest'
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer
+          extensions: mysqli, mbstring, xml, curl, zip
+          coverage: none
+
+      - name: php -l on every shopos-digital source file
+        run: |
+          find shopos-digital -type f -name '*.php' \
+            -not -path '*/node_modules/*' -not -path '*/vendor/*' \
+            -print0 | xargs -0 -n1 php -l >/dev/null
+
+      - name: Install SVN
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
+      - name: Install WordPress test suite
+        env:
+          WP_VERSION: ${{ matrix.wp }}
+          # The script's update-check reads $0 — via `bash <(curl …)` that
+          # DRAINS the rest of the script from the pipe, so it silently did
+          # nothing (the failure the dead workflow's `|| true` masked). Run
+          # the vendored copy from a real path and skip the self-check.
+          WP_INSTALL_TESTS_SKIP_UPDATE_CHECK: 'true'
+        run: |
+          set -e
+          # Final `true` = skip-database-creation: the MySQL service already
+          # provisions wordpress_test (MYSQL_DATABASE), and the script's
+          # exists-already path is an interactive prompt that dies headless.
+          bash shopos-digital/bin/install-wp-tests.sh \
+            wordpress_test root root 127.0.0.1 "$WP_VERSION" true
+          # Hard-verify the lib landed so a silent no-op fails HERE, not at
+          # phpunit time.
+          test -f /tmp/wordpress-tests-lib/includes/functions.php
+
+      - name: Install PHPUnit + polyfills
+        run: composer require --dev --working-dir=/tmp --no-interaction --no-progress "phpunit/phpunit:^9" "yoast/phpunit-polyfills:^2"
+
+      - name: Run PHPUnit (unmasked)
+        working-directory: shopos-digital
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          WP_TESTS_PHPUNIT_POLYFILLS_PATH: /tmp/vendor/yoast/phpunit-polyfills
+        run: /tmp/vendor/bin/phpunit --configuration phpunit.xml.dist

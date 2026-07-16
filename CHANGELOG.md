@@ -2,6 +2,11 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.38.0] — 2026-07-16
+
+- shopos-digital **1.7.6**: fix uncovered by the un-masked CI — "Clean Revisions"/"Clean Trashed Posts" never deleted anything (multi-table `DELETE … LIMIT` is invalid MySQL; every run errored silently). Batch now bounded by a derived-table ID subquery. Plus a stale-transient-key fix in the months-cache tests.
+- shopos-core + repo CI: Phase-3 (mechanisms) — **Perf-budget tooling + un-masked shopos-digital CI**. (A) New root `.github/workflows/shopos-digital-ci.yml` (path-filtered; MySQL + WP test suite + PHPUnit ^9 on PHP 8.1/8.3; **no `|| true`**) replacing the nested workflow that never ran (wrong location) and was masked anyway; dead file deleted. (B) New gated `Core\Perf` probe (`shopos_core_perf_probe_enabled`, default off): `?shopos_perf=1` storefront requests respond with `X-ShopOS-Queries`/`X-ShopOS-Render-Ms`/`X-ShopOS-Mem-MB`; `tools/perf-budget.php` checks each template in `tools/perf-budgets.json` against budget (exit-code gate, `--seed` mode with ×1.25 headroom) — a local/staging gate, not CI (repo CI has no WordPress). `PerfProbeTest` added (897 tests / 2495 assertions green)
+
 ## [1.37.0] — 2026-07-16
 
 - shopos-core: Phase-3 (settings) — **Dashboard overview search + jump-to-setting**: one search box on the ShopOS dashboard that live-filters the module cards and deep-links matching settings (`Dashboard::settings_index()` — one row per schema entry, linking to the module page + `#<option_name>` fragment; fields render with that id, and a new `:target` CSS rule highlights the landing field). Client-side only over embedded JSON — no AJAX/REST. Admin-only, purely additive → no flag. `DashboardSearchTest` added (890 tests / 2457 assertions green)
