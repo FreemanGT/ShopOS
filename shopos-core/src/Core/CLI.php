@@ -17,6 +17,10 @@
  * shape the Feature Flags admin page writes ('1'/'0'), validated against
  * Feature_Flags::registry() so a typo can never mint a stray option.
  *
+ * `blueprint export|diff|import` (decisions §10) is operator-invoked
+ * settings-as-code over Core\Blueprint — still no web surface, still inside
+ * the §4.4 line.
+ *
  * @package ShopOSCore
  */
 
@@ -167,9 +171,127 @@ final class CLI {
 		\WP_CLI::error( 'Unknown subcommand. Use "list" or "set".' );
 	}
 
+	/**
+	 * Export, diff or import a Store Blueprint (settings-as-code).
+	 *
+	 * ## OPTIONS
+	 *
+	 * <action>
+	 * : "export", "diff" or "import".
+	 * ---
+	 * options:
+	 *   - export
+	 *   - diff
+	 *   - import
+	 * ---
+	 *
+	 * <file>
+	 * : Path to the blueprint JSON file.
+	 *
+	 * [<name>]
+	 * : Blueprint name on export. Defaults to the file name without extension.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp shopos blueprint export flagship.json
+	 *     wp shopos blueprint diff flagship.json
+	 *     wp shopos blueprint import flagship.json
+	 *
+	 * @param array $args Positional args.
+	 */
+	public function blueprint( $args ) {
+		$action = isset( $args[0] ) ? (string) $args[0] : '';
+		$file   = isset( $args[1] ) ? (string) $args[1] : '';
+
+		if ( ! in_array( $action, array( 'export', 'diff', 'import' ), true ) ) {
+			\WP_CLI::error( 'Unknown subcommand. Use "export", "diff" or "import".' );
+			return;
+		}
+		if ( '' === $file ) {
+			\WP_CLI::error( 'Missing file path. Usage: wp shopos blueprint ' . $action . ' <file>.' );
+			return;
+		}
+
+		if ( 'export' === $action ) {
+			$name     = self::blueprint_name( $file, isset( $args[2] ) ? (string) $args[2] : '' );
+			$envelope = Blueprint::export_payload( $name );
+			$json     = wp_json_encode( $envelope, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
+			if ( false === file_put_contents( $file, $json . "\n" ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+				\WP_CLI::error( sprintf( 'Could not write %s.', $file ) );
+				return;
+			}
+			\WP_CLI::success( sprintf( 'Exported blueprint "%s" (%d options) to %s.', $name, count( $envelope['options'] ), $file ) );
+			return;
+		}
+
+		// diff / import both start from a decoded file.
+		$envelope = self::read_blueprint_file( $file );
+		if ( is_string( $envelope ) ) {
+			\WP_CLI::error( $envelope );
+			return;
+		}
+
+		$known_modules = array_keys( Plugin::instance()->registry()->all() );
+		$available_tax = self::indexed_taxonomies();
+
+		if ( 'diff' === $action ) {
+			// diff validates here; import delegates to apply()'s own validate.
+			$check = Blueprint::validate( $envelope );
+			if ( ! $check['ok'] ) {
+				\WP_CLI::error( sprintf( 'Invalid blueprint (%s). No options were written.', $check['reason'] ) );
+				return;
+			}
+			$diff = Blueprint::diff_rows( $envelope, $known_modules, $available_tax );
+			foreach ( array_merge( $check['warnings'], $diff['warnings'] ) as $warning ) {
+				\WP_CLI::warning( $warning );
+			}
+			\WP_CLI\Utils\format_items( 'table', $diff['rows'], array( 'option', 'action', 'current', 'blueprint' ) );
+			$writes = count( array_filter( $diff['rows'], static function ( $row ) {
+				return 'write' === $row['action'];
+			} ) );
+			\WP_CLI::log( sprintf( '%d option(s) would change, %d already match. Nothing was written.', $writes, count( $diff['rows'] ) - $writes ) );
+			return;
+		}
+
+		$result = Blueprint::apply( $envelope, $known_modules, $available_tax );
+		foreach ( $result['warnings'] as $warning ) {
+			\WP_CLI::warning( $warning );
+		}
+		if ( ! $result['ok'] ) {
+			\WP_CLI::error( sprintf( 'Invalid blueprint (%s). No options were written.', $result['reason'] ) );
+			return;
+		}
+		\WP_CLI::success(
+			sprintf(
+				'Applied blueprint "%s": %d written, %d unchanged. Pre-apply backup taken %s (ShopOS → Tools restores it).',
+				$result['name'],
+				$result['written'],
+				$result['skipped'],
+				$result['backup_at']
+			)
+		);
+	}
+
 	/* -----------------------------------------------------------------
 	 * Pure seams (unit-tested)
 	 * ----------------------------------------------------------------- */
+
+	/**
+	 * Resolve the blueprint name for an export: the explicit positional when
+	 * given, else the file's base name without its extension.
+	 *
+	 * @param string $file Export file path.
+	 * @param string $arg  Optional explicit name positional.
+	 * @return string
+	 */
+	public static function blueprint_name( $file, $arg ) {
+		if ( '' !== trim( $arg ) ) {
+			return trim( $arg );
+		}
+		$base = basename( $file );
+		$dot  = strrpos( $base, '.' );
+		return ( false === $dot || 0 === $dot ) ? $base : substr( $base, 0, $dot );
+	}
 
 	/**
 	 * Map a CLI reindex target to its module id, or null when unknown.
@@ -241,5 +363,46 @@ final class CLI {
 			return false;
 		}
 		return null;
+	}
+
+	/* -----------------------------------------------------------------
+	 * I/O glue (exercised in live-QA, like the reindex loop)
+	 * ----------------------------------------------------------------- */
+
+	/**
+	 * Read + decode a blueprint file. Returns the decoded array, or an error
+	 * message string for WP_CLI::error().
+	 *
+	 * @param string $file Path.
+	 * @return array|string
+	 */
+	private static function read_blueprint_file( $file ) {
+		if ( ! is_readable( $file ) ) {
+			return sprintf( 'Cannot read %s.', $file );
+		}
+		$decoded = json_decode( (string) file_get_contents( $file ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		if ( ! is_array( $decoded ) ) {
+			return sprintf( '%s is not valid JSON.', $file );
+		}
+		return $decoded;
+	}
+
+	/**
+	 * Taxonomies present in the ShopFilters index, or null when the index is
+	 * unavailable (module never indexed / table absent) — null suppresses the
+	 * not-indexed-yet facet warnings rather than firing them for everything.
+	 *
+	 * @return string[]|null
+	 */
+	private static function indexed_taxonomies() {
+		// Only touch the index table when the module is enabled — its
+		// migration guarantees the table then, so a fresh store never sees a
+		// raw missing-table query (WP_DEBUG would print the db error).
+		$module = Plugin::instance()->registry()->get( 'shop_filters' );
+		if ( ! $module || ! $module->is_enabled() ) {
+			return null;
+		}
+		$taxonomies = ( new \ShopOS\Core\Modules\ShopFilters\Index_Repository() )->available_taxonomies();
+		return array() === $taxonomies ? null : $taxonomies;
 	}
 }

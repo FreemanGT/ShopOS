@@ -142,6 +142,56 @@ final class CliTest extends TestCase {
 		$this->assertStringContainsString( 'Unknown subcommand', $GLOBALS['fr_cli']['error'][0] );
 	}
 
+	/* -------- blueprint (decisions §10) -------- */
+
+	public function test_blueprint_name_prefers_the_explicit_arg_then_the_file_stem(): void {
+		$this->assertSame( 'flagship', CLI::blueprint_name( '/tmp/whatever.json', ' flagship ' ) );
+		$this->assertSame( 'flagship', CLI::blueprint_name( '/stores/flagship.json', '' ) );
+		$this->assertSame( 'flagship.v2', CLI::blueprint_name( 'flagship.v2.json', '' ) );
+		$this->assertSame( 'flagship', CLI::blueprint_name( 'flagship', '' ) );
+		$this->assertSame( '.hidden', CLI::blueprint_name( '.hidden', '' ) );
+	}
+
+	public function test_blueprint_unknown_action_errors(): void {
+		( new CLI() )->blueprint( array( 'bogus', 'x.json' ) );
+		$this->assertStringContainsString( 'Unknown subcommand', $GLOBALS['fr_cli']['error'][0] );
+	}
+
+	public function test_blueprint_requires_a_file_path(): void {
+		( new CLI() )->blueprint( array( 'export' ) );
+		$this->assertStringContainsString( 'Missing file path', $GLOBALS['fr_cli']['error'][0] );
+	}
+
+	public function test_blueprint_export_writes_a_valid_blueprint_file(): void {
+		update_option( 'shopos_core_design_accent', 'forest' );
+		$file = sys_get_temp_dir() . '/shopos-bp-' . uniqid() . '.json';
+
+		( new CLI() )->blueprint( array( 'export', $file, 'flagship' ) );
+
+		$this->assertStringContainsString( 'Exported blueprint "flagship"', $GLOBALS['fr_cli']['success'][0] );
+		$decoded = json_decode( (string) file_get_contents( $file ), true );
+		$this->assertSame( 'flagship', $decoded['blueprint']['name'] );
+		$this->assertSame( 'forest', $decoded['options']['shopos_core_design_accent'] );
+		$this->assertTrue( \ShopOS\Core\Core\Blueprint::validate( $decoded )['ok'] );
+		unlink( $file );
+	}
+
+	public function test_blueprint_diff_and_import_error_on_unreadable_or_invalid_files(): void {
+		( new CLI() )->blueprint( array( 'diff', '/nonexistent/x.json' ) );
+		$this->assertStringContainsString( 'Cannot read', $GLOBALS['fr_cli']['error'][0] );
+
+		$file = tempnam( sys_get_temp_dir(), 'shopos-bp-' );
+		file_put_contents( $file, 'not json' );
+		( new CLI() )->blueprint( array( 'import', $file ) );
+		$this->assertStringContainsString( 'not valid JSON', $GLOBALS['fr_cli']['error'][1] );
+		$this->assertArrayNotHasKey( 'shopos_core_settings_backups', $GLOBALS['fr_opts'] );
+
+		file_put_contents( $file, (string) json_encode( array( 'version' => 1 ) ) );
+		( new CLI() )->blueprint( array( 'import', $file ) );
+		$this->assertStringContainsString( 'missing_field:exported_at', $GLOBALS['fr_cli']['error'][2] );
+		unlink( $file );
+	}
+
 	/* -------- helpers -------- */
 
 	/** Find one flag_rows() row by its module.feature key. */
