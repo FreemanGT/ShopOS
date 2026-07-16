@@ -141,6 +141,14 @@ final class Feature_Flags {
 				'since'       => '1.35.0',
 				'shared'      => false,
 			),
+			array(
+				'module'      => 'perf',
+				'feature'     => 'probe',
+				'label'       => __( 'Perf probe — diagnostic response headers', 'shopos-core' ),
+				'description' => __( 'When on, storefront requests carrying ?shopos_perf=1 respond with X-ShopOS-Queries / X-ShopOS-Render-Ms / X-ShopOS-Mem-MB headers, read by the tools/perf-budget.php per-template budget check. Off = no listeners, no headers. Numbers only — nothing sensitive.', 'shopos-core' ),
+				'since'       => '1.38.0',
+				'shared'      => false,
+			),
 		);
 	}
 }
