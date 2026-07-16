@@ -1,5 +1,13 @@
 # ShopOS Theme — Changelog
 
+## [1.12.1] — 2026-07-16
+
+- Updater: manifest cache 6h → 5min for near-instant dashboard updates
+
+## [1.12.0] — 2026-07-16
+
+- Dashboard self-updates via ShopOS release channel; add theme screenshot
+
 ## [1.11.30] — 2026-07-16
 
 - Self-hosted storefront webfonts (§11.4 row 3a): Heebo/Assistant/Rubik shipped as variable-weight woff2 (hebrew+latin subsets, Google Fonts' own subset splits and unicode-ranges, font-display swap) under assets/fonts/ + assets/css/shopos-fonts.css, with OFL licenses. INERT — nothing enqueues the file until the shopos_core_theme_fonts_selfhost_enabled flag ships (row 3b), so the render is unchanged
