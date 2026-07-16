@@ -55,6 +55,12 @@
       "skillPath": "skills/web-quality-audit/SKILL.md",
       "computedHash": "48e90790e9269d46c6471bbc61d109db05bdc2ef834734dff21c039880934e9b"
     },
+    "wordpress-elementor-dev": {
+      "source": "guramzhgamadze/WordPress-Elementor-Skill",
+      "sourceType": "github",
+      "skillPath": "wp-elementor-skill/SKILL.md",
+      "computedHash": "50b34dc7ba21a9918797751bb8d7b1fdfa7c2e851201072c0cba9029c31248e5"
+    },
     "wordpress-router": {
       "source": "WordPress/agent-skills",
       "sourceType": "github",
