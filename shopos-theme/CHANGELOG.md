@@ -1,5 +1,9 @@
 # ShopOS Theme — Changelog
 
+## [1.13.0] — 2026-07-16
+
+- ShopOS Line §11.4 row 4 — ship the theme-owned PDP template at templates/woo/single-product.php (verbatim copy of the Core module template; resolved only by Core's flag-gated loader when shopos_core_theme_template_pdp_enabled is on; inert by file presence)
+
 ## [1.12.1] — 2026-07-16
 
 - Updater: manifest cache 6h → 5min for near-instant dashboard updates

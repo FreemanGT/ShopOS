@@ -33,7 +33,7 @@ shopos-core/src/Modules/ProductPage/Coupon_Notice.php:156:		if ( ! apply_filters
 shopos-core/src/Modules/ProductPage/Coupon_Notice.php:186:		return apply_filters( 'shopos_core/product_page/coupon_notice_html', $html, $product );
 shopos-core/src/Modules/ProductPage/Stock_Urgency.php:149:		if ( ! apply_filters( 'shopos_core/product_page/show_stock_urgency', true, $product ) ) {
 shopos-core/src/Modules/ProductPage/Stock_Urgency.php:163:		$messages = (array) apply_filters( 'shopos_core/product_page/urgency_messages', $messages, $product );
-shopos-core/src/Modules/ProductPage/Template_Loader.php:200:			? (string) apply_filters( 'woocommerce_product_additional_information_heading', __( 'Additional information', 'shopos-core' ) )
+shopos-core/src/Modules/ProductPage/Template_Loader.php:222:			? (string) apply_filters( 'woocommerce_product_additional_information_heading', __( 'Additional information', 'shopos-core' ) )
 shopos-core/src/Modules/ProductPage/templates/single-product.php:100:											<?php echo wp_kses_post( apply_filters( 'woocommerce_product_' . $shopos_key . '_tab_title', $shopos_tab['title'], $shopos_key ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment -- WC's own tab-title filter, documented in woocommerce/templates/single-product/tabs/tabs.php ?>
 shopos-core/src/Modules/ProductPage/templates/single-product.php:123:					do_action( 'woocommerce_after_single_product_summary' );
 shopos-core/src/Modules/ProductPage/templates/single-product.php:169:			do_action( 'woocommerce_after_single_product' );

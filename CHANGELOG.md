@@ -2,6 +2,14 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.13.0] — 2026-07-16
+
+- ShopOS Line §11.4 row 4 — ship the theme-owned PDP template at templates/woo/single-product.php (verbatim copy of the Core module template; resolved only by Core's flag-gated loader when shopos_core_theme_template_pdp_enabled is on; inert by file presence)
+
+## [1.43.0] — 2026-07-16
+
+- ShopOS Line §11.4 row 4 — theme/template_pdp permanent kill-switch in Feature_Flags::registry() + flag-gated theme-copy rung in ProductPage Template_Loader::template_file() (theme copy at templates/woo/single-product.php; public override still wins; missing-copy fallback logs once; Ruling-10 fonts_selfhost warning)
+
 ## [1.11.31] — 2026-07-16
 
 - Wire the fonts_selfhost flag (§11.4 row 3b): flag ON enqueues the 1.11.30 self-hosted shopos-fonts.css and suppresses the Elementor kit Google Fonts print; flag OFF/Core-absent byte-identical (pinned FQCN read path — the theme is unnamespaced). design-tokens bridge gains the kit-slot re-map: emits --shopos-ui-font-body/display only when Design::kit_slots() differs from the defaults

@@ -136,6 +136,13 @@ if ( ! function_exists( 'locate_template' ) ) {
 		return $GLOBALS['fr_locate_template'] ?? '';
 	}
 }
+// get_stylesheet_directory — resolves from $GLOBALS['fr_stylesheet_dir'] so
+// tests can point the active theme at a fixture dir (the §11.4 theme-PDP rung).
+if ( ! function_exists( 'get_stylesheet_directory' ) ) {
+	function get_stylesheet_directory() {
+		return $GLOBALS['fr_stylesheet_dir'] ?? '';
+	}
+}
 if ( ! function_exists( 'add_theme_support' ) ) {
 	function add_theme_support( $feature ) {
 		$GLOBALS['fr_theme_supports'][] = $feature;
