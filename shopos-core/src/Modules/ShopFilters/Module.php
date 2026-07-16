@@ -153,10 +153,27 @@ final class Module extends Module_Base {
 		// the storefront panel is rendered.
 		( new Seo() )->register();
 
+		// Optional Elementor widget (a draggable [shopos_shop_filters] panel).
+		// Gated on the action itself, which only fires when Elementor is active —
+		// so the module keeps booting Elementor-free (its shortcode / index / SEO
+		// policy are independent). No module-level `elementor` dependency: that
+		// would stop the whole module booting on an Elementor-less store.
+		add_action( 'elementor/widgets/register', array( $this, 'register_widget' ) );
+
 		if ( is_admin() ) {
 			( new Admin_Page( $indexer ) )->boot();
 			( new Admin_Config_Page() )->boot();
 		}
+	}
+
+	/**
+	 * Register the Shop Filters Elementor widget. Fired on
+	 * `elementor/widgets/register` (Elementor-active only).
+	 *
+	 * @param \Elementor\Widgets_Manager $widgets_manager
+	 */
+	public function register_widget( $widgets_manager ) {
+		$widgets_manager->register( new Widget( array(), array( 'shopos_module' => $this ) ) );
 	}
 
 	/**
