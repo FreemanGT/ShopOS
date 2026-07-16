@@ -70,10 +70,22 @@ final class ShopOS_Theme {
 	 * Enqueue theme stylesheets and scripts.
 	 */
 	public function enqueue_assets() {
+		// Hello Elementor registers its stylesheet at wp_enqueue_scripts:10
+		// (we run at 20), but the parent enqueue can be absent — the
+		// hello_elementor_enqueue_style filter / "hide theme style" setting
+		// disables it, and a parent update could rename the handle. WordPress
+		// silently skips a style whose dependency is unregistered, which would
+		// drop the whole ShopOS CSS chain (tokens → theme → rtl + every inline
+		// block riding the shopos-tokens handle), so only depend on the parent
+		// handle when it actually exists (§11 Ruling 6.2).
+		$parent_deps = wp_style_is( 'hello-elementor-theme-style', 'registered' )
+			? array( 'hello-elementor-theme-style' )
+			: array();
+
 		wp_enqueue_style(
 			'shopos-tokens',
 			SHOPOS_THEME_ASSETS . '/css/shopos-tokens.css',
-			array( 'hello-elementor-theme-style' ),
+			$parent_deps,
 			SHOPOS_THEME_VERSION
 		);
 

@@ -18,6 +18,10 @@ This is the aggregated changelog across all three packages. See each package's o
 
 - Dashboard self-updates via ShopOS release channel; add theme screenshot
 
+## [1.11.29] — 2026-07-16
+
+- CSS-chain robustness (§11.4 row 2 / Ruling 6.2): shopos-tokens hard-depended on the parent hello-elementor-theme-style handle, so a store where the parent enqueue is absent (hello_elementor_enqueue_style filter / hide-theme-style setting / renamed handle after a parent update) silently lost the entire ShopOS CSS chain — tokens, theme, RTL and every inline block attached to the shopos-tokens handle (design-token bridge, Design panel). enqueue_assets() now depends on the parent handle only when it is registered at our wp_enqueue_scripts:20 slot (parent registers at 10) and falls back to a no-dependency enqueue otherwise; print order with the parent present is unchanged
+
 ## [1.41.0] — 2026-07-16
 
 - shopos-core: Phase-1 leftover, part 2 of 2 — **ProductPage `Labels_Base` adoption (resolver only)**. The last of the four modules; Phase 1 fully drained. Its sectioned settings label loop is not `label_fields()`-compatible and stays, test-pinned. Baselines + `.pot` unchanged (935 tests / 2669 assertions green)
