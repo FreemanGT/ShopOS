@@ -213,14 +213,19 @@ add_action(
 			array_flip( array_merge( $hooks['actions'], $hooks['filters'] ) )
 		);
 
+		// One class_exists for all flag reads — a typo'd FQCN in a copy
+		// wouldn't error (class_exists just returns false), it would report
+		// that flag as false forever and misdirect a census debugging round.
+		$has_flags = class_exists( '\ShopOS\Core\Core\Feature_Flags' );
+
 		$report = array(
 			'url'      => isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '',
 			'surface'  => $surface,
 			'template' => get_page_template_slug() ? get_page_template_slug() : ( $GLOBALS['template'] ?? '' ),
 			'flags'    => array(
-				'theme.template_pdp'   => class_exists( '\ShopOS\Core\Core\Feature_Flags' ) && \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'template_pdp' ),
-				'theme.template_plp'   => class_exists( '\ShopOS\Core\Core\Feature_Flags' ) && \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'template_plp' ),
-				'theme.fonts_selfhost' => class_exists( '\ShopOS\Core\Core\Feature_Flags' ) && \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'fonts_selfhost' ),
+				'theme.template_pdp'   => $has_flags && \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'template_pdp' ),
+				'theme.template_plp'   => $has_flags && \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'template_plp' ),
+				'theme.fonts_selfhost' => $has_flags && \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'fonts_selfhost' ),
 			),
 			'fired'    => $fired,
 			'census'   => $census,

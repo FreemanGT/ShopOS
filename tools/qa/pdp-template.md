@@ -75,7 +75,7 @@ $WP eval 'var_dump( ( new \ShopOS\Core\Modules\ProductPage\Template_Loader( new 
 #    `product_pdp_on` is the committed flag-on key. (Interface: arg 1 is the
 #    base URL — an earlier revision of this doc recorded a bare `check`
 #    argument, which the script would treat as the base URL and fail.)
-wp shopos flags set perf.probe on
+$WP shopos flags set perf.probe on
 php tools/perf-budget.php "$ENV_URL" tools/perf-budgets.json
 
 # 8. Warning path (Ruling 10): template_pdp on + fonts_selfhost off for one
@@ -84,9 +84,12 @@ $WP shopos flags set theme.fonts_selfhost off
 curl -s "$ENV_URL$PDP_PATH" > /dev/null
 $WP option get shopos_core_log --format=json | jq '.[0]'
 
-# 9. Restore the env exactly as found: flags back off, harness removed.
+# 9. Restore the env exactly as found: flags back off (perf.probe too — a
+#    leaked probe flag adds X-ShopOS-* headers to every later session's
+#    render-diff runs in this shared env), harness removed.
 $WP shopos flags set theme.template_pdp off
 $WP shopos flags set theme.fonts_selfhost off
+$WP shopos flags set perf.probe off
 rm <wp-env docroot>/wp-content/mu-plugins/hook-listener.php
 ```
 
