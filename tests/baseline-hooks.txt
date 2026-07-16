@@ -1,3 +1,4 @@
+shopos-core/src/Core/Cache.php:124:		return (bool) apply_filters( 'shopos_core/cache/use_object_cache', $default );
 shopos-core/src/Core/Feature_Flags.php:60:		return (bool) apply_filters( "shopos_core/feature_flag/{$module}/{$feature}", $enabled, $module, $feature );
 shopos-core/src/Core/Logger.php:47:		$filtered = apply_filters( 'shopos_core/logger/entry', $entry, (string) $message, $level );
 shopos-core/src/Core/Logger.php:72:		do_action( 'shopos_core/logger/written', $entry, $log );
@@ -51,10 +52,10 @@ shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-front
 shopos-core/src/Modules/Search/Search_Repository.php:70:		$cap = (int) apply_filters( 'shopos_core/search/max_results', self::MAX_RESULTS );
 shopos-core/src/Modules/ShopFilters/Facet_Config.php:110:			$is_visible = (bool) apply_filters( 'shopos_core/shop_filters/is_facet_visible', $is_visible, (string) $def['taxonomy'], $context_category_id );
 shopos-core/src/Modules/ShopFilters/Facet_Config.php:83:		$defs = apply_filters( 'shopos_core/shop_filters/facet_config', $defs, $context_category_id, $available_taxonomies );
-shopos-core/src/Modules/ShopFilters/Query_Builder.php:1141:		return (int) apply_filters( 'loop_shop_per_page', wc_get_default_products_per_page() );
-shopos-core/src/Modules/ShopFilters/Query_Builder.php:658:			$ttl = (int) apply_filters( 'shopos_core/shop_filters/facet_cache_ttl', 5 * MINUTE_IN_SECONDS );
-shopos-core/src/Modules/ShopFilters/Query_Builder.php:810:		$pre = apply_filters( 'shopos_core/shop_filters/pre_search_product_ids', null, (string) $term );
-shopos-core/src/Modules/ShopFilters/Query_Builder.php:839:		return array_map( 'intval', (array) apply_filters( 'shopos_core/shop_filters/search_product_ids', $ids, (string) $term ) );
+shopos-core/src/Modules/ShopFilters/Query_Builder.php:1150:		return (int) apply_filters( 'loop_shop_per_page', wc_get_default_products_per_page() );
+shopos-core/src/Modules/ShopFilters/Query_Builder.php:667:			$ttl = (int) apply_filters( 'shopos_core/shop_filters/facet_cache_ttl', 5 * MINUTE_IN_SECONDS );
+shopos-core/src/Modules/ShopFilters/Query_Builder.php:819:		$pre = apply_filters( 'shopos_core/shop_filters/pre_search_product_ids', null, (string) $term );
+shopos-core/src/Modules/ShopFilters/Query_Builder.php:848:		return array_map( 'intval', (array) apply_filters( 'shopos_core/shop_filters/search_product_ids', $ids, (string) $term ) );
 shopos-core/src/Modules/ShopFilters/Shortcode.php:106:		do_action( 'shopos_core/shop_filters/after_render', $context_id );
 shopos-core/src/Modules/ShopFilters/Shortcode.php:118:		return (string) apply_filters( 'shopos_core/shop_filters/panel_html', $html, $context_id );
 shopos-core/src/Modules/ShopFilters/Shortcode.php:89:		do_action( 'shopos_core/shop_filters/before_render', $context_id );
