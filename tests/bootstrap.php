@@ -541,6 +541,7 @@ if ( ! class_exists( '\\Elementor\\Controls_Manager' ) ) {
 			const SELECT2     = "select2";
 			const CHOOSE      = "choose";
 			const HEADING     = "heading";
+			const RAW_HTML    = "raw_html";
 		}
 	' );
 }

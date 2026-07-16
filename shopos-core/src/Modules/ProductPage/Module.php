@@ -150,5 +150,24 @@ final class Module extends Module_Base {
 		( new Coupon_Notice( $this ) )->register();
 		( new Stock_Urgency( $this ) )->register();
 		( new Template_Loader( $this ) )->register();
+
+		// Optional Elementor widgets — draggable equivalents of the
+		// [shopos_discounted_price] / [shopos_stock_urgency] shortcodes for
+		// pre-takeover Elementor-built or Theme-Builder product pages. Gated on
+		// the action itself, which only fires when Elementor is active — so the
+		// module keeps booting Elementor-free (its PDP takeover + shortcodes are
+		// independent). No module-level `elementor` dependency: that would stop
+		// the whole module booting on an Elementor-less store.
+		add_action( 'elementor/widgets/register', array( $this, 'register_widgets' ) );
+	}
+
+	/**
+	 * Register the ProductPage Elementor widgets.
+	 *
+	 * @param \Elementor\Widgets_Manager $widgets_manager
+	 */
+	public function register_widgets( $widgets_manager ) {
+		$widgets_manager->register( new Coupon_Notice_Widget( array(), array( 'shopos_module' => $this ) ) );
+		$widgets_manager->register( new Stock_Urgency_Widget( array(), array( 'shopos_module' => $this ) ) );
 	}
 }

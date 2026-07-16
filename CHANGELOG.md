@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.31.0] — 2026-07-15
+
+- shopos-core: Phase-2 fan-out (item 2) — two new ProductPage conversion-block Elementor widgets, **ShopOS Stock Urgency** (`shopos_stock_urgency`) and **ShopOS Coupon Price** (`shopos_discounted_price`), thin shells over the module's already-shipped `Stock_Urgency::shortcode()` / `Coupon_Notice::shortcode()` (drop one onto a pre-takeover Elementor-built or Theme-Builder product page to place the badge/notice where the summary hook never fires). No per-instance controls (driven by the module's global settings; an info note points there) and no asset deps (each block's `enqueue()` already fires on single-product pages); an editor placeholder shows when the block has nothing to render. Wired via `elementor/widgets/register` inside the existing `boot()` (fires only with Elementor active → the module still boots Elementor-free). `get_name()` frozen at the shortcode tags. Purely additive → no flag. `ProductPageWidgetsTest` added (839 tests / 2304 assertions green)
+
 ## [1.30.0] — 2026-07-15
 
 - shopos-core: Phase-2 fan-out (item 1) — new **ShopOS Search** Elementor widget, a thin shell over the Search module's already-shipped `Frontend::render_form()` (dragging it onto a page = placing the `[shopos_search]` shortcode). Two optional text controls (placeholder / button) fall through to the module Labels defaults when blank; the globally head-enqueued search assets enhance it into the live dropdown, so it declares no asset dependencies. Wired via `elementor/widgets/register` inside the existing `boot()` (fires only with Elementor active → the module still boots Elementor-free). `get_name()` frozen at `shopos_search`. Purely additive (no flag — inert until placed, slider-widget precedent). `SearchWidgetTest` added (832 tests / 2291 assertions green)
