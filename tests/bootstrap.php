@@ -615,13 +615,18 @@ foreach (
 		eval( "function {$fn}() { return ( \$GLOBALS['fr_page_type'] ?? '' ) === '{$kind}'; }" );
 	}
 }
-// is_search gets its OWN global (not an fr_page_type value): the §11.4 row-5
-// search carve-out needs "product archive AND search" simultaneously true
-// (native product search is is_shop() + is_search() at once), which the
-// single-valued fr_page_type cannot express. Defaults false.
+// is_search gets its OWN global (not only an fr_page_type value): the §11.4
+// row-5 search carve-out needs "product archive AND search" simultaneously
+// true (native product search is is_shop() + is_search() at once), which the
+// single-valued fr_page_type cannot express. It ALSO honors
+// fr_page_type === 'search' — InfiniteScrollHooksTest ships a guarded stub
+// with exactly those semantics (now shadowed by this earlier definition),
+// and a test following that documented convention must not silently get
+// false. Defaults false.
 if ( ! function_exists( 'is_search' ) ) {
 	function is_search() {
-		return ! empty( $GLOBALS['fr_is_search'] );
+		return ! empty( $GLOBALS['fr_is_search'] )
+			|| ( $GLOBALS['fr_page_type'] ?? '' ) === 'search';
 	}
 }
 // is_main_query defaults TRUE (front-end template code runs on the main

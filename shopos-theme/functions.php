@@ -23,5 +23,5 @@ require_once SHOPOS_THEME_PATH . '/inc/class-shopos-template-loader.php';
 require_once SHOPOS_THEME_PATH . '/inc/updater.php';
 
 ShopOS_Theme::instance();
-ShopOS_Theme_Template_Loader::instance()->register();
+( new ShopOS_Theme_Template_Loader() )->register();
 ShopOS_Theme_Plugin_Dependencies::instance();

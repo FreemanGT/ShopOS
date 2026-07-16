@@ -45,16 +45,15 @@ defined( 'ABSPATH' ) || exit;
 final class ShopOS_Theme_Template_Loader {
 
 	/**
-	 * Singleton instance.
-	 *
-	 * @var ShopOS_Theme_Template_Loader|null
-	 */
-	private static $instance = null;
-
-	/**
 	 * Which theme-owned surface is driving the current request: '' when none,
 	 * 'plp' when the archive template claimed it. §11.3's per-surface context
 	 * value (the $is_takeover replacement, going forward).
+	 *
+	 * Static on purpose (it IS per-request global state); everything else is
+	 * instance state — production constructs exactly one instance in
+	 * functions.php, and tests construct fresh ones so the once-per-request
+	 * Logger guards stay order-independent (Core Template_Loader precedent —
+	 * deliberately NOT a singleton, which would leak guard state into tests).
 	 *
 	 * @var string
 	 */
@@ -74,18 +73,6 @@ final class ShopOS_Theme_Template_Loader {
 	 * @var bool
 	 */
 	private $logged_template_missing = false;
-
-	/**
-	 * Returns the singleton.
-	 *
-	 * @return ShopOS_Theme_Template_Loader
-	 */
-	public static function instance() {
-		if ( null === self::$instance ) {
-			self::$instance = new self();
-		}
-		return self::$instance;
-	}
 
 	/**
 	 * Register hooks. One template_include registration, forever (§11.3);
@@ -119,6 +106,13 @@ final class ShopOS_Theme_Template_Loader {
 			return $template;
 		}
 
+		// FQCN, never bare Feature_Flags::class — the theme is unnamespaced
+		// (class-shopos-theme.php:76-80: a bare name silently reads false
+		// forever). DELIBERATELY not deduped into a helper: the bidirectional
+		// FeatureFlagsAdminTest scan requires one LITERAL
+		// is_enabled( 'theme', '<feature>' ) call site per registry flag — a
+		// dynamic is_enabled( 'theme', $feature ) is invisible to it and
+		// fails test_registry_has_no_stale_entries.
 		if ( ! class_exists( '\ShopOS\Core\Core\Feature_Flags' )
 			|| ! \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'template_plp' ) ) {
 			return $template; // Flag off (or Core absent) = the current render.
@@ -178,13 +172,30 @@ final class ShopOS_Theme_Template_Loader {
 	 * live Elementor search page the term never reaches the query vars
 	 * (Search module Results_Query.php precedent).
 	 *
-	 * @return string
+	 * PRESENCE-BASED on purpose (Ruling 2 is a law about the REQUEST, not
+	 * the parsed value): an array payload (?s[]=x) or a value sanitization
+	 * strips to nothing (?s=%3Cb%3E) still counts as "a request search term"
+	 * — the sentinel keeps should_claim_plp() refusing. Stricter than
+	 * Results_Query::should_handle (which sees '' for those shapes) is safe:
+	 * refusing more can never wrongly claim the search surface, and neither
+	 * surface claims those requests, so the current render stands.
+	 *
+	 * @return string '' when no term is present; the term (or a non-empty
+	 *                sentinel for unparseable payloads) otherwise.
 	 */
 	public static function request_search_term() {
 		if ( ! isset( $_GET['s'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only routing decision.
 			return '';
 		}
-		return trim( sanitize_text_field( wp_unslash( $_GET['s'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$raw = wp_unslash( $_GET['s'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( is_array( $raw ) ) {
+			return '[array]';
+		}
+		$term = trim( sanitize_text_field( $raw ) );
+		if ( '' !== $term ) {
+			return $term;
+		}
+		return '' === trim( (string) $raw ) ? '' : '[unparseable]';
 	}
 
 	/**

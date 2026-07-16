@@ -49,10 +49,6 @@ final class ThemeTemplateLoaderTest extends TestCase {
 		return realpath( __DIR__ . '/../shopos-theme' );
 	}
 
-	private function loader(): ShopOS_Theme_Template_Loader {
-		return ShopOS_Theme_Template_Loader::instance();
-	}
-
 	private function log_entries( string $level ): array {
 		$log = $GLOBALS['fr_opts']['shopos_core_log'] ?? array();
 		return array_values(
@@ -65,10 +61,9 @@ final class ThemeTemplateLoaderTest extends TestCase {
 		);
 	}
 
-	/** A fresh (non-singleton) loader so once-per-request guards reset per test. */
+	/** A fresh loader per test so once-per-request guards stay order-independent. */
 	private function fresh_loader(): ShopOS_Theme_Template_Loader {
-		$ref = new ReflectionClass( ShopOS_Theme_Template_Loader::class );
-		return $ref->newInstanceWithoutConstructor();
+		return new ShopOS_Theme_Template_Loader();
 	}
 
 	public function test_theme_template_exists_on_disk(): void {
@@ -204,5 +199,32 @@ final class ThemeTemplateLoaderTest extends TestCase {
 		$this->assertSame( '', ShopOS_Theme_Template_Loader::request_search_term() );
 		$_GET['s'] = '  hello  ';
 		$this->assertSame( 'hello', ShopOS_Theme_Template_Loader::request_search_term() );
+	}
+
+	/**
+	 * Ruling 2 is presence-based: payloads that sanitize to nothing (arrays,
+	 * tag-only strings) still count as a request search term — the loader
+	 * must refuse, not claim on the stripped value.
+	 */
+	public function test_request_search_term_is_presence_based_for_unparseable_payloads(): void {
+		$_GET['s'] = array( 'knife' );
+		$this->assertNotSame( '', ShopOS_Theme_Template_Loader::request_search_term(), 'array payload counts as a term' );
+
+		$_GET['s'] = '<b></b>';
+		$this->assertNotSame( '', ShopOS_Theme_Template_Loader::request_search_term(), 'tag-only payload counts as a term' );
+
+		$_GET['s'] = '   ';
+		$this->assertSame( '', ShopOS_Theme_Template_Loader::request_search_term(), 'whitespace-only is no term' );
+	}
+
+	public function test_runtime_refuses_unparseable_search_payloads(): void {
+		$GLOBALS['fr_page_type']      = 'shop';
+		$GLOBALS['fr_stylesheet_dir'] = $this->theme_dir();
+		$GLOBALS['fr_opts']['shopos_core_theme_template_plp_enabled']   = '1';
+		$GLOBALS['fr_opts']['shopos_core_theme_fonts_selfhost_enabled'] = '1';
+		$_GET['s']                    = array( 'knife' );
+
+		$this->assertSame( '/theme/archive.php', $this->fresh_loader()->maybe_load_template( '/theme/archive.php' ) );
+		$this->assertSame( '', ShopOS_Theme_Template_Loader::context() );
 	}
 }

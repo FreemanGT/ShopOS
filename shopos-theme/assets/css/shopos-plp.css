@@ -36,7 +36,7 @@
 
 .shopos-ui-plp .woocommerce-products-header__title {
 	font-family: var(--shopos-ui-font-display, inherit);
-	font-size: var(--shopos-ui-text-xxl, 2.25rem);
+	font-size: var(--shopos-ui-text-xxl, clamp(1.9rem, 1.55rem + 1.5vw, 2.75rem));
 	line-height: var(--shopos-ui-leading-tight, 1.18);
 	margin-block: 0 var(--shopos-ui-space-sm, 8px);
 }
@@ -50,7 +50,7 @@
 .shopos-ui-plp .woocommerce-result-count {
 	margin-block: 0;
 	color: var(--shopos-ui-color-ink-soft, #3a3a3a);
-	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	font-size: var(--shopos-ui-text-sm, clamp(0.82rem, 0.78rem + 0.22vw, 0.9rem));
 }
 
 .shopos-ui-plp .woocommerce-ordering {
@@ -96,7 +96,7 @@
 	border-radius: var(--shopos-ui-radius-sm, 4px);
 	color: inherit;
 	text-decoration: none;
-	transition: background-color var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease, ease);
+	transition: background-color var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease, cubic-bezier(0.2, 0, 0, 1));
 }
 
 .shopos-ui-plp .woocommerce-pagination .page-numbers li .page-numbers.current {
