@@ -1,3 +1,5 @@
+shopos-core/src/Core/Blueprint.php:416:		do_action( 'shopos_core/blueprint/before_apply', $envelope );
+shopos-core/src/Core/Blueprint.php:453:		do_action( 'shopos_core/blueprint/after_apply', $envelope, array( 'written' => $written, 'skipped' => $skipped, 'total' => $total ) );
 shopos-core/src/Core/Cache.php:124:		return (bool) apply_filters( 'shopos_core/cache/use_object_cache', $default );
 shopos-core/src/Core/Design.php:242:		if ( ! apply_filters( 'shopos_core/design/tokens_css_enabled', true ) ) {
 shopos-core/src/Core/Feature_Flags.php:60:		return (bool) apply_filters( "shopos_core/feature_flag/{$module}/{$feature}", $enabled, $module, $feature );
