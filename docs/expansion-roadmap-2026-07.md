@@ -104,7 +104,7 @@ ceilings.
 
 | Item | Dim | Effort | Notes |
 |---|---|---|---|
-| **"ShopOS Line" decisions addendum** | theme | S | **GATE** — owner approval required (STOP-and-ask). Theme owns PLP/PDP/cart/checkout/account/search/email as classic PHP/Woo overrides; reaffirm no-FSE; Elementor = storytelling pages only. No code. Blocks everything below. |
+| **"ShopOS Line" decisions addendum** | theme | S | ✅ **owner-approved 2026-07-16 as decisions §11** (rulings 1–10, all as recommended). Re-sequenced by §11 Ruling 2: v1 = typography prerequisite → **PDP** → **PLP** only; header/footer chrome is CUT from v1 and joins cart/checkout/account/search-results/emails behind the measurable **§11-B checkpoint** (PDP+PLP flag-on ≥30 days across ≥1 theme release, zero rollbacks + theme PHPUnit/CI lane + store #2 committed or owner re-affirms). Flags live plugin-side in `Feature_Flags::registry()` under virtual module id `theme` as PERMANENT kill-switches; templates only at `shopos-theme/templates/woo/` via a flag-gated loader — never `{theme}/woocommerce/`. Rows below re-read through §11.4's sequencing (docs-only rewrites PR → CSS-chain fix → typography 2 PRs → PDP → PLP → §11-B). |
 | **De-hardcode Style-Kit typography + self-host webfonts** | theme | M | Move the `sk_type_*` → `--shopos-ui-font-*` mapping into the theme + a Customizer control for the kit slot IDs (default `sk_type_12/sk_type_2`, currently hardcoded to fixed slot IDs). `@font-face` for the Heebo/Assistant/Rubik Hebrew-first stack. |
 | **First theme-owned Woo template: PLP/archive** | theme | L | `shopos-theme/woocommerce/` (or a theme template loader modeled on `ProductPage/Template_Loader.php`); flag-off renders the current Elementor path untouched. |
 | **Own header/footer chrome** | theme | XL | `header.php` + `footer.php` (RTL/bilingual nav, cart utility, Search entry) so `get_header('shop')`/`get_footer('shop')` resolve to theme chrome. Theme-mod opt-in. Multiple PRs. |
@@ -117,10 +117,11 @@ ceilings.
 
 - **"Complete theme with templates" = classic PHP + Woo overrides, never `templates/*.html`.**
   Per decisions §4.3, FSE/block patterns are a permanent non-goal.
-- **Three items need explicit owner sign-off before any code** (STOP-and-ask): the ShopOS
-  Line (reverses "theme = skin"), the ShopFilters widget (reverses §5.4, cleared as §5.9),
-  and the Design panel + Store Blueprint (cleared as §9 / §10 — all Phase-3 gates cleared;
-  only the ShopOS Line gate remains).
+- **Three items needed explicit owner sign-off before any code** (STOP-and-ask): the ShopOS
+  Line (reverses "theme = skin", **cleared as §11, 2026-07-16**), the ShopFilters widget
+  (reverses §5.4, cleared as §5.9), and the Design panel + Store Blueprint (cleared as
+  §9 / §10). **All standing gates are now cleared**; §11-B is the next gate (defined in §11
+  Ruling 2), and every Phase-4 step still runs pre-flight → plan → owner approval.
 - **Frozen identifiers**: every new widget locks `get_name()` at birth; every settings
   refactor asserts byte-identical option names/output before and after.
 - **Theme has no PHPUnit** — theme/template changes are verified by live-QA on a live store +
