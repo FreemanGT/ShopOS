@@ -5,8 +5,8 @@
  * Swaps the single-product template for the module's designed page via
  * `template_include` at priority 9999 — late enough to win over Elementor
  * Pro's Theme Builder single-product location (priority 12), which is what
- * renders the current product page. Flag-off, nothing registers and the
- * existing page renders untouched (the rollback path).
+ * renders the current product page. Module disabled, nothing registers and
+ * the existing page renders untouched (the permanent rollback path).
  *
  * The takeover template renders the standard WooCommerce single-product
  * hook stack (`woocommerce_before_single_product_summary` for sale flash +
@@ -23,9 +23,9 @@
  * thumbnail slider) so the native gallery ships fully featured — the theme
  * itself never declared them because it never styled the PDP.
  *
- * Template is theme-overridable at `shopos/product_page/single-product.php`.
- *
- * Only constructed when the layout feature flag is on (Module::boot()).
+ * Template is theme-overridable at `shopos/product_page/single-product.php` —
+ * a public contract the ShopOS theme never ships a file at (§11.3). This loader
+ * is permanent: the theme-PDP flag's off-state renderer (§11 Ruling 5).
  *
  * @package ShopOSCore
  */

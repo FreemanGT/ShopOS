@@ -125,8 +125,8 @@ ceilings.
 - **Frozen identifiers**: every new widget locks `get_name()` at birth; every settings
   refactor asserts byte-identical option names/output before and after.
 - **Theme has no PHPUnit** — theme/template changes are verified by live-QA on a live store +
-  `.pot` regen, and `SHOPOS_THEME_VERSION` must be bumped **manually**
-  (`tools/release.sh` historically bumped only `style.css`).
+  `.pot` regen; theme version bumps run through `tools/release.sh`, which stamps
+  `style.css` + `SHOPOS_THEME_VERSION` in lockstep (since 1.11.27; §11 Ruling 7.6).
 - **Permanent non-goals** — record, don't re-propose: broad REST (§4.4) and Gutenberg/FSE
   (§4.3).
 

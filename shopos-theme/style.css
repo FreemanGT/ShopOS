@@ -1,7 +1,7 @@
 /*
 Theme Name: ShopOS Theme
 Theme URI: https://shoposdigital.com/shopos-theme
-Description: ShopOS is a WooCommerce-first child theme of Hello Elementor. It provides the design tokens, typography, RTL/Hebrew support, and WooCommerce template refinements. All business logic lives in the companion ShopOS Core plugin — the theme handles presentation only.
+Description: ShopOS is a WooCommerce-first child theme of Hello Elementor. It provides the design tokens, typography, RTL/Hebrew support, and WooCommerce template refinements — and, behind permanent default-off ShopOS Core feature flags, owns the buy-path templates at templates/woo/ (the ShopOS Line, decisions §11). Data and business logic live in the companion ShopOS Core plugin.
 Author: ShopOS Digital
 Author URI: https://shoposdigital.com
 Template: hello-elementor
