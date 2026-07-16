@@ -76,8 +76,11 @@ jobs:
           WP_INSTALL_TESTS_SKIP_UPDATE_CHECK: 'true'
         run: |
           set -e
+          # Final `true` = skip-database-creation: the MySQL service already
+          # provisions wordpress_test (MYSQL_DATABASE), and the script's
+          # exists-already path is an interactive prompt that dies headless.
           bash shopos-digital/bin/install-wp-tests.sh \
-            wordpress_test root root 127.0.0.1 "$WP_VERSION"
+            wordpress_test root root 127.0.0.1 "$WP_VERSION" true
           # Hard-verify the lib landed so a silent no-op fails HERE, not at
           # phpunit time.
           test -f /tmp/wordpress-tests-lib/includes/functions.php
