@@ -6,7 +6,7 @@ shopos-core/src/Core/Feature_Flags.php:60:		return (bool) apply_filters( "shopos
 shopos-core/src/Core/Logger.php:47:		$filtered = apply_filters( 'shopos_core/logger/entry', $entry, (string) $message, $level );
 shopos-core/src/Core/Logger.php:72:		do_action( 'shopos_core/logger/written', $entry, $log );
 shopos-core/src/Core/Module_Registry.php:81:		$this->modules = apply_filters( 'shopos_core/modules', $this->modules );
-shopos-core/src/Core/Plugin.php:194:		do_action( 'shopos_core/booted', $this );
+shopos-core/src/Core/Plugin.php:198:		do_action( 'shopos_core/booted', $this );
 shopos-core/src/Core/Security.php:101:		$defaults = apply_filters( 'shopos_core/rate_limit_defaults', array( 'max' => $max, 'window' => $window ), $bucket );
 shopos-core/src/Core/Settings_Hub.php:435:		do_action( 'shopos_core/module_page/' . $module->id(), $module );
 shopos-core/src/Core/Settings_Tools.php:154:		$skip_backup = (bool) apply_filters( 'shopos_core/tools/import/skip_backup', false, $envelope );
