@@ -69,8 +69,10 @@ final class ModuleBaseLabelFieldsTest extends TestCase {
 	}
 
 	/**
-	 * Byte-identity guarantee for future adoption: the helper reproduces the
-	 * exact loop the modules ship today, driven by real Search\Labels data.
+	 * Byte-identity guarantee: the helper reproduces the exact hand-rolled
+	 * loop the modules shipped pre-adoption (replaced in 1.40.0), driven by
+	 * real Search\Labels data. LabelsAdoptionTest asserts the same parity
+	 * against each adopted module's live settings_schema().
 	 */
 	public function test_output_is_byte_identical_to_the_shipped_loop(): void {
 		$defaults = SearchLabels::defaults();
