@@ -71,8 +71,13 @@ jobs:
           WP_VERSION: ${{ matrix.wp }}
         run: |
           set -e
-          bash <(curl -fsSL https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh) \
+          # NOTE: the old `master` URL is a deprecated stub that warns and does
+          # nothing — the dead workflow's `|| true` + svn fallback was papering
+          # over exactly that. Use `main`, then hard-verify the lib landed so a
+          # silent no-op fails HERE, not at phpunit time.
+          bash <(curl -fsSL https://raw.githubusercontent.com/wp-cli/scaffold-command/main/templates/install-wp-tests.sh) \
             wordpress_test root root 127.0.0.1 "$WP_VERSION"
+          test -f /tmp/wordpress-tests-lib/includes/functions.php
 
       - name: Install PHPUnit + polyfills
         run: composer require --dev --working-dir=/tmp --no-interaction --no-progress "phpunit/phpunit:^9" "yoast/phpunit-polyfills:^2"
