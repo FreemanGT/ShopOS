@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Plugin {
 
-	const VERSION = '1.34.0';
+	const VERSION = '1.35.0';
 
 	/**
 	 * Singleton instance.
@@ -163,6 +163,13 @@ final class Plugin {
 		// Register the ShopOS Elementor widget category (a no-op when Elementor
 		// is absent — the categories_registered hook only fires once it loads).
 		( new Elementor\Category() )->boot();
+
+		// Design panel (gated, default off): admin page + front-end token emit.
+		// Booted here (not in the is_admin block) so its wp_enqueue_scripts emit
+		// registers on front-end requests too.
+		if ( Feature_Flags::is_enabled( 'design', 'panel' ) ) {
+			( new Design() )->boot();
+		}
 
 		// Admin-only components.
 		if ( is_admin() ) {

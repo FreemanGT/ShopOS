@@ -133,6 +133,14 @@ final class Feature_Flags {
 				'since'       => '1.11.40',
 				'shared'      => false,
 			),
+			array(
+				'module'      => 'design',
+				'feature'     => 'panel',
+				'label'       => __( 'Design panel', 'shopos-core' ),
+				'description' => __( 'Adds a ShopOS → Design admin page to set a store accent + a few core design tokens (colours, corner radius) that flow to every module. Off = no page and no CSS; even on, only tokens you change are emitted.', 'shopos-core' ),
+				'since'       => '1.35.0',
+				'shared'      => false,
+			),
 		);
 	}
 }
