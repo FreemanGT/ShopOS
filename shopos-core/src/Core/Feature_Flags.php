@@ -157,6 +157,14 @@ final class Feature_Flags {
 				'since'       => '1.42.2',
 				'shared'      => false,
 			),
+			array(
+				'module'      => 'theme',
+				'feature'     => 'template_pdp',
+				'label'       => __( 'Theme — product page template (ShopOS Line)', 'shopos-core' ),
+				'description' => __( 'When on, the designed product page renders from the ShopOS theme\'s own copy (templates/woo/single-product.php) instead of the Core module copy — the same page, owned by the theme (decisions §11.4 row 4). Off = the Core ProductPage template renders as today, byte-identical. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Needs the ShopOS theme active and the Product Page module enabled (the module toggle stays the outer kill-switch); turn on theme.fonts_selfhost first (Ruling 10) or fonts differ between Elementor and template pages.', 'shopos-core' ),
+				'since'       => '1.43.0',
+				'shared'      => false,
+			),
 		);
 	}
 }

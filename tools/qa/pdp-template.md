@@ -89,6 +89,22 @@ rm <wp-env docroot>/wp-content/mu-plugins/hook-listener.php
 
 Sibling checks recorded alongside (Ruling 7.2): no shared-JS detector file changes in the PR (verbatim markup); flag-OFF pass against the current render recorded in Results.
 
-## Results — §11.4 row 4 PR
+## Results — §11.4 row 4 PR (run 2026-07-16, wp-env, core 1.42.2→1.43.0 / theme 1.11.31→1.13.0)
 
-_Filled by the row-4 template PR (Ruling 7 preamble: acceptance evidence is mandatory in the template PR itself)._
+All runs against identity-verified fresh servers (gotcha 2), determinism pins active, coming-soon disabled for the window, env restored as found afterwards. Baseline side = the pre-PR stack tip (#20, core 1.42.2 + theme 1.11.31).
+
+| Check | Result |
+|---|---|
+| R7.3(a) flag-off render identity across the PR | **byte-identical** (`render-diff` on `/?product=test-product-6`, 63,007 normalized bytes both sides) |
+| Flag-off census across the PR | identical (fired counts + full callback census) |
+| Flag-off log rows | none |
+| R7.3(b) flag-on vs flag-off render (fonts ON both sides, `template_pdp` the only delta) | **byte-identical** — the verbatim theme copy proves parity exactly |
+| R7.1 hook checklist flag-on | all 6 checklist hooks fired 1× with callback census identical to flag-off; server-side flag reads confirmed in the census report (`template_pdp: true`, `fonts_selfhost: true`) |
+| Resolution seam (fresh CLI) | flag on → `themes/shopos-theme/templates/woo/single-product.php`; flag off → module copy; override rung untouched |
+| Clean flag-on log | zero rows |
+| Ruling-10 warning (pdp on / fonts off) | exactly 1 `warning` row per request (1 request → 1, 2 requests → 2); resolves the theme copy regardless |
+| Fallback (theme copy absent, flag on) | resolves the module copy, renders byte-identical to flag-off, exactly 1 `info` row per request |
+| R7.4 perf (fonts+pdp ON, probe on) | queries/render-ms/mem all within the `product` budget (232/113/18). **Bytes: 61,855 vs the 53,429 budget — a PRE-EXISTING overage**: pre-PR flags-off measures the identical 62,246 bytes as row-4 flags-off (row-4 delta = 0; the raw-byte difference between the two numbers is the fonts flag's head delta, kit-Google-Fonts-print suppressed vs fonts link added). The budget was seeded at 1.38.0 and wp-env content has drifted since; NOT reseeded (R7.4 — reseeding needs an owner call), flagged in the row-4 PR |
+| R7.2 detectors | no shared-JS detector file touched in the PR (verbatim markup); flag-OFF pass = the R7.3(a) run |
+| R7.5 owner screenshots + RTL | **pending — pre-flip acceptance gate**, before any live flag-on (with fonts_selfhost ON) |
+| Staging-with-Pro render-diff | **deferred to the flip-time checklist** — owner decision 3a, 2026-07-16 (staging access TBD; recorded row-4 DONE-bar deviation) |

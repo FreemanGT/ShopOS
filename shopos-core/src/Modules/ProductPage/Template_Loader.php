@@ -24,13 +24,19 @@
  * itself never declared them because it never styled the PDP.
  *
  * Template is theme-overridable at `shopos/product_page/single-product.php` —
- * a public contract the ShopOS theme never ships a file at (§11.3). This loader
- * is permanent: the theme-PDP flag's off-state renderer (§11 Ruling 5).
+ * a public contract the ShopOS theme never ships a file at (§11.3). With
+ * `shopos_core_theme_template_pdp_enabled` on, the ShopOS theme's own copy at
+ * `templates/woo/single-product.php` renders instead (§11.4 row 4; see
+ * template_file()). This loader is permanent: the theme-PDP flag's off-state
+ * renderer (§11 Ruling 5).
  *
  * @package ShopOSCore
  */
 
 namespace ShopOS\Core\Modules\ProductPage;
+
+use ShopOS\Core\Core\Feature_Flags;
+use ShopOS\Core\Core\Logger;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -50,6 +56,22 @@ final class Template_Loader {
 	 * @var bool
 	 */
 	private static $is_takeover = false;
+
+	/**
+	 * Once-per-request guards for the two Logger paths below — template_file()
+	 * runs more than once per request (maybe_takeover + body_class) and every
+	 * Logger::log() call is a DB option write. Instance properties, not statics:
+	 * the loader is constructed once per request in production, and a fresh
+	 * instance per unit test keeps the log assertions order-independent.
+	 *
+	 * @var bool
+	 */
+	private $warned_fonts_off = false;
+
+	/**
+	 * @var bool
+	 */
+	private $logged_theme_copy_missing = false;
 
 	/**
 	 * @var Module
@@ -248,8 +270,18 @@ final class Template_Loader {
 	}
 
 	/**
-	 * Resolve the takeover template: theme override first, then the module
-	 * copy; '' when neither is readable (falls back to the current template).
+	 * Resolve the takeover template: public theme override first, then — when
+	 * the §11.4 theme-PDP flag is on — the ShopOS theme's own copy, then the
+	 * module copy; '' when nothing is readable (falls back to the current
+	 * template).
+	 *
+	 * The theme copy resolves via get_stylesheet_directory() deliberately:
+	 * no parent-theme fallback (a file shipped in the parent can never claim
+	 * the surface) and no template-hierarchy discovery path — §11.3, templates
+	 * resolve only through this flag-gated rung, never by file presence. A
+	 * flag-on store whose active theme ships no copy (e.g. a Blueprint import
+	 * onto an older theme, §11 Ruling 8) logs once and falls back to the
+	 * module copy.
 	 *
 	 * @return string
 	 */
@@ -257,7 +289,30 @@ final class Template_Loader {
 		$override = function_exists( 'locate_template' )
 			? locate_template( 'shopos/product_page/single-product.php' )
 			: '';
-		$file     = $override ? $override : SHOPOS_CORE_PATH . 'src/Modules/ProductPage/templates/single-product.php';
+		if ( $override ) {
+			return is_readable( $override ) ? $override : '';
+		}
+
+		if ( Feature_Flags::is_enabled( 'theme', 'template_pdp' ) ) {
+			// §11 Ruling 10: fonts must not flip between Elementor pages and
+			// PHP-template pages — fonts_selfhost is a flip precondition.
+			if ( ! $this->warned_fonts_off && ! Feature_Flags::is_enabled( 'theme', 'fonts_selfhost' ) ) {
+				$this->warned_fonts_off = true;
+				Logger::log( 'theme.template_pdp is on while theme.fonts_selfhost is off — storefront fonts will differ between Elementor and template pages. Turn fonts_selfhost on first (decisions §11 Ruling 10).', 'warning' );
+			}
+
+			$theme_copy = get_stylesheet_directory() . '/templates/woo/single-product.php';
+			if ( is_readable( $theme_copy ) ) {
+				return $theme_copy;
+			}
+
+			if ( ! $this->logged_theme_copy_missing ) {
+				$this->logged_theme_copy_missing = true;
+				Logger::log( 'theme.template_pdp is on but the active theme ships no templates/woo/single-product.php — rendering the Core module copy instead (decisions §11.3).', 'info' );
+			}
+		}
+
+		$file = SHOPOS_CORE_PATH . 'src/Modules/ProductPage/templates/single-product.php';
 
 		return is_readable( $file ) ? $file : '';
 	}

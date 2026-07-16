@@ -20,7 +20,7 @@ final class ProductPageTemplateTest extends TestCase {
 		parent::setUp();
 		$GLOBALS['fr_opts']  = array();
 		$GLOBALS['fr_hooks'] = array();
-		unset( $GLOBALS['fr_page_type'], $GLOBALS['fr_locate_template'] );
+		unset( $GLOBALS['fr_page_type'], $GLOBALS['fr_locate_template'], $GLOBALS['fr_stylesheet_dir'] );
 	}
 
 	private function loader(): Template_Loader {
@@ -172,5 +172,94 @@ final class ProductPageTemplateTest extends TestCase {
 		// …plus the explicit sticky-bar override, whose red is a hardcoded
 		// literal in VS rather than the var.
 		$this->assertStringContainsString( '.shopos-sticky-bar__buy{background:#0A7C66 !important}', $css );
+	}
+
+	// ---- §11.4 row 4: the flag-gated theme-copy rung in template_file() ----
+
+	/** The real repo theme dir — its templates/woo/single-product.php IS the fixture. */
+	private function theme_dir(): string {
+		return realpath( __DIR__ . '/../shopos-theme' );
+	}
+
+	private function log_entries( string $level ): array {
+		$log = $GLOBALS['fr_opts']['shopos_core_log'] ?? array();
+		return array_values(
+			array_filter(
+				is_array( $log ) ? $log : array(),
+				static function ( $entry ) use ( $level ) {
+					return ( $entry['level'] ?? '' ) === $level;
+				}
+			)
+		);
+	}
+
+	public function test_theme_copy_exists_on_disk(): void {
+		$this->assertFileExists( $this->theme_dir() . '/templates/woo/single-product.php' );
+	}
+
+	public function test_flag_off_ignores_a_present_theme_copy(): void {
+		$GLOBALS['fr_page_type']      = 'product';
+		$GLOBALS['fr_stylesheet_dir'] = $this->theme_dir();
+
+		$expected = SHOPOS_CORE_PATH . 'src/Modules/ProductPage/templates/single-product.php';
+		$this->assertSame( $expected, $this->loader()->template_file(), 'file presence alone must never change the render (§11.3)' );
+		$this->assertSame( array(), $this->log_entries( 'info' ), 'flag off logs nothing' );
+		$this->assertSame( array(), $this->log_entries( 'warning' ), 'flag off warns nothing' );
+	}
+
+	public function test_flag_on_resolves_the_theme_copy(): void {
+		$GLOBALS['fr_page_type']      = 'product';
+		$GLOBALS['fr_stylesheet_dir'] = $this->theme_dir();
+		$GLOBALS['fr_opts']['shopos_core_theme_template_pdp_enabled']   = '1';
+		$GLOBALS['fr_opts']['shopos_core_theme_fonts_selfhost_enabled'] = '1';
+
+		$this->assertSame(
+			$this->theme_dir() . '/templates/woo/single-product.php',
+			$this->loader()->template_file()
+		);
+		$this->assertSame( array(), $this->log_entries( 'warning' ), 'fonts on ⇒ no Ruling-10 warning' );
+	}
+
+	public function test_flag_on_without_a_theme_copy_falls_back_to_the_module_copy_and_logs_once(): void {
+		$GLOBALS['fr_page_type']      = 'product';
+		$GLOBALS['fr_stylesheet_dir'] = __DIR__; // A real dir with no templates/woo/ — a theme predating the template.
+		$GLOBALS['fr_opts']['shopos_core_theme_template_pdp_enabled']   = '1';
+		$GLOBALS['fr_opts']['shopos_core_theme_fonts_selfhost_enabled'] = '1';
+
+		$loader   = $this->loader();
+		$expected = SHOPOS_CORE_PATH . 'src/Modules/ProductPage/templates/single-product.php';
+
+		// template_file() runs more than once per request (maybe_takeover +
+		// body_class): both calls resolve, exactly one info row is written.
+		$this->assertSame( $expected, $loader->template_file(), 'Blueprint-import-onto-old-theme falls back (§11.3)' );
+		$this->assertSame( $expected, $loader->template_file() );
+		$this->assertCount( 1, $this->log_entries( 'info' ), 'fallback logs once per request, not per call' );
+	}
+
+	public function test_public_override_beats_the_theme_copy_flag_on(): void {
+		$GLOBALS['fr_page_type']      = 'product';
+		$GLOBALS['fr_stylesheet_dir'] = $this->theme_dir();
+		$GLOBALS['fr_opts']['shopos_core_theme_template_pdp_enabled']   = '1';
+		$GLOBALS['fr_opts']['shopos_core_theme_fonts_selfhost_enabled'] = '1';
+		// The override must be a readable file — reuse a real fixture path.
+		$override                      = SHOPOS_CORE_PATH . 'src/Modules/ProductPage/templates/single-product.php';
+		$GLOBALS['fr_locate_template'] = $override;
+
+		$this->assertSame( $override, $this->loader()->template_file(), 'the shopos/product_page/ public contract stays the top rung (Hard Rule #2)' );
+	}
+
+	public function test_flag_on_with_fonts_off_warns_once_and_still_resolves(): void {
+		$GLOBALS['fr_page_type']      = 'product';
+		$GLOBALS['fr_stylesheet_dir'] = $this->theme_dir();
+		$GLOBALS['fr_opts']['shopos_core_theme_template_pdp_enabled'] = '1';
+
+		$loader = $this->loader();
+
+		$this->assertSame( $this->theme_dir() . '/templates/woo/single-product.php', $loader->template_file() );
+		$loader->template_file();
+
+		$warnings = $this->log_entries( 'warning' );
+		$this->assertCount( 1, $warnings, 'Ruling-10 warning fires once per request, not per call' );
+		$this->assertStringContainsString( 'fonts_selfhost', $warnings[0]['message'] );
 	}
 }
