@@ -1,5 +1,9 @@
 # ShopOS Theme — Changelog
 
+## [1.11.30] — 2026-07-16
+
+- Self-hosted storefront webfonts (§11.4 row 3a): Heebo/Assistant/Rubik shipped as variable-weight woff2 (hebrew+latin subsets, Google Fonts' own subset splits and unicode-ranges, font-display swap) under assets/fonts/ + assets/css/shopos-fonts.css, with OFL licenses. INERT — nothing enqueues the file until the shopos_core_theme_fonts_selfhost_enabled flag ships (row 3b), so the render is unchanged
+
 ## [1.11.29] — 2026-07-16
 
 - CSS-chain robustness (§11.4 row 2 / Ruling 6.2): shopos-tokens hard-depended on the parent hello-elementor-theme-style handle, so a store where the parent enqueue is absent (hello_elementor_enqueue_style filter / hide-theme-style setting / renamed handle after a parent update) silently lost the entire ShopOS CSS chain — tokens, theme, RTL and every inline block attached to the shopos-tokens handle (design-token bridge, Design panel). enqueue_assets() now depends on the parent handle only when it is registered at our wp_enqueue_scripts:20 slot (parent registers at 10) and falls back to a no-dependency enqueue otherwise; print order with the parent present is unchanged
