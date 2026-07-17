@@ -37,6 +37,17 @@ fail() { printf "\033[1;31m[fail]\033[0m    %s\n" "$*"; exit 1; }
 command -v gh >/dev/null 2>&1 || fail "gh CLI not found"
 command -v jq >/dev/null 2>&1 || fail "jq not found"
 
+# ── Preflight: only publish a clean main that matches origin ──────────────
+# dist/ zips carry no branch identity, so without this an unmerged branch
+# build (or a stale zip from a parallel session) ships to every client store
+# within the updater's ~5-min manifest poll.
+BRANCH="$( git -C "${ROOT}" rev-parse --abbrev-ref HEAD )"
+[[ "${BRANCH}" == "main" ]] || fail "publish only from main (currently on: ${BRANCH})"
+[[ -z "$( git -C "${ROOT}" status --porcelain )" ]] || fail "working tree not clean — commit or stash first"
+git -C "${ROOT}" fetch origin main --quiet
+[[ "$( git -C "${ROOT}" rev-parse HEAD )" == "$( git -C "${ROOT}" rev-parse origin/main )" ]] \
+    || fail "HEAD != origin/main — push or pull first, then rebuild the zip"
+
 get_version() {
     grep -i "^[[:space:]]*\*\?[[:space:]]*Version:" "$1" \
         | head -n 1 \
@@ -54,6 +65,14 @@ publish_one() {
     local tag="${product#shopos-}-${version}"          # theme-1.12.0 / core-1.42.0
 
     [[ -f "${zip}" ]] || fail "Missing ${zip} — run tools/build.sh first"
+
+    # Theme zips must carry the self-updater require — a zip without it
+    # permanently cuts updated stores off the update channel (the PR #22
+    # merge once dropped it; PR #24 restored it).
+    if [[ "${product}" == "shopos-theme" ]]; then
+        unzip -p "${zip}" "shopos-theme/functions.php" | grep -q "inc/updater.php" \
+            || fail "theme zip missing the inc/updater.php require — refusing to brick the update channel"
+    fi
 
     # 1. GitHub Release with the zip attached (skip if the tag already exists).
     if gh release view "${tag}" --repo "${RELEASES_REPO}" >/dev/null 2>&1; then
@@ -80,6 +99,17 @@ publish_one() {
     else
         sha=""
         echo '{}' > /tmp/shopos-manifest.json
+    fi
+
+    # Never move the manifest backwards — the updaters are version-compare
+    # driven, so a downgrade strands already-updated stores and re-offers
+    # older code to the rest. Re-publishing the SAME version stays allowed
+    # (the asset re-upload path above).
+    local prev
+    prev="$( jq -r --arg p "${product}" '.[$p].version // "0"' /tmp/shopos-manifest.json )"
+    if [[ "${prev}" != "${version}" ]] \
+        && [[ "$( printf '%s\n%s\n' "${prev}" "${version}" | sort -V | tail -1 )" == "${prev}" ]]; then
+        fail "manifest downgrade blocked: ${product} is at ${prev}, refusing to publish ${version}"
     fi
 
     jq --arg p "${product}" --arg v "${version}" --arg url "${package_url}" \

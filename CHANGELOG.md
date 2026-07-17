@@ -6,6 +6,14 @@ This is the aggregated changelog across all three packages. See each package's o
 
 - shopos-digital **1.7.8**: escape the profiler table's three raw admin echoes (`$type_badge` / `$color` / `$r->recommendation`) — the remediation PR-18 bullet recorded as shipped in 1.7.5 but silently dropped (2026-07-17 sweep finding)
 
+## [1.44.2] — 2026-07-17
+
+- Security (remediation B-1): legacy RestockNotify CSV export now formula-injection-escapes the visitor-supplied name/email fields via the modern `CSV_Exporter::escape_csv_field()` — the store no longer ships one hardened and one vulnerable exporter over the same table
+
+## [1.44.1] — 2026-07-17
+
+- Design panel: fix the Design admin page 403ing on click — submenu registered before the parent `shopos` menu existed, so the page hook was filed under `admin_page_*` and never resolved; register at `admin_menu` priority 11
+
 ## [1.14.0] — 2026-07-17
 
 - Theme-owned PLP: templates/woo/archive-product.php + the shared theme loader (inc/class-shopos-template-loader.php) behind shopos_core_theme_template_plp_enabled — §11.4 row 5

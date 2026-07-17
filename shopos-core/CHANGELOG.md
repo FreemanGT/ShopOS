@@ -1,5 +1,13 @@
 # ShopOS Core — Changelog
 
+## [1.44.2] — 2026-07-17
+
+- Security (remediation B-1, owner-approved 2026-07-17): the legacy RestockNotify CSV export (`admin.php?page=restock-notify-subscribers&shopos_restock_export=1`) now routes `customer_name` / `customer_email` through `CSV_Exporter::escape_csv_field()` — the same OWASP formula-injection neutralization the modern Wave-4.1b exporter has carried since 1.21.25. Both fields are visitor-supplied via the public subscribe endpoint, and `sanitize_text_field()` does not strip a leading `=`/`+`/`-`/`@`. Hard Rule #3 legacy edit: one line, no option/table/URL changes.
+
+## [1.44.1] — 2026-07-17
+
+- Design panel: fix the Design admin page dying with "Sorry, you are not allowed to access this page" — the submenu registered on `admin_menu` before the Settings Hub created the parent `shopos` menu, so WordPress filed the page hook under `admin_page_*` instead of `shopos_page_*`; the menu link rendered but the page never resolved. Register the submenu at priority 11 (hub parent registers at 10).
+
 ## [1.44.0] — 2026-07-17
 
 - Theme PLP flag: shopos_core_theme_template_plp_enabled registry entry — §11.4 row 5 (permanent kill-switch; resolved by the theme's shared loader)
