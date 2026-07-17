@@ -94,8 +94,8 @@ final class Frontend {
 			return;
 		}
 
-		$fs_base  = trailingslashit( __DIR__ . '/legacy' ) . 'assets/';
-		$url_base = trailingslashit( SHOPOS_CORE_URL . 'src/Modules/RestockNotify/legacy' ) . 'assets/';
+		$fs_base  = trailingslashit( __DIR__ ) . 'assets/';
+		$url_base = trailingslashit( SHOPOS_CORE_URL . 'src/Modules/RestockNotify' ) . 'assets/';
 		$pick     = array( Module_Base::class, 'pick_min_url' );
 
 		wp_enqueue_style(
