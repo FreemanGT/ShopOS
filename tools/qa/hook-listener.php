@@ -5,12 +5,15 @@
  *
  * Two jobs, both QA-window-only:
  *
- * 1. Hook-firing census (Ruling 7.1): on every front-end single-product
- *    request it records, per checklist hook, whether it fired and the full
- *    callback census (priority → callback names) as of shutdown — i.e. AFTER
- *    the takeover-time detaches — and writes the report to
- *    wp-content/shopos-qa-hook-report.json. Flag-on and flag-off runs must
- *    produce identical censuses.
+ * 1. Hook-firing census (Ruling 7.1): on every front-end single-product or
+ *    product-archive request it records, per checklist hook of that surface
+ *    (pdp / plp), whether it fired and the full callback census (priority →
+ *    callback names) as of shutdown — i.e. AFTER any takeover-time detaches —
+ *    and writes the report to wp-content/shopos-qa-hook-report.json. Flag-on
+ *    and flag-off runs must produce identical censuses. Counters register for
+ *    the union of both surfaces (the mu-plugin loads before the query is
+ *    parsed, so it cannot branch on conditionals at registration time); the
+ *    report is scoped to the surface's own checklist at shutdown.
  *
  * 2. Loop-order determinism for render-diff runs (Ruling 7.3): WooCommerce
  *    shuffles related products on every request
@@ -68,11 +71,35 @@ add_filter(
 // ---- Job 1: hook-firing census ----
 
 /**
- * The per-template checklist hooks. Actions are counted when they fire;
- * the tabs filter is counted when it runs. Census (registered callbacks)
- * is captured for all of them at shutdown.
+ * The per-surface checklist hooks. Actions are counted when they fire;
+ * filters are counted when they run. Census (registered callbacks) is
+ * captured for the surface's own list at shutdown.
+ *
+ * @param string $surface 'pdp' (single product) or 'plp' (product archive).
+ * @return array
  */
-function shopos_qa_checklist_hooks() {
+function shopos_qa_checklist_hooks( $surface = 'pdp' ) {
+	if ( 'plp' === $surface ) {
+		return array(
+			'actions' => array(
+				'woocommerce_before_main_content',
+				'woocommerce_shop_loop_header',
+				'woocommerce_before_shop_loop',
+				'woocommerce_shop_loop',
+				'woocommerce_before_shop_loop_item',
+				'woocommerce_before_shop_loop_item_title',
+				'woocommerce_shop_loop_item_title',
+				'woocommerce_after_shop_loop_item_title',
+				'woocommerce_after_shop_loop_item',
+				'woocommerce_after_shop_loop',
+				'woocommerce_no_products_found',
+				'woocommerce_after_main_content',
+				'woocommerce_sidebar',
+			),
+			'filters' => array(),
+		);
+	}
+
 	return array(
 		'actions' => array(
 			'woocommerce_before_single_product',
@@ -87,9 +114,23 @@ function shopos_qa_checklist_hooks() {
 	);
 }
 
+/**
+ * Union of both surfaces' checklists, for counter registration.
+ *
+ * @return array
+ */
+function shopos_qa_all_hooks() {
+	$pdp = shopos_qa_checklist_hooks( 'pdp' );
+	$plp = shopos_qa_checklist_hooks( 'plp' );
+	return array(
+		'actions' => array_values( array_unique( array_merge( $pdp['actions'], $plp['actions'] ) ) ),
+		'filters' => array_values( array_unique( array_merge( $pdp['filters'], $plp['filters'] ) ) ),
+	);
+}
+
 $GLOBALS['shopos_qa_fired'] = array();
 
-foreach ( shopos_qa_checklist_hooks()['actions'] as $shopos_qa_hook ) {
+foreach ( shopos_qa_all_hooks()['actions'] as $shopos_qa_hook ) {
 	add_action(
 		$shopos_qa_hook,
 		static function () use ( $shopos_qa_hook ) {
@@ -98,7 +139,7 @@ foreach ( shopos_qa_checklist_hooks()['actions'] as $shopos_qa_hook ) {
 		-9999
 	);
 }
-foreach ( shopos_qa_checklist_hooks()['filters'] as $shopos_qa_hook ) {
+foreach ( shopos_qa_all_hooks()['filters'] as $shopos_qa_hook ) {
 	add_filter(
 		$shopos_qa_hook,
 		static function ( $value ) use ( $shopos_qa_hook ) {
@@ -132,13 +173,21 @@ function shopos_qa_callback_name( $callback ) {
 add_action(
 	'shutdown',
 	static function () {
-		if ( is_admin() || ! function_exists( 'is_product' ) || ! is_product() ) {
+		if ( is_admin() || ! function_exists( 'is_product' ) ) {
+			return;
+		}
+
+		if ( is_product() ) {
+			$surface = 'pdp';
+		} elseif ( is_shop() || is_product_taxonomy() ) {
+			$surface = 'plp';
+		} else {
 			return;
 		}
 
 		global $wp_filter;
 
-		$hooks  = shopos_qa_checklist_hooks();
+		$hooks  = shopos_qa_checklist_hooks( $surface );
 		$census = array();
 		foreach ( array_merge( $hooks['actions'], $hooks['filters'] ) as $hook ) {
 			$census[ $hook ] = array();
@@ -159,14 +208,26 @@ add_action(
 			}
 		}
 
+		$fired = array_intersect_key(
+			$GLOBALS['shopos_qa_fired'],
+			array_flip( array_merge( $hooks['actions'], $hooks['filters'] ) )
+		);
+
+		// One class_exists for all flag reads — a typo'd FQCN in a copy
+		// wouldn't error (class_exists just returns false), it would report
+		// that flag as false forever and misdirect a census debugging round.
+		$has_flags = class_exists( '\ShopOS\Core\Core\Feature_Flags' );
+
 		$report = array(
 			'url'      => isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '',
+			'surface'  => $surface,
 			'template' => get_page_template_slug() ? get_page_template_slug() : ( $GLOBALS['template'] ?? '' ),
 			'flags'    => array(
-				'theme.template_pdp'  => class_exists( '\ShopOS\Core\Core\Feature_Flags' ) && \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'template_pdp' ),
-				'theme.fonts_selfhost' => class_exists( '\ShopOS\Core\Core\Feature_Flags' ) && \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'fonts_selfhost' ),
+				'theme.template_pdp'   => $has_flags && \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'template_pdp' ),
+				'theme.template_plp'   => $has_flags && \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'template_plp' ),
+				'theme.fonts_selfhost' => $has_flags && \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'fonts_selfhost' ),
 			),
-			'fired'    => $GLOBALS['shopos_qa_fired'],
+			'fired'    => $fired,
 			'census'   => $census,
 		);
 
