@@ -165,6 +165,14 @@ final class Feature_Flags {
 				'since'       => '1.43.0',
 				'shared'      => false,
 			),
+			array(
+				'module'      => 'theme',
+				'feature'     => 'template_plp',
+				'label'       => __( 'Theme — product listing template (ShopOS Line)', 'shopos-core' ),
+				'description' => __( 'When on, the shop page and product-taxonomy archives render from the ShopOS theme\'s classic template (templates/woo/archive-product.php) via the shared theme loader instead of the Elementor archive template — the first Elementor-to-PHP conversion (decisions §11.4 row 5). Never claims search results (Ruling 2). Off = the current archive render, byte-identical. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Needs the ShopOS theme at 1.14.0+ AND, when ShopOS Digital is active, Digital 1.7.7+ (older Digital forces no_found_rows on archive queries and the classic grid renders empty); without Core (or on an older theme) it is inert; turn on theme.fonts_selfhost first (Ruling 10) or fonts differ between Elementor and template pages.', 'shopos-core' ),
+				'since'       => '1.44.0',
+				'shared'      => false,
+			),
 		);
 	}
 }
