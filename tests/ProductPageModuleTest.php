@@ -42,6 +42,15 @@ final class ProductPageModuleTest extends TestCase {
 		$this->assertSame( 5, $schema['urgency_max']['default'] );
 	}
 
+	public function test_settings_schema_carries_the_layout_style_selector(): void {
+		$schema = ( new Module() )->settings_schema();
+
+		$this->assertSame( 'select', $schema['layout_style']['type'] );
+		$this->assertSame( 'editorial', $schema['layout_style']['default'], 'default look is the calm editorial one' );
+		$this->assertArrayHasKey( 'editorial', $schema['layout_style']['choices'] );
+		$this->assertArrayHasKey( 'conversion', $schema['layout_style']['choices'] );
+	}
+
 	public function test_settings_schema_carries_one_text_field_per_label(): void {
 		$schema = ( new Module() )->settings_schema();
 

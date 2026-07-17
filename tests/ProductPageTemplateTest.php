@@ -100,6 +100,30 @@ final class ProductPageTemplateTest extends TestCase {
 		$this->assertContains( 'shopos-ui-pdp-active', $this->loader()->body_class( array( 'a' ) ) );
 	}
 
+	public function test_layout_style_defaults_to_editorial(): void {
+		$this->assertSame( 'editorial', $this->loader()->layout_style(), 'no option = calm editorial default' );
+	}
+
+	public function test_layout_style_reads_the_conversion_option(): void {
+		$GLOBALS['fr_opts']['shopos_core_product_page_layout_style'] = 'conversion';
+		$this->assertSame( 'conversion', $this->loader()->layout_style() );
+	}
+
+	public function test_layout_style_normalises_unknown_values_to_editorial(): void {
+		$GLOBALS['fr_opts']['shopos_core_product_page_layout_style'] = 'bogus';
+		$this->assertSame( 'editorial', $this->loader()->layout_style(), 'a stale/invalid value falls back, never renders a missing look' );
+	}
+
+	public function test_body_class_carries_the_layout_modifier(): void {
+		$GLOBALS['fr_page_type'] = 'product';
+		$this->assertContains( 'shopos-ui-pdp--editorial', $this->loader()->body_class( array( 'a' ) ) );
+
+		$GLOBALS['fr_opts']['shopos_core_product_page_layout_style'] = 'conversion';
+		$classes = $this->loader()->body_class( array( 'a' ) );
+		$this->assertContains( 'shopos-ui-pdp--conversion', $classes );
+		$this->assertNotContains( 'shopos-ui-pdp--editorial', $classes, 'exactly one look modifier on the body' );
+	}
+
 	public function test_gallery_supports_keeps_zoom_and_drops_slider_and_lightbox(): void {
 		// The theme declares all three; the module keeps zoom, removes the
 		// slider (flexslider fights the editorial grid) and the lightbox.

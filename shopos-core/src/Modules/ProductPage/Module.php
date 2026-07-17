@@ -82,6 +82,17 @@ final class Module extends Module_Base {
 		$layout_section  = __( 'Designed layout', 'shopos-core' );
 
 		$schema = array(
+			'layout_style'   => array(
+				'label'       => __( 'Layout style', 'shopos-core' ),
+				'type'        => 'select',
+				'default'     => 'editorial',
+				'choices'     => array(
+					'editorial'  => __( 'Editorial — calm, gallery-led', 'shopos-core' ),
+					'conversion' => __( 'Conversion — bold, accent-led', 'shopos-core' ),
+				),
+				'section'     => $layout_section,
+				'description' => __( 'The visual layout of the designed product page. Editorial is restrained and gallery-led; Conversion is bolder and accent-led, giving social proof and urgency more prominence. Both support RTL and LTR.', 'shopos-core' ),
+			),
 			'coupon_code'    => array(
 				'label'       => __( 'Coupon code', 'shopos-core' ),
 				'type'        => 'text',

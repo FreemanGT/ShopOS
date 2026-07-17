@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.45.0] — 2026-07-17
+
+- Product Page: two selectable layouts (Editorial / Conversion) via a Layout style setting, softer ~1rem rounding, and an RTL hero that keeps images on the left with the title and buy box on the right in Hebrew
+
 ## [1.44.4] — 2026-07-17
 
 - RestockNotify frontend CSS/JS 404 fix: assets enqueued from a nonexistent `legacy/assets/` path; corrected to `RestockNotify/assets/` (caught by live-store browse QA)

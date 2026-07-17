@@ -350,6 +350,23 @@ final class Template_Loader {
 	}
 
 	/**
+	 * The owner-chosen layout style for the designed page: 'editorial' (default,
+	 * calm gallery-led) or 'conversion' (bold, accent-led). Anything else — an
+	 * empty option, a stale value — normalises to 'editorial'. Drives the
+	 * `.shopos-ui-pdp--{style}` body modifier the stylesheet keys the two looks
+	 * off (the scope root `.shopos-ui-pdp` stays on the template <main>, so the
+	 * looks are authored purely in CSS — the template and its theme copy are
+	 * untouched). Pure given the option — unit-tested.
+	 *
+	 * @return string 'editorial'|'conversion'
+	 */
+	public function layout_style() {
+		return 'conversion' === (string) $this->module->get_option( 'layout_style', 'editorial' )
+			? 'conversion'
+			: 'editorial';
+	}
+
+	/**
 	 * Scope class for the designed page.
 	 *
 	 * @param array $classes Body classes.
@@ -358,6 +375,7 @@ final class Template_Loader {
 	public function body_class( $classes ) {
 		if ( function_exists( 'is_product' ) && is_product() && '' !== $this->template_file() ) {
 			$classes[] = 'shopos-ui-pdp-active';
+			$classes[] = 'shopos-ui-pdp--' . $this->layout_style();
 		}
 		return $classes;
 	}

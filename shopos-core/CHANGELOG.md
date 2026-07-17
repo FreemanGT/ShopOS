@@ -1,5 +1,9 @@
 # ShopOS Core — Changelog
 
+## [1.45.0] — 2026-07-17
+
+- Product Page: two selectable layouts (Editorial / Conversion) via a Layout style setting, softer ~1rem rounding, and an RTL hero that keeps images on the left with the title and buy box on the right in Hebrew
+
 ## [1.44.4] — 2026-07-17
 
 - RestockNotify: fix the frontend CSS/JS 404ing on every shop / product / cart page. `Frontend::enqueue_always()` built the asset base as `src/Modules/RestockNotify/legacy/assets/` — a directory that never existed (only `legacy/includes/` does); the files live at `src/Modules/RestockNotify/assets/` (where the admin enqueue already pointed). A long-standing latent bug (predates the rebrand), surfaced by live-store browse QA. Regression pinned by `RestockNotifyFrontendTest::test_frontend_assets_enqueue_from_the_non_legacy_assets_path` (new capturing `wp_enqueue_style`/`wp_enqueue_script` bootstrap stubs assert the resolved URL).

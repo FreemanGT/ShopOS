@@ -20,6 +20,20 @@
 	font-size: var(--shopos-ui-text-md, 1rem);
 	line-height: var(--shopos-ui-leading-base, 1.55);
 	background: var(--shopos-ui-color-paper, #ffffff);
+
+	/* One soft-rounding knob for the whole designed page (owner: "everything a
+	   little rounded, ~1rem"). Every buy-box button, input, card and section
+	   already reads these primitive tokens with a literal fallback, so
+	   re-pointing them here rounds the page in one place — surface-scoped, so
+	   the store-wide Cards / Swatches / admin radii are untouched. Small chips
+	   land a touch under 1rem so they don't read as blobs; pills/rounds stay. */
+	--shopos-ui-pdp-radius: 1rem;
+	--shopos-ui-button-radius: var(--shopos-ui-pdp-radius);
+	--shopos-ui-input-radius:  var(--shopos-ui-pdp-radius);
+	--shopos-ui-card-radius:   var(--shopos-ui-pdp-radius);
+	--shopos-ui-radius-lg:     var(--shopos-ui-pdp-radius);
+	--shopos-ui-radius-md:     var(--shopos-ui-pdp-radius);
+	--shopos-ui-radius-sm:     0.625rem;
 }
 
 .shopos-ui-pdp__container {
@@ -1039,4 +1053,150 @@
 	.shopos-ui-pdp__gallery .woocommerce-product-gallery__wrapper {
 		scroll-behavior: auto;
 	}
+}
+
+/* ========================================================================== *
+ *  Layout looks — the two owner-selectable designs (layout_style setting)
+ *
+ *  One template, two skins keyed off the `.shopos-ui-pdp--{style}` body
+ *  modifier (Template_Loader::layout_style()). The scaffold, gallery
+ *  mechanics, WooCommerce neutralisation and buy-box plumbing above are
+ *  shared; everything below is only the visual identity of each look. Values
+ *  route through the theme tokens, so RTL (logical properties), reduced-motion
+ *  and high-contrast handling carry over for free.
+ * ========================================================================== */
+
+/* ---- Hero orientation (shared by both looks) ---------------------------- *
+ * Owner rule: images on the LEFT, title + buy box on the RIGHT — in Hebrew
+ * too, not just LTR (matches the LTR reference). The 7fr|5fr hero would
+ * otherwise mirror under RTL and throw the gallery to the right, so pin the
+ * grid to physical left-to-right placement and hand the reading direction
+ * back to each column's own content. Desktop only; the mobile layout stacks
+ * (gallery, then summary) and needs no pin. */
+@media (min-width: 1024px) {
+	[dir="rtl"] .shopos-ui-pdp__layout {
+		direction: ltr;
+	}
+
+	[dir="rtl"] .shopos-ui-pdp__gallery,
+	[dir="rtl"] .shopos-ui-pdp__summary-col {
+		direction: rtl;
+	}
+}
+
+/* ============================ Editorial =================================== *
+ * Airy, typographic, gallery-led — the quiet boutique, opened up. The summary
+ * leaves its filled panel to sit on paper; hairlines and generous rhythm carry
+ * the structure and the buy box stays one confident ink action. */
+
+.shopos-ui-pdp--editorial .shopos-ui-pdp__summary-col {
+	background: none;
+	padding: 0;
+}
+
+/* A little more air between the two columns. */
+@media (min-width: 1024px) {
+	.shopos-ui-pdp--editorial .shopos-ui-pdp__layout {
+		gap: var(--shopos-ui-space-3xl, 96px);
+	}
+}
+
+/* Display title, a step larger — the page's clear anchor. */
+.shopos-ui-pdp--editorial .shopos-ui-pdp__summary .product_title {
+	font-size: clamp(2rem, 1.55rem + 1.8vw, 3rem);
+}
+
+/* The struck from-price steps back to a quiet muted tone instead of a
+   discount-bin red (quiet-luxury); the current figure stays confident ink. */
+.shopos-ui-pdp--editorial .shopos-ui-pdp__summary .price del {
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
+	font-weight: var(--shopos-ui-weight-regular, 400);
+}
+
+/* A hairline lead-in makes the buy box read as the decisive block on the
+   otherwise open column. */
+.shopos-ui-pdp--editorial .shopos-ui-pdp__summary form.cart {
+	margin-top: var(--shopos-ui-space-lg, 24px);
+	padding-top: var(--shopos-ui-space-lg, 24px);
+	border-top: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+}
+
+/* Gallery frame softened to match the airier column. */
+.shopos-ui-pdp--editorial .shopos-ui-pdp__gallery .woocommerce-product-gallery__image {
+	background: var(--shopos-ui-color-paper-soft, #faf9f7);
+}
+
+/* =========================== Conversion ================================== *
+ * Accent-forward and decisive — the summary lifts onto an elevated card, price
+ * and CTA carry weight, and the store's accent (Design panel / theme) paints
+ * the primary action and active states. Still restrained: no gradients, no
+ * glass, no urgency spam — the energy is contrast and the accent, not noise. */
+
+.shopos-ui-pdp--conversion .shopos-ui-pdp__summary-col {
+	background: var(--shopos-ui-color-paper, #ffffff);
+	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	border-radius: var(--shopos-ui-radius-xl, 20px);
+	padding: var(--shopos-ui-space-xl, 40px);
+	box-shadow: var(--shopos-ui-shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
+}
+
+/* Confident title + an offer-forward price. */
+.shopos-ui-pdp--conversion .shopos-ui-pdp__summary .product_title {
+	font-weight: var(--shopos-ui-weight-bold, 700);
+}
+
+.shopos-ui-pdp--conversion .shopos-ui-pdp__summary > .price {
+	font-size: var(--shopos-ui-text-xxl, 2.25rem);
+	font-weight: var(--shopos-ui-weight-bold, 700);
+	line-height: var(--shopos-ui-leading-tight, 1.18);
+}
+
+/* On-sale flash flips from ink to the store accent. */
+.shopos-ui-pdp--conversion span.onsale {
+	background: var(--shopos-ui-color-accent, #1b1b1b);
+	color: var(--shopos-ui-color-accent-text, #ffffff);
+}
+
+/* The primary action takes the store accent (default accent is ink, so
+   monochrome stores still get a confident dark CTA; a gold / forest accent
+   lights it right up). VariationSwatches stores drive their own CTA colour via
+   the existing "Buy button colour" setting; this styles the standard WC form. */
+.shopos-ui-pdp--conversion .shopos-ui-pdp__summary form.cart .single_add_to_cart_button {
+	background: var(--shopos-ui-color-accent, #1b1b1b);
+	border-color: var(--shopos-ui-color-accent, #1b1b1b);
+	color: var(--shopos-ui-color-accent-text, #ffffff);
+	font-size: var(--shopos-ui-text-md, 1rem);
+}
+
+/* Trust items become soft chips instead of a hairline row. */
+.shopos-ui-pdp--conversion .shopos-ui-pdp__trust {
+	border-top: 0;
+	padding-top: 0;
+	gap: var(--shopos-ui-space-sm, 8px);
+	flex-wrap: wrap;
+}
+
+.shopos-ui-pdp--conversion .shopos-ui-pdp__trust-item {
+	padding: var(--shopos-ui-space-xs, 4px) var(--shopos-ui-space-md, 16px);
+	background: var(--shopos-ui-color-accent-soft, #f1efea);
+	border-radius: var(--shopos-ui-radius-pill, 999px);
+}
+
+/* Accordion sections lift into soft cards for a more guided, app-like feel. */
+.shopos-ui-pdp--conversion .shopos-ui-pdp__accordion {
+	border-top: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--shopos-ui-space-md, 16px);
+}
+
+.shopos-ui-pdp--conversion .shopos-ui-pdp__acc-item {
+	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	border-radius: var(--shopos-ui-pdp-radius, 1rem);
+	padding-inline: var(--shopos-ui-space-lg, 24px);
+}
+
+/* Gallery picks up a hair of depth to sit with the elevated summary card. */
+.shopos-ui-pdp--conversion .shopos-ui-pdp__gallery .woocommerce-product-gallery__image {
+	box-shadow: var(--shopos-ui-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.06));
 }
