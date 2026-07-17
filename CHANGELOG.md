@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [digital 1.7.8] — 2026-07-17
+
+- shopos-digital **1.7.8**: escape the profiler table's three raw admin echoes (`$type_badge` / `$color` / `$r->recommendation`) — the remediation PR-18 bullet recorded as shipped in 1.7.5 but silently dropped (2026-07-17 sweep finding)
+
 ## [1.44.2] — 2026-07-17
 
 - Security (remediation B-1): legacy RestockNotify CSV export now formula-injection-escapes the visitor-supplied name/email fields via the modern `CSV_Exporter::escape_csv_field()` — the store no longer ships one hardened and one vulnerable exporter over the same table
