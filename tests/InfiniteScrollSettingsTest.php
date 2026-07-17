@@ -23,8 +23,10 @@ final class InfiniteScrollSettingsTest extends TestCase {
 		$this->assertSame( 'auto', $schema['trigger_mode']['default'] );
 		$this->assertSame( 'select', $schema['trigger_mode']['type'] );
 		$this->assertArrayHasKey( 'choices', $schema['trigger_mode'] );
+		// B-3 (1.44.3): the button/hybrid stub choices were withdrawn — their
+		// "Load more" UI never shipped. auto is the only offered mode.
 		$this->assertSame(
-			array( 'auto', 'button', 'hybrid' ),
+			array( 'auto' ),
 			array_keys( $schema['trigger_mode']['choices'] )
 		);
 	}

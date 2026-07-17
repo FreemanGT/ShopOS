@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.44.3] — 2026-07-17
+
+- InfiniteScroll (remediation B-3): the non-functional Button/Hybrid trigger-mode stub choices are withdrawn from the settings select — auto is the only offered mode; saved values and the JS dispatcher are untouched
+
 ## [digital 1.7.8] — 2026-07-17
 
 - shopos-digital **1.7.8**: escape the profiler table's three raw admin echoes (`$type_badge` / `$color` / `$r->recommendation`) — the remediation PR-18 bullet recorded as shipped in 1.7.5 but silently dropped (2026-07-17 sweep finding)
