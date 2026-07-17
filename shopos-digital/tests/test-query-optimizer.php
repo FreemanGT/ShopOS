@@ -31,6 +31,41 @@ class Test_FD_Query_Optimizer extends WP_UnitTestCase {
         $this->assertFalse(get_transient('shopos_digital_months_post'));
     }
 
+    public function test_no_found_rows_skips_product_archive_main_queries() {
+        // qo_no_found_rows_front is ON by default. Simulate the front-end
+        // product post-type archive main query (the shop page after
+        // WC_Query's rewrite) and assert the optimizer leaves found_posts
+        // intact — classic archive renders (WC fallback, ShopOS theme PLP)
+        // read it via wc_get_loop_prop('total'), result count, pagination.
+        $optimizer = new ShopOS_Digital_Query_Optimizer(ShopOS_Digital_Core::get_defaults());
+
+        // The digital suite runs without WooCommerce, so register a stub
+        // 'product' post type — is_post_type_archive('product') resolves the
+        // post type object and returns false while it is unregistered. The
+        // test framework unregisters custom post types between tests.
+        register_post_type('product', array('public' => true, 'has_archive' => true));
+
+        self::factory()->post->create(array('post_type' => 'post', 'post_status' => 'publish'));
+
+        // Product archive shape: exempt.
+        $q = new WP_Query();
+        $q->parse_query(array('post_type' => 'product'));
+        $q->is_post_type_archive = true;
+        $q->is_archive           = true;
+        $GLOBALS['wp_the_query'] = $q; // is_main_query() compares against this.
+        $optimizer->no_found_rows($q);
+        $this->assertEmpty($q->get('no_found_rows'), 'product archive main queries keep their counts');
+
+        // Non-product front query: still optimized.
+        $q2 = new WP_Query();
+        $q2->parse_query(array('post_type' => 'post'));
+        $GLOBALS['wp_the_query'] = $q2;
+        $optimizer->no_found_rows($q2);
+        $this->assertTrue((bool) $q2->get('no_found_rows'), 'non-product main queries stay optimized');
+
+        unset($GLOBALS['wp_the_query']);
+    }
+
     public function test_remove_sort_strips_orderby_when_enabled() {
         $opts = ShopOS_Digital_Core::get_defaults();
         $opts['qo_remove_sort_order'] = 1;

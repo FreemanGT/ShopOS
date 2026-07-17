@@ -1,5 +1,13 @@
 # ShopOS Theme — Changelog
 
+## [1.14.0] — 2026-07-17
+
+- Theme-owned PLP: templates/woo/archive-product.php + the shared theme loader (inc/class-shopos-template-loader.php) behind shopos_core_theme_template_plp_enabled — §11.4 row 5
+
+## [1.13.1] — 2026-07-17
+
+- Restore the inc/updater.php require dropped by the PR #22 merge resolution — the theme self-updater was dead code on 1.13.0
+
 ## [1.13.0] — 2026-07-16
 
 - ShopOS Line §11.4 row 4 — ship the theme-owned PDP template at templates/woo/single-product.php (verbatim copy of the Core module template; resolved only by Core's flag-gated loader when shopos_core_theme_template_pdp_enabled is on; inert by file presence)

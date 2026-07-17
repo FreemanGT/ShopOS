@@ -59,7 +59,47 @@ class ShopOS_Digital_Query_Optimizer {
     public function no_found_rows($q) {
         // Guard at callback time: skip admin AND REST requests
         if (is_admin() || $this->is_rest_request()) return;
-        if ($q->is_main_query()) $q->set('no_found_rows', true);
+        if (!$q->is_main_query()) return;
+        // WooCommerce product archives consume the main query's found_posts in
+        // classic renders: woocommerce_result_count, pagination
+        // (max_num_pages), and wc_get_loop_prop('total') — the loop guard
+        // inside archive-product.php. Forcing no_found_rows here renders an
+        // EMPTY product grid with no pagination the moment anything classic
+        // serves the archive (WC's own template fallback, or the ShopOS
+        // theme's PLP template, decisions §11.4 row 5). Elementor-rendered
+        // archives never read the main query's counts, so this exemption
+        // costs one count query on product-archive pages and is correct
+        // under every renderer. (This hook runs at 100 — after WC_Query at
+        // 10 has already rewritten the shop page into a product post-type
+        // archive, so is_post_type_archive('product') covers the shop page.)
+        /**
+         * Filters whether this main query is exempt from no_found_rows
+         * forcing. Default: WooCommerce product archives (they consume the
+         * counts in classic renders — see above). Lets a store exempt other
+         * classically rendered paginated archives (e.g. a blog index) that
+         * would otherwise hit the same empty-pagination failure shape,
+         * without disabling the optimization site-wide.
+         *
+         * @since 1.7.7
+         *
+         * @param bool     $exempt Whether to skip forcing no_found_rows.
+         * @param WP_Query $q      The main query.
+         */
+        if (apply_filters('shopos_digital/qo_no_found_rows_exempt', $this->is_product_archive_query($q), $q)) return;
+        $q->set('no_found_rows', true);
+    }
+
+    /**
+     * Whether $q is a WooCommerce product-archive main query: the product
+     * post-type archive (incl. the shop page after WC_Query's rewrite) or
+     * any product taxonomy archive (categories, tags, attributes, custom).
+     */
+    private function is_product_archive_query($q) {
+        if ($q->is_post_type_archive('product')) return true;
+        $taxonomies = get_object_taxonomies('product');
+        // The !empty guard is load-bearing: is_tax(array()) matches ANY
+        // taxonomy archive.
+        return !empty($taxonomies) && $q->is_tax($taxonomies);
     }
     public function no_found_rows_admin($q) {
         if ($q->is_main_query() && !$q->get('no_found_rows')) {

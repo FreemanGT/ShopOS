@@ -6,7 +6,7 @@ alwaysApply: true
 
 # Agent skills
 
-This repo ships agent skills in `.claude/skills/<name>/SKILL.md` (plus `references/`). Before starting work in an area, read the matching skill file and follow it — the full topic → skill map is in `AGENTS.md` ("Skills" section).
+**Step one for EVERY coding task in this repo:** check the skill map, pick the best-fitting skill(s), and read `.claude/skills/<name>/SKILL.md` (plus its `references/`) before writing code — the full topic → skill map is in `AGENTS.md` ("Skills" section). Prefer the most specific match; combine skills for cross-area tasks.
 
 Quick routes: WP task classification → `wordpress-router` · Elementor (widgets/addons/Theme Builder/dynamic tags/Pro forms) → `wordpress-elementor-dev` + `elementor-*` · plugin dev → `wp-plugin-development` · WooCommerce/HPOS/gateways → `wp-woocommerce-dev` · REST endpoints → `wp-rest-api` · PHPStan → `wp-phpstan` · WP-CLI ops → `wp-wpcli-and-ops` · backend perf → `wp-performance` · frontend perf → `core-web-vitals`/`performance` · PHP security review → `wp-security-review` + `differential-review`/`insecure-defaults`/`variant-analysis` · migrations → `wp-migration-upgrade-review` · modern CSS/JS → `modern-web-guidance` · a11y → `accessibility` · SEO → `seo` · email HTML → `email-html-mjml`.
 
