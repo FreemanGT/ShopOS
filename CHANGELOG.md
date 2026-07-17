@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [digital 1.7.7] — 2026-07-17
+
+- shopos-digital **1.7.7**: Query Optimizer's `no_found_rows` forcing now exempts WooCommerce product-archive main queries (shop page + product taxonomies) — classic archive renders read `found_posts` (result count, pagination, `wc_get_loop_prop('total')` loop guard), so the forcing rendered an empty grid under any classic archive template (incl. the §11.4 row-5 theme PLP). Caught by the row-5 wp-env QA window; regression test added.
+
 ## [1.13.1] — 2026-07-17
 
 - Restore the inc/updater.php require dropped by the PR #22 merge resolution — the theme self-updater was dead code on 1.13.0
