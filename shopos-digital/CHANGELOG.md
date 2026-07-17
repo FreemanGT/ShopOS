@@ -2,6 +2,10 @@
 
 Seeded from git history at 1.7.4. Per-release detail for 1.7.3 and earlier lives in `readme.txt`.
 
+## [1.7.8] — 2026-07-17
+
+- FIX: escape the profiler table's three raw echoes in the admin renderer (`$type_badge` / `$color` / `$r->recommendation`) — the PR-18 remediation bullet recorded as shipped in 1.7.5 but silently dropped. Values are internally generated (audit risk: Low); escaping closes the ledger gap.
+
 ## [1.7.7] — 2026-07-17
 
 - **Fix: the Query Optimizer's `no_found_rows` forcing (default on) now exempts WooCommerce product-archive main queries** — the shop page (post-type archive) and every product taxonomy archive. Classic archive renders read the main query's `found_posts` for the result count, pagination (`max_num_pages`), and `wc_get_loop_prop( 'total' )` — the loop guard inside `archive-product.php` — so forcing `no_found_rows` there rendered an **empty product grid with no pagination** whenever anything classic served the archive (WooCommerce's own template fallback today; the ShopOS theme's flag-gated PLP template, decisions §11.4 row 5, tomorrow). Caught live by the row-5 wp-env QA window. New regression test + a `shopos_digital/qo_no_found_rows_exempt` filter so stores can exempt other classically rendered paginated archives without disabling the optimization site-wide.

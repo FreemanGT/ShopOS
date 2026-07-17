@@ -708,14 +708,14 @@ class ShopOS_Digital_Admin {
                 elseif ($r->component_type === 'mu-plugin') $type_badge = '🔧';
             ?>
                 <tr>
-                    <td><strong><?php echo $type_badge; ?> <?php echo esc_html($r->component); ?></strong><br><span style="font-size:11px;color:#888"><?php echo esc_html($r->component_type); ?></span></td>
+                    <td><strong><?php echo esc_html($type_badge); ?> <?php echo esc_html($r->component); ?></strong><br><span style="font-size:11px;color:#888"><?php echo esc_html($r->component_type); ?></span></td>
                     <td><?php echo number_format($r->occurrences); ?></td>
                     <td><?php echo number_format($r->avg_duration * 1000, 0); ?>ms<br><span style="font-size:11px;color:#888"><?php echo number_format($r->max_duration * 1000, 0); ?>ms max</span></td>
                     <td><strong><?php echo number_format($r->total_duration, 2); ?>s</strong></td>
-                    <td><span style="background:<?php echo $color; ?>;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;text-transform:uppercase"><?php echo esc_html(str_replace('_', ' ', $r->classification)); ?></span></td>
+                    <td><span style="background:<?php echo esc_attr($color); ?>;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;text-transform:uppercase"><?php echo esc_html(str_replace('_', ' ', $r->classification)); ?></span></td>
                     <td>
                         <code style="display:block;font-size:11px;background:#f5f5f5;padding:5px;border-radius:3px;max-height:80px;overflow:auto;margin-bottom:5px"><?php echo esc_html(substr($r->query_sample, 0, 500)); ?></code>
-                        <div style="font-size:12px;color:#2e7d32"><?php echo $r->recommendation; ?></div>
+                        <div style="font-size:12px;color:#2e7d32"><?php echo esc_html($r->recommendation); ?></div>
                         <button type="button" class="button button-small shopos-digital-prof-explain" data-fp="<?php echo esc_attr($r->fingerprint); ?>" style="margin-top:5px">🔍 EXPLAIN</button>
                     </td>
                 </tr>
