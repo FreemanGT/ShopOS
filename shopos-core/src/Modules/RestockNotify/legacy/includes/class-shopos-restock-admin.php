@@ -268,7 +268,7 @@ class ShopOS_Restock_Admin {
             __( 'תאריך הרשמה', 'shopos-core' ),
             __( 'תאריך עדכון', 'shopos-core' ),
         ));
-        foreach ($rows as $r) fputcsv($o, array($r['id'],$r['product_id'],$r['variation_id'],$r['customer_name'],$r['customer_email'],$this->status_heb($r['status']),$r['created_at'],$r['notified_at']??''));
+        foreach ($rows as $r) fputcsv($o, array($r['id'],$r['product_id'],$r['variation_id'],\ShopOS\Core\Modules\RestockNotify\CSV_Exporter::escape_csv_field((string)$r['customer_name']),\ShopOS\Core\Modules\RestockNotify\CSV_Exporter::escape_csv_field((string)$r['customer_email']),$this->status_heb($r['status']),$r['created_at'],$r['notified_at']??''));
         fclose($o); exit;
     }
 

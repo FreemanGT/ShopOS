@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.44.2] — 2026-07-17
+
+- Security (remediation B-1): legacy RestockNotify CSV export now formula-injection-escapes the visitor-supplied name/email fields via the modern `CSV_Exporter::escape_csv_field()` — the store no longer ships one hardened and one vulnerable exporter over the same table
+
 ## [1.44.1] — 2026-07-17
 
 - Design panel: fix the Design admin page 403ing on click — submenu registered before the parent `shopos` menu existed, so the page hook was filed under `admin_page_*` and never resolved; register at `admin_menu` priority 11
