@@ -39,6 +39,12 @@ class Test_FD_Query_Optimizer extends WP_UnitTestCase {
         // read it via wc_get_loop_prop('total'), result count, pagination.
         $optimizer = new ShopOS_Digital_Query_Optimizer(ShopOS_Digital_Core::get_defaults());
 
+        // The digital suite runs without WooCommerce, so register a stub
+        // 'product' post type — is_post_type_archive('product') resolves the
+        // post type object and returns false while it is unregistered. The
+        // test framework unregisters custom post types between tests.
+        register_post_type('product', array('public' => true, 'has_archive' => true));
+
         self::factory()->post->create(array('post_type' => 'post', 'post_status' => 'publish'));
 
         // Product archive shape: exempt.
