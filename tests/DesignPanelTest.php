@@ -95,6 +95,34 @@ final class DesignPanelTest extends TestCase {
 		$this->assertStringStartsWith( ':root{', $css );
 	}
 
+	/* -------- boot wiring (1.44.1 regression pin) -------- */
+
+	public function test_submenu_registers_after_the_parent_menu(): void {
+		// The Settings Hub registers the parent `shopos` menu at the default
+		// priority 10 and Design boots before the hub in Plugin::boot(), so a
+		// submenu registered at <= 10 files its page hook under `admin_page_*`
+		// and the page 403s (the 1.44.1 bug). Pin the after-parent priority.
+		$hooks_before           = $GLOBALS['fr_hooks'] ?? array();
+		$GLOBALS['fr_hooks']    = array();
+		$GLOBALS['fr_is_admin'] = true;
+		try {
+			( new Design() )->boot();
+			$entries = array();
+			foreach ( $GLOBALS['fr_hooks']['admin_menu'] ?? array() as $h ) {
+				if ( is_array( $h['cb'] ) && $h['cb'][0] instanceof Design && 'register_menu' === $h['cb'][1] ) {
+					$entries[] = $h;
+				}
+			}
+			$this->assertNotEmpty( $entries, 'Design registers its submenu on admin_menu when is_admin' );
+			foreach ( $entries as $h ) {
+				$this->assertGreaterThan( 10, $h['priority'], 'submenu must register after the parent shopos menu (priority 10)' );
+			}
+		} finally {
+			unset( $GLOBALS['fr_is_admin'] );
+			$GLOBALS['fr_hooks'] = $hooks_before;
+		}
+	}
+
 	/* -------- kit_slots (§11 Ruling 8 — Core-option default, filterable, no UI) -------- */
 
 	public function test_kit_slots_default_to_the_hardcoded_style_kit_slots(): void {

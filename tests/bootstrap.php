@@ -475,6 +475,15 @@ if ( ! function_exists( 'is_rtl' ) ) {
 	}
 }
 
+// Smart is_admin: reads $GLOBALS['fr_is_admin'] so tests can drive admin-only
+// boot branches (e.g. Design::boot()'s admin_menu wiring). Defaults to false —
+// byte-identical falsy behavior to the previous null stub.
+if ( ! function_exists( 'is_admin' ) ) {
+	function is_admin() {
+		return ! empty( $GLOBALS['fr_is_admin'] );
+	}
+}
+
 // Smart wp_localize_script: captures the localize payload into
 // $GLOBALS['fr_localize_calls'] keyed by $object_name so tests can assert
 // the JS-side data (handle, object name, payload). Doesn't render anything.
@@ -809,7 +818,9 @@ $stubs = array(
 	'load_plugin_textdomain', 'load_child_theme_textdomain',
 	// is_rtl is promoted to a smart stub above (reads $GLOBALS['fr_locale'])
 	// so shell code renders the correct direction for the driven locale.
-	'is_admin', 'current_user_can',
+	// is_admin is promoted to a smart stub above (reads $GLOBALS['fr_is_admin'])
+	// so tests can drive admin-only boot branches. Keep it out of this list.
+	'current_user_can',
 	'wp_verify_nonce', 'check_admin_referer', 'check_ajax_referer', 'wp_create_nonce', 'wp_nonce_field',
 	'esc_url_raw',
 	'deactivate_plugins', 'delete_plugins',
