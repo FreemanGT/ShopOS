@@ -1,12 +1,15 @@
 # Expansion Roadmap — 2026 H2
 
-**Status: PROPOSAL — nothing committed.** This document sequences the *next phase* of
-work toward the owner's stated goal: "a more complete theme with templates, enhanced
-settings, modules with Elementor widgets, and advanced mechanisms." Like
-[optional-future-features.md](optional-future-features.md), it is a forward plan, not a
-commitment — each phase still enters the normal wave/PR process (pre-flight + plan +
-owner approval) before any code. It complements, and does not replace,
-[roadmap.md](roadmap.md) (the committed execution log).
+**Status: Phases 0–3 executed; Phase 4 (the ShopOS Line, decisions §11) in flight.** As of
+2026-07-17 this document is BOTH the forward plan and the de-facto execution log for
+post-Wave-9 work — the ✅-marked rows below are shipped, and [roadmap.md](roadmap.md)'s own
+wave log stops at Wave 9 (2026-07-06). Rows that are not ✅-marked remain proposals and
+still enter the normal wave/PR process (pre-flight + plan + owner approval) before any
+code. Row-level shipped status is authoritative here + in decisions §11.4; per-release
+detail lives in [CLAUDE.md](CLAUDE.md)'s "Current infrastructure state" and the package
+CHANGELOGs. This document sequences work toward the owner's stated goal: "a more complete
+theme with templates, enhanced settings, modules with Elementor widgets, and advanced
+mechanisms."
 
 **Prepared**: 2026-07-15, from a four-dimension codebase analysis (theme, settings,
 widgets, mechanisms).
@@ -55,8 +58,8 @@ refactors land.
 | **[#11] ProductSlider `--ps-*` design tokens as Elementor controls** | widgets | S | COMMITTED. Mirror the shipped CategorySlider `--cs-*` (Wave 4.2); empty default → byte-identical render, no flag. |
 | ✅ **Wire the Settings_Hub color picker** — **shipped 1.28.0 (2026-07-15)**, bundled with the field-API extension | settings | S | Enqueued `wp-color-picker` in `Settings_Hub::enqueue_admin_assets()` (legacy VariationSwatches pattern). Fixes ProductPage `button_color` + InfiniteScroll `shimmer_*`, previously bare hex. |
 | **Harden the `choices`-vs-`options` bug class** | settings | S | Registry-drive the invariant test (`Module_Registry->all()`, not 4 hardcoded classes) + loud notice on empty select choices. |
-| **Wire the dead accent presets to a Customizer control** | theme | S | Sanitized select stamping `.is-accent-ink/gold/forest` on `<body>`; interim until the Design panel. |
-| **Loose ends** — theme `he_IL.po`/`.pot` (PR-21), owner-gated B-1 (legacy CSV twin), B-3 (InfiniteScroll stub choices) | mechanisms | S | Each independently shippable. |
+| **Wire the dead accent presets to a Customizer control** | theme | S | ✅ **OBSOLETED** by the ShopOS Design panel (core 1.35.0, decisions §9) — the accent-preset picker + curated token allow-list superseded this interim Customizer approach. |
+| **Loose ends** — theme `he_IL.po`/`.pot` (PR-21), owner-gated B-1 (legacy CSV twin), B-3 (InfiniteScroll stub choices) | mechanisms | S | ✅ all three shipped: theme `he_IL.po`/`.pot` committed (PR-21); B-1 legacy-CSV formula-injection escape — core 1.44.2 (2026-07-17); B-3 InfiniteScroll stub-choice withdrawal — core 1.44.3 (2026-07-17). |
 
 ### Phase 1 — Foundations (the critical path)
 
