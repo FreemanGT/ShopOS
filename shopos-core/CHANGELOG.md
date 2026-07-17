@@ -1,5 +1,9 @@
 # ShopOS Core — Changelog
 
+## [1.44.4] — 2026-07-17
+
+- RestockNotify: fix the frontend CSS/JS 404ing on every shop / product / cart page. `Frontend::enqueue_always()` built the asset base as `src/Modules/RestockNotify/legacy/assets/` — a directory that never existed (only `legacy/includes/` does); the files live at `src/Modules/RestockNotify/assets/` (where the admin enqueue already pointed). A long-standing latent bug (predates the rebrand), surfaced by live-store browse QA. Regression pinned by `RestockNotifyFrontendTest::test_frontend_assets_enqueue_from_the_non_legacy_assets_path` (new capturing `wp_enqueue_style`/`wp_enqueue_script` bootstrap stubs assert the resolved URL).
+
 ## [1.44.3] — 2026-07-17
 
 - InfiniteScroll (remediation B-3, owner-approved 2026-07-17): withdraw the non-functional `Button` / `Hybrid` choices from the Trigger-mode select — user-visible on the settings page since the 1.23.0 flag graduation while their "Load more" UI never shipped. `auto` is the only offered mode; the option key and the JS dispatcher's handling of a previously saved `button`/`hybrid` value are untouched (a re-save writes `auto`). Wave 3.1's roadmap limitation note remains the record for a future button UI.

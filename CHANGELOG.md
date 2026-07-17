@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.44.4] — 2026-07-17
+
+- RestockNotify frontend CSS/JS 404 fix: assets enqueued from a nonexistent `legacy/assets/` path; corrected to `RestockNotify/assets/` (caught by live-store browse QA)
+
 ## [1.44.3] — 2026-07-17
 
 - InfiniteScroll (remediation B-3): the non-functional Button/Hybrid trigger-mode stub choices are withdrawn from the settings select — auto is the only offered mode; saved values and the JS dispatcher are untouched

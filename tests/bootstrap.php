@@ -533,6 +533,23 @@ if ( ! function_exists( 'wp_add_inline_style' ) ) {
 	}
 }
 
+// Smart wp_enqueue_style / wp_enqueue_script: capture handle => resolved src
+// into $GLOBALS['fr_enqueued_styles'] / [...scripts] so tests can assert the
+// computed asset URL (e.g. the RestockNotify frontend asset path). Return null
+// like the previous null stubs — no observable behavior change.
+if ( ! function_exists( 'wp_enqueue_style' ) ) {
+	function wp_enqueue_style( $handle, $src = '', $deps = array(), $ver = false, $media = 'all' ) {
+		$GLOBALS['fr_enqueued_styles'][ $handle ] = (string) $src;
+		return null;
+	}
+}
+if ( ! function_exists( 'wp_enqueue_script' ) ) {
+	function wp_enqueue_script( $handle, $src = '', $deps = array(), $ver = false, $in_footer = false ) {
+		$GLOBALS['fr_enqueued_scripts'][ $handle ] = (string) $src;
+		return null;
+	}
+}
+
 // Wave 4.2 — capable Elementor stubs for testing Widget::register_controls().
 //
 // Strictly additive over the minimal Widget_Base stub that existing slider
@@ -804,7 +821,9 @@ $stubs = array(
 	'remove_action', 'remove_filter',
 	'register_activation_hook', 'register_deactivation_hook', 'register_uninstall_hook',
 	'plugin_dir_path', 'plugin_dir_url',
-	'wp_enqueue_script', 'wp_enqueue_style', 'wp_register_style', 'wp_register_script',
+	// wp_enqueue_style / wp_enqueue_script are promoted to capturing stubs above
+	// so tests can assert the resolved asset URL. Keep them out of this list.
+	'wp_register_style', 'wp_register_script',
 	'wp_localize_script',
 	// wp_add_inline_script is promoted to a smart stub below (Wave 4.5 /
 	// 1.11.40 — see "Inline script capture" block) so tests can verify

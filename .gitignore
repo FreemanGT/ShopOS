@@ -16,3 +16,4 @@ coverage/
 
 # phpcs result cache (local build artifact)
 .phpcs.cache
+.gstack/

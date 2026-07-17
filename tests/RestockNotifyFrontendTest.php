@@ -75,6 +75,26 @@ final class RestockNotifyFrontendTest extends TestCase {
 		update_option( 'shopos_restock_gdpr_text',            'I agree.' );
 	}
 
+	public function test_frontend_assets_enqueue_from_the_non_legacy_assets_path(): void {
+		// Regression (1.44.4): the modern Frontend enqueued from
+		// RestockNotify/legacy/assets/ — a directory that does not exist (only
+		// legacy/includes/ does) — so the CSS/JS 404'd on every shop / product /
+		// cart page. The assets live at RestockNotify/assets/ (the admin enqueue
+		// already used that path). Caught by live-store browse QA, not the suite.
+		$GLOBALS['fr_enqueued_styles']  = array();
+		$GLOBALS['fr_enqueued_scripts'] = array();
+		add_filter( 'shopos_restock_should_enqueue', static function () { return true; } );
+
+		( new Frontend() )->enqueue_always();
+
+		$css = $GLOBALS['fr_enqueued_styles']['shopos-restock-frontend'] ?? '';
+		$js  = $GLOBALS['fr_enqueued_scripts']['shopos-restock-frontend'] ?? '';
+		$this->assertStringContainsString( 'src/Modules/RestockNotify/assets/', $css );
+		$this->assertStringNotContainsString( 'legacy/assets', $css );
+		$this->assertStringContainsString( 'src/Modules/RestockNotify/assets/', $js );
+		$this->assertStringNotContainsString( 'legacy/assets', $js );
+	}
+
 	public function test_constructor_wires_assets_shortcode_and_init_when_auto_inject_off(): void {
 		update_option( 'shopos_restock_auto_inject', 'no' );
 
