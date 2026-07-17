@@ -1,5 +1,9 @@
 # ShopOS Core — Changelog
 
+## [1.44.3] — 2026-07-17
+
+- InfiniteScroll (remediation B-3, owner-approved 2026-07-17): withdraw the non-functional `Button` / `Hybrid` choices from the Trigger-mode select — user-visible on the settings page since the 1.23.0 flag graduation while their "Load more" UI never shipped. `auto` is the only offered mode; the option key and the JS dispatcher's handling of a previously saved `button`/`hybrid` value are untouched (a re-save writes `auto`). Wave 3.1's roadmap limitation note remains the record for a future button UI.
+
 ## [1.44.2] — 2026-07-17
 
 - Security (remediation B-1, owner-approved 2026-07-17): the legacy RestockNotify CSV export (`admin.php?page=restock-notify-subscribers&shopos_restock_export=1`) now routes `customer_name` / `customer_email` through `CSV_Exporter::escape_csv_field()` — the same OWASP formula-injection neutralization the modern Wave-4.1b exporter has carried since 1.21.25. Both fields are visitor-supplied via the public subscribe endpoint, and `sanitize_text_field()` does not strip a leading `=`/`+`/`-`/`@`. Hard Rule #3 legacy edit: one line, no option/table/URL changes.

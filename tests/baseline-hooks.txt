@@ -20,11 +20,11 @@ shopos-core/src/Modules/CheapestDefaultVariation/Module.php:131:		$should_apply 
 shopos-core/src/Modules/CheapestDefaultVariation/Module.php:186:		$cheapest = apply_filters( 'shopos_core/cheapest_variation/chosen', $cheapest, $product, $variations );
 shopos-core/src/Modules/CheapestDefaultVariation/Module.php:234:		$strategy = (string) apply_filters( 'shopos_core/cheapest_variation/strategy', $strategy, $product );
 shopos-core/src/Modules/HoverSwap/Frontend.php:83:		if ( ! apply_filters( 'shopos_core/hover_swap/show', true, $product ) ) {
-shopos-core/src/Modules/InfiniteScroll/Module.php:220:			'rootMargin'          => (string) apply_filters( 'shopos_core/infinite_scroll/root_margin', '800px 0px' ),
-shopos-core/src/Modules/InfiniteScroll/Module.php:257:		$resolved = apply_filters( 'shopos_core/infinite_scroll/should_render_wrapper', $resolved );
-shopos-core/src/Modules/InfiniteScroll/Module.php:276:		do_action( 'shopos_core/infinite_scroll/before_render' );
-shopos-core/src/Modules/InfiniteScroll/Module.php:294:		do_action( 'shopos_core/infinite_scroll/after_render' );
-shopos-core/src/Modules/InfiniteScroll/Module.php:314:		$resolved = apply_filters( 'shopos_core/infinite_scroll/selector', $setting );
+shopos-core/src/Modules/InfiniteScroll/Module.php:218:			'rootMargin'          => (string) apply_filters( 'shopos_core/infinite_scroll/root_margin', '800px 0px' ),
+shopos-core/src/Modules/InfiniteScroll/Module.php:255:		$resolved = apply_filters( 'shopos_core/infinite_scroll/should_render_wrapper', $resolved );
+shopos-core/src/Modules/InfiniteScroll/Module.php:274:		do_action( 'shopos_core/infinite_scroll/before_render' );
+shopos-core/src/Modules/InfiniteScroll/Module.php:292:		do_action( 'shopos_core/infinite_scroll/after_render' );
+shopos-core/src/Modules/InfiniteScroll/Module.php:312:		$resolved = apply_filters( 'shopos_core/infinite_scroll/selector', $setting );
 shopos-core/src/Modules/ProductFeed/Generator.php:167:			do_action( 'shopos_core/product_feed/after_generate', $this->feed_file(), $elapsed );
 shopos-core/src/Modules/ProductFeed/Generator.php:254:			$args = (array) apply_filters(
 shopos-core/src/Modules/ProductFeed/Generator.php:292:				$xml = (string) apply_filters( 'shopos_core/product_feed/item', $this->product_xml( $product ), $product );

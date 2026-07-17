@@ -88,12 +88,10 @@ final class Module extends Module_Base {
 				'label'       => __( 'Trigger mode', 'shopos-core' ),
 				'type'        => 'select',
 				'choices'     => array(
-					'auto'   => __( 'Auto — load on scroll / observer (current behavior)', 'shopos-core' ),
-					'button' => __( 'Button — halt auto-loading (button UI deferred — see roadmap)', 'shopos-core' ),
-					'hybrid' => __( 'Hybrid — auto for first N pages, then halt (button UI deferred — see roadmap)', 'shopos-core' ),
+					'auto'   => __( 'Auto — load on scroll / observer', 'shopos-core' ),
 				),
 				'default'     => 'auto',
-				'description' => __( 'Which mechanism advances pages. Auto is fully functional. Button halts auto-loading after the first page (functionally max_pages=1). Hybrid auto-loads up to the threshold then halts. The user-facing "Load more" button UI is deferred to a future wave.', 'shopos-core' ),
+				'description' => __( 'Auto is the only shipped mode. The Button and Hybrid stubs were withdrawn from this select (remediation B-3) — their "Load more" UI never shipped; the JS still honors a previously saved button/hybrid value until this page is re-saved.', 'shopos-core' ),
 			),
 			'history_mode'      => array(
 				'label'       => __( 'URL update on page advance', 'shopos-core' ),

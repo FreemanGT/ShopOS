@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.44.3] — 2026-07-17
+
+- InfiniteScroll (remediation B-3): the non-functional Button/Hybrid trigger-mode stub choices are withdrawn from the settings select — auto is the only offered mode; saved values and the JS dispatcher are untouched
+
 ## [1.44.2] — 2026-07-17
 
 - Security (remediation B-1): legacy RestockNotify CSV export now formula-injection-escapes the visitor-supplied name/email fields via the modern `CSV_Exporter::escape_csv_field()` — the store no longer ships one hardened and one vulnerable exporter over the same table
