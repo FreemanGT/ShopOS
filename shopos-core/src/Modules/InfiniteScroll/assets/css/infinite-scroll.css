@@ -34,7 +34,7 @@
 
 .shopos-skel-image {
     width: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: var(--shopos-ui-card-aspect, 3 / 4);
     margin-bottom: 14px;
 }
 
@@ -54,7 +54,7 @@
 
 .shopos-new-product {
     opacity: 0;
-    animation: shopos-fade-in var(--shopos-ui-is-fade-duration, .55s) cubic-bezier(.2,.7,.3,1) forwards;
+    animation: shopos-fade-in var(--shopos-ui-is-fade-duration, .55s) var(--shopos-ui-ease-out, cubic-bezier(.2,.7,.3,1)) forwards;
     will-change: opacity, transform;
 }
 
@@ -68,8 +68,8 @@
     width: 100%;
     text-align: center;
     padding: 28px 16px;
-    color: #6b7280;
-    font-size: 14px;
+    color: var(--shopos-ui-color-ink-muted, #6b7280);
+    font-size: var(--shopos-ui-text-sm, 14px);
     letter-spacing: .02em;
 }
 
