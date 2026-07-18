@@ -10,7 +10,7 @@
  *
  * Naming convention:
  *   --shopos-ui-<group>-<variant>[-<modifier>]
- *   group    = color | text | space | radius | shadow | motion | card | input | button | badge | z
+ *   group    = color | text | space | radius | shadow | motion | overlay | card | input | button | badge | z
  *   variant  = semantic role (ink, paper, accent, danger, …) or scale step
  *   modifier = optional state (hover, muted, soft, …)
  */
@@ -44,6 +44,8 @@
     --shopos-ui-color-accent:       var(--shopos-ui-palette-ink);
     --shopos-ui-color-accent-soft:  var(--shopos-ui-palette-paper-dim);
     --shopos-ui-color-accent-text:  var(--shopos-ui-palette-paper);
+    --shopos-ui-color-accent-hover: color-mix(in srgb, var(--shopos-ui-color-accent) 88%, #000);
+    --shopos-ui-color-accent-active:color-mix(in srgb, var(--shopos-ui-color-accent) 78%, #000);
     --shopos-ui-color-danger:       var(--shopos-ui-palette-red);
     --shopos-ui-color-danger-soft:  #fde3e6;
     --shopos-ui-color-success:      var(--shopos-ui-palette-green);
@@ -81,7 +83,9 @@
     --shopos-ui-tracking-tight:  -0.01em;
     --shopos-ui-tracking-normal: 0;
     --shopos-ui-tracking-wide:   0.04em;
+    --shopos-ui-tracking-caps:   0.14em;
 
+    --shopos-ui-weight-light:   300;
     --shopos-ui-weight-regular: 400;
     --shopos-ui-weight-medium:  500;
     --shopos-ui-weight-semi:    600;
@@ -124,6 +128,11 @@
     --shopos-ui-ease-out:       cubic-bezier(0.2, 0.8, 0.2, 1);
     --shopos-ui-ease-in:        cubic-bezier(0.4, 0, 1, 1);
     --shopos-ui-ease-bounce:    cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --shopos-ui-motion-spin:    0.8s;   /* full-rotation loop for spinners; intentionally NOT zeroed by reduced-motion */
+
+    /* --- Overlay / scrim ---------------------------------------------- */
+    --shopos-ui-overlay-scrim:  rgba(0, 0, 0, 0.45);
+    --shopos-ui-overlay-blur:   2px;
 
     /* --- Card primitives ---------------------------------------------- */
     --shopos-ui-card-radius:       var(--shopos-ui-radius-md);
@@ -135,6 +144,7 @@
     --shopos-ui-card-shadow:       var(--shopos-ui-shadow-sm);
     --shopos-ui-card-shadow-hover: var(--shopos-ui-shadow-md);
     --shopos-ui-card-hover-shift:  -2px;
+    --shopos-ui-card-hover-scale:  1.015;
 
     /* --- Form / input primitives -------------------------------------- */
     --shopos-ui-input-height:      44px;
@@ -145,6 +155,7 @@
     --shopos-ui-input-border-hover:1px solid var(--shopos-ui-color-ink-soft);
     --shopos-ui-input-focus-ring:  0 0 0 2px var(--shopos-ui-color-accent);
     --shopos-ui-input-padding-x:   var(--shopos-ui-space-md);
+    --shopos-ui-focus-outline:     2px solid var(--shopos-ui-color-accent);
 
     /* --- Button primitives -------------------------------------------- */
     --shopos-ui-button-height:       48px;
@@ -164,6 +175,18 @@
     --shopos-ui-container-max:   1360px;
     --shopos-ui-container-pad:   var(--shopos-ui-space-md);
     --shopos-ui-section-gap:     var(--shopos-ui-space-xxl);
+    --shopos-ui-drawer-width:    min(480px, 94vw);  /* off-canvas panels: QuickView, filters drawer */
+    --shopos-ui-swatch-size:     28px;              /* filter / variation swatch chip */
+    --shopos-ui-measure:         65ch;              /* readable line length for body copy */
+
+    /*
+     * Canonical breakpoints. CSS custom properties CANNOT be used inside a
+     * @media query, so these are reference values only — the single source of
+     * truth modules copy into their media queries / JS matchMedia calls, kept
+     * here so the numbers stop drifting per-module. tablet=1024px, mobile=640px.
+     */
+    --shopos-ui-bp-tablet:       1024px;
+    --shopos-ui-bp-mobile:       640px;
 
     /* --- Z-stack ------------------------------------------------------- */
     --shopos-ui-z-card:    1;
