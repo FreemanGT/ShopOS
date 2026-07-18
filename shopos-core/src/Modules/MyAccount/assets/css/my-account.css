@@ -20,8 +20,9 @@ body.woocommerce-account {
     --fma-ink-2:     var(--shopos-ui-color-ink-soft, #2a2a2a);
     --fma-ink-3:     var(--shopos-ui-color-ink-muted, #777777);
     --fma-line:      var(--shopos-ui-color-hairline, #e6e6e6);
-    --fma-accent:    var(--shopos-ui-color-accent, #0a0a0a);
-    --fma-accent-tx: var(--shopos-ui-color-accent-text, #ffffff);
+    --fma-accent:       var(--shopos-ui-color-accent, #0a0a0a);
+    --fma-accent-hover: var(--shopos-ui-color-accent-hover, #2a2a2a);
+    --fma-accent-tx:    var(--shopos-ui-color-accent-text, #ffffff);
     --fma-radius:    var(--shopos-ui-radius-md, 8px);
     --fma-radius-sm: var(--shopos-ui-radius-sm, 4px);
     --fma-radius-lg: var(--shopos-ui-radius-lg, 12px);
@@ -805,9 +806,9 @@ body.woocommerce-account .woocommerce-MyAccount-content .button:not(.cancel):not
     gap: var(--fma-space-sm);
     min-height: var(--fma-button-height);
     padding: 0 var(--fma-space-lg);
-    background: var(--fma-ink);
-    color: var(--fma-bg);
-    border: 1px solid var(--fma-ink);
+    background: var(--fma-accent);
+    color: var(--fma-accent-tx);
+    border: 1px solid var(--fma-accent);
     border-radius: var(--fma-radius-sm);
     font-family: var(--fma-font);
     font-size: var(--fma-text-sm);
@@ -817,7 +818,7 @@ body.woocommerce-account .woocommerce-MyAccount-content .button:not(.cancel):not
     text-transform: uppercase;
     text-decoration: none;
     cursor: pointer;
-    transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+    transition: background var(--shopos-ui-motion-fast, 180ms) ease, border-color var(--shopos-ui-motion-fast, 180ms) ease, color var(--shopos-ui-motion-fast, 180ms) ease;
     box-shadow: none;
     text-shadow: none;
 }
@@ -826,9 +827,9 @@ body.woocommerce-account .woocommerce button.button:hover,
 body.woocommerce-account .woocommerce input.button:hover,
 body.woocommerce-account .woocommerce a.button.alt:hover,
 body.woocommerce-account .woocommerce-MyAccount-content .button:not(.cancel):not(.view):hover {
-    background: var(--fma-ink-2);
-    border-color: var(--fma-ink-2);
-    color: var(--fma-bg);
+    background: var(--fma-accent-hover);
+    border-color: var(--fma-accent-hover);
+    color: var(--fma-accent-tx);
 }
 
 /* Secondary "view" / "cancel" / order-actions ghost buttons handled above. */
