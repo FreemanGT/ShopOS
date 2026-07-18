@@ -10,6 +10,10 @@
  *    Transitions — supporting browsers cross-fade old page → new page on
  *    same-origin navigations instead of flashing white. Unsupported
  *    browsers ignore the at-rule entirely.
+ *
+ * Colours / motion / geometry route through the --shopos-ui-* theme tokens
+ * (token value as the literal fallback) so the Design panel tunes the suite's
+ * most-seen animation.
  */
 
 /* ── B: cross-document fade ────────────────────────── */
@@ -20,8 +24,8 @@
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-	animation-duration: 0.18s;
-	animation-timing-function: ease;
+	animation-duration: var(--shopos-ui-motion-fast, 180ms);
+	animation-timing-function: var(--shopos-ui-ease, ease);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -37,15 +41,15 @@
 	inset: 0;
 	/* Same ceiling as the QuickView / ShopFilters drawers; being appended
 	   last at show() time wins the DOM-order tie over everything else. */
-	z-index: var(--shopos-ui-z-max, 100000);
+	z-index: var(--shopos-ui-z-max, 99999);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: rgba(15, 18, 26, 0.35);
-	-webkit-backdrop-filter: blur(1.5px);
-	backdrop-filter: blur(1.5px);
+	background: var(--shopos-ui-overlay-scrim, rgba(15, 18, 26, 0.35));
+	-webkit-backdrop-filter: blur(var(--shopos-ui-overlay-blur, 2px));
+	backdrop-filter: blur(var(--shopos-ui-overlay-blur, 2px));
 	opacity: 0;
-	transition: opacity 0.15s ease;
+	transition: opacity var(--shopos-ui-motion-fast, 0.15s) var(--shopos-ui-ease, ease);
 }
 
 .shopos-pt-overlay.shopos-pt-overlay--on {
@@ -58,25 +62,25 @@
 	align-items: center;
 	gap: 12px;
 	background: var(--shopos-ui-color-paper, #fff);
-	color: var(--shopos-ui-color-ink, #1c2230);
-	border-radius: 1rem;
+	color: var(--shopos-ui-color-ink, #1b1b1b);
+	border-radius: var(--shopos-ui-radius-lg, 12px);
 	padding: 22px 34px;
-	box-shadow: 0 8px 30px rgba(15, 18, 26, 0.18);
+	box-shadow: var(--shopos-ui-shadow-md, 0 8px 30px rgba(15, 18, 26, 0.18));
 }
 
 .shopos-pt-spinner {
 	width: 30px;
 	height: 30px;
 	border-radius: 50%;
-	border: 3px solid rgba(15, 18, 26, 0.14);
-	border-top-color: var(--shopos-ui-color-ink, #1c2230);
-	animation: shopos-pt-spin 0.7s linear infinite;
+	border: 3px solid var(--shopos-ui-color-hairline, rgba(15, 18, 26, 0.14));
+	border-top-color: var(--shopos-ui-color-ink, #1b1b1b);
+	animation: shopos-pt-spin var(--shopos-ui-motion-spin, 0.7s) linear infinite;
 }
 
 .shopos-pt-label {
-	font-size: 13.5px;
-	font-weight: 600;
-	line-height: 1.4;
+	font-size: var(--shopos-ui-text-sm, 13.5px);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	line-height: var(--shopos-ui-leading-snug, 1.4);
 }
 
 @keyframes shopos-pt-spin {
@@ -91,6 +95,6 @@
 	   the motion: a static ring instead of a spinner. */
 	.shopos-pt-spinner {
 		animation: none;
-		border-top-color: rgba(15, 18, 26, 0.14);
+		border-top-color: var(--shopos-ui-color-hairline, rgba(15, 18, 26, 0.14));
 	}
 }
