@@ -196,7 +196,7 @@
 @media (hover: hover) {
 	.cs.cs-products .cs-card.product:hover img.attachment-woocommerce_thumbnail,
 	.cs.cs-products .cs-card.product:hover img.wp-post-image {
-		transform: scale(1.015);
+		transform: scale(var(--shopos-ui-card-hover-scale, 1.015));
 	}
 }
 

@@ -282,7 +282,7 @@
 	inset: -10px;
 }
 .cs-card:hover .cs-img {
-	transform: scale(1.015);
+	transform: scale(var(--shopos-ui-card-hover-scale, 1.015));
 }
 
 /* ── Meta ─────────────────────────────────────────── */
