@@ -17,6 +17,31 @@ final class SearchResultsQueryTest extends TestCase {
 		$this->assertTrue( Results_Query::should_handle( false, true, true, 'hoodie', true ) );
 	}
 
+	protected function setUp(): void {
+		parent::setUp();
+		$GLOBALS['fr_opts'] = array();
+	}
+
+	public function test_include_oos_follows_catalog_by_default(): void {
+		// Woo default (shows OOS in catalog) => search shows them too.
+		$this->assertTrue( Results_Query::include_oos() );
+
+		// Woo hides OOS store-wide => search hides them too.
+		$GLOBALS['fr_opts']['woocommerce_hide_out_of_stock_items'] = 'yes';
+		$this->assertFalse( Results_Query::include_oos() );
+	}
+
+	public function test_include_oos_explicit_overrides_win_over_catalog(): void {
+		$GLOBALS['fr_opts']['woocommerce_hide_out_of_stock_items'] = 'yes';
+
+		$GLOBALS['fr_opts']['shopos_core_search_include_oos'] = 'yes';
+		$this->assertTrue( Results_Query::include_oos(), 'always-show wins over a hiding catalog' );
+
+		$GLOBALS['fr_opts']['woocommerce_hide_out_of_stock_items'] = 'no';
+		$GLOBALS['fr_opts']['shopos_core_search_include_oos']      = 'no';
+		$this->assertFalse( Results_Query::include_oos(), 'never-show wins over a showing catalog' );
+	}
+
 	/**
 	 * @dataProvider non_handling_cases
 	 */
