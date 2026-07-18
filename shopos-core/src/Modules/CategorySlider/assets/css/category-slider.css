@@ -10,11 +10,14 @@
  */
 
 .cs {
-	--cs-bg: oklch(0.985 0.005 80);
-	--cs-ink: oklch(0.18 0.01 60);
-	--cs-mute: oklch(0.45 0.01 60);
-	--cs-line: oklch(0.88 0.008 70);
-	--cs-accent: oklch(0.55 0.12 35);
+	/* Chained to the ShopOS design tokens so the Design panel / .is-accent-*
+	   body classes restyle both sliders. The oklch literals stay as fallbacks,
+	   so rendering is byte-identical on a theme that doesn't define the tokens. */
+	--cs-bg: var(--shopos-ui-color-paper, oklch(0.985 0.005 80));
+	--cs-ink: var(--shopos-ui-color-ink, oklch(0.18 0.01 60));
+	--cs-mute: var(--shopos-ui-color-ink-muted, oklch(0.45 0.01 60));
+	--cs-line: var(--shopos-ui-color-hairline, oklch(0.88 0.008 70));
+	--cs-accent: var(--shopos-ui-color-accent, oklch(0.55 0.12 35));
 	--cs-per: 5;
 	--cs-per-tablet: 4;
 	--cs-per-mobile: 2;
