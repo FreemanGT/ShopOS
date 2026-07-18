@@ -17,18 +17,21 @@
 }
 
 .shopos-shop-pick {
-	--eshop-text: #111111;
-	--eshop-muted: #6b6b6b;
-	--eshop-border: #e0e0e0;
-	--eshop-border-strong: #111111;
-	--eshop-bg: #ffffff;
-	--eshop-bg-soft: #f2f2f2;
-	--eshop-accent: #111111;
-	--eshop-success: #0f8a4a;
-	--eshop-danger: #ca2b1d;
-	--eshop-radius-pill: 999px;
+	/* Chained to the ShopOS design tokens, current literals as fallbacks. These
+	   are scoped to .shopos-shop-pick so they resolve fine here; the body-mounted
+	   toast marks (below) reference the theme tokens directly instead. */
+	--eshop-text: var(--shopos-ui-color-ink, #111111);
+	--eshop-muted: var(--shopos-ui-color-ink-muted, #6b6b6b);
+	--eshop-border: var(--shopos-ui-color-hairline, #e0e0e0);
+	--eshop-border-strong: var(--shopos-ui-color-ink, #111111);
+	--eshop-bg: var(--shopos-ui-color-paper, #ffffff);
+	--eshop-bg-soft: var(--shopos-ui-color-paper-dim, #f2f2f2);
+	--eshop-accent: var(--shopos-ui-color-accent, #111111);
+	--eshop-success: var(--shopos-ui-color-success, #0f8a4a);
+	--eshop-danger: var(--shopos-ui-color-danger, #ca2b1d);
+	--eshop-radius-pill: var(--shopos-ui-radius-pill, 999px);
 	--eshop-gap: 8px;
-	--eshop-transition: 140ms ease;
+	--eshop-transition: var(--shopos-ui-motion-fast, 140ms) var(--shopos-ui-ease, ease);
 
 	direction: rtl !important;
 	text-align: right !important;
@@ -709,7 +712,10 @@
 	width: 22px;
 	height: 22px;
 	border-radius: 50%;
-	background: var(--shopos-success, #0f8a4a);
+	/* Toasts are body-mounted, outside .shopos-shop-pick / .shopos-buy-box, so
+	   the module-local --shopos-success / --eshop-danger vars never resolve here
+	   and the fallback always won. Use the document-scope theme tokens instead. */
+	background: var(--shopos-ui-color-success, #0f8a4a);
 	color: #ffffff;
 	font-size: 14px;
 	flex: 0 0 auto;
@@ -733,7 +739,10 @@
 	width: 22px;
 	height: 22px;
 	border-radius: 50%;
-	background: var(--eshop-danger, #d14c4c);
+	/* Body-mounted like the check mark above — resolve against the document-scope
+	   token, not the out-of-scope --eshop-danger (whose #d14c4c fallback also
+	   didn't match the intended #ca2b1d error red). */
+	background: var(--shopos-ui-color-danger, #ca2b1d);
 	color: #ffffff;
 	font-size: 14px;
 	font-weight: 700;

@@ -183,25 +183,31 @@ body:has(.shopos-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produc
 
 /* ---------- Host ---------- */
 .shopos-buy-box {
-	--shopos-text: #111111;
-	--shopos-muted: #6b6b6b;
-	--shopos-border: #d9d9d9;
-	--shopos-border-strong: #111111;
-	--shopos-bg: #ffffff;
+	/* Chained to the ShopOS design tokens (current literals kept as fallbacks,
+	   so a token-less theme renders byte-identically). This is what puts the
+	   buy box — the store's most conversion-critical surface — under the Design
+	   panel: --shopos-primary is the Buy Now CTA, now following the owner accent
+	   instead of a baked red. */
+	--shopos-text: var(--shopos-ui-color-ink, #111111);
+	--shopos-muted: var(--shopos-ui-color-ink-muted, #6b6b6b);
+	--shopos-border: var(--shopos-ui-color-hairline, #d9d9d9);
+	--shopos-border-strong: var(--shopos-ui-color-ink, #111111);
+	--shopos-bg: var(--shopos-ui-color-paper, #ffffff);
 	/* Add-to-cart background — darker than the page (#F4F4F4) for clear
-	   definition while staying in "light grey / low emphasis" territory. */
+	   definition while staying in "light grey / low emphasis" territory.
+	   Deliberate greys, not a palette colour the owner rebrands — left literal. */
 	--shopos-bg-soft: #e0e0e0;
 	--shopos-bg-soft-hover: #d1d1d1;
 	--shopos-bg-soft-active: #c7c7c7;
-	--shopos-accent: #111111;
-	--shopos-primary: #ca2b1d;
-	--shopos-primary-hover: #a8241a;
-	--shopos-primary-active: #8f1e15;
-	--shopos-success: #0f8a4a;
-	--shopos-radius: 999px;
+	--shopos-accent: var(--shopos-ui-color-accent, #111111);
+	--shopos-primary: var(--shopos-ui-color-accent, #ca2b1d);
+	--shopos-primary-hover: var(--shopos-ui-color-accent-hover, #a8241a);
+	--shopos-primary-active: var(--shopos-ui-color-accent-active, #8f1e15);
+	--shopos-success: var(--shopos-ui-color-success, #0f8a4a);
+	--shopos-radius: var(--shopos-ui-radius-pill, 999px);
 	--shopos-radius-sm: 24px;
 	--shopos-gap: 10px;
-	--shopos-transition: 160ms ease;
+	--shopos-transition: var(--shopos-ui-motion-fast, 160ms) var(--shopos-ui-ease, ease);
 
 	direction: rtl !important;
 	text-align: right !important;
@@ -920,9 +926,9 @@ body:has(.shopos-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produc
 		height: 52px !important;
 		padding: 0 18px !important;
 		border: 0 !important;
-		border-radius: 999px !important;
-		background: #ca2b1d !important;
-		color: #ffffff !important;
+		border-radius: var(--shopos-ui-radius-pill, 999px) !important;
+		background: var(--shopos-primary) !important;
+		color: var(--shopos-ui-color-accent-text, #ffffff) !important;
 		font-size: 16px !important;
 		font-weight: 600 !important;
 		cursor: pointer !important;
@@ -939,7 +945,7 @@ body:has(.shopos-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produc
 	}
 
 	.shopos-sticky-bar__buy:hover:not(:disabled):not(.disabled):not([aria-disabled="true"]) {
-		background: #a8241a !important;
+		background: var(--shopos-primary-hover) !important;
 	}
 
 	.shopos-sticky-bar__buy:disabled,
