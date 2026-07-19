@@ -49,14 +49,14 @@
 
 .shopos-sf__term-count,
 .shopos-sf__cat-count {
-	color: #767676;
+	color: var(--shopos-ui-color-ink-muted, #767676);
 	font-size: 0.85em;
 }
 
 /* Checkbox facets: branded fill + a quick pop on the label when ticked — the
    visible selection feedback for plain (non-swatch) attribute terms. */
 .shopos-sf__checkbox {
-	accent-color: #111;
+	accent-color: var(--shopos-ui-color-accent, #111);
 }
 
 .shopos-sf__checkbox:checked + .shopos-sf__term-label {
@@ -116,7 +116,7 @@
 
 .shopos-sf__count {
 	margin: 0 0 1em;
-	color: #767676;
+	color: var(--shopos-ui-color-ink-muted, #767676);
 }
 
 /* ---- sort dropdown ---- */
@@ -182,8 +182,8 @@
 
 .shopos-sf__swatch-chip {
 	display: block;
-	width: 28px;
-	height: 28px;
+	width: var(--shopos-ui-swatch-size, 28px);
+	height: var(--shopos-ui-swatch-size, 28px);
 	border-radius: 50%;
 	border: 1px solid rgba(0, 0, 0, 0.15);
 	background-size: cover;
@@ -195,15 +195,15 @@
 	width: auto;
 	min-width: 28px;
 	height: auto;
-	border-radius: 999px;
+	border-radius: var(--shopos-ui-radius-pill, 999px);
 	padding: 0.25em 0.7em;
-	background: #f6f6f6;
+	background: var(--shopos-ui-color-paper-dim, #f6f6f6);
 	font-size: 0.85em;
 	line-height: 1.4;
 }
 
 .shopos-sf__swatch-input:checked + .shopos-sf__swatch-chip {
-	box-shadow: 0 0 0 2px #fff, 0 0 0 4px #111;
+	box-shadow: 0 0 0 2px var(--shopos-ui-color-paper, #fff), 0 0 0 4px var(--shopos-ui-color-accent, #111);
 	animation: shopos-sf-pop 0.2s ease;
 }
 
@@ -214,7 +214,7 @@
 }
 
 .shopos-sf__swatch-input:focus-visible + .shopos-sf__swatch-chip {
-	box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2271b1;
+	box-shadow: 0 0 0 2px var(--shopos-ui-color-paper, #fff), 0 0 0 4px var(--shopos-ui-color-accent, #2271b1);
 }
 
 /* ============================================================
@@ -493,11 +493,11 @@
 		display: block;
 		position: fixed;
 		inset: 0;
-		background: rgba(0, 0, 0, 0.45);
+		background: var(--shopos-ui-overlay-scrim, rgba(0, 0, 0, 0.45));
 		opacity: 0;
 		visibility: hidden;
 		transition: opacity 0.25s ease;
-		z-index: var(--shopos-ui-z-max, 99998);
+		z-index: var(--shopos-ui-z-overlay, 99998);
 	}
 
 	.shopos-sf__panel {
@@ -506,13 +506,13 @@
 		bottom: 0;
 		max-height: 85vh;
 		overflow-y: auto;
-		background: #fff;
+		background: var(--shopos-ui-color-paper, #fff);
 		padding: 1em;
 		border-radius: 12px 12px 0 0;
 		box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
 		transform: translateY(100%);
 		transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-		z-index: var(--shopos-ui-z-max, 99999);
+		z-index: var(--shopos-ui-z-modal, 99999);
 	}
 
 	.shopos-sf--open .shopos-sf__panel {
@@ -570,7 +570,7 @@
 		gap: 0.75em;
 		position: sticky;
 		bottom: 0;
-		background: #fff;
+		background: var(--shopos-ui-color-paper, #fff);
 		padding-top: 1em;
 		margin-top: 0.5em;
 	}
@@ -580,10 +580,10 @@
 		padding: 0.85em 1.25em;
 		font-weight: var(--shopos-ui-button-font-weight, 600);
 		letter-spacing: var(--shopos-ui-button-tracking, normal);
-		border: 1px solid #111;
+		border: 1px solid var(--shopos-ui-color-accent, #111);
 		border-radius: var(--shopos-ui-radius-pill, 999px);
-		background: #111;
-		color: #fff;
+		background: var(--shopos-ui-color-accent, #111);
+		color: var(--shopos-ui-color-accent-text, #fff);
 		cursor: pointer;
 		transition: transform 0.08s ease;
 	}
