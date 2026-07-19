@@ -1,5 +1,9 @@
 # ShopOS Theme — Changelog
 
+## [1.15.0] — 2026-07-19
+
+- Foundation design tokens — overlay/scrim, accent hover/active, motion-spin, card-hover-scale, drawer-width, measure, focus-outline, breakpoint canon (additive; no visual change)
+
 ## [1.14.0] — 2026-07-17
 
 - Theme-owned PLP: templates/woo/archive-product.php + the shared theme loader (inc/class-shopos-template-loader.php) behind shopos_core_theme_template_plp_enabled — §11.4 row 5

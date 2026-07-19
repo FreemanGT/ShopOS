@@ -2,6 +2,14 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.45.0] — 2026-07-19
+
+- Design-token coverage across all storefront modules (buy box, sliders, filters, restock, PDP, quickview/hoverswap, my-account, search, page-transitions, infinite-scroll) + owner-control settings (search OOS visibility, sort labels, buy-box toggles, mobile card height, tap-to-open) + 2 bug fixes (restock subscribe 400, swatch toast colour scope) + RestockNotify RTL now follows locale
+
+## [1.15.0] — 2026-07-19
+
+- Foundation design tokens — overlay/scrim, accent hover/active, motion-spin, card-hover-scale, drawer-width, measure, focus-outline, breakpoint canon (additive; no visual change)
+
 ## [1.44.4] — 2026-07-17
 
 - RestockNotify frontend CSS/JS 404 fix: assets enqueued from a nonexistent `legacy/assets/` path; corrected to `RestockNotify/assets/` (caught by live-store browse QA)
