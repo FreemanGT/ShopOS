@@ -167,8 +167,9 @@ final class ProductPageTemplateTest extends TestCase {
 
 		// Drives VS's own custom property (its action buttons read it)…
 		$this->assertStringContainsString( '.shopos-ui-pdp .shopos-buy-box{--shopos-primary:#0A7C66', $css );
-		$this->assertStringContainsString( '--shopos-primary-hover:#0A7C66', $css );
-		$this->assertStringContainsString( '--shopos-primary-active:#0A7C66', $css );
+		// …with hover/active derived by darkening the chosen colour, not flattened.
+		$this->assertStringContainsString( '--shopos-primary-hover:color-mix(in srgb, #0A7C66 88%, #000)', $css );
+		$this->assertStringContainsString( '--shopos-primary-active:color-mix(in srgb, #0A7C66 78%, #000)', $css );
 		// …plus the explicit sticky-bar override, whose red is a hardcoded
 		// literal in VS rather than the var.
 		$this->assertStringContainsString( '.shopos-sticky-bar__buy{background:#0A7C66 !important}', $css );

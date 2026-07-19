@@ -265,7 +265,12 @@ final class Template_Loader {
 			return '';
 		}
 
-		return '.shopos-ui-pdp .shopos-buy-box{--shopos-primary:' . $hex . ';--shopos-primary-hover:' . $hex . ';--shopos-primary-active:' . $hex . '}'
+		// Derive hover/active by darkening the owner's chosen colour, rather than
+		// flattening all three CTA states to the same hex (no press feedback).
+		$hover  = 'color-mix(in srgb, ' . $hex . ' 88%, #000)';
+		$active = 'color-mix(in srgb, ' . $hex . ' 78%, #000)';
+
+		return '.shopos-ui-pdp .shopos-buy-box{--shopos-primary:' . $hex . ';--shopos-primary-hover:' . $hover . ';--shopos-primary-active:' . $active . '}'
 			. '.shopos-ui-pdp .shopos-buy-box .shopos-sticky-bar__buy,.shopos-ui-pdp .shopos-sticky-bar__buy{background:' . $hex . ' !important}';
 	}
 
