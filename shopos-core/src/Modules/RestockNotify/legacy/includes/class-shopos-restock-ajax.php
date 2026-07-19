@@ -4,8 +4,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class ShopOS_Restock_Ajax {
 
     public function __construct() {
-        add_action( 'wp_ajax_rsn_subscribe', array( $this, 'handle_subscribe' ) );
-        add_action( 'wp_ajax_nopriv_rsn_subscribe', array( $this, 'handle_subscribe' ) );
+        add_action( 'wp_ajax_shopos_restock_subscribe', array( $this, 'handle_subscribe' ) );
+        add_action( 'wp_ajax_nopriv_shopos_restock_subscribe', array( $this, 'handle_subscribe' ) );
     }
 
     public function handle_subscribe() {
