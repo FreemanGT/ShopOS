@@ -76,7 +76,14 @@ function shopos_theme_check_update( $transient ) {
 	$slug  = basename( dirname( __DIR__ ) );
 	$entry = shopos_theme_update_manifest();
 
-	if ( ! $entry || ! version_compare( $entry->version, SHOPOS_THEME_VERSION, '>' ) ) {
+	// Compare against the version WordPress read from style.css (the same value
+	// it shows as "installed"), not the SHOPOS_THEME_VERSION constant. After an
+	// in-place update a stale opcached functions.php can hold the old constant
+	// while style.css is already current — that mismatch re-offers the version
+	// already installed ("update 1.15.0 → 1.15.0"). One source of truth kills it.
+	$installed = isset( $transient->checked[ $slug ] ) ? $transient->checked[ $slug ] : SHOPOS_THEME_VERSION;
+
+	if ( ! $entry || ! version_compare( $entry->version, $installed, '>' ) ) {
 		// Let WP know the theme is current (enables auto-update UI).
 		if ( isset( $transient->response[ $slug ] ) ) {
 			unset( $transient->response[ $slug ] );

@@ -1,5 +1,9 @@
 # ShopOS Theme — Changelog
 
+## [1.15.1] — 2026-07-19
+
+- Fix: compare manifest against WordPress's on-disk theme version instead of the opcached SHOPOS_THEME_VERSION constant, so an in-place update no longer re-offers the version already installed
+
 ## [1.15.0] — 2026-07-19
 
 - Foundation design tokens — overlay/scrim, accent hover/active, motion-spin, card-hover-scale, drawer-width, measure, focus-outline, breakpoint canon (additive; no visual change)

@@ -74,6 +74,14 @@ publish_one() {
             || fail "theme zip missing the inc/updater.php require — refusing to brick the update channel"
     fi
 
+    # Core's updater is booted from Plugin.php; a merge once silently dropped
+    # that line (core 1.44.3–1.45.0 shipped it unbooted, cutting updated stores
+    # off the channel). Same guard as the theme require above.
+    if [[ "${product}" == "shopos-core" ]]; then
+        unzip -p "${zip}" "shopos-core/src/Core/Plugin.php" | grep -q "new Updater()" \
+            || fail "core zip doesn't boot the updater — refusing to brick the update channel"
+    fi
+
     # 1. GitHub Release with the zip attached (skip if the tag already exists).
     if gh release view "${tag}" --repo "${RELEASES_REPO}" >/dev/null 2>&1; then
         log "Release ${tag} already exists — re-uploading asset"

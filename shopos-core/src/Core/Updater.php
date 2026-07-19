@@ -85,7 +85,15 @@ final class Updater {
 		$entry = $this->manifest();
 		$item  = $this->update_item( $entry );
 
-		if ( $entry && version_compare( $entry->version, SHOPOS_CORE_VERSION, '>' ) ) {
+		// Compare against the version WordPress read from the plugin header (the
+		// value it shows as "installed"), not the SHOPOS_CORE_VERSION constant —
+		// a stale opcached header after an in-place update would otherwise
+		// re-offer the version already installed.
+		$installed = isset( $transient->checked[ SHOPOS_CORE_BASENAME ] )
+			? $transient->checked[ SHOPOS_CORE_BASENAME ]
+			: SHOPOS_CORE_VERSION;
+
+		if ( $entry && version_compare( $entry->version, $installed, '>' ) ) {
 			$transient->response[ SHOPOS_CORE_BASENAME ] = $item;
 			unset( $transient->no_update[ SHOPOS_CORE_BASENAME ] );
 		} elseif ( $item ) {

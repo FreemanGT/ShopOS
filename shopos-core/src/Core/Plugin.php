@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Plugin {
 
-	const VERSION = '1.45.0';
+	const VERSION = '1.45.1';
 
 	/**
 	 * Singleton instance.
@@ -173,6 +173,12 @@ final class Plugin {
 
 		// Scoped `wp shopos` CLI surface — a no-op unless WP-CLI is running.
 		CLI::register();
+
+		// Dashboard update checks run from admin *and* cron (wp_update_plugins),
+		// so the updater registers unconditionally. Must stay at method scope,
+		// not inside is_admin() — a merge once dropped this line and silently
+		// cut every updated store off the core update channel (see publish.sh).
+		( new Updater() )->boot();
 
 		// Perf probe (gated, default off): diagnostic response headers for
 		// tools/perf-budget.php. Even flag-on registers nothing unless the

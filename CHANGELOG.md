@@ -2,6 +2,14 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## [1.15.1] — 2026-07-19
+
+- Fix: compare manifest against WordPress's on-disk theme version instead of the opcached SHOPOS_THEME_VERSION constant, so an in-place update no longer re-offers the version already installed
+
+## [1.45.1] — 2026-07-19
+
+- Fix: boot the dashboard updater (a merge dropped it in 1.44.3, stranding stores off the core update channel); compare manifest against WP's on-disk version to stop re-offering the installed version
+
 ## [1.45.0] — 2026-07-19
 
 - Design-token coverage across all storefront modules (buy box, sliders, filters, restock, PDP, quickview/hoverswap, my-account, search, page-transitions, infinite-scroll) + owner-control settings (search OOS visibility, sort labels, buy-box toggles, mobile card height, tap-to-open) + 2 bug fixes (restock subscribe 400, swatch toast colour scope) + RestockNotify RTL now follows locale

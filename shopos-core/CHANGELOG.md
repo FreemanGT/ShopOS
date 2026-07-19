@@ -1,5 +1,9 @@
 # ShopOS Core — Changelog
 
+## [1.45.1] — 2026-07-19
+
+- Fix: boot the dashboard updater (a merge dropped it in 1.44.3, stranding stores off the core update channel); compare manifest against WP's on-disk version to stop re-offering the installed version
+
 ## [1.45.0] — 2026-07-19
 
 - Design-token coverage across all storefront modules (buy box, sliders, filters, restock, PDP, quickview/hoverswap, my-account, search, page-transitions, infinite-scroll) + owner-control settings (search OOS visibility, sort labels, buy-box toggles, mobile card height, tap-to-open) + 2 bug fixes (restock subscribe 400, swatch toast colour scope) + RestockNotify RTL now follows locale
