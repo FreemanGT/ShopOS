@@ -20,11 +20,11 @@ shopos-core/src/Modules/CheapestDefaultVariation/Module.php:131:		$should_apply 
 shopos-core/src/Modules/CheapestDefaultVariation/Module.php:186:		$cheapest = apply_filters( 'shopos_core/cheapest_variation/chosen', $cheapest, $product, $variations );
 shopos-core/src/Modules/CheapestDefaultVariation/Module.php:234:		$strategy = (string) apply_filters( 'shopos_core/cheapest_variation/strategy', $strategy, $product );
 shopos-core/src/Modules/HoverSwap/Frontend.php:83:		if ( ! apply_filters( 'shopos_core/hover_swap/show', true, $product ) ) {
-shopos-core/src/Modules/InfiniteScroll/Module.php:218:			'rootMargin'          => (string) apply_filters( 'shopos_core/infinite_scroll/root_margin', '800px 0px' ),
-shopos-core/src/Modules/InfiniteScroll/Module.php:255:		$resolved = apply_filters( 'shopos_core/infinite_scroll/should_render_wrapper', $resolved );
-shopos-core/src/Modules/InfiniteScroll/Module.php:274:		do_action( 'shopos_core/infinite_scroll/before_render' );
-shopos-core/src/Modules/InfiniteScroll/Module.php:292:		do_action( 'shopos_core/infinite_scroll/after_render' );
-shopos-core/src/Modules/InfiniteScroll/Module.php:312:		$resolved = apply_filters( 'shopos_core/infinite_scroll/selector', $setting );
+shopos-core/src/Modules/InfiniteScroll/Module.php:225:			'rootMargin'          => (string) apply_filters( 'shopos_core/infinite_scroll/root_margin', '800px 0px' ),
+shopos-core/src/Modules/InfiniteScroll/Module.php:263:		$resolved = apply_filters( 'shopos_core/infinite_scroll/should_render_wrapper', $resolved );
+shopos-core/src/Modules/InfiniteScroll/Module.php:282:		do_action( 'shopos_core/infinite_scroll/before_render' );
+shopos-core/src/Modules/InfiniteScroll/Module.php:300:		do_action( 'shopos_core/infinite_scroll/after_render' );
+shopos-core/src/Modules/InfiniteScroll/Module.php:320:		$resolved = apply_filters( 'shopos_core/infinite_scroll/selector', $setting );
 shopos-core/src/Modules/ProductFeed/Generator.php:167:			do_action( 'shopos_core/product_feed/after_generate', $this->feed_file(), $elapsed );
 shopos-core/src/Modules/ProductFeed/Generator.php:254:			$args = (array) apply_filters(
 shopos-core/src/Modules/ProductFeed/Generator.php:292:				$xml = (string) apply_filters( 'shopos_core/product_feed/item', $this->product_xml( $product ), $product );
@@ -41,10 +41,10 @@ shopos-core/src/Modules/ProductPage/templates/single-product.php:55:			do_action
 shopos-core/src/Modules/ProductPage/templates/single-product.php:64:						do_action( 'woocommerce_before_single_product_summary' );
 shopos-core/src/Modules/ProductPage/templates/single-product.php:72:							do_action( 'woocommerce_single_product_summary' );
 shopos-core/src/Modules/ProductPage/templates/single-product.php:86:					$shopos_tabs = apply_filters( 'woocommerce_product_tabs', array() );
-shopos-core/src/Modules/ProductSlider/Widget.php:1276:			return apply_filters( 'shopos_core/product_slider/archive_thumbnail_size', 'large' );
-shopos-core/src/Modules/ProductSlider/Widget.php:1395:					$max_pages = max( 1, (int) apply_filters( 'shopos_core/product_slider/grid_max_pages', $max_pages, $s ) );
-shopos-core/src/Modules/ProductSlider/Widget.php:811:		$args = (array) apply_filters( 'shopos_core/product_slider/query_args', $args, $s );
-shopos-core/src/Modules/ProductSlider/Widget.php:923:			$per_page = (int) apply_filters( 'loop_shop_per_page', wc_get_default_products_per_page() );
+shopos-core/src/Modules/ProductSlider/Widget.php:1290:			return apply_filters( 'shopos_core/product_slider/archive_thumbnail_size', 'large' );
+shopos-core/src/Modules/ProductSlider/Widget.php:1409:					$max_pages = max( 1, (int) apply_filters( 'shopos_core/product_slider/grid_max_pages', $max_pages, $s ) );
+shopos-core/src/Modules/ProductSlider/Widget.php:823:		$args = (array) apply_filters( 'shopos_core/product_slider/query_args', $args, $s );
+shopos-core/src/Modules/ProductSlider/Widget.php:935:			$per_page = (int) apply_filters( 'loop_shop_per_page', wc_get_default_products_per_page() );
 shopos-core/src/Modules/QuickView/Ajax.php:78:		$html = (string) apply_filters( 'shopos_core/quick_view/drawer_html', $html, $product_id );
 shopos-core/src/Modules/QuickView/Frontend.php:142:		if ( ! apply_filters( 'shopos_core/quick_view/show_trigger', true, $product ) ) {
 shopos-core/src/Modules/QuickView/templates/drawer-content.php:55:		do_action( 'woocommerce_single_product_summary' );
@@ -89,6 +89,6 @@ shopos-core/src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php
 shopos-core/src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:284:				do_action( 'woocommerce_before_add_to_cart_button' );
 shopos-core/src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:298:							'min_value'   => apply_filters( 'woocommerce_quantity_input_min', $product->get_min_purchase_quantity(), $product ),
 shopos-core/src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:299:							'max_value'   => apply_filters( 'woocommerce_quantity_input_max', $product->get_max_purchase_quantity(), $product ),
-shopos-core/src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:345:		<?php do_action( 'woocommerce_after_single_variation' ); ?>
-shopos-core/src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:349:	<?php do_action( 'woocommerce_after_variations_form' ); ?>
-shopos-core/src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:352:<?php do_action( 'woocommerce_after_add_to_cart_form' ); ?>
+shopos-core/src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:349:		<?php do_action( 'woocommerce_after_single_variation' ); ?>
+shopos-core/src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:353:	<?php do_action( 'woocommerce_after_variations_form' ); ?>
+shopos-core/src/Modules/VariationSwatches/legacy/templates/variation-buy-box.php:356:<?php do_action( 'woocommerce_after_add_to_cart_form' ); ?>

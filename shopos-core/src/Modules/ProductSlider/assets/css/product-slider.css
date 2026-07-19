@@ -450,7 +450,7 @@
 	.cs.cs-products .cs-card.product img.attachment-woocommerce_thumbnail,
 	.cs.cs-products .cs-card.product img.wp-post-image,
 	.cs.cs-products ul.products li.product img {
-		height: 220px;
+		height: var(--cs-card-h-mobile, 220px);
 	}
 	.cs.cs-products .cs-card.product .woocommerce-loop-product__title {
 		margin-top: 10px;

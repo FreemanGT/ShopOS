@@ -89,7 +89,7 @@ $pdp_price_html = $product->get_price_html(); ?>
 			  // For OOS / priceless products the single ATC "אזל מהמלאי"
 			  // button above is the full action surface — showing a second
 			  // disabled pill below it just creates visual noise. ?>
-		<?php if ( $buyable ) : ?>
+		<?php if ( $buyable && ShopOS_VS_Settings::bool( ShopOS_VS_Settings::OPT_PDP_SHOW_BUY_NOW, 'yes' ) ) : ?>
 			<button type="submit"
 					class="shopos-buy-now single_add_to_cart_button button"
 					name="add-to-cart"
@@ -103,7 +103,7 @@ $pdp_price_html = $product->get_price_html(); ?>
 	<input type="hidden" name="product_id" value="<?php echo absint( $product_id ); ?>" />
 	<input type="hidden" name="<?php echo esc_attr( ShopOS_VS_Ajax::BUY_NOW_FIELD ); ?>" class="shopos-buy-now-flag" value="" />
 
-	<?php if ( $buyable ) : ?>
+	<?php if ( $buyable && ShopOS_VS_Settings::bool( ShopOS_VS_Settings::OPT_PDP_SHOW_STICKY_BAR, 'yes' ) ) : ?>
 		<?php // Sticky mobile bottom bar — hidden on desktop via CSS, revealed
 			  // when the main buy box scrolls out of viewport. The shared
 			  // shopos-swatches.js handles the toggle via .shopos-buy-now

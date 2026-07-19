@@ -304,6 +304,7 @@ $pdp_min_html   = wc_price( $pdp_min );
 					?>
 				</div>
 
+				<?php if ( ShopOS_VS_Settings::bool( ShopOS_VS_Settings::OPT_PDP_SHOW_BUY_NOW, 'yes' ) ) : ?>
 				<button type="submit"
 						class="shopos-buy-now single_add_to_cart_button button disabled wc-variation-selection-needed"
 						name="add-to-cart"
@@ -312,6 +313,7 @@ $pdp_min_html   = wc_price( $pdp_min );
 						aria-disabled="true">
 					<?php echo esc_html( \ShopOS\Core\Modules\VariationSwatches\Labels::get( 'buy_now' ) ); ?>
 				</button>
+				<?php endif; ?>
 			</div>
 
 			<input type="hidden" name="product_id" value="<?php echo absint( $product_id ); ?>" />
@@ -327,6 +329,7 @@ $pdp_min_html   = wc_price( $pdp_min );
 			  // toggled from JS so assistive tech isn't duplicated when it's
 			  // off-screen.
 			  // ------------------------------------------------------------------ ?>
+		<?php if ( ShopOS_VS_Settings::bool( ShopOS_VS_Settings::OPT_PDP_SHOW_STICKY_BAR, 'yes' ) ) : ?>
 		<div class="shopos-sticky-bar" aria-hidden="true">
 			<div class="shopos-sticky-bar__inner">
 				<div class="shopos-sticky-bar__price" aria-live="polite">
@@ -341,6 +344,7 @@ $pdp_min_html   = wc_price( $pdp_min );
 				</button>
 			</div>
 		</div>
+		<?php endif; ?>
 
 		<?php do_action( 'woocommerce_after_single_variation' ); ?>
 

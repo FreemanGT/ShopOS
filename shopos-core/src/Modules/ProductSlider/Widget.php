@@ -324,6 +324,18 @@ final class Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'card_height_mobile',
+			array(
+				'label'       => __( 'Image height (mobile)', 'shopos-core' ),
+				'type'        => Controls_Manager::SLIDER,
+				'size_units'  => array( 'px' ),
+				'range'       => array( 'px' => array( 'min' => 120, 'max' => 400, 'step' => 10 ) ),
+				'default'     => array( 'unit' => 'px', 'size' => 220 ),
+				'description' => __( 'Image height on phones — the desktop height usually leaves too little room for the rest of the card on narrow viewports.', 'shopos-core' ),
+			)
+		);
+
 		$this->end_controls_section();
 
 		// ── Card style (Style tab) ────────────────────────────────────────
@@ -1178,7 +1190,8 @@ final class Widget extends Widget_Base {
 			$per_view_mobile = max( 1.0, round( $per_view_mobile ) );
 		}
 		$gap             = max( 0, $this->slider_int( $s['gap'] ?? null, 20 ) );
-		$card_height     = max( 100, $this->slider_int( $s['card_height'] ?? null, 320 ) );
+		$card_height        = max( 100, $this->slider_int( $s['card_height'] ?? null, 320 ) );
+		$card_height_mobile = max( 100, $this->slider_int( $s['card_height_mobile'] ?? null, 220 ) );
 		$shape           = in_array( $s['shape'] ?? 'soft', array( 'soft', 'rect' ), true ) ? $s['shape'] : 'soft';
 		$show_cart       = ( $s['show_cart'] ?? 'yes' ) === 'yes';
 		$show_sale_badge = ( $s['show_sale_badge'] ?? 'yes' ) === 'yes';
@@ -1217,12 +1230,13 @@ final class Widget extends Widget_Base {
 		// `per_view_mobile` is a float (1.0–3.0) so the next card can peek;
 		// the others are integer cards-per-view.
 		$style_vars = sprintf(
-			'--cs-per: %d; --cs-per-tablet: %d; --cs-per-mobile: %s; --cs-gap: %dpx; --cs-card-h: %dpx;',
+			'--cs-per: %d; --cs-per-tablet: %d; --cs-per-mobile: %s; --cs-gap: %dpx; --cs-card-h: %dpx; --cs-card-h-mobile: %dpx;',
 			$per_view,
 			$per_view_tablet,
 			rtrim( rtrim( number_format( $per_view_mobile, 2, '.', '' ), '0' ), '.' ),
 			$gap,
-			$card_height
+			$card_height,
+			$card_height_mobile
 		);
 
 		// `woocommerce` is the ancestor class many third-party plugins
