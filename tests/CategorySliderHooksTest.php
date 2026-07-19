@@ -16,6 +16,21 @@ if ( ! class_exists( '\\Elementor\\Group_Control_Typography' ) ) {
 	eval( 'namespace Elementor; class Group_Control_Typography { public static function get_type() { return "typography"; } }' );
 }
 
+if ( ! class_exists( 'WP_Term' ) ) {
+	class WP_Term {
+		public $term_id;
+		public $taxonomy;
+		public function __construct( $id = 0, $taxonomy = '' ) {
+			$this->term_id  = $id;
+			$this->taxonomy = $taxonomy;
+		}
+	}
+}
+if ( ! function_exists( 'get_queried_object' ) ) {
+	function get_queried_object() {
+		return $GLOBALS['fr_queried_object'] ?? null;
+	}
+}
 if ( ! function_exists( 'get_terms' ) ) {
 	function get_terms( $args = array() ) {
 		return $GLOBALS['fr_get_terms_return'] ?? array();
@@ -70,6 +85,60 @@ final class CategorySliderHooksTest extends TestCase {
 		$GLOBALS['fr_opts']             = array();
 		$GLOBALS['fr_hooks']            = array();
 		$GLOBALS['fr_get_terms_return'] = array();
+		$GLOBALS['fr_queried_object']   = null;
+	}
+
+	/** Capture the get_terms() args fetch_terms() builds for the given settings. */
+	private function capture_query_args( array $settings ): array {
+		$captured = array();
+		add_filter(
+			'shopos_core/category_slider/query_args',
+			static function ( $args ) use ( &$captured ) {
+				$captured = $args;
+				return $args;
+			}
+		);
+		$widget = new Widget();
+		$ref    = new \ReflectionClass( $widget );
+		$m      = $ref->getMethod( 'fetch_terms' );
+		$m->setAccessible( true );
+		$m->invoke( $widget, $settings );
+		return $captured;
+	}
+
+	public function test_auto_source_on_category_archive_shows_current_children(): void {
+		$GLOBALS['fr_queried_object'] = new WP_Term( 42, 'product_cat' );
+
+		$args = $this->capture_query_args( array( 'source' => 'current_children', 'limit' => 12 ) );
+
+		$this->assertSame( 42, $args['parent'], 'Auto source must query the children of the queried category.' );
+	}
+
+	public function test_auto_source_off_archive_shows_top_level(): void {
+		$GLOBALS['fr_queried_object'] = null; // e.g. the shop page.
+
+		$args = $this->capture_query_args( array( 'source' => 'current_children', 'limit' => 12 ) );
+
+		$this->assertSame( 0, $args['parent'], 'Auto source off a category archive must fall back to top-level.' );
+	}
+
+	public function test_auto_source_ignores_non_product_cat_queried_object(): void {
+		$GLOBALS['fr_queried_object'] = new WP_Term( 7, 'post_tag' );
+
+		$args = $this->capture_query_args( array( 'source' => 'current_children', 'limit' => 12 ) );
+
+		$this->assertSame( 0, $args['parent'], 'A non-product_cat queried object must not drive the drill-down.' );
+	}
+
+	public function test_auto_source_overrides_manual_include(): void {
+		$GLOBALS['fr_queried_object'] = new WP_Term( 42, 'product_cat' );
+
+		$args = $this->capture_query_args(
+			array( 'source' => 'current_children', 'include' => array( 1, 2, 3 ), 'limit' => 12 )
+		);
+
+		$this->assertSame( 42, $args['parent'] );
+		$this->assertArrayNotHasKey( 'include', $args, 'Auto source must ignore the manual Include list.' );
 	}
 
 	public function test_query_args_filter_receives_args_and_settings(): void {

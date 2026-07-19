@@ -153,9 +153,19 @@
 	   Negative margin compensates so the track still aligns with the head. */
 	padding: 12px 0 16px;
 	margin: -12px 0 -16px;
-	mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
-	-webkit-mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+	/* Edge fade advertises "more to scroll". Dynamic: the JS toggles
+	   .cs-fade-start / .cs-fade-end from scroll position, so the first/last
+	   card's name is never faded at rest. Default (no classes) = both edges
+	   opaque = no fade, no clipping. A static symmetric mask clipped the
+	   first card's first letter (nothing is scrolled off the start yet) and
+	   faded both ends of a non-scrollable rail. */
+	--cs-fade-l: #000;
+	--cs-fade-r: #000;
+	mask-image: linear-gradient(to right, var(--cs-fade-l) 0, #000 24px, #000 calc(100% - 24px), var(--cs-fade-r) 100%);
+	-webkit-mask-image: linear-gradient(to right, var(--cs-fade-l) 0, #000 24px, #000 calc(100% - 24px), var(--cs-fade-r) 100%);
 }
+.cs-track.cs-fade-start { --cs-fade-l: transparent; }
+.cs-track.cs-fade-end   { --cs-fade-r: transparent; }
 .cs-track::-webkit-scrollbar { display: none; }
 /* Admin-disabled state: no grab affordance, browser owns both axes. */
 .cs[data-cs-mouse-drag="0"] .cs-track {

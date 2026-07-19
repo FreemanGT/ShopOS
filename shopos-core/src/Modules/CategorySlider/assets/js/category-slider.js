@@ -488,6 +488,12 @@
 			// mode (0..-max), and is safe against the legacy positive-RTL mode.
 			var ratio = max > 0 ? clamp(Math.abs(track.scrollLeft) / max, 0, 1) : 0;
 
+			// Dynamic edge fade: fade the start only once content is scrolled
+			// past it, the end only while more remains. A non-scrollable rail
+			// (max <= 0) gets neither, so the first card's name is never clipped.
+			track.classList.toggle('cs-fade-start', max > 0 && ratio > 0.001);
+			track.classList.toggle('cs-fade-end', max > 0 && ratio < 0.999);
+
 			if (bar && progress) {
 				// Pixel-based math so the bar reaches the parent's far edge
 				// exactly at ratio=1. Translating in % of the bar's own width
@@ -509,7 +515,11 @@
 				progress.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
 			}
 			if (footCurrent && totalCards > 0) {
-				var current = clamp(Math.round(ratio * (totalCards - per)) + per, per, totalCards);
+				// Lower bound is min(per, total): when the rail holds fewer cards
+				// than fit per view (common after a drill-down to a small child
+				// set), `per` > totalCards inverts the clamp and it would report
+				// e.g. "04 / 03". Cap the "current" at what actually exists.
+				var current = clamp(Math.round(ratio * (totalCards - per)) + per, Math.min(per, totalCards), totalCards);
 				footCurrent.textContent = String(current).padStart(2, '0');
 			}
 
