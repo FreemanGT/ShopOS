@@ -83,6 +83,20 @@ final class Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'source',
+			array(
+				'label'       => __( 'Categories to show', 'shopos-core' ),
+				'type'        => Controls_Manager::SELECT,
+				'default'     => 'manual',
+				'options'     => array(
+					'manual'           => __( 'Chosen categories (below)', 'shopos-core' ),
+					'current_children' => __( "Current category's children (auto)", 'shopos-core' ),
+				),
+				'description' => __( 'Auto: on a category page the slider shows that category\'s sub-categories; elsewhere (e.g. the shop page) it shows top-level categories. Drop one instance on your category-archive template to make the rail drill down as visitors browse. The Order / Limit / Exclude controls still apply.', 'shopos-core' ),
+			)
+		);
+
+		$this->add_control(
 			'limit',
 			array(
 				'label'      => __( 'Max categories', 'shopos-core' ),
@@ -140,6 +154,7 @@ final class Widget extends Widget_Base {
 				'default'      => 'yes',
 				'return_value' => 'yes',
 				'description'  => __( 'Ignored if "Child of" or "Include only" is set.', 'shopos-core' ),
+				'condition'    => array( 'source' => 'manual' ),
 			)
 		);
 
@@ -153,7 +168,7 @@ final class Widget extends Widget_Base {
 				'default'     => '',
 				'options'     => array( '' => __( '— Any —', 'shopos-core' ) ) + $term_options,
 				'description' => __( 'Show only sub-categories of this parent term.', 'shopos-core' ),
-				'condition'   => array( 'parent_only!' => 'yes' ),
+				'condition'   => array( 'parent_only!' => 'yes', 'source' => 'manual' ),
 			)
 		);
 
@@ -167,6 +182,7 @@ final class Widget extends Widget_Base {
 				'options'     => $term_options,
 				'default'     => array(),
 				'description' => __( 'When set, only these categories appear (overrides Top-level / Child of).', 'shopos-core' ),
+				'condition'   => array( 'source' => 'manual' ),
 			)
 		);
 
@@ -622,6 +638,25 @@ final class Widget extends Widget_Base {
 	}
 
 	/**
+	 * Term id whose children the auto ("current category's children") source
+	 * shows: the queried product_cat term on a category archive, else 0
+	 * (top-level). Kept tiny and WP-only so the branch that consumes it in
+	 * fetch_terms() stays the sole thing to reason about.
+	 *
+	 * @return int
+	 */
+	private function current_category_id() {
+		if ( ! function_exists( 'get_queried_object' ) ) {
+			return 0;
+		}
+		$obj = get_queried_object();
+		if ( $obj instanceof \WP_Term && 'product_cat' === $obj->taxonomy ) {
+			return (int) $obj->term_id;
+		}
+		return 0;
+	}
+
+	/**
 	 * Query product_cat terms with the widget's settings.
 	 *
 	 * @param array $s Settings.
@@ -639,7 +674,15 @@ final class Widget extends Widget_Base {
 			'number'     => max( 1, $this->slider_int( $s['limit'] ?? null, 12 ) ),
 		);
 
-		if ( ! empty( $include ) ) {
+		if ( 'current_children' === ( $s['source'] ?? 'manual' ) ) {
+			// Auto drill-down: the children of the queried product_cat term on a
+			// category archive, or top-level (parent 0) everywhere else (e.g. the
+			// shop page) — so one instance shows top categories on the shop page
+			// and drills to sub-categories on each category page. Overrides the
+			// manual Include / Top-level / Child-of controls (hidden in this mode);
+			// Order / Limit / Exclude still apply.
+			$args['parent'] = $this->current_category_id();
+		} elseif ( ! empty( $include ) ) {
 			// `include` overrides hierarchical filters — user explicitly chose these.
 			$args['include'] = $include;
 		} else {
