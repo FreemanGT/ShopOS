@@ -104,6 +104,17 @@ final class Module extends Module_Base {
 				'checkbox_label' => __( 'Display the SKU on each dropdown result', 'shopos-core' ),
 				'default'        => 'no',
 			),
+			'include_oos'    => array(
+				'label'       => __( 'Out-of-stock products', 'shopos-core' ),
+				'type'        => 'select',
+				'choices'     => array(
+					'follow' => __( 'Follow the catalog (recommended)', 'shopos-core' ),
+					'yes'    => __( 'Always show in search', 'shopos-core' ),
+					'no'     => __( 'Never show in search', 'shopos-core' ),
+				),
+				'default'     => 'follow',
+				'description' => __( 'Whether out-of-stock products appear in search. "Follow the catalog" mirrors your WooCommerce stock-visibility setting (Settings → Products → Inventory); the others force it on or off regardless.', 'shopos-core' ),
+			),
 		);
 
 		return $schema;

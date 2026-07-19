@@ -46,6 +46,12 @@ class ShopOS_VS_Settings {
 	/** Single-product buy box options (new in 1.6.1). */
 	public const OPT_PDP_HIDE_OOS        = 'shopos_vs_pdp_hide_oos';
 
+	/** Buy box: show the mobile sticky add-to-cart bar. */
+	public const OPT_PDP_SHOW_STICKY_BAR = 'shopos_vs_pdp_show_sticky_bar';
+
+	/** Buy box: show the "Buy now" (express-checkout) button. */
+	public const OPT_PDP_SHOW_BUY_NOW    = 'shopos_vs_pdp_show_buy_now';
+
 	/** Archive / shop-grid OOS hiding (new in 1.6.6). */
 	public const OPT_SHOP_HIDE_OOS       = 'shopos_vs_shop_hide_oos';
 

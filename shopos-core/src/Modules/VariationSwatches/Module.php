@@ -141,6 +141,18 @@ final class Module extends Module_Base {
 				'checkbox_label' => __( 'Skip rendering swatches for variations that are out of stock on single-product pages', 'shopos-core' ),
 				'default'        => 'no',
 			),
+			'pdp_show_sticky_bar'      => array(
+				'label'          => __( 'Buy box: mobile sticky bar', 'shopos-core' ),
+				'type'           => 'checkbox',
+				'checkbox_label' => __( 'Show the sticky add-to-cart bar that follows the shopper on mobile', 'shopos-core' ),
+				'default'        => 'yes',
+			),
+			'pdp_show_buy_now'         => array(
+				'label'          => __( 'Buy box: "Buy now" button', 'shopos-core' ),
+				'type'           => 'checkbox',
+				'checkbox_label' => __( 'Show the express "Buy now" button beside Add to cart', 'shopos-core' ),
+				'default'        => 'yes',
+			),
 			'shop_hide_oos'            => array(
 				'label'          => __( 'Shop: hide out-of-stock swatches', 'shopos-core' ),
 				'type'           => 'checkbox',

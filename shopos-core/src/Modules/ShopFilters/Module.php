@@ -84,6 +84,25 @@ final class Module extends Module_Base {
 			'description' => __( 'Default product ordering for shop and category pages (until the shopper picks a sort). Blank keeps the WooCommerce default.', 'shopos-core' ),
 		);
 
+		// Sort-option label overrides — one text field per sort key. Blank keeps
+		// the English default (mirrors the WooCommerce catalog-ordering names).
+		// These are the only visible panel strings not already owner-editable.
+		$first = true;
+		foreach ( Url_State::orderby_whitelist() as $orderby ) {
+			/* translators: %s: the English default wording for this sort option. */
+			$desc = sprintf( __( 'Default: %s', 'shopos-core' ), self::default_orderby_label( $orderby ) );
+			if ( $first ) {
+				$desc = __( 'Sort-menu wording — leave a field blank to use its English default.', 'shopos-core' ) . ' ' . $desc;
+				$first = false;
+			}
+			$schema[ 'label_sort_' . $orderby ] = array(
+				'label'       => self::default_orderby_label( $orderby ),
+				'type'        => 'text',
+				'default'     => '',
+				'description' => $desc,
+			);
+		}
+
 		$schema['filter_style'] = array(
 			'label'       => __( 'Filter panel style', 'shopos-core' ),
 			'type'        => 'select',
@@ -105,6 +124,22 @@ final class Module extends Module_Base {
 	 * @return string
 	 */
 	public static function orderby_label( $orderby ) {
+		// Owner override (ShopOS → Shop Filters → sort-label fields). Blank = default.
+		$override = get_option( 'shopos_core_shop_filters_label_sort_' . $orderby, '' );
+		if ( is_string( $override ) && '' !== trim( $override ) ) {
+			return $override;
+		}
+		return self::default_orderby_label( $orderby );
+	}
+
+	/**
+	 * The built-in English label for a sort option (mirrors WooCommerce's
+	 * catalog-ordering names), before any owner override.
+	 *
+	 * @param string $orderby Orderby key.
+	 * @return string
+	 */
+	public static function default_orderby_label( $orderby ) {
 		$labels = array(
 			'menu_order' => __( 'Default sorting', 'shopos-core' ),
 			'popularity' => __( 'Popularity', 'shopos-core' ),

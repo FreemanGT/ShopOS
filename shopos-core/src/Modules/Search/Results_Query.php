@@ -108,6 +108,29 @@ final class Results_Query {
 		return empty( $ids ) ? array( 0 ) : $ids;
 	}
 
+	/**
+	 * Whether search should surface out-of-stock products.
+	 *
+	 * Owner setting `shopos_core_search_include_oos`:
+	 *  - 'follow' (default) mirrors the catalog: include OOS products unless
+	 *    WooCommerce is configured to hide out-of-stock items store-wide.
+	 *  - 'yes' always includes them; 'no' always excludes them (the historical
+	 *    always-in-stock-only behaviour).
+	 *
+	 * @return bool
+	 */
+	public static function include_oos() {
+		$pref = get_option( 'shopos_core_search_include_oos', 'follow' );
+		if ( 'yes' === $pref ) {
+			return true;
+		}
+		if ( 'no' === $pref ) {
+			return false;
+		}
+		// follow: hide OOS only when WooCommerce hides them from the catalog.
+		return 'yes' !== get_option( 'woocommerce_hide_out_of_stock_items' );
+	}
+
 	/* -----------------------------------------------------------------
 	 * WP adapters (integration / live QA)
 	 * ----------------------------------------------------------------- */
@@ -138,7 +161,7 @@ final class Results_Query {
 			return;
 		}
 
-		$q->set( 'post__in', self::plan_ids( $this->repo->search( $term, -1, true ) ) );
+		$q->set( 'post__in', self::plan_ids( $this->repo->search( $term, -1, ! self::include_oos() ) ) );
 		$q->set( 'orderby', 'post__in' );
 		$this->active = true;
 	}

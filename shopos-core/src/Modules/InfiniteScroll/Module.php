@@ -116,6 +116,13 @@ final class Module extends Module_Base {
 				'default'     => '',
 				'description' => __( 'CSS selector(s) for the product grid container. Empty = use built-in selector list. Listeners can further override via the shopos_core/infinite_scroll/selector filter.', 'shopos-core' ),
 			),
+			'tap_to_navigate'   => array(
+				'label'          => __( 'Tap-to-open product cards', 'shopos-core' ),
+				'type'           => 'checkbox',
+				'checkbox_label' => __( 'On touch devices, open a product on the first tap of its card', 'shopos-core' ),
+				'default'        => 'yes',
+				'description'    => __( 'Works around themes whose card :hover styles swallow the first tap. Turn off if it conflicts with a theme that already handles single-tap navigation.', 'shopos-core' ),
+			),
 			'shimmer_base_color'      => array(
 				'label'       => __( 'Skeleton shimmer — base color', 'shopos-core' ),
 				'type'        => 'color',
@@ -228,6 +235,7 @@ final class Module extends Module_Base {
 			'historyMode'         => (string) $this->get_option( 'history_mode', 'disabled' ),
 			'hybridThreshold'     => (int) $this->get_option( 'hybrid_threshold', 2 ),
 			'containerSelector'   => $this->resolve_container_selector(),
+			'tapToNavigate'       => 'yes' === $this->get_option( 'tap_to_navigate', 'yes' ),
 		);
 	}
 

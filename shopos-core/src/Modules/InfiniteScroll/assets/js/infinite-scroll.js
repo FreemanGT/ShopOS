@@ -903,6 +903,11 @@
 
     if (!('ontouchstart' in window)) { return; }
 
+    // Owner opt-out (ShopOS → Infinite Scroll → Tap-to-open). The payload sends
+    // false only when the setting is off; older cached payloads omit the key and
+    // keep the historical always-on behaviour.
+    if ((window.ShopOSInfiniteScroll || {}).tapToNavigate === false) { return; }
+
     var MOVE_TOLERANCE = 10;   // px — beyond this the gesture was a scroll
     var MAX_TAP_MS = 700;      // longer presses are not taps
     var CARD = 'li.product, .cs-card.product, .type-product, li.wc-block-grid__product';

@@ -67,6 +67,8 @@ final class Settings_Reader {
 		'shopos_vs_shop_apply_search',
 		'shopos_vs_shop_apply_related',
 		'shopos_vs_pdp_hide_oos',
+		'shopos_vs_pdp_show_sticky_bar',
+		'shopos_vs_pdp_show_buy_now',
 		'shopos_vs_shop_hide_oos',
 		'shopos_vs_shop_no_preselect',
 		'shopos_vs_shop_hide_attr_labels',
