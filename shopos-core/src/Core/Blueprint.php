@@ -31,6 +31,7 @@ namespace ShopOS\Core\Core;
 
 defined( 'ABSPATH' ) || exit;
 
+use ShopOS\Core\Modules\BundleDeals\Bundle_Config;
 use ShopOS\Core\Modules\ProductPage\Labels as Product_Page_Labels;
 use ShopOS\Core\Modules\QuickView\Labels as Quick_View_Labels;
 use ShopOS\Core\Modules\Search\Labels as Search_Labels;
@@ -84,6 +85,8 @@ final class Blueprint {
 		}
 
 		$keys[ Facet_Config::OPTION ] = 'facet';
+
+		$keys[ Bundle_Config::OPTION ] = 'bundle';
 
 		$keys[ Design::OPTION_PREFIX . 'accent' ] = 'design';
 		foreach ( array_keys( Design::colour_fields() ) as $short ) {
@@ -220,6 +223,17 @@ final class Blueprint {
 				}
 				return true;
 
+			case 'bundle':
+				if ( ! is_array( $value ) ) {
+					return false;
+				}
+				foreach ( $value as $row ) {
+					if ( ! is_array( $row ) || empty( $row['type'] ) || ! is_string( $row['type'] ) ) {
+						return false;
+					}
+				}
+				return true;
+
 			case 'design':
 				if ( Design::OPTION_PREFIX . 'accent' === $key ) {
 					return is_string( $value ) && isset( Design::presets()[ $value ] );
@@ -297,6 +311,13 @@ final class Blueprint {
 					}
 				}
 				return array( Facet_Config::sanitize( $matrix, array_keys( $matrix ) ), $warnings );
+
+			case 'bundle':
+				// Reuse the module's own pure normaliser: bad types drop, every
+				// value re-coerced. Product / term ids are kept as-is — they may
+				// name catalogue entries this store hasn't created yet (the
+				// cross-store fresh-store case the whole Blueprint exists for).
+				return array( Bundle_Config::sanitize( is_array( $value ) ? $value : array() ), $warnings );
 
 			case 'design':
 				if ( Design::OPTION_PREFIX . 'radius' === $key ) {
@@ -479,6 +500,7 @@ final class Blueprint {
 		switch ( $surface ) {
 			case 'modules':
 			case 'facet':
+			case 'bundle':
 				return array();
 			case 'flag':
 				return '0';

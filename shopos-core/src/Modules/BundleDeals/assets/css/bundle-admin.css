@@ -1,0 +1,124 @@
+/**
+ * ShopOS Bundle Deals — builder admin styling.
+ *
+ * Card-based repeater on the ShopOS → Bundle Deals page. Uses the WP admin
+ * palette (this is a wp-admin surface) with a light ShopOS accent; no theme
+ * tokens here since the admin has no --shopos-ui-* root.
+ */
+
+.shopos-bundle-list {
+	display: grid;
+	gap: 16px;
+	max-width: 860px;
+	margin: 16px 0;
+}
+
+.shopos-bundle-card {
+	position: relative;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+	padding: 16px 18px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.shopos-bundle-card__head {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.shopos-bundle-card__enable {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.shopos-bundle-card__title {
+	flex: 1 1 200px;
+	min-width: 140px;
+}
+
+.shopos-bundle-card__remove {
+	margin-inline-start: auto;
+	font-size: 22px;
+	line-height: 1;
+	color: #b32d2e;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.shopos-bundle-card__preview {
+	margin: 8px 0 12px;
+	color: #50575e;
+	font-style: italic;
+	min-height: 1em;
+}
+
+.shopos-bundle-panel {
+	margin: 8px 0;
+	padding: 12px;
+	background: #f6f7f7;
+	border-radius: 6px;
+}
+
+.shopos-bundle-tiers {
+	border-collapse: collapse;
+	width: auto;
+}
+
+.shopos-bundle-tiers th,
+.shopos-bundle-tiers td {
+	padding: 4px 8px;
+	text-align: start;
+}
+
+.shopos-bundle-inline {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.shopos-bundle-inline label {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.shopos-bundle-scope {
+	margin-top: 10px;
+	padding-top: 10px;
+	border-top: 1px dashed #dcdcde;
+}
+
+.shopos-bundle-scope h4 {
+	margin: 0 0 8px;
+}
+
+.shopos-bundle-scope__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 12px;
+}
+
+.shopos-bundle-scope__grid label {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-weight: 600;
+	font-size: 12px;
+}
+
+.shopos-bundle-scope__grid select,
+.shopos-bundle-scope__grid input {
+	font-weight: 400;
+}
+
+.shopos-bundle-card__priority {
+	margin: 12px 0 0;
+	color: #50575e;
+}

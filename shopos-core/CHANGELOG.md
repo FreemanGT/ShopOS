@@ -1,5 +1,9 @@
 # ShopOS Core — Changelog
 
+## [1.46.0] — 2026-07-19
+
+- New module **Bundle Deals** (`src/Modules/BundleDeals/`, default OFF — the module-enable toggle is the sole kill switch): four discount types — volume/tiered, BOGO, frequently-bought-together (curated), and mix-&-match — targeted by product / category / tag, configured in a card-based visual builder on the ShopOS → Bundle Deals page. The suite's first cart-pricing module: discounts apply as per-line effective unit prices (`set_price()`) via `woocommerce_before_calculate_totals`, computed from fresh pristine base prices so re-fired calculations never compound (recalc-safe); the best per-line discount wins and never stacks, never raises a price, never drops below zero. Storefront block renders on `woocommerce_single_product_summary` (priority 25), the `[shopos_bundle_deals]` shortcode and a `shopos_bundle_deals` Elementor widget: tiered table, BOGO badge, mix-&-match progress bar, and a frequently-bought-together box with an "add bundle to cart" endpoint (`shopos_core_bundle_deals_add`, nonce + rate-limited). Cart lines show the struck original + a "you save" tag. Owner-editable wording via `shopos_core_bundle_deals_label_*`; config is portable through the Store Blueprint `bundle` surface. Three additive filters (`active_bundles`, `apply_discount`, `savings_html`). Pure engine (`Pricing`), storage (`Bundle_Config`), targeting (`Targeting`) and markup (`Display`) are exhaustively unit-tested.
+
 ## [1.45.1] — 2026-07-19
 
 - Fix: boot the dashboard updater (a merge dropped it in 1.44.3, stranding stores off the core update channel); compare manifest against WP's on-disk version to stop re-offering the installed version

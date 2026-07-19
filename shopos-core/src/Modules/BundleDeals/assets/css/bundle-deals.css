@@ -1,0 +1,223 @@
+/**
+ * ShopOS Bundle Deals — storefront block.
+ *
+ * The product-page offer cards (tiered table, BOGO badge, mix-&-match progress
+ * bar, frequently-bought-together set) + the cart savings tag. Every colour /
+ * space / radius / motion value comes from a --shopos-ui-* design token with a
+ * literal fallback so the block also works on a non-ShopOS theme; layout uses
+ * logical properties so the RTL storefront is correct without overrides.
+ */
+
+.shopos-ui-bundle-deals {
+	display: grid;
+	gap: var(--shopos-ui-space-md, 12px);
+	margin-block: var(--shopos-ui-space-md, 12px);
+}
+
+.shopos-ui-bundle {
+	border: 1px solid var(--shopos-ui-color-hairline, #e5e2dc);
+	border-radius: var(--shopos-ui-radius-lg, 12px);
+	background: var(--shopos-ui-color-paper, #fff);
+	padding: var(--shopos-ui-space-md, 14px) var(--shopos-ui-space-lg, 16px);
+}
+
+.shopos-ui-bundle__heading {
+	margin: 0 0 var(--shopos-ui-space-sm, 8px);
+	font-family: var(--shopos-ui-font-display, inherit);
+	font-size: var(--shopos-ui-text-md, 1rem);
+	font-weight: var(--shopos-ui-weight-semibold, 600);
+	color: var(--shopos-ui-color-ink, #1a1a1a);
+}
+
+/* ---- Tiered ---- */
+
+.shopos-ui-bundle__tiers {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: var(--shopos-ui-space-xs, 6px);
+}
+
+.shopos-ui-bundle__tier {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--shopos-ui-space-sm, 8px);
+	padding: var(--shopos-ui-space-xs, 6px) var(--shopos-ui-space-sm, 10px);
+	border-radius: var(--shopos-ui-radius-md, 8px);
+	background: var(--shopos-ui-color-surface-alt, #f6f4ef);
+	font-size: var(--shopos-ui-text-sm, 0.9rem);
+}
+
+.shopos-ui-bundle__tier.is-active {
+	background: var(--shopos-ui-color-success-soft, #e6f4ea);
+	outline: 1px solid var(--shopos-ui-color-success, #2e7d46);
+}
+
+.shopos-ui-bundle__tier-save {
+	font-weight: var(--shopos-ui-weight-semibold, 600);
+	color: var(--shopos-ui-color-success, #2e7d46);
+	white-space: nowrap;
+}
+
+/* ---- BOGO / offer line ---- */
+
+.shopos-ui-bundle__offer {
+	display: flex;
+	align-items: center;
+	gap: var(--shopos-ui-space-sm, 10px);
+	margin: 0;
+	font-size: var(--shopos-ui-text-sm, 0.95rem);
+	font-weight: var(--shopos-ui-weight-medium, 500);
+	color: var(--shopos-ui-color-ink, #1a1a1a);
+}
+
+.shopos-ui-bundle__offer-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 1.6em;
+	block-size: 1.6em;
+	border-radius: var(--shopos-ui-radius-round, 50%);
+	background: var(--shopos-ui-color-accent, #b8794f);
+	color: var(--shopos-ui-color-accent-text, #fff);
+	font-weight: var(--shopos-ui-weight-bold, 700);
+	flex: 0 0 auto;
+}
+
+/* ---- Mix & match progress ---- */
+
+.shopos-ui-bundle__track {
+	block-size: 6px;
+	border-radius: var(--shopos-ui-radius-pill, 999px);
+	background: var(--shopos-ui-color-hairline, #e5e2dc);
+	overflow: hidden;
+}
+
+.shopos-ui-bundle__fill {
+	display: block;
+	block-size: 100%;
+	min-inline-size: 8%;
+	border-radius: inherit;
+	background: var(--shopos-ui-color-accent, #b8794f);
+	transition: inline-size var(--shopos-ui-motion-base, 0.28s) var(--shopos-ui-ease-out, ease-out);
+}
+
+.shopos-ui-bundle__progress.is-unlocked .shopos-ui-bundle__fill {
+	background: var(--shopos-ui-color-success, #2e7d46);
+}
+
+.shopos-ui-bundle__status {
+	margin: var(--shopos-ui-space-xs, 6px) 0 0;
+	font-size: var(--shopos-ui-text-sm, 0.85rem);
+	color: var(--shopos-ui-color-text-soft, #6b6b6b);
+}
+
+.shopos-ui-bundle__progress.is-unlocked .shopos-ui-bundle__status {
+	color: var(--shopos-ui-color-success, #2e7d46);
+	font-weight: var(--shopos-ui-weight-semibold, 600);
+}
+
+/* ---- Frequently bought together ---- */
+
+.shopos-ui-bundle__set {
+	list-style: none;
+	margin: 0 0 var(--shopos-ui-space-sm, 10px);
+	padding: 0;
+	display: grid;
+	gap: var(--shopos-ui-space-xs, 6px);
+}
+
+.shopos-ui-bundle__set-label {
+	display: flex;
+	align-items: center;
+	gap: var(--shopos-ui-space-sm, 10px);
+	cursor: pointer;
+}
+
+.shopos-ui-bundle__set-thumb img {
+	inline-size: 44px;
+	block-size: 44px;
+	object-fit: cover;
+	border-radius: var(--shopos-ui-radius-sm, 6px);
+	display: block;
+}
+
+.shopos-ui-bundle__set-name {
+	flex: 1 1 auto;
+	font-size: var(--shopos-ui-text-sm, 0.9rem);
+}
+
+.shopos-ui-bundle__set-price {
+	white-space: nowrap;
+	font-size: var(--shopos-ui-text-sm, 0.9rem);
+	color: var(--shopos-ui-color-text-soft, #6b6b6b);
+}
+
+.shopos-ui-bundle__fbt-foot {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--shopos-ui-space-sm, 10px);
+	flex-wrap: wrap;
+}
+
+.shopos-ui-bundle__fbt-total del {
+	color: var(--shopos-ui-color-text-soft, #9a9a9a);
+	margin-inline-end: 0.4em;
+}
+
+.shopos-ui-bundle__fbt-total ins {
+	text-decoration: none;
+	font-weight: var(--shopos-ui-weight-bold, 700);
+	color: var(--shopos-ui-color-ink, #1a1a1a);
+}
+
+.shopos-ui-bundle__add {
+	appearance: none;
+	border: 0;
+	cursor: pointer;
+	padding: var(--shopos-ui-space-sm, 10px) var(--shopos-ui-space-lg, 18px);
+	border-radius: var(--shopos-ui-radius-md, 8px);
+	background: var(--shopos-ui-color-accent, #b8794f);
+	color: var(--shopos-ui-color-accent-text, #fff);
+	font-weight: var(--shopos-ui-weight-semibold, 600);
+	transition: background var(--shopos-ui-motion-fast, 0.18s) var(--shopos-ui-ease-out, ease-out);
+}
+
+.shopos-ui-bundle__add:hover {
+	background: var(--shopos-ui-color-accent-hover, #a06a44);
+}
+
+.shopos-ui-bundle__add[disabled] {
+	opacity: 0.55;
+	cursor: default;
+}
+
+/* ---- Cart savings ---- */
+
+.shopos-ui-bundle-save {
+	display: inline-block;
+	margin-block-start: 4px;
+	font-size: var(--shopos-ui-text-xs, 0.8rem);
+	font-weight: var(--shopos-ui-weight-semibold, 600);
+	color: var(--shopos-ui-color-success, #2e7d46);
+}
+
+.shopos-ui-bundle-cart-price del {
+	color: var(--shopos-ui-color-text-soft, #9a9a9a);
+	margin-inline-end: 0.35em;
+}
+
+.shopos-ui-bundle-cart-price ins {
+	text-decoration: none;
+	font-weight: var(--shopos-ui-weight-semibold, 600);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.shopos-ui-bundle__fill,
+	.shopos-ui-bundle__add {
+		transition: none;
+	}
+}
