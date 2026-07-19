@@ -177,7 +177,7 @@
 }
 
 .shopos-search-trigger:focus-visible {
-	outline: 2px solid currentColor;
+	outline: var(--shopos-ui-focus-outline, 2px solid currentColor);
 	outline-offset: 3px;
 }
 
@@ -210,7 +210,7 @@
 .shopos-search-modal__scrim {
 	position: fixed;
 	inset: 0;
-	background: rgba(17, 17, 17, 0.5);
+	background: var(--shopos-ui-overlay-scrim, rgba(17, 17, 17, 0.5));
 }
 
 .shopos-search-modal__panel {
@@ -318,7 +318,7 @@
 }
 
 .shopos-search-modal__close:focus-visible {
-	outline: 2px solid var(--shopos-ui-color-ink, #1b1b1b);
+	outline: var(--shopos-ui-focus-outline, 2px solid var(--shopos-ui-color-ink, #1b1b1b));
 	outline-offset: 2px;
 }
 
