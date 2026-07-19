@@ -6,6 +6,7 @@ use ShopOS\Core\Core\Design;
 use ShopOS\Core\Core\Feature_Flags;
 use ShopOS\Core\Core\Plugin;
 use ShopOS\Core\Core\Settings_Tools;
+use ShopOS\Core\Modules\BundleDeals\Bundle_Config;
 use ShopOS\Core\Modules\ProductPage\Labels as Product_Page_Labels;
 use ShopOS\Core\Modules\QuickView\Labels as Quick_View_Labels;
 use ShopOS\Core\Modules\Search\Labels as Search_Labels;
@@ -53,8 +54,9 @@ final class BlueprintTest extends TestCase {
 
 		$label_count = count( Quick_View_Labels::defaults() ) + count( Shop_Filters_Labels::defaults() )
 			+ count( Search_Labels::defaults() ) + count( Product_Page_Labels::defaults() );
+		// 1 modules + flags + labels + 1 facet + 1 bundle + design (accent + colours + radius).
 		$this->assertCount(
-			1 + count( Feature_Flags::registry() ) + $label_count + 1 + ( 1 + count( Design::colour_fields() ) + 1 ),
+			1 + count( Feature_Flags::registry() ) + $label_count + 1 + 1 + ( 1 + count( Design::colour_fields() ) + 1 ),
 			$keys
 		);
 
@@ -62,6 +64,7 @@ final class BlueprintTest extends TestCase {
 		$this->assertSame( 'flag', $keys['shopos_core_design_panel_enabled'] );
 		$this->assertSame( 'label', $keys['shopos_core_quick_view_label_close'] );
 		$this->assertSame( 'facet', $keys[ Facet_Config::OPTION ] );
+		$this->assertSame( 'bundle', $keys[ Bundle_Config::OPTION ] );
 		$this->assertSame( 'design', $keys['shopos_core_design_accent'] );
 		$this->assertSame( 'design', $keys['shopos_core_design_radius'] );
 	}
@@ -237,6 +240,24 @@ final class BlueprintTest extends TestCase {
 		// Unknown index (null) means no advisory at all.
 		list( , $warnings ) = Blueprint::normalize_value( Facet_Config::OPTION, 'facet', $rows, false, array(), null );
 		$this->assertSame( array(), $warnings );
+	}
+
+	public function test_bundle_rows_reuse_the_module_normaliser(): void {
+		$rows = array(
+			array( 'type' => 'tiered', 'id' => 'x', 'enabled' => 1, 'tiers' => array( array( 'min' => 3, 'kind' => 'percent', 'amount' => 150 ) ) ),
+			array( 'type' => 'nonsense' ), // dropped by the sanitiser.
+		);
+		list( $config, $warnings ) = Blueprint::normalize_value( Bundle_Config::OPTION, 'bundle', $rows, false, array(), null );
+
+		$this->assertCount( 1, $config, 'the unknown-type row is dropped' );
+		$this->assertSame( 'tiered', $config[0]['type'] );
+		$this->assertSame( 100.0, $config[0]['tiers'][0]['amount'], 'percent clamped' );
+		$this->assertSame( array(), $warnings );
+	}
+
+	public function test_validate_rejects_a_bundle_row_without_a_type(): void {
+		$this->assertFalse( Blueprint::value_is_valid( 'bundle', Bundle_Config::OPTION, array( array( 'title' => 'x' ) ) ) );
+		$this->assertTrue( Blueprint::value_is_valid( 'bundle', Bundle_Config::OPTION, array( array( 'type' => 'bogo' ) ) ) );
 	}
 
 	public function test_design_values_normalise_to_the_admin_shapes(): void {

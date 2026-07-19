@@ -1,5 +1,5 @@
-shopos-core/src/Core/Blueprint.php:416:		do_action( 'shopos_core/blueprint/before_apply', $envelope );
-shopos-core/src/Core/Blueprint.php:453:		do_action( 'shopos_core/blueprint/after_apply', $envelope, array( 'written' => $written, 'skipped' => $skipped, 'total' => $total ) );
+shopos-core/src/Core/Blueprint.php:437:		do_action( 'shopos_core/blueprint/before_apply', $envelope );
+shopos-core/src/Core/Blueprint.php:474:		do_action( 'shopos_core/blueprint/after_apply', $envelope, array( 'written' => $written, 'skipped' => $skipped, 'total' => $total ) );
 shopos-core/src/Core/Cache.php:124:		return (bool) apply_filters( 'shopos_core/cache/use_object_cache', $default );
 shopos-core/src/Core/Design.php:143:		$value = apply_filters( 'shopos_core/theme/kit_slots', $value );
 shopos-core/src/Core/Design.php:295:		if ( ! apply_filters( 'shopos_core/design/tokens_css_enabled', true ) ) {
@@ -14,6 +14,9 @@ shopos-core/src/Core/Settings_Tools.php:154:		$skip_backup = (bool) apply_filter
 shopos-core/src/Core/Settings_Tools.php:161:		do_action( 'shopos_core/tools/import/before_write', $envelope );
 shopos-core/src/Core/Settings_Tools.php:185:		do_action( 'shopos_core/tools/import/after_write', $envelope, array( 'written' => $written, 'total' => $total ) );
 shopos-core/src/Core/Settings_Tools.php:89:		$envelope['options'] = (array) apply_filters( 'shopos_core/tools/export/options', $envelope['options'], $envelope );
+shopos-core/src/Modules/BundleDeals/Cart_Pricing.php:244:		$tag = (string) apply_filters( 'shopos_core/bundle_deals/savings_html', $tag, $cart_item, $saved );
+shopos-core/src/Modules/BundleDeals/Cart_Pricing.php:72:		$bundles = apply_filters( 'shopos_core/bundle_deals/active_bundles', Bundle_Config::active() );
+shopos-core/src/Modules/BundleDeals/Cart_Pricing.php:98:			$discount = apply_filters( 'shopos_core/bundle_deals/apply_discount', $discounts[ $key ], $cart_item, $bundles );
 shopos-core/src/Modules/CategorySlider/Widget.php:666:		$args = (array) apply_filters( 'shopos_core/category_slider/query_args', $args, $s );
 shopos-core/src/Modules/CategorySlider/Widget.php:862:					echo apply_filters(
 shopos-core/src/Modules/CheapestDefaultVariation/Module.php:131:		$should_apply = apply_filters( 'shopos_core/cheapest_variation/should_apply', true, $product, $default_attributes );

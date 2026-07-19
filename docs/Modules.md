@@ -4,8 +4,8 @@
 
 **Goal:** ~20 production modules covering the full WooCommerce storefront lifecycle (discover → decide → buy → account → retain), localized for the Israeli market (Hebrew/RTL UI, shekel pricing).
 
-- **Built today:** 15 modules in `shopos-core/src/Modules/`
-- **Planned:** ~7 modules to close the gap to a complete storefront OS
+- **Built today:** 16 modules in `shopos-core/src/Modules/`
+- **Planned:** 8 net-new + 1 consolidation to close the gap to a complete storefront OS (see [TODO.md](TODO.md) for the build queue, [roadmap.md](roadmap.md) for strategy)
 - **Legend:** ✅ Built · 🟡 Partial (exists, needs consolidation/expansion) · ⬜ Planned
 
 ---
@@ -17,7 +17,7 @@
 | 1 | Storefront & Discovery | Search, ShopFilters, InfiniteScroll, CategorySlider, ProductSlider, HoverSwap | — |
 | 2 | Product & Conversion | ProductPage, QuickView, VariationSwatches, CheapestDefaultVariation, RestockNotify | Advanced Add-to-Cart, Product Reviews |
 | 3 | Cart & Checkout | — | Side Cart, Checkout |
-| 4 | Sales & Promotion | — | Bundle Deals, Fortune Wheel, Product Badges, Flash Sale Banner |
+| 4 | Sales & Promotion | Bundle Deals | Fortune Wheel, Product Badges, Flash Sale Banner |
 | 5 | Customer Account | MyAccount | — |
 | 6 | Merchandising & Ops | ProductFeed, VariableStockFix | Bulk Price Editor, Custom Email Templates |
 | 7 | Experience & Platform | PageTransitions | — |
@@ -83,8 +83,8 @@ WooCommerce checkout replacement: compact 3-step or classic layout, Israeli sett
 
 ## 4. Sales & Promotion
 
-### ⬜ Bundle Deals *(planned)*
-Four bundle types: volume/tiered discounts, curated bundles + add-ons, mix-&-match with progress bar, BOGO. Scoped by product/category/tag with automatic savings tags. → *reference: Bundle Deals*
+### ✅ Bundle Deals — `src/Modules/BundleDeals/`
+Four bundle types — volume/tiered, BOGO, curated (frequently-bought-together) and mix-&-match — targeted by product/category/tag, built in a card-based visual builder. The suite's first cart-pricing module: per-line effective-price discounts via `woocommerce_before_calculate_totals` (recalc-safe from fresh base prices; best-wins, never stacks/raises/goes-negative). PDP block (summary hook 25 + `[shopos_bundle_deals]` shortcode + Elementor widget) with a tier table, BOGO badge, mix-&-match progress bar and an FBT "add bundle to cart" box; cart lines show struck original + "you save". Portable via the Store Blueprint `bundle` surface. Default OFF (module toggle is the kill switch). → *reference: Bundle Deals*
 
 ### ⬜ Fortune Wheel *(planned)*
 Gamified spin-to-win for discounts/gifts + lead capture. Triggers: entry / scroll / exit-intent / post-purchase. Auto coupon application; configurable odds, colors, coupon validity, signup fields. → *reference: Fortune Wheel*
@@ -142,7 +142,7 @@ Target feature set (14 items) from the market reference, mapped to ShopOS module
 | 4 | Shopping | Product Quick View | QuickView | ✅ Built |
 | 5 | Shopping | Advanced Add-to-Cart | Advanced Add-to-Cart (VariationSwatches + RestockNotify + CheapestDefaultVariation + ProductPage) | 🟡 Consolidate |
 | 6 | Shopping | Live Color Swatches | VariationSwatches | ✅ Built |
-| 7 | Sales | Bundle Deals | Bundle Deals | ⬜ New |
+| 7 | Sales | Bundle Deals | Bundle Deals | ✅ Built |
 | 8 | Sales | Fortune Wheel | Fortune Wheel | ⬜ New |
 | 9 | Sales | Product Tags / Badges | Product Badges | ⬜ New |
 | 10 | Sales | Flash Sale Banner | Flash Sale Banner | ⬜ New |
@@ -157,11 +157,11 @@ Target feature set (14 items) from the market reference, mapped to ShopOS module
 
 ## Build roadmap to ~20 modules
 
-15 built + the following closes the gap to a complete storefront OS (~22 modules total):
+16 built + the following closes the gap to a complete storefront OS (~22 modules total):
 
 1. **Side Cart** — highest cart-conversion lift; standalone.
 2. **Checkout** — Israeli-market autocomplete + trust; large, standalone.
-3. **Bundle Deals** — AOV growth; standalone.
+3. ✅ **Bundle Deals** — AOV growth; standalone. *(built 1.46.0)*
 4. **Product Reviews** — trust/social proof; standalone.
 5. **Product Badges** — merchandising; light, high-visibility.
 6. **Flash Sale Banner** — promotion; light.

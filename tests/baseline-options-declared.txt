@@ -1,3 +1,5 @@
+shopos_bundle
+shopos_bundle_deals
 shopos_buy_box
 shopos_buy_now
 shopos_category_slider
@@ -6,6 +8,10 @@ shopos_color
 shopos_core
 shopos_core_
 shopos_core_boot_failures
+shopos_core_bundle_deals_add
+shopos_core_bundle_deals_bundles
+shopos_core_bundle_deals_label_
+shopos_core_bundle_deals_save
 shopos_core_db_version
 shopos_core_delete_done_
 shopos_core_design_
