@@ -56,8 +56,11 @@ Theme-owned classic PHP templates; flag names **not yet minted**. Do not start u
         Reuses the cart's `woocommerce_locate_template` filter, generalized to the shared `locate_woo_template`; two
         structural templates forked (`my-account.php` shell + `navigation.php` rail), content + auth/payment forms
         CSS-skinned (WC keeps the nonces). `AccountTemplateTest` (`@group theme`) green. Pre-flip: render-diff + owner screenshots + RTL.
-  - [ ] Checkout *(needs the deferred tech-pin resolved first — decisions Ruling 9)* ·
-        [ ] Search-results template · [ ] Transactional emails *(**Core-side, not the theme** — decisions ownership map)*
+  - [x] **Checkout** — DONE 2026-07-20 (core 1.52.0 + theme 1.20.0, flag `theme.style_checkout`, default OFF).
+        Skin-ONLY (Ruling 9 resolved-as-moot 2026-07-20): NO forked templates — `is_checkout()`-gated `shopos-checkout.css`
+        restyles WC's own markup, WC keeps every nonce/gateway. Works on block + shortcode, no per-store migration.
+        `CheckoutSkinTest` (`@group theme`) green. Pre-flip: render-diff + owner screenshots + RTL.
+  - [ ] Search-results template · [ ] Transactional emails *(**Core-side, not the theme** — decisions ownership map)*
 
 ## D. Open audit follow-ups (2026-07-03 audit, B-5)
 - [x] Uninstall **created-vs-cleaned matrix** + **dead-code cross-check** — swept 2026-07-20,

@@ -64,11 +64,12 @@ Fortune Wheel · Bulk Price Editor · Custom Email Templates · Advanced Add-to-
 - **§11-B deferred surfaces** (theme-owned classic PHP): ~~header/footer chrome~~ (**shipped
   1.47.0/1.16.0, flag `theme.template_chrome`**) · ~~cart~~ (**shipped 1.48.0/1.17.0, flag
   `theme.template_cart`**) · ~~account~~ (**shipped 1.50.0/1.18.0, flag `theme.template_account`**) ·
-  checkout · search-results template · transactional emails.
+  ~~checkout~~ (**shipped 1.52.0/1.20.0, flag `theme.style_checkout` — skin-only, Ruling 9 resolved-as-moot**) ·
+  search-results template · transactional emails.
   Owner **overrode the §11-B calendar gate 2026-07-20** to start these (the 30-day-flag-on
   + store-#2 conditions are not met); building **one plan-first PR per surface**. The theme-CI-lane
   precondition **is genuinely satisfied** (`@group theme` in core's suite + named CI step — decisions
-  §11-B Ruling 7.8). Checkout still needs the Ruling 9 tech-pin resolved first; emails stay Core-side.
+  §11-B Ruling 7.8). Ruling 9 checkout pin RESOLVED 2026-07-20 (skin-only, both transports, no migration); emails stay Core-side.
   See decisions [§11 Ruling 2](decisions-2026-04-28.md).
 
 ### 3. Open audit follow-ups (B-5)

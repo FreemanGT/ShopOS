@@ -2,14 +2,14 @@
 # This file is distributed under the GNU General Public License v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ShopOS Theme 1.18.0\n"
+"Project-Id-Version: ShopOS Theme 1.20.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/theme/shopos-theme\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-20T14:40:38+00:00\n"
+"POT-Creation-Date: 2026-07-20T16:53:20+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: shopos-theme\n"
@@ -65,11 +65,11 @@ msgstr ""
 msgid "Toggle menu"
 msgstr ""
 
-#: inc/class-shopos-theme.php:219
+#: inc/class-shopos-theme.php:234
 msgid "ShopOS Footer"
 msgstr ""
 
-#: inc/class-shopos-theme.php:221
+#: inc/class-shopos-theme.php:236
 msgid "Widgets shown in the ShopOS theme footer (chrome flag on)."
 msgstr ""
 
@@ -117,6 +117,16 @@ msgstr ""
 
 #: inc/plugin-dependencies.php:156
 msgid "Insufficient permissions."
+msgstr ""
+
+#. translators: %s: the search term.
+#: templates/woo/search-results.php:61
+#, php-format
+msgid "Search results for “%s”"
+msgstr ""
+
+#: templates/woo/search-results.php:65
+msgid "Search results"
 msgstr ""
 
 #: theme.json
