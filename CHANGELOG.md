@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## core [1.51.0] + theme [1.19.0] — 2026-07-20
+
+- **ShopOS Line — theme-owned search results** (§11-B surface 4), behind the new permanent, default-OFF `theme.template_search` flag (Core). The product search-results page renders from the theme's own `templates/woo/search-results.php` via the shared `template_include` loader — a new claim arm that mirrors the PLP arm but claims the product-archive main query *with* a search term (§11 Ruling 2's positive half), provably disjoint from PLP and never claiming a generic non-product search. The always-on `Results_Query` still supplies the engine-ranked results; the template only reskins the archive. Flag off = byte-identical to today's search render (Ruling 6). Fourth §11-B deferred surface. See `shopos-core` / `shopos-theme` CHANGELOGs.
+
 ## core [1.47.0] + theme [1.16.0] — 2026-07-20
 
 - **ShopOS Line — theme-owned header/footer chrome** (§11-B surface 1), behind the new permanent, default-OFF `theme.template_chrome` flag (Core). Flag off = byte-identical passthrough to the Hello Elementor parent chrome (verified in wp-env-with-Pro); flag on = a skin-light, token-driven classic header + footer owned by the theme. First §11-B deferred surface (owner overrode the §11-B calendar gate 2026-07-20). See `shopos-core` / `shopos-theme` CHANGELOGs.
