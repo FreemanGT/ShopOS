@@ -2,6 +2,10 @@
 
 This is the aggregated changelog across all three packages. See each package's own `CHANGELOG.md` for package-scoped history.
 
+## core [1.47.0] + theme [1.16.0] — 2026-07-20
+
+- **ShopOS Line — theme-owned header/footer chrome** (§11-B surface 1), behind the new permanent, default-OFF `theme.template_chrome` flag (Core). Flag off = byte-identical passthrough to the Hello Elementor parent chrome (verified in wp-env-with-Pro); flag on = a skin-light, token-driven classic header + footer owned by the theme. First §11-B deferred surface (owner overrode the §11-B calendar gate 2026-07-20). See `shopos-core` / `shopos-theme` CHANGELOGs.
+
 ## [1.15.1] — 2026-07-19
 
 - Fix: compare manifest against WordPress's on-disk theme version instead of the opcached SHOPOS_THEME_VERSION constant, so an in-place update no longer re-offers the version already installed
