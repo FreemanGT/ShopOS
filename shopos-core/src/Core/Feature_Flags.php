@@ -197,6 +197,14 @@ final class Feature_Flags {
 				'since'       => '1.50.0',
 				'shared'      => false,
 			),
+			array(
+				'module'      => 'theme',
+				'feature'     => 'template_search',
+				'label'       => __( 'Theme — search results template (ShopOS Line)', 'shopos-core' ),
+				'description' => __( 'When on, the product search-results page renders from the ShopOS theme\'s classic template (templates/woo/search-results.php) via the shared theme loader instead of the Elementor archive template — the fourth §11-B deferred surface (decisions §11.4, §11 Ruling 2 search carve-out). Claims exactly the product-archive main query that carries a search term (the mirror-positive of the PLP loader\'s search refusal); it never touches a generic post/page search. The Search module\'s Results_Query already supplies the engine-ranked results, so the template only reskins the surrounding archive. Off = the current search render, byte-identical (Ruling 6). Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Needs the ShopOS theme active; without Core (or on an older theme) it is inert; turn on theme.fonts_selfhost first (Ruling 10) or fonts differ between Elementor and template pages.', 'shopos-core' ),
+				'since'       => '1.51.0',
+				'shared'      => false,
+			),
 		);
 	}
 }

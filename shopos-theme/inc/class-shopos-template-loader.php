@@ -16,7 +16,7 @@
  * callback, never in whether it is hooked, so the QA callback census is
  * identical in both flag states (§11 Ruling 7.1).
  *
- * The per-surface context value (`context()`: '' | 'plp') is §11.3's
+ * The per-surface context value (`context()`: '' | 'plp' | 'search') is §11.3's
  * replacement for the `$is_takeover` static pattern, going forward — Core's
  * private static is not retro-touched.
  *
@@ -46,8 +46,9 @@ final class ShopOS_Theme_Template_Loader {
 
 	/**
 	 * Which theme-owned surface is driving the current request: '' when none,
-	 * 'plp' when the archive template claimed it. §11.3's per-surface context
-	 * value (the $is_takeover replacement, going forward).
+	 * 'plp' when the archive template claimed it, 'search' when the
+	 * search-results template did. §11.3's per-surface context value (the
+	 * $is_takeover replacement, going forward).
 	 *
 	 * Static on purpose (it IS per-request global state); everything else is
 	 * instance state — production constructs exactly one instance in
@@ -85,7 +86,12 @@ final class ShopOS_Theme_Template_Loader {
 	}
 
 	/**
-	 * The single shared template_include callback.
+	 * The single shared template_include callback. One arm per theme-owned
+	 * full-page surface (the §11.3 "one shared registration, a claim arm per
+	 * surface" doctrine): PLP (§11.4 row 5) now, search-results (§11-B surface
+	 * 4) alongside it. The arms are disjoint by construction — should_claim_plp()
+	 * refuses any product archive carrying search, should_claim_search() claims
+	 * exactly those — so their relative order never matters.
 	 *
 	 * @param string $template Resolved template path.
 	 * @return string
@@ -95,47 +101,72 @@ final class ShopOS_Theme_Template_Loader {
 			return $template; // WooCommerce absent.
 		}
 
-		if ( ! self::should_claim_plp(
-			is_admin(),
-			is_main_query(),
-			is_shop(),
-			is_product_taxonomy(),
-			is_search(),
-			self::request_search_term()
-		) ) {
-			return $template;
-		}
+		$is_admin  = is_admin();
+		$is_main   = is_main_query();
+		$is_shop   = is_shop();
+		$is_tax    = is_product_taxonomy();
+		$is_search = is_search();
+		$term      = self::request_search_term();
 
 		// FQCN, never bare Feature_Flags::class — the theme is unnamespaced
 		// (class-shopos-theme.php:76-80: a bare name silently reads false
-		// forever). DELIBERATELY not deduped into a helper: the bidirectional
-		// FeatureFlagsAdminTest scan requires one LITERAL
-		// is_enabled( 'theme', '<feature>' ) call site per registry flag — a
-		// dynamic is_enabled( 'theme', $feature ) is invisible to it and
-		// fails test_registry_has_no_stale_entries.
-		if ( ! class_exists( '\ShopOS\Core\Core\Feature_Flags' )
-			|| ! \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'template_plp' ) ) {
-			return $template; // Flag off (or Core absent) = the current render.
+		// forever). Each arm keeps its OWN literal is_enabled( 'theme',
+		// '<feature>' ) call site: the bidirectional FeatureFlagsAdminTest scan
+		// requires one LITERAL call per registry flag — a dynamic
+		// is_enabled( 'theme', $feature ) is invisible to it and fails
+		// test_registry_has_no_stale_entries. That contract is why the flag read
+		// stays here and is NOT folded into the shared resolve() helper.
+		if ( self::should_claim_plp( $is_admin, $is_main, $is_shop, $is_tax, $is_search, $term ) ) {
+			if ( ! class_exists( '\ShopOS\Core\Core\Feature_Flags' )
+				|| ! \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'template_plp' ) ) {
+				return $template; // Flag off (or Core absent) = the current render.
+			}
+			return $this->resolve( $template, 'archive-product.php', 'plp', 'template_plp' );
 		}
 
+		if ( self::should_claim_search( $is_admin, $is_main, $is_shop, $is_tax, $is_search, $term ) ) {
+			if ( ! class_exists( '\ShopOS\Core\Core\Feature_Flags' )
+				|| ! \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'template_search' ) ) {
+				return $template; // Flag off (or Core absent) = the current render.
+			}
+			return $this->resolve( $template, 'search-results.php', 'search', 'template_search' );
+		}
+
+		return $template;
+	}
+
+	/**
+	 * Resolve a claimed surface to its theme template file, or fall back to the
+	 * current render. Shared by every claim arm: the once-per-request fonts
+	 * warning (§11 Ruling 10) and the missing-file fallback log (§11.3) live here
+	 * so every surface behaves identically. Only the flag read stays per-arm (the
+	 * FeatureFlagsAdminTest literal-call-site contract; see maybe_load_template).
+	 *
+	 * @param string $template Current resolved template (the fallback).
+	 * @param string $filename templates/woo/ filename to resolve.
+	 * @param string $context  Per-surface context() value set on success.
+	 * @param string $flag     The surface flag name, for the log messages.
+	 * @return string
+	 */
+	private function resolve( $template, $filename, $context, $flag ) {
 		// §11 Ruling 10: fonts must not flip between Elementor pages and
 		// PHP-template pages — fonts_selfhost is a flip precondition.
 		if ( ! $this->warned_fonts_off
 			&& ! \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'fonts_selfhost' ) ) {
 			$this->warned_fonts_off = true;
-			\ShopOS\Core\Core\Logger::log( 'theme.template_plp is on while theme.fonts_selfhost is off — storefront fonts will differ between Elementor and template pages. Turn fonts_selfhost on first (decisions §11 Ruling 10).', 'warning' );
+			\ShopOS\Core\Core\Logger::log( 'theme.' . $flag . ' is on while theme.fonts_selfhost is off — storefront fonts will differ between Elementor and template pages. Turn fonts_selfhost on first (decisions §11 Ruling 10).', 'warning' );
 		}
 
-		$file = get_stylesheet_directory() . '/templates/woo/archive-product.php';
+		$file = get_stylesheet_directory() . '/templates/woo/' . $filename;
 		if ( ! is_readable( $file ) ) {
 			if ( ! $this->logged_template_missing ) {
 				$this->logged_template_missing = true;
-				\ShopOS\Core\Core\Logger::log( 'theme.template_plp is on but the active theme ships no templates/woo/archive-product.php — rendering the current template instead (decisions §11.3).', 'info' );
+				\ShopOS\Core\Core\Logger::log( 'theme.' . $flag . ' is on but the active theme ships no templates/woo/' . $filename . ' — rendering the current template instead (decisions §11.3).', 'info' );
 			}
 			return $template;
 		}
 
-		self::$context = 'plp';
+		self::$context = $context;
 
 		return $file;
 	}
@@ -165,6 +196,43 @@ final class ShopOS_Theme_Template_Loader {
 			&& ( $is_shop || $is_product_taxonomy )
 			&& ! $is_search
 			&& '' === trim( (string) $request_term );
+	}
+
+	/**
+	 * Whether the search-results template claims this request (§11-B surface 4).
+	 * Pure — unit-tested. The mirror-positive of should_claim_plp()'s search
+	 * refusal: the SAME product-archive main query base ($is_shop covers the
+	 * product post-type archive, which native product search — ?post_type=product&s= —
+	 * still satisfies), but carrying search rather than refusing it. "Carrying
+	 * search" is is_search() OR a request search term with is_search() false (the
+	 * live Elementor search page, where the term reaches only the request URL —
+	 * Results_Query::should_handle's trigger, §11 Ruling 2's binding carve-out).
+	 *
+	 * The base is deliberately NOT `|| $is_search`: a bare is_search() with no
+	 * product archive (a generic post/page search, or the mixed ?s= WP search) is
+	 * not a product-search surface — Results_Query refuses it too (its is_product
+	 * gate) — so this template must not take it over with a product grid.
+	 *
+	 * Disjoint from should_claim_plp() by construction: on the shared
+	 * (is_shop || is_product_taxonomy) base, "carries search" partitions the
+	 * space, so the two arms never both fire (asserted in SearchTemplateTest).
+	 *
+	 * @param bool   $is_admin            In wp-admin.
+	 * @param bool   $is_main             Main query.
+	 * @param bool   $is_shop             is_shop() (covers the product post-type archive).
+	 * @param bool   $is_product_taxonomy is_product_taxonomy() (product_cat/tag, pa_*, custom).
+	 * @param bool   $is_search           is_search().
+	 * @param string $request_term        Raw request search term (never the query var).
+	 * @return bool
+	 */
+	public static function should_claim_search( $is_admin, $is_main, $is_shop, $is_product_taxonomy, $is_search, $request_term ) {
+		if ( $is_admin || ! $is_main ) {
+			return false;
+		}
+		if ( ! $is_shop && ! $is_product_taxonomy ) {
+			return false;
+		}
+		return $is_search || '' !== trim( (string) $request_term );
 	}
 
 	/**
@@ -201,7 +269,7 @@ final class ShopOS_Theme_Template_Loader {
 	/**
 	 * Which theme-owned surface is driving the current request.
 	 *
-	 * @return string '' | 'plp'
+	 * @return string '' | 'plp' | 'search'
 	 */
 	public static function context() {
 		return self::$context;
@@ -216,16 +284,21 @@ final class ShopOS_Theme_Template_Loader {
 	 * render this loader didn't claim (including the missing-file fallback).
 	 */
 	public function enqueue_assets() {
-		if ( 'plp' !== self::$context ) {
-			return;
+		if ( 'plp' === self::$context ) {
+			wp_enqueue_style(
+				'shopos-plp',
+				SHOPOS_THEME_ASSETS . '/css/shopos-plp.css',
+				array( 'shopos-theme' ),
+				SHOPOS_THEME_VERSION
+			);
+		} elseif ( 'search' === self::$context ) {
+			wp_enqueue_style(
+				'shopos-search',
+				SHOPOS_THEME_ASSETS . '/css/shopos-search.css',
+				array( 'shopos-theme' ),
+				SHOPOS_THEME_VERSION
+			);
 		}
-
-		wp_enqueue_style(
-			'shopos-plp',
-			SHOPOS_THEME_ASSETS . '/css/shopos-plp.css',
-			array( 'shopos-theme' ),
-			SHOPOS_THEME_VERSION
-		);
 	}
 
 	/**

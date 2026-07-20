@@ -1,0 +1,117 @@
+/**
+ * ShopOS search results — layout for the theme-owned search-results template
+ * (§11-B surface 4, §11 Ruling 2 carve-out).
+ *
+ * Enqueued ONLY when the shared theme loader claims the request
+ * (ShopOS_Theme_Template_Loader::context() === 'search'); flag-off pages load
+ * zero bytes of this file. Scoped entirely under .shopos-ui-search.
+ *
+ * Deliberately a sibling of shopos-plp.css, not a dependent: the search page
+ * is an archive with a results heading, so the container / toolbar / grid /
+ * pagination rules mirror the PLP file's (same tokens keep them visually in
+ * lock-step), plus the search-specific header. One self-contained stylesheet
+ * per surface, matching the PLP/cart/account convention.
+ *
+ * Values ride the shopos-tokens.css system (the enqueue depends on
+ * shopos-theme → shopos-tokens). Direction-safe by construction: logical
+ * properties only, no left/right — the theme is RTL-first (§11 Ruling 7.5).
+ * Visual acceptance is the R7.5 owner screenshot + RTL gate.
+ */
+
+.shopos-ui-search {
+	color: var(--shopos-ui-color-ink, #1b1b1b);
+	font-family: var(--shopos-ui-font-body, inherit);
+}
+
+.shopos-ui-search__container {
+	max-inline-size: var(--shopos-ui-container-max, 1360px);
+	margin-inline: auto;
+	padding-inline: var(--shopos-ui-container-pad, 16px);
+	padding-block: var(--shopos-ui-space-xl, 40px) var(--shopos-ui-space-xxl, 64px);
+}
+
+/* Search results heading (the term the shopper searched for). */
+.shopos-ui-search__header {
+	margin-block-end: var(--shopos-ui-space-lg, 24px);
+}
+
+.shopos-ui-search__title {
+	font-family: var(--shopos-ui-font-display, inherit);
+	font-size: var(--shopos-ui-text-xxl, clamp(1.9rem, 1.55rem + 1.5vw, 2.75rem));
+	line-height: var(--shopos-ui-leading-tight, 1.18);
+	margin-block: 0;
+}
+
+/* ShopFilters slot (placement provisional pending R7.5). */
+.shopos-ui-search__filters {
+	margin-block-end: var(--shopos-ui-space-lg, 24px);
+}
+
+/* Result count + catalog ordering read as one quiet toolbar line. */
+.shopos-ui-search .woocommerce-result-count {
+	margin-block: 0;
+	color: var(--shopos-ui-color-ink-soft, #3a3a3a);
+	font-size: var(--shopos-ui-text-sm, clamp(0.82rem, 0.78rem + 0.22vw, 0.9rem));
+}
+
+.shopos-ui-search .woocommerce-ordering {
+	margin-block: 0 var(--shopos-ui-space-md, 16px);
+}
+
+.shopos-ui-search .woocommerce-ordering select {
+	border: var(--shopos-ui-input-border, 1px solid #e6e6e2);
+	border-radius: var(--shopos-ui-input-radius, 4px);
+	padding-block: 0.4em;
+	padding-inline: 0.6em;
+	background: var(--shopos-ui-input-bg, #ffffff);
+	color: inherit;
+}
+
+/* Breathing room above the grid — the grid itself stays WC's ul.products
+   (gap from shopos.css, columns from WC/the mobile-cols override). */
+.shopos-ui-search ul.products {
+	margin-block-start: var(--shopos-ui-space-md, 16px);
+}
+
+/* No-results copy (woocommerce_no_products_found → wc_no_products_found). */
+.shopos-ui-search .woocommerce-info,
+.shopos-ui-search .woocommerce-no-products-found {
+	margin-block-start: var(--shopos-ui-space-md, 16px);
+}
+
+/* Pagination. */
+.shopos-ui-search .woocommerce-pagination {
+	margin-block-start: var(--shopos-ui-space-xl, 40px);
+	text-align: center;
+}
+
+.shopos-ui-search .woocommerce-pagination ul.page-numbers {
+	display: inline-flex;
+	gap: var(--shopos-ui-space-sm, 8px);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+.shopos-ui-search .woocommerce-pagination .page-numbers li .page-numbers {
+	display: inline-block;
+	min-inline-size: 2.25em;
+	padding-block: 0.45em;
+	padding-inline: 0.6em;
+	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	border-radius: var(--shopos-ui-radius-sm, 4px);
+	color: inherit;
+	text-decoration: none;
+	transition: background-color var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.shopos-ui-search .woocommerce-pagination .page-numbers li .page-numbers.current {
+	background: var(--shopos-ui-color-accent, #1b1b1b);
+	border-color: var(--shopos-ui-color-accent, #1b1b1b);
+	color: var(--shopos-ui-color-accent-text, #ffffff);
+}
+
+.shopos-ui-search .woocommerce-pagination .page-numbers li a.page-numbers:hover {
+	background: var(--shopos-ui-color-paper-soft, #faf9f7);
+}
