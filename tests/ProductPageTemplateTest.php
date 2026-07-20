@@ -12,7 +12,11 @@ use PHPUnit\Framework\TestCase;
  * <details> markup, and the body-class scope hook. The actual render
  * (Elementor precedence, gallery, sticky bar) is integration — live-QA.
  *
+ * ShopOS Line theme CI lane (decisions §11-B) — the flag-gated rung resolves
+ * the theme's single-product.php copy, so this rides the `theme` group.
+ *
  * @covers \ShopOS\Core\Modules\ProductPage\Template_Loader
+ * @group theme
  */
 final class ProductPageTemplateTest extends TestCase {
 
