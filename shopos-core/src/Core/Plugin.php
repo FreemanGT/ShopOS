@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Plugin {
 
-	const VERSION = '1.52.0';
+	const VERSION = '1.53.0';
 
 	/**
 	 * Singleton instance.
@@ -185,6 +185,18 @@ final class Plugin {
 		// request carries ?shopos_perf=1.
 		if ( Feature_Flags::is_enabled( 'perf', 'probe' ) ) {
 			( new Perf() )->boot();
+		}
+
+		// ShopOS Line transactional-email skin (§11-B surface 6, gated, default
+		// off). Core-side by construction: WC emails send from cron / webhook /
+		// REST where the active theme may not be ShopOS Line, so a theme email
+		// override would vanish (decisions §11 line 304). Booted here (method
+		// scope, NOT inside is_admin) so it registers in cron/REST send contexts
+		// too. Skin-only — hooks woocommerce_email_styles and appends email-safe
+		// CSS Emogrifier inlines; forks no templates, no WC email @version chase.
+		// Off = filter never added, byte-identical (Ruling 6). This closes §11-B.
+		if ( Feature_Flags::is_enabled( 'theme', 'style_emails' ) ) {
+			( new Email_Skin() )->boot();
 		}
 
 		// Admin-only components.

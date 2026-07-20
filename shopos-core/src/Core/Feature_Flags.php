@@ -213,6 +213,14 @@ final class Feature_Flags {
 				'since'       => '1.52.0',
 				'shared'      => false,
 			),
+			array(
+				'module'      => 'theme',
+				'feature'     => 'style_emails',
+				'label'       => __( 'Theme — transactional email skin (ShopOS Line)', 'shopos-core' ),
+				'description' => __( 'When on, ShopOS Core restyles the WooCommerce transactional emails (new order, processing, completed, invoice, password reset, …) to the ShopOS Line brand — the sixth and final §11-B deferred surface (decisions §11.4). Unlike every sibling surface this is Core-side, not theme-side: WooCommerce emails send from cron / webhook / REST contexts where the active theme may not be ShopOS Line, so a theme-level email override would vanish (decisions §11 line 304). Skin-only like the checkout surface — it hooks woocommerce_email_styles and appends email-safe CSS (literal hex/px values; no CSS custom properties, @media, or logical properties, which email clients drop) that WooCommerce inlines onto the markup via Emogrifier; it forks NO email templates, so there is no WooCommerce email @version to chase, and WooCommerce keeps ownership of every email template, header, and footer (Core only appends brand styles, never replacing WooCommerce\'s). Off = the WooCommerce default email styling with nothing appended, byte-identical (Ruling 6). Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Core-only: unlike the other §11-B surfaces it does NOT need the ShopOS theme active. This closes §11-B.', 'shopos-core' ),
+				'since'       => '1.53.0',
+				'shared'      => false,
+			),
 		);
 	}
 }

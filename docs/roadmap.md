@@ -1,6 +1,6 @@
 # ShopOS — Roadmap
 
-**Last updated:** 2026-07-19 · **Owner:** Yiftach
+**Last updated:** 2026-07-20 · **Owner:** Yiftach
 
 The single forward-looking plan for the suite. History lives in the CHANGELOGs and
 [`archive/`](archive/); this file is **status + what's shipped + what's left + what's next**.
@@ -61,15 +61,16 @@ Fortune Wheel · Bulk Price Editor · Custom Email Templates · Advanced Add-to-
 - **Flip gates for the three built-but-OFF theme flags** (`fonts_selfhost`, `template_pdp`,
   `template_plp`): staging render-diff identity with Elementor Pro, kit font parity, perf-budget,
   RTL pass, owner screenshots, then ≥30 days flag-on across a theme release. Details in [TODO.md](TODO.md).
-- **§11-B deferred surfaces** (theme-owned classic PHP): ~~header/footer chrome~~ (**shipped
-  1.47.0/1.16.0, flag `theme.template_chrome`**) · ~~cart~~ (**shipped 1.48.0/1.17.0, flag
-  `theme.template_cart`**) · ~~account~~ (**shipped 1.50.0/1.18.0, flag `theme.template_account`**) ·
-  ~~checkout~~ (**shipped 1.52.0/1.20.0, flag `theme.style_checkout` — skin-only, Ruling 9 resolved-as-moot**) ·
-  search-results template · transactional emails.
-  Owner **overrode the §11-B calendar gate 2026-07-20** to start these (the 30-day-flag-on
-  + store-#2 conditions are not met); building **one plan-first PR per surface**. The theme-CI-lane
-  precondition **is genuinely satisfied** (`@group theme` in core's suite + named CI step — decisions
-  §11-B Ruling 7.8). Ruling 9 checkout pin RESOLVED 2026-07-20 (skin-only, both transports, no migration); emails stay Core-side.
+- **§11-B deferred surfaces** (theme-owned classic PHP) — **ALL SHIPPED, §11-B COMPLETE**:
+  ~~header/footer chrome~~ (**1.47.0/1.16.0, `theme.template_chrome`**) · ~~cart~~ (**1.48.0/1.17.0,
+  `theme.template_cart`**) · ~~account~~ (**1.50.0/1.18.0, `theme.template_account`**) ·
+  ~~search-results template~~ (**1.51.0/1.19.0, `theme.template_search`**) ·
+  ~~checkout~~ (**1.52.0/1.20.0, `theme.style_checkout` — skin-only, Ruling 9 resolved-as-moot**) ·
+  ~~transactional emails~~ (**1.53.0, `theme.style_emails` — Core-side skin-only, closes §11-B**).
+  Owner **overrode the §11-B calendar gate 2026-07-20** to build these (the 30-day-flag-on
+  + store-#2 conditions were not met); shipped **one plan-first PR per surface**. The theme-CI-lane
+  precondition was genuinely satisfied (`@group theme` in core's suite + named CI step — decisions
+  §11-B Ruling 7.8). Ruling 9 checkout pin RESOLVED 2026-07-20 (skin-only, both transports, no migration); emails Core-side (cron-safe). All six ship default OFF — the flag-flip acceptance gate (render-diff identity, RTL, owner screenshots) is now the remaining §11-B work.
   See decisions [§11 Ruling 2](decisions-2026-04-28.md).
 
 ### 3. Open audit follow-ups (B-5)
