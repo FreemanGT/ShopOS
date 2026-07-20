@@ -41,31 +41,35 @@ final class ShopOS_Theme {
 		add_action( 'widgets_init', array( $this, 'register_widget_areas' ) );
 		add_filter( 'body_class', array( $this, 'add_body_class' ) );
 
-		// ShopOS Line cart page (§11-B surface 2). Registered UNCONDITIONALLY
-		// so the callback census is identical in both flag states (§11 Ruling
-		// 7.1); the flag gate lives inside the callback. Priority 10 / 3 args
+		// ShopOS Line theme-owned WooCommerce surfaces — cart (§11-B surface 2)
+		// + account (surface 3), and every later locate_template surface. ONE
+		// shared filter, registered UNCONDITIONALLY so the callback census is
+		// identical in both flag states (§11 Ruling 7.1); the per-surface flag
+		// gate lives inside the callback. New surfaces add a claim arm to
+		// woo_surface_enabled(), never a new registration (the §11.3 "one shared
+		// arm" doctrine, applied to locate_template). Priority 10 / 3 args
 		// matches WooCommerce's own `woocommerce_locate_template` signature.
-		add_filter( 'woocommerce_locate_template', array( __CLASS__, 'locate_cart_template' ), 10, 3 );
+		add_filter( 'woocommerce_locate_template', array( __CLASS__, 'locate_woo_template' ), 10, 3 );
 	}
 
 	/**
-	 * Once-per-request log guards for the cart locate-template filter. Static
-	 * because ShopOS_Theme is a singleton (unlike the PLP loader, which is
-	 * new-per-test); reset_cart_guards() is the test seam.
+	 * Once-per-request log guards for the shared woo locate-template filter.
+	 * Static because ShopOS_Theme is a singleton (unlike the PLP loader, which
+	 * is new-per-test); reset_woo_guards() is the test seam.
 	 *
 	 * @var bool
 	 */
-	private static $warned_cart_fonts_off = false;
+	private static $warned_woo_fonts_off = false;
 
 	/**
 	 * @var bool
 	 */
-	private static $logged_cart_template_missing = false;
+	private static $logged_woo_template_missing = false;
 
 	/**
 	 * Whether the theme owns the cart page (decisions §11.4, §11-B surface 2).
 	 *
-	 * The single pinned flag-read path for the cart — the locate-template
+	 * The single pinned flag-read path for the cart — the shared locate-template
 	 * filter and the cart-asset enqueue both route through here. Spelled as an
 	 * FQCN because the theme is unnamespaced (see chrome_enabled()). Core
 	 * absent ⇒ hard false ⇒ the WooCommerce default cart (today's render).
@@ -78,13 +82,23 @@ final class ShopOS_Theme {
 	}
 
 	/**
-	 * Whether a WooCommerce template name is one this theme claims for the cart
-	 * surface. Pure — unit-tested. Only `cart/*` names, and deliberately never
-	 * the PDP/PLP templates the theme also ships under `templates/woo/` (those
+	 * Whether the theme owns the My Account pages (decisions §11.4, §11-B
+	 * surface 3). The single pinned flag-read path for account — same FQCN /
+	 * Core-absent-hard-false contract as cart_enabled().
+	 *
+	 * @return bool
+	 */
+	public static function account_enabled() {
+		return class_exists( '\ShopOS\Core\Core\Feature_Flags' )
+			&& \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'template_account' );
+	}
+
+	/**
+	 * Whether a WooCommerce template name is a `cart/*` template. Pure —
+	 * unit-tested. The prefix guard keeps the shared filter from redirecting the
+	 * PDP/PLP templates the theme also ships under `templates/woo/` (those
 	 * belong to the `template_include` loaders, not `locate_template`): without
-	 * this prefix guard, a bare `templates/woo/<name>` existence check would
-	 * redirect `single-product.php` / `archive-product.php` through here and
-	 * collide with those loaders.
+	 * it, a bare `templates/woo/<name>` existence check would collide with them.
 	 *
 	 * @param string $template_name WooCommerce template name, e.g. 'cart/cart.php'.
 	 * @return bool
@@ -94,42 +108,73 @@ final class ShopOS_Theme {
 	}
 
 	/**
-	 * Redirect WooCommerce cart templates to the theme's own copies when the
-	 * cart surface is on. Flag-off returns $template untouched ⇒ the
-	 * WooCommerce default ⇒ byte-identical (§11 Ruling 6).
+	 * Whether a WooCommerce template name is a `myaccount/*` template. Pure —
+	 * unit-tested (same prefix-guard rationale as should_claim_cart_template).
 	 *
-	 * Resolves ONLY from `templates/woo/cart/` via get_stylesheet_directory(),
+	 * @param string $template_name WooCommerce template name, e.g. 'myaccount/my-account.php'.
+	 * @return bool
+	 */
+	public static function should_claim_account_template( $template_name ) {
+		return 0 === strpos( (string) $template_name, 'myaccount/' );
+	}
+
+	/**
+	 * Whether $template_name belongs to a theme-owned WooCommerce surface whose
+	 * flag is on. The single claim arm — new surfaces slot in here, keeping one
+	 * LITERAL is_enabled() call site per flag (via the *_enabled() pinned reads)
+	 * so the bidirectional FeatureFlagsAdminTest scan still resolves each flag.
+	 *
+	 * @param string $template_name WooCommerce template name.
+	 * @return bool
+	 */
+	private static function woo_surface_enabled( $template_name ) {
+		if ( self::should_claim_cart_template( $template_name ) ) {
+			return self::cart_enabled();
+		}
+		if ( self::should_claim_account_template( $template_name ) ) {
+			return self::account_enabled();
+		}
+		return false;
+	}
+
+	/**
+	 * Redirect WooCommerce templates to the theme's own copies when the owning
+	 * surface's flag is on. Flag-off (or a non-theme-owned template) returns
+	 * $template untouched ⇒ the WooCommerce default ⇒ byte-identical (§11
+	 * Ruling 6).
+	 *
+	 * Resolves ONLY from `templates/woo/<name>` via get_stylesheet_directory(),
 	 * never the auto-located `{theme}/woocommerce/` path (§11.3 — never
-	 * resolvable by file presence). Templates the theme does not ship
-	 * (mini-cart.php, …) fail is_readable and fall through to the WooCommerce
-	 * default, so the filter's blast radius is exactly the cart-page files we
-	 * ship. Once-per-request Ruling-10 fonts warning + missing-template info
-	 * log mirror the PLP loader.
+	 * resolvable by file presence). Templates the theme does not ship (e.g.
+	 * `cart/mini-cart.php`, or a `myaccount/*` form we CSS-skin instead of fork)
+	 * fail is_readable and fall through to the WooCommerce default, so the
+	 * filter's blast radius is exactly the files we ship. Once-per-request
+	 * Ruling-10 fonts warning + missing-template info log mirror the PLP loader.
 	 *
 	 * @param string $template      Path WooCommerce resolved.
 	 * @param string $template_name Template name, e.g. 'cart/cart.php'.
 	 * @param string $template_path Base template path (unused — signature parity).
 	 * @return string
 	 */
-	public static function locate_cart_template( $template, $template_name, $template_path = '' ) {
-		if ( ! self::should_claim_cart_template( $template_name ) || ! self::cart_enabled() ) {
+	public static function locate_woo_template( $template, $template_name, $template_path = '' ) {
+		if ( ! self::woo_surface_enabled( $template_name ) ) {
 			return $template;
 		}
 
 		// §11 Ruling 10: fonts must not flip between Elementor pages and
 		// PHP-template pages — fonts_selfhost is a flip precondition. Core is
-		// present here (cart_enabled() true ⇒ Feature_Flags loaded ⇒ Logger too).
-		if ( ! self::$warned_cart_fonts_off
+		// present here (a surface flag is on ⇒ Feature_Flags loaded ⇒ Logger too).
+		if ( ! self::$warned_woo_fonts_off
 			&& ! \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'fonts_selfhost' ) ) {
-			self::$warned_cart_fonts_off = true;
-			\ShopOS\Core\Core\Logger::log( 'theme.template_cart is on while theme.fonts_selfhost is off — storefront fonts will differ between Elementor and template pages. Turn fonts_selfhost on first (decisions §11 Ruling 10).', 'warning' );
+			self::$warned_woo_fonts_off = true;
+			\ShopOS\Core\Core\Logger::log( 'A ShopOS Line theme-template flag is on while theme.fonts_selfhost is off — storefront fonts will differ between Elementor and template pages. Turn fonts_selfhost on first (decisions §11 Ruling 10).', 'warning' );
 		}
 
 		$file = get_stylesheet_directory() . '/templates/woo/' . $template_name;
 		if ( ! is_readable( $file ) ) {
-			if ( ! self::$logged_cart_template_missing ) {
-				self::$logged_cart_template_missing = true;
-				\ShopOS\Core\Core\Logger::log( 'theme.template_cart is on but the active theme ships no templates/woo/' . $template_name . ' — rendering the WooCommerce default instead (decisions §11.3).', 'info' );
+			if ( ! self::$logged_woo_template_missing ) {
+				self::$logged_woo_template_missing = true;
+				\ShopOS\Core\Core\Logger::log( 'A ShopOS Line surface flag is on but the active theme ships no templates/woo/' . $template_name . ' — rendering the WooCommerce default instead (decisions §11.3).', 'info' );
 			}
 			return $template;
 		}
@@ -138,11 +183,11 @@ final class ShopOS_Theme {
 	}
 
 	/**
-	 * Test seam: reset the once-per-request cart log guards.
+	 * Test seam: reset the once-per-request woo locate-template log guards.
 	 */
-	public static function reset_cart_guards() {
-		self::$warned_cart_fonts_off        = false;
-		self::$logged_cart_template_missing = false;
+	public static function reset_woo_guards() {
+		self::$warned_woo_fonts_off        = false;
+		self::$logged_woo_template_missing = false;
 	}
 
 	/**
@@ -310,6 +355,19 @@ final class ShopOS_Theme {
 				array(),
 				SHOPOS_THEME_VERSION,
 				true
+			);
+		}
+
+		// ShopOS Line My Account (decisions §11.4, §11-B surface 3): skin-light,
+		// token-driven account styles (structural forks + CSS-skinned WC forms).
+		// Only on the account page when the theme owns it — no JS (WC owns the
+		// account form behaviour), zero new assets everywhere else.
+		if ( self::account_enabled() && function_exists( 'is_account_page' ) && is_account_page() ) {
+			wp_enqueue_style(
+				'shopos-account',
+				SHOPOS_THEME_ASSETS . '/css/shopos-account.css',
+				array( 'shopos-theme' ),
+				SHOPOS_THEME_VERSION
 			);
 		}
 	}

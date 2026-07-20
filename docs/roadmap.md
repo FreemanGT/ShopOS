@@ -63,7 +63,8 @@ Fortune Wheel · Bulk Price Editor · Custom Email Templates · Advanced Add-to-
   RTL pass, owner screenshots, then ≥30 days flag-on across a theme release. Details in [TODO.md](TODO.md).
 - **§11-B deferred surfaces** (theme-owned classic PHP): ~~header/footer chrome~~ (**shipped
   1.47.0/1.16.0, flag `theme.template_chrome`**) · ~~cart~~ (**shipped 1.48.0/1.17.0, flag
-  `theme.template_cart`**) · checkout · account · search-results template · transactional emails.
+  `theme.template_cart`**) · ~~account~~ (**shipped 1.50.0/1.18.0, flag `theme.template_account`**) ·
+  checkout · search-results template · transactional emails.
   Owner **overrode the §11-B calendar gate 2026-07-20** to start these (the 30-day-flag-on
   + store-#2 conditions are not met); building **one plan-first PR per surface**. The theme-CI-lane
   precondition **is genuinely satisfied** (`@group theme` in core's suite + named CI step — decisions

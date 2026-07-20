@@ -189,6 +189,14 @@ final class Feature_Flags {
 				'since'       => '1.48.0',
 				'shared'      => false,
 			),
+			array(
+				'module'      => 'theme',
+				'feature'     => 'template_account',
+				'label'       => __( 'Theme — My Account pages (ShopOS Line)', 'shopos-core' ),
+				'description' => __( 'When on, the WooCommerce My Account pages render from the ShopOS theme\'s own classic templates (templates/woo/myaccount/*.php — the account shell, navigation, dashboard, orders, view-order, downloads, payment-methods, addresses) instead of the WooCommerce defaults, the third §11-B deferred surface (decisions §11.4). Redirected via the same flag-gated woocommerce_locate_template filter as the cart, never by file presence (§11.3). The auth/payment form templates (login, edit-account, add-payment-method, password reset) are deliberately NOT forked — they are skin-styled via CSS so their nonces and gateway fields stay WooCommerce-owned. Off = the current WooCommerce account render, byte-identical (Ruling 6), with every account hook/nonce still firing. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Only affects the [woocommerce_my_account] shortcode account. Needs the ShopOS theme active; without Core the theme reads this as hard false; turn on theme.fonts_selfhost first (Ruling 10) or fonts differ between Elementor and template pages.', 'shopos-core' ),
+				'since'       => '1.50.0',
+				'shared'      => false,
+			),
 		);
 	}
 }

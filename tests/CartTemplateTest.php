@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @covers ShopOS_Theme::cart_enabled
  * @covers ShopOS_Theme::should_claim_cart_template
- * @covers ShopOS_Theme::locate_cart_template
+ * @covers ShopOS_Theme::locate_woo_template
  * @group theme
  */
 final class CartTemplateTest extends TestCase {
@@ -36,7 +36,7 @@ final class CartTemplateTest extends TestCase {
 		$GLOBALS['fr_opts']  = array();
 		$GLOBALS['fr_hooks'] = array();
 		unset( $GLOBALS['fr_stylesheet_dir'] );
-		ShopOS_Theme::reset_cart_guards();
+		ShopOS_Theme::reset_woo_guards();
 	}
 
 	private function theme_dir(): string {
@@ -135,7 +135,7 @@ final class CartTemplateTest extends TestCase {
 		// Flag off: file presence alone must never change resolution (§11.3 / Ruling 6).
 		$this->assertSame(
 			'/wc/cart/cart.php',
-			ShopOS_Theme::locate_cart_template( '/wc/cart/cart.php', 'cart/cart.php', '' )
+			ShopOS_Theme::locate_woo_template( '/wc/cart/cart.php', 'cart/cart.php', '' )
 		);
 		$this->assertSame( array(), $this->log_entries( 'warning' ), 'flag off warns nothing' );
 	}
@@ -148,7 +148,7 @@ final class CartTemplateTest extends TestCase {
 		foreach ( $this->shipped_cart_templates() as $name ) {
 			$this->assertSame(
 				$this->theme_dir() . '/templates/woo/' . $name,
-				ShopOS_Theme::locate_cart_template( '/wc/' . $name, $name, '' ),
+				ShopOS_Theme::locate_woo_template( '/wc/' . $name, $name, '' ),
 				"{$name} redirects to the theme copy when the flag is on"
 			);
 		}
@@ -162,7 +162,7 @@ final class CartTemplateTest extends TestCase {
 
 		$this->assertSame(
 			'/wc/single-product.php',
-			ShopOS_Theme::locate_cart_template( '/wc/single-product.php', 'single-product.php', '' ),
+			ShopOS_Theme::locate_woo_template( '/wc/single-product.php', 'single-product.php', '' ),
 			'the PDP template the theme also ships is never claimed by the cart filter'
 		);
 	}
@@ -176,9 +176,9 @@ final class CartTemplateTest extends TestCase {
 		// the WC default renders, and the miss is logged once per request.
 		$this->assertSame(
 			'/wc/cart/mini-cart.php',
-			ShopOS_Theme::locate_cart_template( '/wc/cart/mini-cart.php', 'cart/mini-cart.php', '' )
+			ShopOS_Theme::locate_woo_template( '/wc/cart/mini-cart.php', 'cart/mini-cart.php', '' )
 		);
-		ShopOS_Theme::locate_cart_template( '/wc/cart/mini-cart.php', 'cart/mini-cart.php', '' );
+		ShopOS_Theme::locate_woo_template( '/wc/cart/mini-cart.php', 'cart/mini-cart.php', '' );
 		$this->assertCount( 1, $this->log_entries( 'info' ), 'missing template logs once per request' );
 	}
 
@@ -188,9 +188,9 @@ final class CartTemplateTest extends TestCase {
 
 		$this->assertSame(
 			$this->theme_dir() . '/templates/woo/cart/cart.php',
-			ShopOS_Theme::locate_cart_template( '/wc/cart/cart.php', 'cart/cart.php', '' )
+			ShopOS_Theme::locate_woo_template( '/wc/cart/cart.php', 'cart/cart.php', '' )
 		);
-		ShopOS_Theme::locate_cart_template( '/wc/cart/cart.php', 'cart/cart.php', '' );
+		ShopOS_Theme::locate_woo_template( '/wc/cart/cart.php', 'cart/cart.php', '' );
 
 		$warnings = $this->log_entries( 'warning' );
 		$this->assertCount( 1, $warnings, 'Ruling-10 warning once per request' );
