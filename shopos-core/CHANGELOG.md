@@ -1,5 +1,10 @@
 # ShopOS Core — Changelog
 
+## [1.49.0] — 2026-07-20
+
+- **Force background auto-updates for shopos-core.** `Updater::boot()` now hooks `auto_update_plugin`: shopos-core auto-updates in the background regardless of the per-plugin auto-update toggle, so a store can never strand itself an update behind (the 1.44.3–1.45.0 unbooted-updater incident is the motivating case). Other plugins keep WordPress's default behaviour — the filter only forces `true` for `SHOPOS_CORE_BASENAME`, passing every other plugin's decision through untouched. Additive (Hard Rule #1: new filter consumer). Pinned by `UpdaterTest`.
+- Fix: `SHOPOS_CORE_VERSION` was left at `1.47.0` in the 1.48.0 release (the manual bump missed the constant while the header + `Plugin::VERSION` moved to 1.48.0); now consistent at 1.49.0 across all four version spots. No functional effect in 1.48.0 — `check_update()` compares against WordPress's plugin-header value, not the constant, and 1.48.0 shipped no core assets — but the constant is the asset cache-bust token and must track the header.
+
 ## [1.48.0] — 2026-07-20
 
 - New feature flag **`theme`/`template_cart`** (`shopos_core_theme_template_cart_enabled`, default OFF, permanent kill-switch — decisions §11 Ruling 4, exempt from graduation sweeps) in `Feature_Flags::registry()`. Gates the ShopOS Line's second §11-B deferred surface: the theme-owned cart page (the theme renders its own classic `templates/woo/cart/*.php` — cart, empty cart, totals, shipping rows, shipping calculator, proceed-to-checkout, cross-sells — via a flag-gated `woocommerce_locate_template` redirect, never by file presence). Off = the current WooCommerce cart render, byte-identical, with every cart hook/nonce still firing. Only affects the `[woocommerce_cart]` shortcode cart; Cart-block stores need a per-store block→shortcode content-migration (Ruling 9, Hard Rule #3). Blueprint / admin / CLI coverage auto-derives from the registry (zero test edits beyond the registry-iterating counts). Pairs with shopos-theme 1.17.0.

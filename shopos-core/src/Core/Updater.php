@@ -31,6 +31,22 @@ final class Updater {
 	public function boot() {
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update' ) );
 		add_filter( 'plugins_api', array( $this, 'plugin_info' ), 10, 3 );
+		add_filter( 'auto_update_plugin', array( $this, 'auto_update' ), 10, 2 );
+	}
+
+	/**
+	 * Force background auto-updates for shopos-core, regardless of the
+	 * per-plugin toggle. Other plugins keep WordPress's default behaviour.
+	 *
+	 * @param bool|null $update Whether to auto-update.
+	 * @param object    $item   Update offer object.
+	 * @return bool|null
+	 */
+	public function auto_update( $update, $item ) {
+		if ( isset( $item->plugin ) && SHOPOS_CORE_BASENAME === $item->plugin ) {
+			return true;
+		}
+		return $update;
 	}
 
 	/**
