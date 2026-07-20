@@ -1,5 +1,13 @@
 # ShopOS Theme — Changelog
 
+## [1.17.0] — 2026-07-20
+
+- **ShopOS Line cart page** (§11-B surface 2), behind `theme.template_cart` (Core flag, default OFF). The whole cart page is theme-owned: forks of WooCommerce's `cart/cart.php`, `cart-empty.php`, `cart-totals.php`, `cart-shipping.php`, `shipping-calculator.php`, `proceed-to-checkout-button.php`, `cross-sells.php` live at `templates/woo/cart/` and are reached ONLY via a flag-gated `woocommerce_locate_template` filter — never by file presence (§11.3). Flag off ⇒ WooCommerce's own templates render, byte-identical (§11 Ruling 6); every cart hook, filter, class/id and the `woocommerce-cart` / shipping-calculator nonces are preserved verbatim so WC's cart JS and every plugin still bind. New `assets/css/shopos-cart.css` (skin-light `--shopos-ui-*` tokens with on-palette fallbacks, RTL-safe logical properties, 768px canon breakpoint stacking the item table into labelled rows, reduced-motion aware) + defensive `assets/js/shopos-cart.js` (submit busy-guard that prevents a double-POST without touching WC's own handlers), both enqueued only on the cart page when the flag is on. Single pinned flag read via `ShopOS_Theme::cart_enabled()` (FQCN — the theme is unnamespaced); Core absent ⇒ hard false ⇒ WooCommerce default cart. Only affects the `[woocommerce_cart]` shortcode cart — Cart-block stores need a per-store block→shortcode content-migration (decisions §11 Ruling 9, Hard Rule #3). Requires shopos-core 1.48.0+ for the flag.
+
+## [1.16.0] — 2026-07-20
+
+- **ShopOS Line header/footer chrome** (§11-B surface 1), behind `theme.template_chrome` (Core flag, default OFF). New `header.php` / `footer.php`: when the flag is off they **require-parent passthrough** to the Hello Elementor parent chrome (byte-identical, decisions §11 Ruling 6, verified in wp-env); when on they render a skin-light, `--shopos-ui-*` token-driven classic header (custom-logo / site-name, `menu-1` primary nav, `[shopos_search]`, cart link + count, mobile toggle) and footer (`menu-2` nav, `shopos-footer` widget area, copyright). New `assets/css/shopos-chrome.css` (RTL-safe logical properties, 768px canon breakpoint, reduced-motion aware) + `assets/js/shopos-chrome.js` (progressive-enhancement mobile toggle, Escape-to-close), both enqueued only when the chrome flag is on. Single pinned flag read via `ShopOS_Theme::chrome_enabled()` (FQCN — the theme is unnamespaced); Core absent ⇒ hard false ⇒ parent chrome. Requires shopos-core 1.47.0+ for the flag.
+
 ## [1.15.1] — 2026-07-19
 
 - Fix: compare manifest against WordPress's on-disk theme version instead of the opcached SHOPOS_THEME_VERSION constant, so an in-place update no longer re-offers the version already installed

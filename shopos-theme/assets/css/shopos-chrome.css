@@ -1,0 +1,240 @@
+/**
+ * ShopOS Line — header/footer chrome (theme.template_chrome).
+ *
+ * Skin-light + token-driven: every brand-visible value routes through a
+ * --shopos-ui-* token (with a literal fallback so a non-theme/absent-token
+ * render still holds). RTL-safe via logical properties — no left/right.
+ * Enqueued only when the chrome flag is on.
+ */
+
+.shopos-chrome {
+	background: var(--shopos-ui-color-paper, #fff);
+	color: var(--shopos-ui-color-ink, #1a1a1a);
+	border-block-end: 1px solid var(--shopos-ui-color-hairline, #e6e6e6);
+	font-family: var(--shopos-ui-font-body, inherit);
+	position: sticky;
+	inset-block-start: 0;
+	z-index: var(--shopos-ui-z-sticky, 100);
+}
+
+.shopos-chrome__inner {
+	display: flex;
+	align-items: center;
+	gap: var(--shopos-ui-space-lg, 1.5rem);
+	max-inline-size: var(--shopos-ui-container-max, 1400px);
+	margin-inline: auto;
+	padding-inline: var(--shopos-ui-container-pad, 1.25rem);
+	padding-block: var(--shopos-ui-space-sm, 0.75rem);
+}
+
+/* Brand ------------------------------------------------------------------- */
+.shopos-chrome__brand {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+}
+
+.shopos-chrome__brand img,
+.shopos-chrome__brand .custom-logo {
+	max-block-size: 40px;
+	inline-size: auto;
+}
+
+.shopos-chrome__site-name {
+	font-family: var(--shopos-ui-font-display, inherit);
+	font-size: var(--shopos-ui-text-lg, 1.125rem);
+	font-weight: 700;
+	text-decoration: none;
+	color: inherit;
+}
+
+/* Primary nav ------------------------------------------------------------- */
+.shopos-chrome__nav {
+	flex: 1 1 auto;
+}
+
+.shopos-chrome__menu {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--shopos-ui-space-md, 1rem);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.shopos-chrome__menu a {
+	display: inline-block;
+	padding-block: var(--shopos-ui-space-xxs, 0.25rem);
+	color: inherit;
+	text-decoration: none;
+	font-size: var(--shopos-ui-text-md, 1rem);
+	line-height: 1.2;
+	transition: color var(--shopos-ui-dur, 0.18s) var(--shopos-ui-ease, ease);
+}
+
+.shopos-chrome__menu a:hover,
+.shopos-chrome__menu .current-menu-item > a {
+	color: var(--shopos-ui-color-accent, #b8863b);
+}
+
+/* Actions (search / cart / toggle) --------------------------------------- */
+.shopos-chrome__actions {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	gap: var(--shopos-ui-space-md, 1rem);
+}
+
+.shopos-chrome__cart {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--shopos-ui-space-xxs, 0.25rem);
+	color: inherit;
+	text-decoration: none;
+}
+
+.shopos-chrome__cart-icon {
+	inline-size: 22px;
+	block-size: 22px;
+	display: inline-block;
+	background: currentColor;
+	-webkit-mask: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='black' d='M7 4h-2l-1 2v2h2l3.6 7.59-1.35 2.44A2 2 0 0 0 9 21h11v-2H9.42a.25.25 0 0 1-.22-.37L10.1 17h6.45a2 2 0 0 0 1.8-1.1l3.58-6.49A1 1 0 0 0 21 8H8.53l-.94-2H7zM9 22a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm9 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z'/></svg>");
+	mask: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='black' d='M7 4h-2l-1 2v2h2l3.6 7.59-1.35 2.44A2 2 0 0 0 9 21h11v-2H9.42a.25.25 0 0 1-.22-.37L10.1 17h6.45a2 2 0 0 0 1.8-1.1l3.58-6.49A1 1 0 0 0 21 8H8.53l-.94-2H7zM9 22a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm9 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z'/></svg>");
+}
+
+.shopos-chrome__cart-count {
+	min-inline-size: 1.25em;
+	padding-inline: 0.35em;
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	font-weight: 700;
+	line-height: 1.4;
+	text-align: center;
+	color: var(--shopos-ui-color-accent-text, #fff);
+	background: var(--shopos-ui-color-accent, #b8863b);
+	border-radius: var(--shopos-ui-radius-pill, 999px);
+}
+
+/* Mobile toggle — hidden on desktop, shown at the 768px canon breakpoint. */
+.shopos-chrome__toggle {
+	display: none;
+	inline-size: 40px;
+	block-size: 40px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+	color: inherit;
+}
+
+.shopos-chrome__toggle-bar,
+.shopos-chrome__toggle-bar::before,
+.shopos-chrome__toggle-bar::after {
+	display: block;
+	inline-size: 22px;
+	block-size: 2px;
+	margin-inline: auto;
+	background: currentColor;
+	content: "";
+	transition: transform var(--shopos-ui-dur, 0.18s) var(--shopos-ui-ease, ease);
+}
+
+.shopos-chrome__toggle-bar::before { transform: translateY(-6px); }
+.shopos-chrome__toggle-bar::after  { transform: translateY(4px); }
+
+/* Content wrapper --------------------------------------------------------- */
+.shopos-chrome__content {
+	min-block-size: 40vh;
+}
+
+/* Footer ------------------------------------------------------------------ */
+.shopos-chrome--footer {
+	position: static;
+	border-block-end: 0;
+	border-block-start: 1px solid var(--shopos-ui-color-hairline, #e6e6e6);
+	background: var(--shopos-ui-color-paper-soft, #f7f7f5);
+	margin-block-start: var(--shopos-ui-space-3xl, 4rem);
+}
+
+.shopos-chrome--footer .shopos-chrome__inner {
+	flex-direction: column;
+	align-items: center;
+	gap: var(--shopos-ui-space-md, 1rem);
+	padding-block: var(--shopos-ui-space-xl, 2rem);
+	text-align: center;
+}
+
+.shopos-chrome__footer-menu {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--shopos-ui-space-md, 1rem);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.shopos-chrome__footer-menu a {
+	color: inherit;
+	text-decoration: none;
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+}
+
+.shopos-chrome__footer-menu a:hover { color: var(--shopos-ui-color-accent, #b8863b); }
+
+.shopos-chrome__widgets {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--shopos-ui-space-xl, 2rem);
+}
+
+.shopos-chrome__widget-title {
+	font-size: var(--shopos-ui-text-md, 1rem);
+	margin-block: 0 var(--shopos-ui-space-xs, 0.5rem);
+}
+
+.shopos-chrome__copyright {
+	margin: 0;
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
+}
+
+/* Responsive — collapse the primary nav behind the toggle. -------------- */
+@media (max-width: 768px) {
+	.shopos-chrome__toggle { display: inline-flex; align-items: center; justify-content: center; }
+
+	.shopos-chrome__nav {
+		position: absolute;
+		inset-inline: 0;
+		inset-block-start: 100%;
+		background: var(--shopos-ui-color-paper, #fff);
+		border-block-end: 1px solid var(--shopos-ui-color-hairline, #e6e6e6);
+		box-shadow: var(--shopos-ui-shadow-md);
+		display: none;
+	}
+
+	.shopos-chrome__inner { position: relative; }
+
+	.shopos-chrome__nav[data-open="true"] { display: block; }
+
+	.shopos-chrome__menu {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0;
+		padding: var(--shopos-ui-space-sm, 0.75rem) var(--shopos-ui-container-pad, 1.25rem);
+	}
+
+	.shopos-chrome__menu a {
+		padding-block: var(--shopos-ui-space-sm, 0.75rem);
+		border-block-end: 1px solid var(--shopos-ui-color-hairline, #e6e6e6);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.shopos-chrome__menu a,
+	.shopos-chrome__toggle-bar,
+	.shopos-chrome__toggle-bar::before,
+	.shopos-chrome__toggle-bar::after { transition: none; }
+}
