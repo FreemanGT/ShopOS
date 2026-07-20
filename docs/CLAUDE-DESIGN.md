@@ -5,7 +5,7 @@
 - **Suite:** `shopos-core` v1.25.1 (all business logic, 15 modules) · `shopos-theme` (Hello-Elementor child: tokens, RTL, Woo overrides) · `shopos-digital` (performance)
 - **Audience:** bilingual **Hebrew-first / RTL** WooCommerce fashion shoppers on Elementor, mostly mobile; secondary audience is the store operator in wp-admin.
 - **Last updated:** 2026-07-14
-- **Companions:** [`DESIGN.md`](DESIGN.md) (full design system) · [`Modules.md`](Modules.md) (module catalog + roadmap) · [`PRODUCT.md`](PRODUCT.md) (product framing) · [`optional-future-features.md`](optional-future-features.md) (forward plan)
+- **Companions:** [`DESIGN.md`](DESIGN.md) (full design system) · [`Modules.md`](Modules.md) (module catalog + roadmap) · [`PRODUCT.md`](PRODUCT.md) (product framing) · [`roadmap.md`](roadmap.md) (forward plan)
 
 > **How to read this:** each module section states **Purpose**, **Status** (always-on vs. default on/off + where the kill-switch is), **Where to configure**, a **Backend — Settings** table (real setting keys, control types, choices, defaults), and **Front-facing — what the shopper sees** (the actual on-page UI, states, and CSS classes). Front-facing UI is measured against the design rules in §1.
 
@@ -495,7 +495,7 @@ The theme (`shopos-theme/assets/css/shopos-tokens.css`) exposes one token layer 
 
 ## 5. Planned modules (design targets, not yet built)
 
-From [`Modules.md`](Modules.md) / [`optional-future-features.md`](optional-future-features.md) — the gap to a complete storefront OS. These have **no code yet**; each needs its own decisions-doc addendum + owner approval before build. Front-facing intent, so the design language is ready when they land:
+From [`Modules.md`](Modules.md) / [`roadmap.md`](roadmap.md) — the gap to a complete storefront OS. These have **no code yet**; each needs its own decisions-doc addendum + owner approval before build. Front-facing intent, so the design language is ready when they land:
 
 - **Side Cart** *(Cart)* — slide-out drawer: line items w/ images/qty, remove-with-undo, live subtotal/coupon/total, free-shipping progress meter, recommended products, quick-checkout. Reuses the QuickView/ShopFilters drawer primitives.
 - **Checkout** *(Checkout)* — WC checkout skin: trimmed fields, Israeli city/settlement autocomplete, real-time RTL-correct validation, phone-first, express-pay placement, trust elements at the payment step.
