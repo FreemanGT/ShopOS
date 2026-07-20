@@ -94,6 +94,21 @@ final class ShopOS_Theme {
 	}
 
 	/**
+	 * Whether the theme skins the checkout page (decisions §11.4, §11-B surface
+	 * 5). The single pinned flag-read path for checkout — same FQCN /
+	 * Core-absent-hard-false contract as cart_enabled(). Skin-only: this gates a
+	 * stylesheet enqueue, NOT a locate_template fork (Ruling 9 resolved-as-moot),
+	 * so it never appears in woo_surface_enabled() and works on both the
+	 * shortcode and block checkout.
+	 *
+	 * @return bool
+	 */
+	public static function checkout_enabled() {
+		return class_exists( '\ShopOS\Core\Core\Feature_Flags' )
+			&& \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'style_checkout' );
+	}
+
+	/**
 	 * Whether a WooCommerce template name is a `cart/*` template. Pure —
 	 * unit-tested. The prefix guard keeps the shared filter from redirecting the
 	 * PDP/PLP templates the theme also ships under `templates/woo/` (those
@@ -366,6 +381,28 @@ final class ShopOS_Theme {
 			wp_enqueue_style(
 				'shopos-account',
 				SHOPOS_THEME_ASSETS . '/css/shopos-account.css',
+				array( 'shopos-theme' ),
+				SHOPOS_THEME_VERSION
+			);
+		}
+
+		// ShopOS Line checkout skin (decisions §11.4, §11-B surface 5): skin-ONLY
+		// — NO forked templates (Ruling 9 resolved-as-moot). WooCommerce keeps
+		// every checkout field/nonce/gateway; the theme only restyles them, so
+		// this works on both the shortcode and block checkout. CSS-only (WC owns
+		// checkout behaviour); loaded only on the checkout page when the flag is
+		// on, so every other page — and a flag-off store — loads zero new assets.
+		if ( self::checkout_enabled() && function_exists( 'is_checkout' ) && is_checkout() ) {
+			// §11 Ruling 10: fonts_selfhost is a flip precondition, or fonts
+			// differ between Elementor and skinned pages. enqueue_assets runs
+			// once per request, so this fires at most once without a guard. Core
+			// is present here (checkout_enabled() true ⇒ Feature_Flags loaded).
+			if ( ! \ShopOS\Core\Core\Feature_Flags::is_enabled( 'theme', 'fonts_selfhost' ) ) {
+				\ShopOS\Core\Core\Logger::log( 'The ShopOS Line checkout skin is on while theme.fonts_selfhost is off — storefront fonts will differ between Elementor and checkout pages. Turn fonts_selfhost on first (decisions §11 Ruling 10).', 'warning' );
+			}
+			wp_enqueue_style(
+				'shopos-checkout',
+				SHOPOS_THEME_ASSETS . '/css/shopos-checkout.css',
 				array( 'shopos-theme' ),
 				SHOPOS_THEME_VERSION
 			);

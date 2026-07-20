@@ -1,0 +1,148 @@
+/**
+ * ShopOS Line — checkout skin (theme.style_checkout, §11-B surface 5).
+ *
+ * SKIN-ONLY: unlike the cart/account surfaces this forks NO templates (Ruling 9
+ * resolved-as-moot). WooCommerce keeps ownership of every checkout field, nonce,
+ * and payment gateway; this file only restyles them by their stable classes, so
+ * it works on BOTH the shortcode ([woocommerce_checkout]) and the block
+ * checkout. Enqueued only on is_checkout() when the flag is on — flag-off stores
+ * never load it, and no other page does either, so §11.5 byte-identity holds.
+ *
+ * Skin-light + token-driven: every value routes through a --shopos-ui-* token
+ * whose literal fallback equals that token's default resolved value (on-palette,
+ * not drift). RTL-safe via logical properties, 768px canon breakpoint,
+ * reduced-motion aware. No !important, no layout of the block checkout's own
+ * grid (its markup is versioned by WooCommerce Blocks — restyle, don't fight).
+ */
+
+/* ---- Shortcode checkout (form.checkout.woocommerce-checkout) ------------- */
+
+form.checkout {
+	color: var(--shopos-ui-color-ink, #1b1b1b);
+	font-family: var(--shopos-ui-font-body, inherit);
+}
+
+form.checkout h3,
+form.checkout .woocommerce-billing-fields h3,
+form.checkout .woocommerce-shipping-fields h3,
+form.checkout #order_review_heading {
+	font-family: var(--shopos-ui-font-display, inherit);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+}
+
+/* Two-column: customer details | order review, on desktop. --------------- */
+@media (min-width: 769px) {
+	form.checkout .col2-set,
+	form.checkout #customer_details {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--shopos-ui-space-xl, 2rem);
+	}
+	form.checkout #customer_details .col-1,
+	form.checkout #customer_details .col-2 {
+		float: none;
+		inline-size: auto;
+	}
+}
+
+/* Fields — skinned, WC-owned. -------------------------------------------- */
+form.checkout .form-row label {
+	display: block;
+	margin-block-end: var(--shopos-ui-space-xxs, 0.25rem);
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+	font-weight: var(--shopos-ui-weight-medium, 500);
+}
+
+form.checkout .input-text,
+form.checkout input[type="text"],
+form.checkout input[type="email"],
+form.checkout input[type="tel"],
+form.checkout input[type="password"],
+form.checkout select,
+form.checkout textarea {
+	inline-size: 100%;
+	block-size: var(--shopos-ui-input-height, 44px);
+	padding-inline: var(--shopos-ui-input-padding-x, 1rem);
+	border: var(--shopos-ui-input-border, 1px solid #e6e6e2);
+	border-radius: var(--shopos-ui-input-radius, 4px);
+	background: var(--shopos-ui-input-bg, #ffffff);
+}
+
+form.checkout textarea {
+	block-size: auto;
+	padding-block: var(--shopos-ui-space-sm, 0.75rem);
+}
+
+form.checkout .input-text:focus-visible,
+form.checkout select:focus-visible,
+form.checkout textarea:focus-visible {
+	outline: var(--shopos-ui-focus-outline, 2px solid #1b1b1b);
+	outline-offset: 1px;
+}
+
+/* Order review + payment box. -------------------------------------------- */
+form.checkout .shop_table {
+	inline-size: 100%;
+	border-collapse: collapse;
+	margin-block: var(--shopos-ui-space-md, 1rem) 0;
+}
+
+form.checkout .shop_table th,
+form.checkout .shop_table td {
+	padding-block: var(--shopos-ui-space-sm, 0.75rem);
+	border-block-end: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	text-align: start;
+	vertical-align: middle;
+}
+
+form.checkout #payment,
+form.checkout .woocommerce-checkout-payment {
+	background: var(--shopos-ui-color-paper-soft, #faf9f7);
+	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	border-radius: var(--shopos-ui-radius-lg, 12px);
+	padding: var(--shopos-ui-space-md, 1rem);
+}
+
+/* Place-order CTA takes the accent (shortcode + block share #place_order). */
+form.checkout #place_order,
+.wc-block-checkout__actions_row .wc-block-components-checkout-place-order-button {
+	background: var(--shopos-ui-color-accent, #1b1b1b);
+	color: var(--shopos-ui-color-accent-text, #ffffff);
+	font-weight: var(--shopos-ui-button-font-weight, 600);
+	border-radius: var(--shopos-ui-button-radius, 4px);
+}
+
+/* ---- Block checkout (.wc-block-checkout) — restyle only, no relayout. --- */
+
+.wc-block-checkout {
+	color: var(--shopos-ui-color-ink, #1b1b1b);
+	font-family: var(--shopos-ui-font-body, inherit);
+}
+
+.wc-block-components-title,
+.wc-block-checkout__main h2,
+.wc-block-components-checkout-step__title {
+	font-family: var(--shopos-ui-font-display, inherit);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+}
+
+.wc-block-components-text-input input,
+.wc-block-components-address-form input,
+.wc-block-components-select select {
+	border-radius: var(--shopos-ui-input-radius, 4px);
+}
+
+/* ---- Responsive + motion ------------------------------------------------ */
+@media (max-width: 768px) {
+	form.checkout .col2-set,
+	form.checkout #customer_details {
+		display: block;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	form.checkout *,
+	form.checkout *::before,
+	form.checkout *::after,
+	.wc-block-checkout * { transition: none !important; }
+}
