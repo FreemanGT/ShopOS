@@ -17,7 +17,12 @@ use PHPUnit\Framework\TestCase;
  * ShopFilters slot, census) is integration — live-QA per
  * tools/qa/plp-template.md.
  *
+ * Part of the ShopOS Line theme CI lane (decisions §11-B): run explicitly in
+ * CI via `phpunit --group theme`. Every §11-B theme-template surface adds its
+ * own `@group theme` *TemplateTest here.
+ *
  * @covers ShopOS_Theme_Template_Loader
+ * @group theme
  */
 final class ThemeTemplateLoaderTest extends TestCase {
 

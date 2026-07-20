@@ -62,9 +62,22 @@ jobs:
 
       - name: php -l on every source file
         run: |
-          find shopos-core shopos-theme tests tools -type f -name "*.php" \
+          find shopos-core tests tools -type f -name "*.php" \
             -not -path "*/node_modules/*" -not -path "*/vendor/*" \
             -print0 | xargs -0 -n1 php -l >/dev/null
+
+      # ShopOS Line theme CI lane (decisions §11-B precondition). The theme is
+      # unnamespaced classic PHP with no standalone suite; its template-routing
+      # logic is CI-gated here — php -l over the theme + the `theme` PHPUnit
+      # group (ThemeTemplateLoaderTest, ProductPageTemplateTest, and each
+      # §11-B surface's *TemplateTest). Runs before the full suite so a theme
+      # regression fails fast under a theme-named step.
+      - name: ShopOS Theme lane (lint + template tests)
+        run: |
+          find shopos-theme -type f -name "*.php" \
+            -not -path "*/node_modules/*" -not -path "*/vendor/*" \
+            -print0 | xargs -0 -n1 php -l >/dev/null
+          vendor/bin/phpunit --group theme
 
       - name: Smoke test (module + importer shape)
         run: php tools/smoke.php
