@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ShopOS Core 1.46.0\n"
+"Project-Id-Version: ShopOS Core 1.48.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shopos-core\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-19T18:21:26+00:00\n"
+"POT-Creation-Date: 2026-07-20T12:39:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: shopos-core\n"
@@ -499,6 +499,22 @@ msgstr ""
 msgid "When on, the shop page and product-taxonomy archives render from the ShopOS theme's classic template (templates/woo/archive-product.php) via the shared theme loader instead of the Elementor archive template — the first Elementor-to-PHP conversion (decisions §11.4 row 5). Never claims search results (Ruling 2). Off = the current archive render, byte-identical. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Needs the ShopOS theme at 1.14.0+ AND, when ShopOS Digital is active, Digital 1.7.7+ (older Digital forces no_found_rows on archive queries and the classic grid renders empty); without Core (or on an older theme) it is inert; turn on theme.fonts_selfhost first (Ruling 10) or fonts differ between Elementor and template pages."
 msgstr ""
 
+#: src/Core/Feature_Flags.php:179
+msgid "Theme — header/footer chrome (ShopOS Line)"
+msgstr ""
+
+#: src/Core/Feature_Flags.php:180
+msgid "When on, the ShopOS theme renders its own classic header (logo, primary menu, search, cart) and footer (menu, widgets, copyright) instead of the Elementor Theme Builder / Hello Elementor chrome — the first §11-B deferred surface (decisions §11.4). Off = the theme's header.php / footer.php pass through to the Hello Elementor parent chrome, byte-identical (Ruling 6). Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Needs the ShopOS theme active; without Core the theme reads this as hard false; turn on theme.fonts_selfhost first (Ruling 10) or fonts differ between Elementor and chrome pages."
+msgstr ""
+
+#: src/Core/Feature_Flags.php:187
+msgid "Theme — cart page template (ShopOS Line)"
+msgstr ""
+
+#: src/Core/Feature_Flags.php:188
+msgid "When on, the whole cart page renders from the ShopOS theme's own classic templates (templates/woo/cart/*.php — cart, empty cart, totals, shipping rows, shipping calculator, proceed-to-checkout, cross-sells) instead of the WooCommerce defaults, the second §11-B deferred surface (decisions §11.4). Redirected via a flag-gated woocommerce_locate_template filter, never by file presence (§11.3) — Off = the current WooCommerce cart render, byte-identical (Ruling 6), with every cart hook/nonce still firing. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Only affects the shortcode ([woocommerce_cart]) cart: stores using the Cart block render their own markup and need a per-store block→shortcode content-migration under Hard Rule #3 (Ruling 9). Needs the ShopOS theme active; without Core the theme reads this as hard false; turn on theme.fonts_selfhost first (Ruling 10) or fonts differ between Elementor and template pages."
+msgstr ""
+
 #. translators: %s: the English default wording for this field.
 #. translators: %s: the English default wording for this sort option.
 #: src/Core/Module_Base.php:155
@@ -897,7 +913,7 @@ msgid "Content"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:61
-#: src/Modules/CategorySlider/Widget.php:453
+#: src/Modules/CategorySlider/Widget.php:437
 #: src/Modules/ProductSlider/Widget.php:91
 #: src/Modules/ProductSlider/Widget.php:423
 msgid "Eyebrow"
@@ -908,7 +924,7 @@ msgid "Shop by category"
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:70
-#: src/Modules/CategorySlider/Widget.php:462
+#: src/Modules/CategorySlider/Widget.php:446
 #: src/Modules/ProductSlider/Widget.php:100
 #: src/Modules/ProductSlider/Widget.php:432
 msgid "Headline"
@@ -928,358 +944,342 @@ msgid "Curated essentials, season-led."
 msgstr ""
 
 #: src/Modules/CategorySlider/Widget.php:88
-msgid "Categories to show"
-msgstr ""
-
-#: src/Modules/CategorySlider/Widget.php:92
-msgid "Chosen categories (below)"
-msgstr ""
-
-#: src/Modules/CategorySlider/Widget.php:93
-msgid "Current category's children (auto)"
-msgstr ""
-
-#: src/Modules/CategorySlider/Widget.php:95
-msgid "Auto: on a category page the slider shows that category's sub-categories; elsewhere (e.g. the shop page) it shows top-level categories. Drop one instance on your category-archive template to make the rail drill down as visitors browse. The Order / Limit / Exclude controls still apply."
-msgstr ""
-
-#: src/Modules/CategorySlider/Widget.php:102
 msgid "Max categories"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:113
+#: src/Modules/CategorySlider/Widget.php:99
 #: src/Modules/ProductSlider/Widget.php:141
 msgid "Order by"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:117
+#: src/Modules/CategorySlider/Widget.php:103
 msgid "Name"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:118
+#: src/Modules/CategorySlider/Widget.php:104
 msgid "Product count"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:119
+#: src/Modules/CategorySlider/Widget.php:105
 msgid "Slug"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:120
+#: src/Modules/CategorySlider/Widget.php:106
 #: src/Modules/ProductSlider/Widget.php:149
 msgid "Menu order"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:128
+#: src/Modules/CategorySlider/Widget.php:114
 #: src/Modules/ProductSlider/Widget.php:159
 #: src/Modules/ShopFilters/templates/admin-facet-config.php:36
 msgid "Order"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:133
+#: src/Modules/CategorySlider/Widget.php:119
 #: src/Modules/ProductSlider/Widget.php:164
 msgid "Ascending"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:134
+#: src/Modules/CategorySlider/Widget.php:120
 #: src/Modules/ProductSlider/Widget.php:165
 msgid "Descending"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:142
+#: src/Modules/CategorySlider/Widget.php:128
 msgid "Hide empty categories"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:152
+#: src/Modules/CategorySlider/Widget.php:138
 msgid "Top-level only"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:156
+#: src/Modules/CategorySlider/Widget.php:142
 msgid "Ignored if \"Child of\" or \"Include only\" is set."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:166
+#: src/Modules/CategorySlider/Widget.php:151
 msgid "Child of"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:169
+#: src/Modules/CategorySlider/Widget.php:154
 msgid "— Any —"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:170
+#: src/Modules/CategorySlider/Widget.php:155
 msgid "Show only sub-categories of this parent term."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:178
+#: src/Modules/CategorySlider/Widget.php:163
 msgid "Include only these"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:184
+#: src/Modules/CategorySlider/Widget.php:169
 msgid "When set, only these categories appear (overrides Top-level / Child of)."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:192
+#: src/Modules/CategorySlider/Widget.php:176
 msgid "Exclude these"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:207
+#: src/Modules/CategorySlider/Widget.php:191
 #: src/Modules/ProductSlider/Widget.php:265
 msgid "Layout"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:215
+#: src/Modules/CategorySlider/Widget.php:199
 #: src/Modules/ProductSlider/Widget.php:273
 msgid "Cards per view"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:226
+#: src/Modules/CategorySlider/Widget.php:210
 #: src/Modules/ProductSlider/Widget.php:284
 msgid "Cards per view (tablet)"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:237
+#: src/Modules/CategorySlider/Widget.php:221
 #: src/Modules/ProductSlider/Widget.php:295
 msgid "Cards per view (mobile)"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:248
+#: src/Modules/CategorySlider/Widget.php:232
 #: src/Modules/ProductSlider/Widget.php:307
 msgid "Gap"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:259
+#: src/Modules/CategorySlider/Widget.php:243
 msgid "Card height"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:273
+#: src/Modules/CategorySlider/Widget.php:257
 #: src/Modules/ProductSlider/Widget.php:345
 msgid "Card style"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:281
+#: src/Modules/CategorySlider/Widget.php:265
 msgid "Shape"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:286
+#: src/Modules/CategorySlider/Widget.php:270
 msgid "Circle"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:287
+#: src/Modules/CategorySlider/Widget.php:271
 #: src/Modules/ProductSlider/Widget.php:358
 msgid "Soft"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:288
+#: src/Modules/CategorySlider/Widget.php:272
 #: src/Modules/ProductSlider/Widget.php:359
 msgid "Rect"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:289
+#: src/Modules/CategorySlider/Widget.php:273
 msgid "Pill"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:297
+#: src/Modules/CategorySlider/Widget.php:281
 msgid "Show product count"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:302
+#: src/Modules/CategorySlider/Widget.php:286
 msgid "On hover"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:303
+#: src/Modules/CategorySlider/Widget.php:287
 msgid "Always"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:304
-#: src/Modules/CategorySlider/Widget.php:563
+#: src/Modules/CategorySlider/Widget.php:288
+#: src/Modules/CategorySlider/Widget.php:547
 #: src/Modules/ProductSlider/Widget.php:575
 msgid "Hidden"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:312
+#: src/Modules/CategorySlider/Widget.php:296
 #: src/Modules/ProductSlider/Widget.php:388
 msgid "Accent color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:324
+#: src/Modules/CategorySlider/Widget.php:308
 #: src/Modules/ProductSlider/Widget.php:400
 msgid "Hover ring color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:327
+#: src/Modules/CategorySlider/Widget.php:311
 #: src/Modules/ProductSlider/Widget.php:403
 msgid "Outline drawn around a card on hover."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:343
+#: src/Modules/CategorySlider/Widget.php:327
 msgid "Background color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:355
+#: src/Modules/CategorySlider/Widget.php:339
 msgid "Text color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:367
+#: src/Modules/CategorySlider/Widget.php:351
 msgid "Muted text color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:379
+#: src/Modules/CategorySlider/Widget.php:363
 msgid "Divider / outline color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:394
+#: src/Modules/CategorySlider/Widget.php:378
 msgid "Arrow button size"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:410
+#: src/Modules/CategorySlider/Widget.php:394
 msgid "Arrow button radius"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:427
+#: src/Modules/CategorySlider/Widget.php:411
 msgid "Arrow hover transition duration"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:443
+#: src/Modules/CategorySlider/Widget.php:427
 #: src/Modules/ProductSlider/Widget.php:413
 msgid "Typography"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:471
+#: src/Modules/CategorySlider/Widget.php:455
 msgid "Card name"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:479
+#: src/Modules/CategorySlider/Widget.php:463
 msgid "Card name color"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:493
+#: src/Modules/CategorySlider/Widget.php:477
 #: src/Modules/ProductSlider/Widget.php:483
 msgid "Behavior"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:501
+#: src/Modules/CategorySlider/Widget.php:485
 #: src/Modules/ProductSlider/Widget.php:506
 msgid "Direction"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:506
+#: src/Modules/CategorySlider/Widget.php:490
 #: src/Modules/ProductSlider/Widget.php:511
 msgid "Auto (follow site)"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:507
+#: src/Modules/CategorySlider/Widget.php:491
 #: src/Modules/ProductSlider/Widget.php:512
 msgid "Force LTR"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:508
+#: src/Modules/CategorySlider/Widget.php:492
 #: src/Modules/ProductSlider/Widget.php:513
 msgid "Force RTL"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:510
+#: src/Modules/CategorySlider/Widget.php:494
 #: src/Modules/ProductSlider/Widget.php:515
 msgid "RTL flips arrows, drag direction, and progress bar."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:517
+#: src/Modules/CategorySlider/Widget.php:501
 #: src/Modules/ProductSlider/Widget.php:523
 msgid "Scroll snap"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:522
+#: src/Modules/CategorySlider/Widget.php:506
 #: src/Modules/ProductSlider/Widget.php:528
 msgid "Free-scroll"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:523
+#: src/Modules/CategorySlider/Widget.php:507
 #: src/Modules/ProductSlider/Widget.php:529
 msgid "Per card"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:524
+#: src/Modules/CategorySlider/Widget.php:508
 #: src/Modules/ProductSlider/Widget.php:530
 msgid "Per page"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:532
+#: src/Modules/CategorySlider/Widget.php:516
 #: src/Modules/ProductSlider/Widget.php:539
 msgid "Enable mouse drag"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:536
+#: src/Modules/CategorySlider/Widget.php:520
 msgid "Drag cards left or right to scroll the row. Clicks still navigate normally — drag only engages after a deliberate horizontal motion. Turn off for pure click behavior."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:543
+#: src/Modules/CategorySlider/Widget.php:527
 #: src/Modules/ProductSlider/Widget.php:551
 msgid "Show arrow buttons"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:556
+#: src/Modules/CategorySlider/Widget.php:540
 #: src/Modules/ProductSlider/Widget.php:568
 msgid "Indicator"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:561
+#: src/Modules/CategorySlider/Widget.php:545
 #: src/Modules/ProductSlider/Widget.php:573
 msgid "Progress bar"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:562
+#: src/Modules/CategorySlider/Widget.php:546
 #: src/Modules/ProductSlider/Widget.php:574
 msgid "Pagination dots"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:565
+#: src/Modules/CategorySlider/Widget.php:549
 #: src/Modules/ProductSlider/Widget.php:577
 msgid "Replaces the legacy \"Show progress bar\" toggle. When unset on pre-existing widgets, the legacy value is honored."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:572
+#: src/Modules/CategorySlider/Widget.php:556
 #: src/Modules/ProductSlider/Widget.php:585
 msgid "Show progress bar"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:582
+#: src/Modules/CategorySlider/Widget.php:566
 #: src/Modules/ProductSlider/Widget.php:596
 msgid "Autoplay"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:593
+#: src/Modules/CategorySlider/Widget.php:577
 #: src/Modules/ProductSlider/Widget.php:608
 msgid "Autoplay delay (ms)"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:605
+#: src/Modules/CategorySlider/Widget.php:589
 #: src/Modules/ProductSlider/Widget.php:623
 msgid "Loop"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:609
+#: src/Modules/CategorySlider/Widget.php:593
 #: src/Modules/ProductSlider/Widget.php:627
 msgid "When the autoplay reaches the end, smoothly wrap back to the start. Drag-past-end-wraps is intentionally out of scope."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:781
+#: src/Modules/CategorySlider/Widget.php:738
 msgid "No product categories found. Adjust the Query controls or add a thumbnail to a category."
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:839
+#: src/Modules/CategorySlider/Widget.php:796
 msgid "Scroll categories"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:840
+#: src/Modules/CategorySlider/Widget.php:797
 #: src/Modules/ProductSlider/Widget.php:1344
 msgid "Previous"
 msgstr ""
 
-#: src/Modules/CategorySlider/Widget.php:843
+#: src/Modules/CategorySlider/Widget.php:800
 #: src/Modules/ProductSlider/Widget.php:1347
 msgid "Next"
 msgstr ""
 
 #. translators: 1: category name, 2: product count
-#: src/Modules/CategorySlider/Widget.php:864
+#: src/Modules/CategorySlider/Widget.php:821
 #, php-format
 msgid "%1$s — %2$s item"
 msgid_plural "%1$s — %2$s items"
@@ -1287,20 +1287,20 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s = product count
-#: src/Modules/CategorySlider/Widget.php:886
+#: src/Modules/CategorySlider/Widget.php:843
 #, php-format
 msgid "%s item"
 msgid_plural "%s items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Modules/CategorySlider/Widget.php:935
+#: src/Modules/CategorySlider/Widget.php:892
 #: src/Modules/ProductSlider/Widget.php:1442
 msgid "Slide navigation"
 msgstr ""
 
 #. translators: %d page index, 1-based
-#: src/Modules/CategorySlider/Widget.php:937
+#: src/Modules/CategorySlider/Widget.php:894
 #: src/Modules/ProductSlider/Widget.php:1444
 #, php-format
 msgid "Page %d"

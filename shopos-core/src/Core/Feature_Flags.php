@@ -173,6 +173,22 @@ final class Feature_Flags {
 				'since'       => '1.44.0',
 				'shared'      => false,
 			),
+			array(
+				'module'      => 'theme',
+				'feature'     => 'template_chrome',
+				'label'       => __( 'Theme — header/footer chrome (ShopOS Line)', 'shopos-core' ),
+				'description' => __( 'When on, the ShopOS theme renders its own classic header (logo, primary menu, search, cart) and footer (menu, widgets, copyright) instead of the Elementor Theme Builder / Hello Elementor chrome — the first §11-B deferred surface (decisions §11.4). Off = the theme\'s header.php / footer.php pass through to the Hello Elementor parent chrome, byte-identical (Ruling 6). Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Needs the ShopOS theme active; without Core the theme reads this as hard false; turn on theme.fonts_selfhost first (Ruling 10) or fonts differ between Elementor and chrome pages.', 'shopos-core' ),
+				'since'       => '1.47.0',
+				'shared'      => false,
+			),
+			array(
+				'module'      => 'theme',
+				'feature'     => 'template_cart',
+				'label'       => __( 'Theme — cart page template (ShopOS Line)', 'shopos-core' ),
+				'description' => __( 'When on, the whole cart page renders from the ShopOS theme\'s own classic templates (templates/woo/cart/*.php — cart, empty cart, totals, shipping rows, shipping calculator, proceed-to-checkout, cross-sells) instead of the WooCommerce defaults, the second §11-B deferred surface (decisions §11.4). Redirected via a flag-gated woocommerce_locate_template filter, never by file presence (§11.3) — Off = the current WooCommerce cart render, byte-identical (Ruling 6), with every cart hook/nonce still firing. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Only affects the shortcode ([woocommerce_cart]) cart: stores using the Cart block render their own markup and need a per-store block→shortcode content-migration under Hard Rule #3 (Ruling 9). Needs the ShopOS theme active; without Core the theme reads this as hard false; turn on theme.fonts_selfhost first (Ruling 10) or fonts differ between Elementor and template pages.', 'shopos-core' ),
+				'since'       => '1.48.0',
+				'shared'      => false,
+			),
 		);
 	}
 }

@@ -1,0 +1,259 @@
+/**
+ * ShopOS Line — cart page (theme.template_cart, §11-B surface 2).
+ *
+ * Scoped entirely under `.shopos-cart` so it can only touch the theme-owned
+ * cart render (flag-off stores never enqueue this file). Skin-light +
+ * token-driven: every brand-visible value routes through a --shopos-ui-* token.
+ * Each literal fallback equals that token's DEFAULT resolved value (from
+ * shopos-tokens.css) so an absent-token / non-theme render is still on-palette
+ * — not drift. RTL-safe via logical properties — no left/right. 768px canon
+ * breakpoint, reduced-motion respected. WooCommerce's own classes/ids are left
+ * intact for its cart JS; this only restyles them.
+ */
+
+.shopos-cart {
+	color: var(--shopos-ui-color-ink, #1b1b1b);
+	font-family: var(--shopos-ui-font-body, inherit);
+}
+
+.shopos-cart a { color: var(--shopos-ui-color-accent, #1b1b1b); }
+
+/* Two-column layout: line items, then the totals rail. ------------------- */
+@media (min-width: 769px) {
+	.shopos-cart {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+		grid-template-areas:
+			"form    totals"
+			"cross   cross";
+		gap: var(--shopos-ui-space-xl, 2rem);
+		align-items: start;
+	}
+	.shopos-cart__form        { grid-area: form; }
+	.shopos-cart__collaterals { grid-area: totals; display: block; }
+	.shopos-cart__cross-sells { grid-area: cross; }
+}
+
+/* Line-item table --------------------------------------------------------- */
+.shopos-cart__table {
+	inline-size: 100%;
+	border-collapse: collapse;
+	margin: 0;
+}
+
+.shopos-cart__table thead th {
+	text-align: start;
+	font-size: var(--shopos-ui-text-xs, 0.75rem);
+	font-weight: var(--shopos-ui-weight-semi, 600);
+	text-transform: uppercase;
+	letter-spacing: var(--shopos-ui-tracking-caps, 0.06em);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
+	padding-block: var(--shopos-ui-space-sm, 0.75rem);
+	border-block-end: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+}
+
+.shopos-cart__item td {
+	padding-block: var(--shopos-ui-space-md, 1rem);
+	border-block-end: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	vertical-align: middle;
+}
+
+.shopos-cart__item .product-thumbnail img {
+	inline-size: 64px;
+	block-size: auto;
+	border-radius: var(--shopos-ui-radius-sm, 4px);
+	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+}
+
+.shopos-cart__item .product-name a {
+	text-decoration: none;
+	font-weight: var(--shopos-ui-weight-medium, 500);
+}
+.shopos-cart__item .product-name a:hover { color: var(--shopos-ui-color-accent-hover, var(--shopos-ui-color-accent, #1b1b1b)); }
+
+.shopos-cart__item .product-remove .remove {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 1.5rem;
+	block-size: 1.5rem;
+	font-size: 1.1rem;
+	line-height: 1;
+	text-decoration: none;
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
+	border-radius: var(--shopos-ui-radius-round, 50%);
+	transition: color var(--shopos-ui-motion-fast, 0.15s) var(--shopos-ui-ease, ease),
+		background var(--shopos-ui-motion-fast, 0.15s) var(--shopos-ui-ease, ease);
+}
+.shopos-cart__item .product-remove .remove:hover {
+	color: var(--shopos-ui-color-danger, #b11226);
+	background: var(--shopos-ui-color-danger-soft, #fde3e6);
+}
+
+.shopos-cart__item .quantity input.qty {
+	inline-size: 4.5rem;
+	block-size: var(--shopos-ui-input-height-sm, 36px);
+	padding-inline: var(--shopos-ui-input-padding-x, 1rem);
+	border: var(--shopos-ui-input-border, 1px solid #e6e6e2);
+	border-radius: var(--shopos-ui-input-radius, 4px);
+	background: var(--shopos-ui-input-bg, #ffffff);
+	text-align: center;
+}
+
+/* Actions row: coupon + update ------------------------------------------- */
+.shopos-cart__actions {
+	padding-block: var(--shopos-ui-space-md, 1rem);
+}
+
+.shopos-cart__coupon {
+	display: inline-flex;
+	gap: var(--shopos-ui-space-xs, 0.5rem);
+	margin-inline-end: var(--shopos-ui-space-md, 1rem);
+}
+
+.shopos-cart__coupon-input {
+	block-size: var(--shopos-ui-input-height, 44px);
+	min-inline-size: 0;
+	inline-size: clamp(8rem, 30vw, 14rem);
+	padding-inline: var(--shopos-ui-input-padding-x, 1rem);
+	border: var(--shopos-ui-input-border, 1px solid #e6e6e2);
+	border-radius: var(--shopos-ui-input-radius, 4px);
+	background: var(--shopos-ui-input-bg, #ffffff);
+}
+.shopos-cart__coupon-input:focus-visible { outline: var(--shopos-ui-focus-outline, 2px solid #1b1b1b); outline-offset: 1px; }
+
+/* Buttons — inherit the theme button system; only the accent CTA is forced. */
+.shopos-cart .button {
+	font-weight: var(--shopos-ui-button-font-weight, 600);
+	border-radius: var(--shopos-ui-button-radius, 4px);
+}
+
+/* Totals rail ------------------------------------------------------------- */
+.shopos-cart__totals {
+	background: var(--shopos-ui-color-paper-soft, #faf9f7);
+	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	border-radius: var(--shopos-ui-radius-lg, 12px);
+	padding: var(--shopos-ui-space-lg, 1.5rem);
+}
+
+.shopos-cart__totals h2 {
+	margin-block: 0 var(--shopos-ui-space-md, 1rem);
+	font-family: var(--shopos-ui-font-display, inherit);
+	font-size: var(--shopos-ui-text-lg, 1.125rem);
+}
+
+.shopos-cart__totals table { inline-size: 100%; border-collapse: collapse; }
+
+.shopos-cart__totals th,
+.shopos-cart__totals td {
+	padding-block: var(--shopos-ui-space-sm, 0.75rem);
+	border-block-end: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
+	text-align: start;
+}
+.shopos-cart__totals td { text-align: end; }
+
+.shopos-cart__totals .order-total th,
+.shopos-cart__totals .order-total td {
+	font-size: var(--shopos-ui-text-lg, 1.125rem);
+	font-weight: var(--shopos-ui-weight-bold, 700);
+	border-block-end: 0;
+}
+
+.shopos-cart__checkout { margin-block-start: var(--shopos-ui-space-md, 1rem); }
+
+.shopos-cart__checkout-button {
+	display: block;
+	inline-size: 100%;
+	text-align: center;
+	background: var(--shopos-ui-color-accent, #1b1b1b);
+	color: var(--shopos-ui-color-accent-text, #ffffff);
+	padding-block: var(--shopos-ui-space-sm, 0.75rem);
+	text-decoration: none;
+	transition: background var(--shopos-ui-motion-fast, 0.15s) var(--shopos-ui-ease, ease);
+}
+.shopos-cart__checkout-button:hover {
+	background: var(--shopos-ui-color-accent-hover, var(--shopos-ui-color-accent, #1b1b1b));
+	color: var(--shopos-ui-color-accent-text, #ffffff);
+}
+
+/* Shipping rows + calculator --------------------------------------------- */
+.shopos-cart__shipping ul#shipping_method { margin: 0; padding: 0; list-style: none; }
+.shopos-cart__shipping li { margin-block: var(--shopos-ui-space-xxs, 0.25rem); }
+
+.shopos-cart__calc .shipping-calculator-button {
+	text-decoration: underline;
+	font-size: var(--shopos-ui-text-sm, 0.875rem);
+}
+.shopos-cart__calc .form-row { margin-block: var(--shopos-ui-space-xs, 0.5rem) 0; }
+.shopos-cart__calc select,
+.shopos-cart__calc .input-text {
+	inline-size: 100%;
+	block-size: var(--shopos-ui-input-height-sm, 36px);
+	padding-inline: var(--shopos-ui-input-padding-x, 1rem);
+	border: var(--shopos-ui-input-border, 1px solid #e6e6e2);
+	border-radius: var(--shopos-ui-input-radius, 4px);
+	background: var(--shopos-ui-input-bg, #ffffff);
+}
+
+/* Cross-sells ------------------------------------------------------------- */
+.shopos-cart__cross-sells h2 {
+	font-family: var(--shopos-ui-font-display, inherit);
+	font-size: var(--shopos-ui-text-xl, 1.375rem);
+	margin-block: var(--shopos-ui-space-xl, 2rem) var(--shopos-ui-space-md, 1rem);
+}
+
+/* Empty cart -------------------------------------------------------------- */
+.shopos-cart--empty {
+	text-align: center;
+	padding-block: var(--shopos-ui-space-3xl, 4rem);
+}
+.shopos-cart--empty .shopos-cart__return { margin-block-start: var(--shopos-ui-space-lg, 1.5rem); }
+
+/* Busy state (set by shopos-cart.js on submit) --------------------------- */
+.shopos-cart .is-busy,
+.shopos-cart__form.is-busy button[type="submit"] {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+/* Responsive — stack the responsive table into labelled rows. ------------ */
+@media (max-width: 768px) {
+	.shopos-cart__table thead { position: absolute; clip: rect(0 0 0 0); clip-path: inset(50%); overflow: hidden; }
+
+	.shopos-cart__item {
+		display: block;
+		border-block-end: 2px solid var(--shopos-ui-color-hairline, #e6e6e2);
+		padding-block: var(--shopos-ui-space-sm, 0.75rem);
+	}
+
+	.shopos-cart__item td {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: var(--shopos-ui-space-md, 1rem);
+		border-block-end: 0;
+		padding-block: var(--shopos-ui-space-xxs, 0.25rem);
+	}
+
+	.shopos-cart__item td::before {
+		content: attr(data-title);
+		font-size: var(--shopos-ui-text-xs, 0.75rem);
+		font-weight: var(--shopos-ui-weight-semi, 600);
+		text-transform: uppercase;
+		letter-spacing: var(--shopos-ui-tracking-caps, 0.06em);
+		color: var(--shopos-ui-color-ink-muted, #6b6b6b);
+	}
+	.shopos-cart__item .product-remove,
+	.shopos-cart__item .product-thumbnail { justify-content: flex-start; }
+	.shopos-cart__item .product-remove::before,
+	.shopos-cart__item .product-thumbnail::before { content: none; }
+
+	.shopos-cart__coupon { display: flex; margin-inline-end: 0; margin-block-end: var(--shopos-ui-space-sm, 0.75rem); }
+	.shopos-cart__coupon-input { inline-size: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.shopos-cart *,
+	.shopos-cart *::before,
+	.shopos-cart *::after { transition: none !important; }
+}
