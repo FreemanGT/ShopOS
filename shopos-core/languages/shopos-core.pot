@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ShopOS Core 1.48.0\n"
+"Project-Id-Version: ShopOS Core 1.50.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shopos-core\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-20T12:39:35+00:00\n"
+"POT-Creation-Date: 2026-07-20T14:40:37+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: shopos-core\n"
@@ -513,6 +513,14 @@ msgstr ""
 
 #: src/Core/Feature_Flags.php:188
 msgid "When on, the whole cart page renders from the ShopOS theme's own classic templates (templates/woo/cart/*.php — cart, empty cart, totals, shipping rows, shipping calculator, proceed-to-checkout, cross-sells) instead of the WooCommerce defaults, the second §11-B deferred surface (decisions §11.4). Redirected via a flag-gated woocommerce_locate_template filter, never by file presence (§11.3) — Off = the current WooCommerce cart render, byte-identical (Ruling 6), with every cart hook/nonce still firing. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Only affects the shortcode ([woocommerce_cart]) cart: stores using the Cart block render their own markup and need a per-store block→shortcode content-migration under Hard Rule #3 (Ruling 9). Needs the ShopOS theme active; without Core the theme reads this as hard false; turn on theme.fonts_selfhost first (Ruling 10) or fonts differ between Elementor and template pages."
+msgstr ""
+
+#: src/Core/Feature_Flags.php:195
+msgid "Theme — My Account pages (ShopOS Line)"
+msgstr ""
+
+#: src/Core/Feature_Flags.php:196
+msgid "When on, the WooCommerce My Account pages render from the ShopOS theme's own classic templates (templates/woo/myaccount/*.php — the account shell, navigation, dashboard, orders, view-order, downloads, payment-methods, addresses) instead of the WooCommerce defaults, the third §11-B deferred surface (decisions §11.4). Redirected via the same flag-gated woocommerce_locate_template filter as the cart, never by file presence (§11.3). The auth/payment form templates (login, edit-account, add-payment-method, password reset) are deliberately NOT forked — they are skin-styled via CSS so their nonces and gateway fields stay WooCommerce-owned. Off = the current WooCommerce account render, byte-identical (Ruling 6), with every account hook/nonce still firing. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Only affects the [woocommerce_my_account] shortcode account. Needs the ShopOS theme active; without Core the theme reads this as hard false; turn on theme.fonts_selfhost first (Ruling 10) or fonts differ between Elementor and template pages."
 msgstr ""
 
 #. translators: %s: the English default wording for this field.

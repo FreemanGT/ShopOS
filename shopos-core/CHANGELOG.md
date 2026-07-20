@@ -1,5 +1,9 @@
 # ShopOS Core — Changelog
 
+## [1.50.0] — 2026-07-20
+
+- New feature flag **`theme`/`template_account`** (`shopos_core_theme_template_account_enabled`, default OFF, permanent kill-switch — decisions §11 Ruling 4) in `Feature_Flags::registry()`. Gates the ShopOS Line's third §11-B deferred surface: the theme-owned My Account pages. The theme renders its own classic `templates/woo/myaccount/*.php` (account shell, navigation, dashboard, orders, view-order, downloads, payment-methods, addresses) via the **same shared `woocommerce_locate_template` filter as the cart** (generalized from `locate_cart_template` to `locate_woo_template`) — never by file presence (§11.3). The auth/payment form templates (login, edit-account, add-payment-method, password reset) are deliberately **not** forked — CSS-skinned so their nonces + gateway fields stay WooCommerce-owned. Off = the current WooCommerce account render, byte-identical (Ruling 6), with every account hook/nonce firing. Only affects the `[woocommerce_my_account]` shortcode account. Blueprint / admin / CLI coverage auto-derives from the registry. Pairs with shopos-theme 1.18.0.
+
 ## [1.49.0] — 2026-07-20
 
 - **Force background auto-updates for shopos-core.** `Updater::boot()` now hooks `auto_update_plugin`: shopos-core auto-updates in the background regardless of the per-plugin auto-update toggle, so a store can never strand itself an update behind (the 1.44.3–1.45.0 unbooted-updater incident is the motivating case). Other plugins keep WordPress's default behaviour — the filter only forces `true` for `SHOPOS_CORE_BASENAME`, passing every other plugin's decision through untouched. Additive (Hard Rule #1: new filter consumer). Pinned by `UpdaterTest`.

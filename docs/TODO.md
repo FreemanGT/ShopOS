@@ -52,7 +52,11 @@ Theme-owned classic PHP templates; flag names **not yet minted**. Do not start u
         Whole cart page theme-owned via a flag-gated `woocommerce_locate_template` redirect (7 forked `cart/*` templates,
         hooks/nonces verbatim); flag-off = WC default byte-identical (Ruling 6). `CartTemplateTest` (`@group theme`) green.
         Block-cart stores need a block→shortcode content-migration (Ruling 9). Pre-flip: render-diff + owner screenshots + RTL.
-  - [ ] Checkout *(needs the deferred tech-pin resolved first — decisions Ruling 9)* · [ ] Account ·
+  - [x] **My Account** — DONE 2026-07-20 (core 1.50.0 + theme 1.18.0, flag `theme.template_account`, default OFF).
+        Reuses the cart's `woocommerce_locate_template` filter, generalized to the shared `locate_woo_template`; two
+        structural templates forked (`my-account.php` shell + `navigation.php` rail), content + auth/payment forms
+        CSS-skinned (WC keeps the nonces). `AccountTemplateTest` (`@group theme`) green. Pre-flip: render-diff + owner screenshots + RTL.
+  - [ ] Checkout *(needs the deferred tech-pin resolved first — decisions Ruling 9)* ·
         [ ] Search-results template · [ ] Transactional emails *(**Core-side, not the theme** — decisions ownership map)*
 
 ## D. Open audit follow-ups (2026-07-03 audit, B-5)
