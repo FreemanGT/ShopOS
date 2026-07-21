@@ -27,6 +27,12 @@
     transform: scaleX(-1);
 }
 
+/* Never track a Hebrew heading — the display's Latin −0.02em is zeroed. */
+.shopos-rtl .shopos-ui-display,
+.shopos-rtl h1.is-display {
+    letter-spacing: 0;
+}
+
 /* Cards: no physical-direction values used, but inherit text-align:right. */
 .shopos-rtl .shopos-ui-card__body {
     text-align: right;

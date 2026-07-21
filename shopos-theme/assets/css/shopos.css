@@ -125,10 +125,108 @@ body {
  * 3. Layout helpers
  * ------------------------------------------------------------------------- */
 
-.shopos-theme .shopos-ui-container {
-    max-width: var(--shopos-ui-container-max);
+.shopos-theme .shopos-ui-container,
+.shopos-theme .shopos-ui-container--wide {
     margin-inline: auto;
     padding-inline: var(--shopos-ui-container-pad);
+}
+.shopos-theme .shopos-ui-container { max-width: var(--shopos-ui-container-max); }
+.shopos-theme .shopos-ui-container--wide { max-width: var(--shopos-ui-container-wide); }  /* hero, PLP grid, editorial bands */
+
+/* --- Composition patterns (§12) ------------------------------------------
+ * The statement display (≤1 per page), hero, and section header. Latin
+ * tracking on the display is zeroed under :lang(he) / .shopos-rtl. */
+
+.shopos-theme .shopos-ui-display,
+.shopos-theme h1.is-display {
+    font-size: var(--shopos-ui-text-display);
+    font-weight: var(--shopos-ui-weight-light);
+    line-height: var(--shopos-ui-leading-flat);
+    letter-spacing: var(--shopos-ui-tracking-tight);
+    margin: 0 0 var(--shopos-ui-space-md);
+}
+
+/* Split hero (default): text column + full-height image on the wide grid. */
+.shopos-theme .shopos-ui-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--shopos-ui-space-xl);
+    align-items: center;
+    padding-block: var(--shopos-ui-section-gap);
+}
+@media (max-width: 640px) {
+    .shopos-theme .shopos-ui-hero { grid-template-columns: 1fr; }
+}
+.shopos-theme .shopos-ui-hero__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--shopos-ui-space-md);
+}
+.shopos-theme .shopos-ui-hero__lead {
+    margin: 0;
+    font-size: var(--shopos-ui-text-lg);
+    font-weight: var(--shopos-ui-weight-light);
+    line-height: var(--shopos-ui-leading-snug);
+    color: var(--shopos-ui-color-ink-soft);
+    max-inline-size: var(--shopos-ui-measure);
+}
+.shopos-theme .shopos-ui-hero__media {
+    margin: 0;
+}
+.shopos-theme .shopos-ui-hero__media img {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    aspect-ratio: 4 / 5;
+    background: var(--shopos-ui-color-paper-dim);
+}
+
+/* Full-bleed hero: 16:9 image, ink scrim, Display in paper, one CTA. */
+.shopos-theme .shopos-ui-hero--full {
+    position: relative;
+    display: block;
+    padding: 0;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+}
+.shopos-theme .shopos-ui-hero--full .shopos-ui-hero__media,
+.shopos-theme .shopos-ui-hero--full .shopos-ui-hero__media img {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    aspect-ratio: auto;
+}
+.shopos-theme .shopos-ui-hero--full .shopos-ui-hero__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(transparent, var(--shopos-ui-overlay-scrim));
+}
+.shopos-theme .shopos-ui-hero--full .shopos-ui-hero__copy {
+    position: absolute;
+    z-index: 1;
+    inset-block-end: var(--shopos-ui-section-gap);
+    inset-inline-start: var(--shopos-ui-container-pad);
+    inset-inline-end: var(--shopos-ui-container-pad);
+    color: var(--shopos-ui-color-paper);
+}
+.shopos-theme .shopos-ui-hero--full .shopos-ui-display {
+    color: var(--shopos-ui-color-paper);
+}
+
+/* Section header: Headline + optional "View all" link on the same baseline. */
+.shopos-theme .shopos-ui-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--shopos-ui-space-md);
+    margin-block-end: var(--shopos-ui-space-lg);
+}
+.shopos-theme .shopos-ui-section-head > * {
+    margin: 0;
 }
 
 .shopos-theme .shopos-ui-stack > * + * {
