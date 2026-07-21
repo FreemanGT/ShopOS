@@ -1061,13 +1061,22 @@ Run before any screen ships. Cite rule names in review comments.
 > inverted mechanism + footer + editorial band, statement display + hero +
 > section-header, chip/note/toast, and the `tokens:check` guard —
 > `tools/tokens-check.php`, 71 tokens in sync). Blocks **9** and **19** are
-> delivered at the **foundation** level — the `.shopos-ui-iconbtn` primitive
-> exists and the module font fallbacks are one-family, but adopting the iconbtn
-> into every existing module icon-trigger (drawer closes, gallery arrows,
-> card-slider nav) and the structural PLP/PDP relayout (column counts, card
-> anatomy order, one-badge cap, sticky bars) are **visual-QA-gated** and remain
-> the live-store follow-on. 1069 tests / 3363 assertions green (php@8.3);
-> versions NOT yet bumped (ship-time decision).
+> partly done + browser-verified in wp-env (Elementor Pro): **9** — QuickView
+> card trigger + drawer close adopt `.shopos-ui-iconbtn` (transparent, no
+> shadow, tonal hover); the Search trigger is recipe-aligned in place (its
+> Elementor-header `!important` armor would block the shared primitive). Still
+> deliberately left (need the owner's live store to QA): the slider `.cs-arrow`
+> (per-widget Elementor CSS-var size/radius controls), card-slider/gallery
+> arrows (subtle backing justified over imagery), ShopFilters close/chip
+> (text-glyph + refined variant), and the chrome hamburger/cart CSS-glyph icons.
+> **19** — the ShopOS Line PLP now uses the §12.3 responsive grid (2/3/4 at
+> 640/1024, verified at 500/900/1280px); the PDP already matches §12.4 (two-col,
+> sticky buy box, ink-muted compare-at, buy-box order). The default WC shop grid
+> + buttons stay Elementor-kit/WC-owned (the §11.4 row-5 decision keeps WC
+> `ul.products`), so those are not force-restyled. Live-verified along the way:
+> the inverted footer (§7.3/§12.6), chrome header, and ink-muted `<del>` prices
+> (§6.4). 1069 tests / 3363 assertions green (php@8.3); versions NOT yet bumped
+> (ship-time decision).
 
 Work top-down; each block is a reviewable PR. Grep patterns are literal.
 
