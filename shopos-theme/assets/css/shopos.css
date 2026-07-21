@@ -353,6 +353,63 @@ body {
 }
 
 /* -------------------------------------------------------------------------
+ * 5b. Icon button (.shopos-ui-iconbtn) — §9.2. The ONE icon-trigger
+ *     primitive: a circle at every state, transparent at rest, tonal-fill
+ *     hover (recipe 1), filled-glyph toggled state, background+color only.
+ * ------------------------------------------------------------------------- */
+
+.shopos-theme .shopos-ui-iconbtn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 40px;
+    block-size: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--shopos-ui-radius-round);
+    background: transparent;
+    color: var(--shopos-ui-color-ink);
+    cursor: pointer;
+    transition:
+        background-color var(--shopos-ui-motion-fast) var(--shopos-ui-ease),
+        color var(--shopos-ui-motion-fast) var(--shopos-ui-ease);
+}
+.shopos-theme .shopos-ui-iconbtn .shopos-ui-icon,
+.shopos-theme .shopos-ui-iconbtn svg {
+    inline-size: 20px;
+    block-size: 20px;
+    stroke-width: 1.5;
+}
+.shopos-theme .shopos-ui-iconbtn:hover { background-color: var(--shopos-ui-color-paper-dim); }
+.shopos-theme .shopos-ui-iconbtn:active { background-color: var(--shopos-ui-palette-sand); }
+/* Toggled (e.g. wishlisted): the filled glyph carries the state; fill stays transparent. */
+.shopos-theme .shopos-ui-iconbtn[aria-pressed="true"],
+.shopos-theme .shopos-ui-iconbtn.is-selected { background-color: transparent; }
+.shopos-theme .shopos-ui-iconbtn:disabled,
+.shopos-theme .shopos-ui-iconbtn[aria-disabled="true"] { opacity: 0.4; cursor: not-allowed; }
+
+.shopos-theme .shopos-ui-iconbtn--sm { inline-size: 32px; block-size: 32px; }
+.shopos-theme .shopos-ui-iconbtn--sm .shopos-ui-icon,
+.shopos-theme .shopos-ui-iconbtn--sm svg { inline-size: 18px; block-size: 18px; }
+.shopos-theme .shopos-ui-iconbtn--lg { inline-size: 48px; block-size: 48px; }
+
+.shopos-theme .shopos-ui-iconbtn__count {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    min-inline-size: 16px;
+    block-size: 16px;
+    padding-inline: 4px;
+    border-radius: var(--shopos-ui-radius-round);
+    background: var(--shopos-ui-color-ink);
+    color: var(--shopos-ui-color-paper);
+    font-size: var(--shopos-ui-text-xs);
+    line-height: 16px;
+    text-align: center;
+}
+
+/* -------------------------------------------------------------------------
  * 5. Input primitive (.shopos-ui-input, .shopos-ui-select, .shopos-ui-textarea)
  * ------------------------------------------------------------------------- */
 
