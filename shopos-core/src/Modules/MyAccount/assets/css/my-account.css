@@ -24,7 +24,7 @@ body.woocommerce-account {
     --fma-accent-hover: var(--shopos-ui-color-accent-hover, #2a2a2a);
     --fma-accent-tx:    var(--shopos-ui-color-accent-text, #ffffff);
     --fma-radius:    var(--shopos-ui-radius-md, 8px);
-    --fma-radius-sm: var(--shopos-ui-radius-sm, 4px);
+    --fma-radius-sm: var(--shopos-ui-radius-xs, 2px);
     --fma-radius-lg: var(--shopos-ui-radius-lg, 12px);
     --fma-pill:      var(--shopos-ui-radius-pill, 999px);
     --fma-font:      var(--shopos-ui-font-body, system-ui, sans-serif);

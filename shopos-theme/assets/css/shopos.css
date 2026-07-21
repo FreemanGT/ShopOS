@@ -198,7 +198,12 @@ body {
 
 .shopos-theme .shopos-ui-btn:hover {
     transform: translateY(-1px);
-    opacity: 1;
+    background: var(--shopos-ui-color-accent-hover);
+}
+
+.shopos-theme .shopos-ui-btn:active {
+    transform: translateY(0);
+    background: var(--shopos-ui-color-accent-active);
 }
 
 .shopos-theme .shopos-ui-btn:disabled,
@@ -415,7 +420,7 @@ body {
     );
     background-size: 200% 100%;
     animation: shopos-ui-shimmer 1.4s linear infinite;
-    border-radius: var(--shopos-ui-radius-sm);
+    border-radius: var(--shopos-ui-radius-md);
 }
 
 @keyframes shopos-ui-shimmer {

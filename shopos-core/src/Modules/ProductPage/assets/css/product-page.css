@@ -801,7 +801,7 @@
 	padding: var(--shopos-ui-space-xs, 4px) var(--shopos-ui-space-md, 16px);
 	background: var(--shopos-ui-color-paper, #ffffff);
 	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
-	border-radius: var(--shopos-ui-radius-sm, 4px);
+	border-radius: var(--shopos-ui-radius-xs, 2px);
 	color: var(--shopos-ui-color-ink, #1b1b1b);
 	font-size: var(--shopos-ui-text-xs, 0.75rem);
 	font-weight: var(--shopos-ui-weight-semi, 600);
@@ -892,7 +892,7 @@
 	height: 44px;
 	object-fit: contain;
 	background: var(--shopos-ui-color-paper-dim, #f1efea);
-	border-radius: var(--shopos-ui-radius-sm, 4px);
+	border-radius: var(--shopos-ui-radius-xs, 2px);
 	flex: none;
 }
 

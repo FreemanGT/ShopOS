@@ -118,7 +118,6 @@
      * back-compat fallback for not-yet-migrated module consumers (§20 PR7);
      * radius-xl is retired. */
     --shopos-ui-radius-xs:    2px;
-    --shopos-ui-radius-sm:    4px;   /* DEPRECATED — migrate consumers to radius-xs, then delete */
     --shopos-ui-radius-md:    6px;
     --shopos-ui-radius-lg:    12px;
     --shopos-ui-radius-pill:  999px;

@@ -61,7 +61,7 @@
 .shopos-cart__item .product-thumbnail img {
 	inline-size: 64px;
 	block-size: auto;
-	border-radius: var(--shopos-ui-radius-sm, 4px);
+	border-radius: var(--shopos-ui-radius-xs, 2px);
 	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
 }
 

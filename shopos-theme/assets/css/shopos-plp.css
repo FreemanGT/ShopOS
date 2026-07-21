@@ -93,7 +93,7 @@
 	padding-block: 0.45em;
 	padding-inline: 0.6em;
 	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
-	border-radius: var(--shopos-ui-radius-sm, 4px);
+	border-radius: var(--shopos-ui-radius-xs, 2px);
 	color: inherit;
 	text-decoration: none;
 	transition: background-color var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease, cubic-bezier(0.2, 0, 0, 1));
