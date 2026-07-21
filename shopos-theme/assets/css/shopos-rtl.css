@@ -9,6 +9,10 @@
 .shopos-rtl {
     direction: rtl;
     text-align: right;
+    /* Hebrew display lines need slightly more breathing room than Latin at
+       the same size (§6.3). */
+    --shopos-ui-leading-flat: 1.1;
+    --shopos-ui-leading-tight: 1.2;
 }
 
 /* Container + stack helpers are already logical. Keep block for future use. */
@@ -28,17 +32,22 @@
     text-align: right;
 }
 
-/* Badges: recompute tracking (Hebrew doesn't want letter-spacing). */
+/* The Hebrew Label Voice (§6.3): Hebrew has no letter case, so the Label
+   role drops uppercase + tracking and instead steps one size up (text-sm
+   where Latin uses text-xs) with word-spacing supplying the air that
+   tracking supplies in Latin. Weight stays 600. */
 .shopos-rtl .shopos-ui-badge {
     letter-spacing: 0;
     text-transform: none;
+    word-spacing: 0.06em;
+    font-size: var(--shopos-ui-text-sm);
 }
 
-/* Uppercase + wide tracking are noisy in Hebrew; drop them globally. */
 .shopos-rtl .shopos-ui-btn,
 .shopos-rtl h6 {
     text-transform: none;
     letter-spacing: 0;
+    word-spacing: 0.06em;
 }
 
 /* Input icons pinned with positioning (swatches etc.) need flipping. */
