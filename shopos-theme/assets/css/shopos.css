@@ -322,10 +322,10 @@ body {
     white-space: nowrap;
 }
 
-.shopos-theme .shopos-ui-badge--success { background: var(--shopos-ui-color-success-soft); color: var(--shopos-ui-color-success); }
-.shopos-theme .shopos-ui-badge--danger  { background: var(--shopos-ui-color-danger-soft);  color: var(--shopos-ui-color-danger); }
-.shopos-theme .shopos-ui-badge--warning { background: var(--shopos-ui-color-warning-soft); color: var(--shopos-ui-color-warning); }
-.shopos-theme .shopos-ui-badge--info    { background: var(--shopos-ui-color-info-soft);    color: var(--shopos-ui-color-info); }
+.shopos-theme .shopos-ui-badge--success { background: var(--shopos-ui-color-success-soft); color: var(--shopos-ui-color-success-text); }
+.shopos-theme .shopos-ui-badge--danger  { background: var(--shopos-ui-color-danger-soft);  color: var(--shopos-ui-color-danger-text); }
+.shopos-theme .shopos-ui-badge--warning { background: var(--shopos-ui-color-warning-soft); color: var(--shopos-ui-color-warning-text); }
+.shopos-theme .shopos-ui-badge--info    { background: var(--shopos-ui-color-info-soft);    color: var(--shopos-ui-color-info-text); }
 .shopos-theme .shopos-ui-badge--accent  { background: var(--shopos-ui-color-accent);       color: var(--shopos-ui-color-accent-text); }
 
 /* -------------------------------------------------------------------------

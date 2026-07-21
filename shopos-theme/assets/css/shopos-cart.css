@@ -86,7 +86,7 @@
 		background var(--shopos-ui-motion-fast, 0.15s) var(--shopos-ui-ease, ease);
 }
 .shopos-cart__item .product-remove .remove:hover {
-	color: var(--shopos-ui-color-danger, #b11226);
+	color: var(--shopos-ui-color-danger-text, #8f101f);
 	background: var(--shopos-ui-color-danger-soft, #fde3e6);
 }
 

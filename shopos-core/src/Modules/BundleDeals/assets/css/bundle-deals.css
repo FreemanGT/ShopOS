@@ -57,7 +57,7 @@
 
 .shopos-ui-bundle__tier-save {
 	font-weight: var(--shopos-ui-weight-semibold, 600);
-	color: var(--shopos-ui-color-success, #2e7d46);
+	color: var(--shopos-ui-color-success-text, #0a5c4c);
 	white-space: nowrap;
 }
 

@@ -116,7 +116,7 @@
 
 .shopos-restock-form-error { animation: rsnFadeIn var(--shopos-ui-motion-fast, 0.3s) var(--shopos-ui-ease-out, ease-out); }
 .shopos-restock-error-text {
-    margin: 0; padding: 10px 14px; font-size: 13px; color: var(--shopos-ui-color-danger, #c00);
+    margin: 0; padding: 10px 14px; font-size: 13px; color: var(--shopos-ui-color-danger-text, #8f101f);
     background: var(--shopos-ui-color-danger-soft, #fff5f5); border: 1px solid var(--shopos-ui-color-danger-soft, #fdd); border-radius: var(--shopos-ui-radius-md, 6px); text-align: start;
 }
 
