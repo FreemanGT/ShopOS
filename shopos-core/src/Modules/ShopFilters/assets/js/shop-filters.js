@@ -17,7 +17,7 @@
 
 	var FILTER_PREFIX = 'filter_';
 	var DEBOUNCE_MS = 400;
-	var MOBILE_QUERY = '(max-width: 768px)';
+	var MOBILE_QUERY = '(max-width: 1024px)';
 
 	var panel = document.querySelector('[data-shopos-sf]');
 	if (!panel) { return; }

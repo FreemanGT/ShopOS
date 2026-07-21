@@ -6,7 +6,7 @@
  * token-driven: every brand-visible value routes through a --shopos-ui-* token.
  * Each literal fallback equals that token's DEFAULT resolved value (from
  * shopos-tokens.css) so an absent-token / non-theme render is still on-palette
- * — not drift. RTL-safe via logical properties — no left/right. 768px canon
+ * — not drift. RTL-safe via logical properties — no left/right. 640px mobile canon
  * breakpoint, reduced-motion respected. WooCommerce's own classes/ids are left
  * intact for its cart JS; this only restyles them.
  */
@@ -217,7 +217,7 @@
 }
 
 /* Responsive — stack the responsive table into labelled rows. ------------ */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
 	.shopos-cart__table thead { position: absolute; clip: rect(0 0 0 0); clip-path: inset(50%); overflow: hidden; }
 
 	.shopos-cart__item {

@@ -10,7 +10,7 @@
  *
  * Skin-light + token-driven: every value routes through a --shopos-ui-* token
  * whose literal fallback equals that token's default resolved value (on-palette,
- * not drift). RTL-safe via logical properties, 768px canon breakpoint,
+ * not drift). RTL-safe via logical properties, 640px mobile canon,
  * reduced-motion aware.
  */
 
@@ -161,7 +161,7 @@
 /* WooCommerce notices keep their own (theme/WC) styling — not restyled here. */
 
 /* Responsive — nav collapses above the content. -------------------------- */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
 	.shopos-account { display: block; }
 	.shopos-account__nav { margin-block-end: var(--shopos-ui-space-lg, 1.5rem); }
 	.shopos-account input.input-text,

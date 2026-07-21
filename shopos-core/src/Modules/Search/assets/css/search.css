@@ -388,7 +388,7 @@ body.shopos-search-open {
  * field at the exact same height before and after results render, so the
  * card never jumps as the list grows downward.
  */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
 	.shopos-search-modal {
 		--shopos-top-offset: calc(var(--shopos-vvh, 100vh) * 0.1);
 		align-items: flex-start;

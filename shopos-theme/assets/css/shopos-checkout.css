@@ -10,7 +10,7 @@
  *
  * Skin-light + token-driven: every value routes through a --shopos-ui-* token
  * whose literal fallback equals that token's default resolved value (on-palette,
- * not drift). RTL-safe via logical properties, 768px canon breakpoint,
+ * not drift). RTL-safe via logical properties, 640px mobile canon,
  * reduced-motion aware. No !important, no layout of the block checkout's own
  * grid (its markup is versioned by WooCommerce Blocks — restyle, don't fight).
  */
@@ -133,7 +133,7 @@ form.checkout #place_order,
 }
 
 /* ---- Responsive + motion ------------------------------------------------ */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
 	form.checkout .col2-set,
 	form.checkout #customer_details {
 		display: block;

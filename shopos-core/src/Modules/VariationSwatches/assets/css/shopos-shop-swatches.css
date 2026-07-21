@@ -773,7 +773,7 @@
 	outline: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
 	/* Sit the toast above any sticky bottom bar so they don't overlap,
 	   mirroring the PDP toast behaviour. */
 	.shopos-shop-toast-stack {

@@ -717,7 +717,7 @@
 		// options first" affordance.
 
 		function isMobileViewport() {
-			return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+			return window.matchMedia && window.matchMedia('(max-width: 1024px)').matches;
 		}
 
 		function syncStickyPrice($form) {

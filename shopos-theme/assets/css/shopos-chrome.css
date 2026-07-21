@@ -116,7 +116,7 @@
 	border-radius: var(--shopos-ui-radius-pill, 999px);
 }
 
-/* Mobile toggle — hidden on desktop, shown at the 768px canon breakpoint. */
+/* Mobile toggle — hidden on desktop, shown at the 640px mobile canon. */
 .shopos-chrome__toggle {
 	display: none;
 	inline-size: 40px;
@@ -202,7 +202,7 @@
 }
 
 /* Responsive — collapse the primary nav behind the toggle. -------------- */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
 	.shopos-chrome__toggle { display: inline-flex; align-items: center; justify-content: center; }
 
 	.shopos-chrome__nav {
