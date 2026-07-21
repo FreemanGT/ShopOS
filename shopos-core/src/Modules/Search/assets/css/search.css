@@ -152,12 +152,18 @@
 }
 
 /* --- Icon trigger (lives in the header — must beat Elementor buttons) ----- */
+/* iconbtn recipe (§9.2), applied in-place: this trigger lives in the Elementor
+   header and needs the !important armor to beat the kit's button styling, which
+   would also block the shared primitive's tonal hover — so it matches the
+   primitive by hand rather than adopting the class. Circle, tonal-fill hover
+   (recipe 1), no opacity-dim, no scale. */
 .shopos-search-trigger {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: auto;
-	padding: var(--shopos-ui-space-sm, 8px);
+	width: 40px;
+	height: 40px;
+	padding: 0 !important;
 	margin: 0;
 	background: transparent !important;
 	border: 0 !important;
@@ -168,23 +174,16 @@
 	line-height: 0;
 	cursor: pointer;
 	border-radius: var(--shopos-ui-radius-round, 50%);
-	transition: opacity var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease-out, ease),
-		transform var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease-out, ease);
+	transition: background-color var(--shopos-ui-motion-fast, 180ms) var(--shopos-ui-ease-out, ease);
 }
 
 .shopos-search-trigger:hover {
-	opacity: 0.65;
+	background: var(--shopos-ui-color-paper-dim, #f1efea) !important;
 }
 
 .shopos-search-trigger:focus-visible {
 	outline: var(--shopos-ui-focus-outline, 2px solid currentColor);
 	outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-	.shopos-search-trigger:active {
-		transform: scale(0.92);
-	}
 }
 
 /* --- Centered command palette -------------------------------------------- */
