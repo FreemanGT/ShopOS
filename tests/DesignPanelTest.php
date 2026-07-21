@@ -90,7 +90,7 @@ final class DesignPanelTest extends TestCase {
 
 	public function test_resolve_then_build_produces_scoped_block(): void {
 		$css = Design::build_css( Design::resolve_values( array( 'accent' => 'forest', 'radius' => '6' ) ) );
-		$this->assertStringContainsString( '--shopos-ui-palette-gold:#3f7a4b;', $css );
+		$this->assertStringContainsString( '--shopos-ui-palette-gold:#3f6b4f;', $css );
 		$this->assertStringContainsString( '--shopos-ui-radius-md:6px;', $css );
 		$this->assertStringStartsWith( ':root{', $css );
 	}

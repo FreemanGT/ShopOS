@@ -86,7 +86,7 @@
 	font-size: var(--shopos-ui-text-xs, 0.75rem);
 	font-weight: var(--shopos-ui-weight-semi, 600);
 	text-transform: uppercase;
-	letter-spacing: var(--shopos-ui-tracking-caps, 0.06em);
+	letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 	padding-block: var(--shopos-ui-space-sm, 0.75rem);
 	border-block-end: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);

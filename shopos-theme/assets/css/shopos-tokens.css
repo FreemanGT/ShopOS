@@ -1,16 +1,18 @@
 /*
- * ShopOS design tokens.
+ * ShopOS design tokens — v2 ("The Quiet Boutique").
  *
  * Every ShopOS Core module consumes these variables. Change a value here and
  * it propagates to Cards, Swatches, Restock forms, Infinite Scroll skeletons,
- * and the admin dashboard. This file is the theme's design API.
+ * and the admin dashboard. This file is the theme's design API and the
+ * canonical value source; docs/DESIGN.md frontmatter mirrors it.
  *
  * To override per-site: add a Customizer CSS rule (or a child stylesheet) that
  * redefines any of these on `:root` or `.shopos-theme`.
  *
  * Naming convention:
  *   --shopos-ui-<group>-<variant>[-<modifier>]
- *   group    = color | text | space | radius | shadow | motion | overlay | card | input | button | badge | z
+ *   group    = color | palette | text | space | radius | shadow | motion |
+ *              overlay | card | input | button | badge | z
  *   variant  = semantic role (ink, paper, accent, danger, …) or scale step
  *   modifier = optional state (hover, muted, soft, …)
  */
@@ -28,12 +30,16 @@
     --shopos-ui-palette-paper-dim: #f1efea;
     --shopos-ui-palette-sand:      #e9e4db;
     --shopos-ui-palette-gold:      #b68a3a;
+    --shopos-ui-palette-forest:    #3f6b4f;   /* opt-in accent — deliberately NOT the success teal */
     --shopos-ui-palette-red:       #b11226;
     --shopos-ui-palette-green:     #0e7c66;
     --shopos-ui-palette-amber:     #a8630a;
     --shopos-ui-palette-info:      #225e8f;
 
-    /* --- Semantic colors ----------------------------------------------- */
+    /* --- Semantic colors -----------------------------------------------
+     * The only colors modules consume. Ink is the default accent. Each
+     * status family carries a -soft fill and a -text partner that is the
+     * ONLY legal text color on that fill (contrast-verified ≥4.5:1). */
     --shopos-ui-color-ink:          var(--shopos-ui-palette-ink);
     --shopos-ui-color-ink-muted:    var(--shopos-ui-palette-mute);
     --shopos-ui-color-ink-soft:     var(--shopos-ui-palette-ink-soft);
@@ -41,49 +47,53 @@
     --shopos-ui-color-paper-soft:   var(--shopos-ui-palette-paper-alt);
     --shopos-ui-color-paper-dim:    var(--shopos-ui-palette-paper-dim);
     --shopos-ui-color-hairline:     var(--shopos-ui-palette-hairline);
-    --shopos-ui-color-accent:       var(--shopos-ui-palette-ink);
+    --shopos-ui-color-accent:       var(--shopos-ui-palette-ink);   /* ink IS the default accent */
     --shopos-ui-color-accent-soft:  var(--shopos-ui-palette-paper-dim);
     --shopos-ui-color-accent-text:  var(--shopos-ui-palette-paper);
     --shopos-ui-color-accent-hover: color-mix(in srgb, var(--shopos-ui-color-accent) 88%, #000);
     --shopos-ui-color-accent-active:color-mix(in srgb, var(--shopos-ui-color-accent) 78%, #000);
     --shopos-ui-color-danger:       var(--shopos-ui-palette-red);
     --shopos-ui-color-danger-soft:  #fde3e6;
+    --shopos-ui-color-danger-text:  #8f101f;   /* text on danger-soft — ≥4.5:1 */
     --shopos-ui-color-success:      var(--shopos-ui-palette-green);
     --shopos-ui-color-success-soft: #d9f2ea;
+    --shopos-ui-color-success-text: #0a5c4c;   /* text on success-soft — ≥4.5:1 */
     --shopos-ui-color-warning:      var(--shopos-ui-palette-amber);
     --shopos-ui-color-warning-soft: #fdecd0;
+    --shopos-ui-color-warning-text: #7c4708;   /* text on warning-soft — ≥4.5:1 */
     --shopos-ui-color-info:         var(--shopos-ui-palette-info);
     --shopos-ui-color-info-soft:    #dce9f3;
+    --shopos-ui-color-info-text:    #1c4a73;   /* text on info-soft — ≥4.5:1 */
 
     /* --- Typography ----------------------------------------------------
-     * Body / display follow Elementor's global typography (so the Style
-     * Kits for Elementor addon, which writes those `--e-global-typography-*`
-     * vars, is authoritative). The hardcoded stacks are the fallback for
-     * when Elementor / Style Kits isn't configured. `sk_type_12` is the
-     * Style Kits "Body" slot; `sk_type_2` is "Heading 1". Mono stays a
-     * fixed monospace stack — code / preformatted text isn't "body text". */
-    --shopos-ui-font-body:    var(--e-global-typography-sk_type_12-font-family, 'Heebo', 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
-    --shopos-ui-font-display: var(--e-global-typography-sk_type_2-font-family, 'Assistant', var(--shopos-ui-font-body));
+     * ONE family (Heebo). --shopos-ui-font-display is an alias of font-body,
+     * retained for API compatibility so existing module CSS doesn't break.
+     * Body follows Elementor's global typography (Style Kits writes the
+     * `--e-global-typography-*` vars); the hardcoded stack is the fallback.
+     * `sk_type_12` is the Style Kits "Body" slot. Mono stays a fixed stack. */
+    --shopos-ui-font-body:    var(--e-global-typography-sk_type_12-font-family, 'Heebo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+    --shopos-ui-font-display: var(--shopos-ui-font-body);
     --shopos-ui-font-mono:    ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-    /* Fluid type scale (clamped between min screen and 1600px). */
-    --shopos-ui-text-xs:   clamp(0.72rem, 0.68rem + 0.2vw, 0.78rem);   /* ~12px */
-    --shopos-ui-text-sm:   clamp(0.82rem, 0.78rem + 0.22vw, 0.9rem);   /* ~14px */
-    --shopos-ui-text-md:   clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem);    /* ~16px */
-    --shopos-ui-text-lg:   clamp(1.1rem, 1rem + 0.4vw, 1.25rem);       /* ~20px */
-    --shopos-ui-text-xl:   clamp(1.35rem, 1.2rem + 0.7vw, 1.75rem);    /* ~28px */
-    --shopos-ui-text-xxl:  clamp(1.9rem, 1.55rem + 1.5vw, 2.75rem);    /* ~40px */
-    --shopos-ui-text-hero: clamp(2.5rem, 1.9rem + 2.6vw, 4rem);        /* ~60px */
+    /* Fluid type scale (clamped between min screen and ~1600px). */
+    --shopos-ui-text-xs:      clamp(0.75rem, 0.73rem + 0.1vw, 0.8125rem);    /* 12→13px  label / badge / meta */
+    --shopos-ui-text-sm:      clamp(0.8125rem, 0.78rem + 0.18vw, 0.9375rem); /* 13→15px  small / caption / button */
+    --shopos-ui-text-md:      clamp(0.95rem, 0.9rem + 0.3vw, 1.0625rem);     /* 15→17px  body (default) */
+    --shopos-ui-text-lg:      clamp(1.125rem, 1.06rem + 0.35vw, 1.3125rem);  /* 18→21px  title / H4 */
+    --shopos-ui-text-xl:      clamp(1.375rem, 1.22rem + 0.8vw, 1.875rem);    /* 22→30px  H3 */
+    --shopos-ui-text-xxl:     clamp(1.875rem, 1.5rem + 1.9vw, 3rem);         /* 30→48px  H2 */
+    --shopos-ui-text-hero:    clamp(2.5rem, 1.75rem + 3.8vw, 5rem);          /* 40→80px  H1 */
+    --shopos-ui-text-display: clamp(3.25rem, 2.1rem + 5.8vw, 7.5rem);        /* 52→120px statement — ≤1 per page */
 
-    --shopos-ui-leading-tight: 1.18;
-    --shopos-ui-leading-snug:  1.35;
-    --shopos-ui-leading-base:  1.55;
+    --shopos-ui-leading-flat:  1.05;   /* display only  (:lang(he) → 1.1) */
+    --shopos-ui-leading-tight: 1.15;   /* hero–xl headings  (:lang(he) → 1.2) */
+    --shopos-ui-leading-snug:  1.35;   /* titles */
+    --shopos-ui-leading-base:  1.6;    /* body */
     --shopos-ui-leading-loose: 1.8;
 
-    --shopos-ui-tracking-tight:  -0.01em;
+    --shopos-ui-tracking-tight:  -0.02em;  /* Latin, hero/display only (zeroed under :lang(he)) */
     --shopos-ui-tracking-normal: 0;
-    --shopos-ui-tracking-wide:   0.04em;
-    --shopos-ui-tracking-caps:   0.14em;
+    --shopos-ui-tracking-wide:   0.04em;   /* Label voice, Latin only (zeroed under :lang(he)) */
 
     --shopos-ui-weight-light:   300;
     --shopos-ui-weight-regular: 400;
@@ -91,7 +101,7 @@
     --shopos-ui-weight-semi:    600;
     --shopos-ui-weight-bold:    700;
 
-    /* --- Spacing scale ------------------------------------------------- */
+    /* --- Spacing scale (component rhythm, static) ---------------------- */
     --shopos-ui-space-0:   0;
     --shopos-ui-space-xxs: 2px;
     --shopos-ui-space-xs:  4px;
@@ -102,24 +112,27 @@
     --shopos-ui-space-xxl: 64px;
     --shopos-ui-space-3xl: 96px;
 
-    /* --- Radii --------------------------------------------------------- */
-    --shopos-ui-radius-xs:   2px;
-    --shopos-ui-radius-sm:   4px;
-    --shopos-ui-radius-md:   6px;
-    --shopos-ui-radius-lg:   12px;
-    --shopos-ui-radius-xl:   20px;
-    --shopos-ui-radius-pill: 999px;
+    /* --- Radii — the shape ladder (Radius-Is-Identity) -----------------
+     * xs=controls, md=cards/panels, lg=modals/sheets, pill=badges/chips,
+     * round=icon buttons/dots/count bubbles. radius-sm is retained ONLY as a
+     * back-compat fallback for not-yet-migrated module consumers (§20 PR7);
+     * radius-xl is retired. */
+    --shopos-ui-radius-xs:    2px;
+    --shopos-ui-radius-sm:    4px;   /* DEPRECATED — migrate consumers to radius-xs, then delete */
+    --shopos-ui-radius-md:    6px;
+    --shopos-ui-radius-lg:    12px;
+    --shopos-ui-radius-pill:  999px;
     --shopos-ui-radius-round: 50%;
 
-    /* --- Shadows ------------------------------------------------------- */
+    /* --- Shadows — depth is tonal-first, shadow-second ----------------- */
     --shopos-ui-shadow-xs: 0 1px 1px rgba(0,0,0,0.04);
-    --shopos-ui-shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+    --shopos-ui-shadow-sm: 0 1px 2px rgba(0,0,0,0.06);   /* card at rest — the one sanctioned resting shadow */
     --shopos-ui-shadow-md: 0 8px 24px rgba(0,0,0,0.08);
     --shopos-ui-shadow-lg: 0 24px 48px rgba(0,0,0,0.12);
     --shopos-ui-shadow-xl: 0 40px 80px rgba(0,0,0,0.18);
     --shopos-ui-shadow-inset: inset 0 0 0 1px var(--shopos-ui-color-hairline);
 
-    /* --- Motion -------------------------------------------------------- */
+    /* --- Motion — three eases, five durations. No bounce anywhere. ----- */
     --shopos-ui-motion-instant: 90ms;
     --shopos-ui-motion-fast:    180ms;
     --shopos-ui-motion-base:    280ms;
@@ -127,7 +140,6 @@
     --shopos-ui-ease:           cubic-bezier(0.2, 0, 0, 1);
     --shopos-ui-ease-out:       cubic-bezier(0.2, 0.8, 0.2, 1);
     --shopos-ui-ease-in:        cubic-bezier(0.4, 0, 1, 1);
-    --shopos-ui-ease-bounce:    cubic-bezier(0.68, -0.55, 0.265, 1.55);
     --shopos-ui-motion-spin:    0.8s;   /* full-rotation loop for spinners; intentionally NOT zeroed by reduced-motion */
 
     /* --- Overlay / scrim ---------------------------------------------- */
@@ -144,23 +156,25 @@
     --shopos-ui-card-shadow:       var(--shopos-ui-shadow-sm);
     --shopos-ui-card-shadow-hover: var(--shopos-ui-shadow-md);
     --shopos-ui-card-hover-shift:  -2px;
-    --shopos-ui-card-hover-scale:  1.015;
 
     /* --- Form / input primitives -------------------------------------- */
     --shopos-ui-input-height:      44px;
     --shopos-ui-input-height-sm:   36px;
-    --shopos-ui-input-radius:      var(--shopos-ui-radius-sm);
+    --shopos-ui-input-radius:      var(--shopos-ui-radius-xs);
     --shopos-ui-input-bg:          var(--shopos-ui-color-paper);
     --shopos-ui-input-border:      1px solid var(--shopos-ui-color-hairline);
     --shopos-ui-input-border-hover:1px solid var(--shopos-ui-color-ink-soft);
-    --shopos-ui-input-focus-ring:  0 0 0 2px var(--shopos-ui-color-accent);
     --shopos-ui-input-padding-x:   var(--shopos-ui-space-md);
-    --shopos-ui-focus-outline:     2px solid var(--shopos-ui-color-accent);
+    --shopos-ui-focus-outline:     2px solid var(--shopos-ui-color-ink);
+    /* DEPRECATED — focus is the global outline (§8.4). Retained (as a valid
+     * box-shadow value) until the per-component focus box-shadows are swept to
+     * :focus-visible (§20 PR5). */
+    --shopos-ui-input-focus-ring:  0 0 0 2px var(--shopos-ui-color-ink);
 
     /* --- Button primitives -------------------------------------------- */
     --shopos-ui-button-height:       48px;
     --shopos-ui-button-height-sm:    36px;
-    --shopos-ui-button-radius:       var(--shopos-ui-radius-sm);
+    --shopos-ui-button-radius:       var(--shopos-ui-radius-xs);
     --shopos-ui-button-padding-x:    var(--shopos-ui-space-lg);
     --shopos-ui-button-font-weight:  var(--shopos-ui-weight-semi);
     --shopos-ui-button-tracking:     var(--shopos-ui-tracking-wide);
@@ -171,10 +185,11 @@
     --shopos-ui-badge-padding:  0 var(--shopos-ui-space-sm);
     --shopos-ui-badge-font:     var(--shopos-ui-text-xs);
 
-    /* --- Layout -------------------------------------------------------- */
+    /* --- Layout — page rhythm is FLUID (air scales with the viewport) -- */
     --shopos-ui-container-max:   1360px;
-    --shopos-ui-container-pad:   var(--shopos-ui-space-md);
-    --shopos-ui-section-gap:     var(--shopos-ui-space-xxl);
+    --shopos-ui-container-wide:  1560px;                              /* hero, PLP grid, editorial bands */
+    --shopos-ui-container-pad:   clamp(1rem, 0.5rem + 2.5vw, 3rem);   /* 16→48px gutters */
+    --shopos-ui-section-gap:     clamp(4rem, 1.2rem + 6.5vw, 8rem);   /* 64→128px between sections */
     --shopos-ui-drawer-width:    min(480px, 94vw);  /* off-canvas panels: QuickView, filters drawer */
     --shopos-ui-swatch-size:     28px;              /* filter / variation swatch chip */
     --shopos-ui-measure:         65ch;              /* readable line length for body copy */
@@ -213,9 +228,32 @@
     --shopos-ui-color-accent-text: #1a1a1a;
 }
 .shopos-theme.is-accent-forest {
-    --shopos-ui-color-accent:      var(--shopos-ui-palette-green);
-    --shopos-ui-color-accent-soft: #d6efe5;
+    --shopos-ui-color-accent:      var(--shopos-ui-palette-forest);
+    --shopos-ui-color-accent-soft: #e2ece5;
     --shopos-ui-color-accent-text: #ffffff;
+}
+
+/*
+ * Inverted surfaces — add .is-inverted on any section to remap the semantic
+ * color slots (dynamic range without a dark mode). Paper becomes ink, the ink
+ * ramp becomes a paper ramp, hairlines become translucent white, and accent
+ * becomes paper — so the primary button flips to paper-on-ink, the ghost
+ * button to a white-hairline outline, and the focus ring to white, with ZERO
+ * component changes. Invert by remap, never by writing dark variants.
+ * Footer is always inverted; beyond it, ≤1 inverted band per page.
+ */
+.shopos-theme .is-inverted,
+.is-inverted {
+    --shopos-ui-color-ink:         #ffffff;
+    --shopos-ui-color-ink-soft:    #d6d4cf;
+    --shopos-ui-color-ink-muted:   #a5a29b;   /* ≥4.5:1 on the ink surface */
+    --shopos-ui-color-paper:       var(--shopos-ui-palette-ink);
+    --shopos-ui-color-paper-soft:  #242423;
+    --shopos-ui-color-paper-dim:   #2e2d2b;
+    --shopos-ui-color-hairline:    rgba(255,255,255,0.16);
+    --shopos-ui-color-accent:      #ffffff;
+    --shopos-ui-color-accent-soft: rgba(255,255,255,0.12);
+    --shopos-ui-color-accent-text: var(--shopos-ui-palette-ink);
 }
 
 /*
@@ -228,7 +266,7 @@
         --shopos-ui-card-shadow:       none;
         --shopos-ui-card-shadow-hover: none;
         --shopos-ui-input-border:      1px solid var(--shopos-ui-color-ink);
-        --shopos-ui-input-focus-ring:  0 0 0 3px var(--shopos-ui-color-accent);
+        --shopos-ui-focus-outline:     3px solid var(--shopos-ui-color-ink);
     }
 }
 

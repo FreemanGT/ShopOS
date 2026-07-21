@@ -56,7 +56,7 @@ final class Design {
 		return array(
 			'default'    => array(),
 			'terracotta' => array( '--shopos-ui-palette-gold' => '#b5532a' ),
-			'forest'     => array( '--shopos-ui-palette-gold' => '#3f7a4b' ),
+			'forest'     => array( '--shopos-ui-palette-gold' => '#3f6b4f' ),
 			'indigo'     => array( '--shopos-ui-palette-gold' => '#4a54b5' ),
 			'plum'       => array( '--shopos-ui-palette-gold' => '#7a3f6b' ),
 		);
