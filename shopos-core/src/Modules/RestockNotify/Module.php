@@ -153,8 +153,15 @@ final class Module extends Module_Base {
 	}
 
 	/**
-	 * Uninstall — remove options but keep the subscriber table by default;
-	 * admins can drop it manually if they want to.
+	 * Uninstall — remove options AND drop the subscriber table.
+	 *
+	 * The subscriber table holds customer PII (emails). WordPress only runs this
+	 * handler on an explicit "Delete" of the plugin, which is a deliberate,
+	 * data-destroying action, so the table is dropped along with everything else
+	 * (owner-approved 2026-07-22; Hard Rule #3 legacy-surface edit — the table
+	 * name is derived from the trusted `$wpdb->prefix`, no legacy class loaded).
+	 * The `shopos_restock_notification_log` accumulator lives off both the module
+	 * prefix and OPTION_KEYS, so it is deleted explicitly.
 	 */
 	public function on_uninstall() {
 		parent::on_uninstall();
@@ -162,6 +169,11 @@ final class Module extends Module_Base {
 			delete_option( 'shopos_restock_' . $key );
 		}
 		delete_option( 'shopos_restock_db_version' );
+		delete_option( 'shopos_restock_notification_log' );
+
+		global $wpdb;
+		$table = $wpdb->prefix . 'shopos_restock_subscribers';
+		$wpdb->query( "DROP TABLE IF EXISTS `{$table}`" ); // phpcs:ignore WordPress.DB -- uninstall PII cleanup; table name from trusted prefix.
 	}
 
 	/**

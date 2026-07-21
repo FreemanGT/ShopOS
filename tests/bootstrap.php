@@ -280,6 +280,10 @@ if ( ! function_exists( 'delete_option' ) ) {
 if ( ! function_exists( 'add_option' ) ) {
 	function add_option( $k, $v ) { if ( ! isset( $GLOBALS['fr_opts'][ $k ] ) ) { $GLOBALS['fr_opts'][ $k ] = $v; return true; } return false; }
 }
+if ( ! function_exists( 'delete_post_meta_by_key' ) ) {
+	// Records the swept meta keys so uninstall-cleanup tests can assert them.
+	function delete_post_meta_by_key( $key ) { $GLOBALS['fr_deleted_meta_keys'][] = $key; return true; }
+}
 
 // Term-meta store + smart get_term_meta / update_term_meta / delete_term_meta
 // (Wave 2.2 / 4b — promoted from inline test stubs after the dumb stub races

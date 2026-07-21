@@ -80,10 +80,10 @@ Theme-owned classic PHP templates; flag names **not yet minted**. Do not start u
 ## D. Open audit follow-ups (2026-07-03 audit, B-5)
 - [x] Uninstall **created-vs-cleaned matrix** + **dead-code cross-check** — swept 2026-07-20,
       findings in [audit-b5-2026-07-20.md](audit-b5-2026-07-20.md). Fixes below (each its own PR):
-  - [ ] **HIGH** RestockNotify `shopos_restock_subscribers` PII table never dropped on uninstall (legacy + owner sign-off)
-  - [ ] Core uninstall completeness: orphan recurring crons (product_feed/variable_stock_fix), `_shopos_core_vs_sampled_color` postmeta, core-owned options (`shopos_core_log`/`settings_backups`/`design_*`), prefix mismatches
-  - [ ] shopos-digital uninstall transient **prefix drift** (`fd_*` → `shopos_digital_%`) — no live transient is cleaned
-  - [ ] Dead localize/CSS cleanup: ShopFilters + BundleDeals + Search + RestockNotify payloads, `notification_log` accumulator, orphan `.shopos-toast` rules
+  - [x] **HIGH** RestockNotify `shopos_restock_subscribers` PII table dropped on uninstall — **1.56.0** (owner-approved PII deletion 2026-07-22; + off-prefix `notification_log` option)
+  - [x] Core uninstall completeness — **1.56.0**: `_shopos_core_vs_sampled_color` postmeta (new VariationSwatches `on_uninstall`), core-owned options (`shopos_core_log`/`settings_backups`/`design_*`/`productfeed_last_generated`). Feed/stock-fix crons were **already** cleared in `on_deactivate` (runs before Delete→uninstall) — no code needed.
+  - [ ] shopos-digital uninstall transient **prefix drift** (`fd_*` → `shopos_digital_%`) — no live transient is cleaned *(next: digital 1.7.9)*
+  - [ ] Dead localize/CSS cleanup: ShopFilters + BundleDeals + Search + RestockNotify payloads, `notification_log` writer, orphan `.shopos-toast` rules *(next: core dead-code PR)*
 
 ## E. Ops & hygiene
 - [ ] **Re-upload core** to the stranded stores on 1.44.3–1.45.0 (one-time; see [BUGS.md](BUGS.md))

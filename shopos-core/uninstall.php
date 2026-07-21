@@ -31,3 +31,21 @@ delete_option( 'shopos_core_modules' );
 delete_option( 'shopos_core_db_version' );
 delete_option( 'shopos_core_legacy_imported' );
 delete_option( 'shopos_core_onboarded' );
+
+// Core-owned options written by Core classes (not modules), so no per-module
+// id-prefix sweep reaches them: the logger buffer, the settings-backup store,
+// and the ProductFeed last-generated stamp (whose `productfeed` key does not
+// match the module's `product_feed_%` sweep prefix — a historical mismatch).
+delete_option( 'shopos_core_log' );
+delete_option( 'shopos_core_settings_backups' );
+delete_option( 'shopos_core_productfeed_last_generated' );
+
+// The Design panel writes several `shopos_core_design_*` options (user config);
+// clear the whole family in one pass.
+global $wpdb;
+$wpdb->query(
+	$wpdb->prepare(
+		"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+		$wpdb->esc_like( 'shopos_core_design_' ) . '%'
+	)
+);
