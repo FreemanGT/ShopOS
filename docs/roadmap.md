@@ -1,6 +1,6 @@
 # ShopOS — Roadmap
 
-**Last updated:** 2026-07-20 · **Owner:** Yiftach
+**Last updated:** 2026-07-21 · **Owner:** Yiftach
 
 The single forward-looking plan for the suite. History lives in the CHANGELOGs and
 [`archive/`](archive/); this file is **status + what's shipped + what's left + what's next**.
@@ -17,8 +17,8 @@ The single forward-looking plan for the suite. History lives in the CHANGELOGs a
 
 | Package | Version |
 |---|---|
-| shopos-core | 1.47.0 |
-| shopos-theme | 1.16.0 |
+| shopos-core | 1.54.0 |
+| shopos-theme | 1.21.0 |
 | shopos-digital | 1.7.8 |
 
 - **15 storefront modules** live (see [Modules.md](Modules.md)). Suite tests green on php@8.3.
@@ -46,6 +46,14 @@ Detail is in the CHANGELOGs and [archive/wave-log-0-9.md](archive/wave-log-0-9.m
 - **Maturity audit + remediation (2026-07-03)** — PRs 1–21 + B-1/B-3 shipped through 1.44.x.
 - **Design-control audit (2026-07-19)** — PR-01…PR-13 (token vocabulary, per-module token
   coverage, owner-control settings bundle) shipped through 1.45.x.
+- **ShopOS v2 design migration — "The Quiet Boutique" (2026-07-21)** — DESIGN.md rewritten to
+  v2 and the suite migrated to it via the §20 checklist (token layer, one type family, single
+  ink focus, 640/1024 canon, ink-muted prices, `-text` on `-soft`, Hebrew Label Voice, inverted
+  surfaces + footer, statement display/hero + chip/note/toast/iconbtn primitives, `tokens:check`
+  drift guard). Prepped on branch `feat/design-v2-migration` (core 1.54.0 + theme 1.21.0);
+  QuickView/Search iconbtn + the ShopOS Line §12.3 PLP grid browser-verified in wp-env. **Not
+  yet published** — Stable tag held at 1.52.0; per-module icon-trigger adoption + the WC-owned
+  PLP/PDP restyle remain owner-live-store follow-ons (DESIGN.md §20).
 
 ## What's left
 
