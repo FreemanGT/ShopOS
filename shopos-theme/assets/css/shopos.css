@@ -329,6 +329,105 @@ body {
 .shopos-theme .shopos-ui-badge--accent  { background: var(--shopos-ui-color-accent);       color: var(--shopos-ui-color-accent-text); }
 
 /* -------------------------------------------------------------------------
+ * 6b. Filter chip (.shopos-ui-chip) — §9.5. Hover recipe 2 (border→ink);
+ *     selection inverts locally so a selected filter reads at a glance.
+ * ------------------------------------------------------------------------- */
+
+.shopos-theme .shopos-ui-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--shopos-ui-space-xs);
+    min-height: 32px;
+    padding: 0 12px;
+    border-radius: var(--shopos-ui-radius-pill);
+    background: var(--shopos-ui-color-paper);
+    color: var(--shopos-ui-color-ink);
+    border: 1px solid var(--shopos-ui-color-hairline);
+    font-size: var(--shopos-ui-text-xs);
+    font-weight: var(--shopos-ui-weight-semi);
+    letter-spacing: var(--shopos-ui-tracking-wide);
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        background var(--shopos-ui-motion-fast) var(--shopos-ui-ease),
+        color var(--shopos-ui-motion-fast) var(--shopos-ui-ease),
+        border-color var(--shopos-ui-motion-fast) var(--shopos-ui-ease);
+}
+
+.shopos-theme .shopos-ui-chip:hover {
+    border-color: var(--shopos-ui-color-ink);
+}
+
+.shopos-theme .shopos-ui-chip[aria-pressed="true"],
+.shopos-theme .shopos-ui-chip.is-selected {
+    background: var(--shopos-ui-color-ink);
+    color: var(--shopos-ui-color-paper);
+    border-color: var(--shopos-ui-color-ink);
+}
+
+.shopos-theme .shopos-ui-chip:disabled,
+.shopos-theme .shopos-ui-chip[aria-disabled="true"] {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* -------------------------------------------------------------------------
+ * 6c. Inline note (.shopos-ui-note) — §9.8. Full -soft fill + matching -text
+ *     color; never a colored side-stripe.
+ * ------------------------------------------------------------------------- */
+
+.shopos-theme .shopos-ui-note {
+    display: block;
+    padding: var(--shopos-ui-space-sm) var(--shopos-ui-space-md);
+    border-radius: var(--shopos-ui-radius-md);
+    background: var(--shopos-ui-color-paper-dim);
+    color: var(--shopos-ui-color-ink);
+    font-size: var(--shopos-ui-text-sm);
+    line-height: var(--shopos-ui-leading-base);
+}
+
+.shopos-theme .shopos-ui-note__lead {
+    font-weight: var(--shopos-ui-weight-semi);
+    letter-spacing: var(--shopos-ui-tracking-wide);
+    text-transform: uppercase;
+    margin-inline-end: var(--shopos-ui-space-xs);
+}
+
+.shopos-theme .shopos-ui-note--success { background: var(--shopos-ui-color-success-soft); color: var(--shopos-ui-color-success-text); }
+.shopos-theme .shopos-ui-note--danger  { background: var(--shopos-ui-color-danger-soft);  color: var(--shopos-ui-color-danger-text); }
+.shopos-theme .shopos-ui-note--warning { background: var(--shopos-ui-color-warning-soft); color: var(--shopos-ui-color-warning-text); }
+.shopos-theme .shopos-ui-note--info    { background: var(--shopos-ui-color-info-soft);    color: var(--shopos-ui-color-info-text); }
+
+/* -------------------------------------------------------------------------
+ * 6d. Toast (.shopos-ui-toast) — §9.8. Bottom inline-center, slide-up entrance
+ *     (instant under reduced motion via the motion token); one at a time.
+ * ------------------------------------------------------------------------- */
+
+.shopos-theme .shopos-ui-toast {
+    position: fixed;
+    inset-block-end: var(--shopos-ui-space-lg);
+    inset-inline: 0;
+    margin-inline: auto;
+    width: max-content;
+    max-width: min(92vw, 420px);
+    z-index: var(--shopos-ui-z-toast);
+    padding: var(--shopos-ui-space-sm) var(--shopos-ui-space-md);
+    background: var(--shopos-ui-color-paper);
+    color: var(--shopos-ui-color-ink);
+    border: 1px solid var(--shopos-ui-color-hairline);
+    border-radius: var(--shopos-ui-radius-md);
+    box-shadow: var(--shopos-ui-shadow-lg);
+    font-size: var(--shopos-ui-text-sm);
+    animation: shopos-ui-toast-in var(--shopos-ui-motion-base) var(--shopos-ui-ease-out);
+}
+
+@keyframes shopos-ui-toast-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* -------------------------------------------------------------------------
  * 7. Card primitive (.shopos-ui-card)
  * ------------------------------------------------------------------------- */
 

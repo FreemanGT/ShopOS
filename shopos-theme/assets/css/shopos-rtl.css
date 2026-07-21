@@ -44,6 +44,7 @@
 }
 
 .shopos-rtl .shopos-ui-btn,
+.shopos-rtl .shopos-ui-chip,
 .shopos-rtl h6 {
     text-transform: none;
     letter-spacing: 0;
