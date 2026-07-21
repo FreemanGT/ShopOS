@@ -1054,6 +1054,21 @@ Run before any screen ships. Cite rule names in review comments.
 
 ## 20. Migration checklist — v1 → v2 (for Claude Code)
 
+> **Migration status (branch `feat/design-v2-migration`).** Blocks 1–8, 10–18,
+> and 20 are **DONE** (token layer, one-family fonts, Radius-Is-Identity,
+> single ink focus, 640/1024 breakpoints, radius-sm retirement + button polish,
+> ink-muted prices + tabular-nums, `-text` on `-soft` fills, Hebrew Label Voice,
+> inverted mechanism + footer + editorial band, statement display + hero +
+> section-header, chip/note/toast, and the `tokens:check` guard —
+> `tools/tokens-check.php`, 71 tokens in sync). Blocks **9** and **19** are
+> delivered at the **foundation** level — the `.shopos-ui-iconbtn` primitive
+> exists and the module font fallbacks are one-family, but adopting the iconbtn
+> into every existing module icon-trigger (drawer closes, gallery arrows,
+> card-slider nav) and the structural PLP/PDP relayout (column counts, card
+> anatomy order, one-badge cap, sticky bars) are **visual-QA-gated** and remain
+> the live-store follow-on. 1069 tests / 3363 assertions green (php@8.3);
+> versions NOT yet bumped (ship-time decision).
+
 Work top-down; each block is a reviewable PR. Grep patterns are literal.
 
 **Tokens (`shopos-tokens.css`) — change first:**
