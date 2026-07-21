@@ -16,7 +16,7 @@
 
 .shopos-ui-pdp {
 	color: var(--shopos-ui-color-ink, #1b1b1b);
-	font-family: var(--shopos-ui-font-body, 'Heebo', 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+	font-family: var(--shopos-ui-font-body, 'Heebo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
 	font-size: var(--shopos-ui-text-md, 1rem);
 	line-height: var(--shopos-ui-leading-base, 1.55);
 	background: var(--shopos-ui-color-paper, #ffffff);
@@ -236,7 +236,7 @@
 	margin: 0 0 var(--shopos-ui-space-sm, 8px);
 	/* No text-wrap:balance — it equalises line lengths, so multi-line titles
 	   refused to fill the column ("titles sometimes not full width", 9.3). */
-	font-family: var(--shopos-ui-font-display, 'Assistant', 'Heebo', 'Rubik', sans-serif);
+	font-family: var(--shopos-ui-font-display, 'Heebo', sans-serif);
 	font-size: var(--shopos-ui-text-xxl, 2.25rem);
 	font-weight: var(--shopos-ui-weight-semi, 600);
 	line-height: var(--shopos-ui-leading-tight, 1.18);
@@ -705,7 +705,7 @@
 .shopos-ui-pdp .up-sells > h2,
 .shopos-ui-pdp .related > h2 {
 	margin: 0 0 var(--shopos-ui-space-lg, 24px);
-	font-family: var(--shopos-ui-font-display, 'Assistant', 'Heebo', 'Rubik', sans-serif);
+	font-family: var(--shopos-ui-font-display, 'Heebo', sans-serif);
 	font-size: var(--shopos-ui-text-xl, 1.5rem);
 	font-weight: var(--shopos-ui-weight-semi, 600);
 	line-height: var(--shopos-ui-leading-tight, 1.18);
