@@ -66,6 +66,9 @@ shopos-core/src/Modules/ShopFilters/Query_Builder.php:848:		return array_map( 'i
 shopos-core/src/Modules/ShopFilters/Shortcode.php:106:		do_action( 'shopos_core/shop_filters/after_render', $context_id );
 shopos-core/src/Modules/ShopFilters/Shortcode.php:118:		return (string) apply_filters( 'shopos_core/shop_filters/panel_html', $html, $context_id );
 shopos-core/src/Modules/ShopFilters/Shortcode.php:89:		do_action( 'shopos_core/shop_filters/before_render', $context_id );
+shopos-core/src/Modules/SideCart/Frontend.php:123:		return (array) apply_filters( 'shopos_core/side_cart/fragments', $fragments, $this->module );
+shopos-core/src/Modules/SideCart/Module.php:181:		return (float) apply_filters( 'shopos_core/side_cart/free_ship_min', $min );
+shopos-core/src/Modules/SideCart/Module.php:203:		$ids = (array) apply_filters( 'shopos_core/side_cart/recommendations', $ids );
 shopos-core/src/Modules/VariableStockFix/Module.php:294:		if ( ! apply_filters( 'shopos_core/variable_stock_fix/should_check', true, $product ) ) {
 shopos-core/src/Modules/VariationSwatches/Color_Sampler.php:197:		$value   = apply_filters(
 shopos-core/src/Modules/VariationSwatches/Sampler_Scheduler.php:192:		$batch_size = (int) apply_filters( self::BATCH_SIZE_FILTER, self::DEFAULT_BATCH_SIZE );

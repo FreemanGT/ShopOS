@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ShopOS Core 1.53.0\n"
+"Project-Id-Version: ShopOS Core 1.55.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shopos-core\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-21T13:48:06+00:00\n"
+"POT-Creation-Date: 2026-07-21T23:39:32+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: shopos-core\n"
@@ -600,6 +600,7 @@ msgid "Select image"
 msgstr ""
 
 #: src/Core/Settings_Hub.php:536
+#: src/Modules/SideCart/Labels.php:49
 msgid "Remove"
 msgstr ""
 
@@ -754,6 +755,7 @@ msgstr ""
 #: src/Modules/QuickView/Ajax.php:58
 #: src/Modules/Search/Ajax.php:58
 #: src/Modules/ShopFilters/Ajax.php:46
+#: src/Modules/SideCart/Ajax.php:74
 msgid "Too many requests. Please slow down."
 msgstr ""
 
@@ -1772,6 +1774,7 @@ msgid "Designed layout"
 msgstr ""
 
 #: src/Modules/ProductPage/Module.php:86
+#: src/Modules/SideCart/Labels.php:61
 msgid "Coupon code"
 msgstr ""
 
@@ -2062,11 +2065,13 @@ msgstr ""
 
 #: src/Modules/QuickView/Labels.php:50
 #: src/Modules/ShopFilters/Labels.php:55
+#: src/Modules/SideCart/Labels.php:40
 msgid "Close button label"
 msgstr ""
 
 #: src/Modules/QuickView/Labels.php:51
 #: src/Modules/ShopFilters/Labels.php:56
+#: src/Modules/SideCart/Labels.php:41
 msgid "Close"
 msgstr ""
 
@@ -2079,6 +2084,7 @@ msgid "View full details"
 msgstr ""
 
 #: src/Modules/QuickView/Labels.php:58
+#: src/Modules/SideCart/Labels.php:96
 msgid "Loading message"
 msgstr ""
 
@@ -2087,6 +2093,7 @@ msgid "Loading…"
 msgstr ""
 
 #: src/Modules/QuickView/Labels.php:62
+#: src/Modules/SideCart/Labels.php:100
 msgid "Error message"
 msgstr ""
 
@@ -2552,6 +2559,7 @@ msgid "Please confirm the consent checkbox to continue."
 msgstr ""
 
 #: src/Modules/RestockNotify/legacy/includes/class-shopos-restock-ajax.php:70
+#: src/Modules/SideCart/Labels.php:101
 msgid "Something went wrong. Please try again."
 msgstr ""
 
@@ -3117,6 +3125,152 @@ msgstr ""
 
 #: src/Modules/ShopFilters/Widget.php:89
 msgid "Configured globally under ShopOS → Shop Filters (facet configuration, panel wording + panel style). The panel adapts to the current page — the shop page shows all facets, a category page scopes to that category, and a search page scopes to the results."
+msgstr ""
+
+#: src/Modules/SideCart/Ajax.php:78
+msgid "Cart unavailable."
+msgstr ""
+
+#: src/Modules/SideCart/Ajax.php:118
+msgid "Unknown request."
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:36
+msgid "Drawer heading"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:37
+msgid "Your cart"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:44
+msgid "Empty-cart message"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:45
+msgid "Your cart is empty."
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:48
+msgid "Remove-item label"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:52
+msgid "Removed-item notice"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:53
+msgid "Item removed."
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:56
+msgid "Undo link"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:57
+msgid "Undo"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:60
+msgid "Coupon field placeholder"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:64
+msgid "Apply-coupon button"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:65
+msgid "Apply"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:68
+msgid "Subtotal label"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:69
+msgid "Subtotal"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:72
+msgid "Checkout button"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:73
+msgid "Checkout"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:76
+msgid "View-cart link"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:77
+msgid "View cart"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:80
+msgid "Recommendations heading"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:81
+msgid "You may also like"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:84
+msgid "Add-recommendation button"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:85
+msgid "Add"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:88
+#, php-format
+msgid "Free-shipping remaining (use %s for the amount)"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:89
+#, php-format
+msgid "Add %s more for free shipping"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:92
+msgid "Free-shipping reached message"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:93
+msgid "You’ve unlocked free shipping!"
+msgstr ""
+
+#: src/Modules/SideCart/Labels.php:97
+msgid "Updating…"
+msgstr ""
+
+#: src/Modules/SideCart/Module.php:46
+msgid "Side Cart"
+msgstr ""
+
+#: src/Modules/SideCart/Module.php:53
+msgid "Slide-out cart drawer with a live subtotal, free-shipping meter, coupon field, remove-with-undo, recommendations and a quick checkout button."
+msgstr ""
+
+#: src/Modules/SideCart/Module.php:72
+msgid "Free-shipping progress meter"
+msgstr ""
+
+#: src/Modules/SideCart/Module.php:75
+msgid "Show a progress bar toward the free-shipping threshold. Hidden automatically when no free-shipping method has a minimum amount."
+msgstr ""
+
+#: src/Modules/SideCart/Module.php:78
+msgid "Recommended products"
+msgstr ""
+
+#: src/Modules/SideCart/Module.php:81
+msgid "Show the cart products’ cross-sells in the drawer."
+msgstr ""
+
+#: src/Modules/SideCart/Module.php:89
+msgid "Side-cart wording — leave a field blank to use its English default."
 msgstr ""
 
 #: src/Modules/VariableStockFix/Importer.php:34

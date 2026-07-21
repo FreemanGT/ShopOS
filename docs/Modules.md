@@ -16,7 +16,7 @@
 |---|----------|-------|---------|
 | 1 | Storefront & Discovery | Search, ShopFilters, InfiniteScroll, CategorySlider, ProductSlider, HoverSwap | — |
 | 2 | Product & Conversion | ProductPage, QuickView, VariationSwatches, CheapestDefaultVariation, RestockNotify | Advanced Add-to-Cart, Product Reviews |
-| 3 | Cart & Checkout | — | Side Cart, Checkout |
+| 3 | Cart & Checkout | Side Cart | Checkout |
 | 4 | Sales & Promotion | Bundle Deals | Fortune Wheel, Product Badges, Flash Sale Banner |
 | 5 | Customer Account | MyAccount | — |
 | 6 | Merchandising & Ops | ProductFeed, VariableStockFix | Bulk Price Editor, Custom Email Templates |
@@ -73,8 +73,8 @@ Visual rating summary (average, per-star breakdown, % recommend), verified-purch
 
 ## 3. Cart & Checkout
 
-### ⬜ Side Cart *(planned)*
-Slide-out cart drawer: line items with images/qty, remove-with-undo, live subtotal/coupon/total, free-shipping progress meter, coupon field, recommended products, quick-checkout button, add-to-cart animations. → *reference: Side Cart*
+### ✅ Side Cart — `src/Modules/SideCart/`
+Slide-out cart drawer: line items with images/qty, remove-with-undo, live subtotal/coupon/total, free-shipping progress meter, coupon field, cross-sell recommendations, quick-checkout button. Thin over WooCommerce — the body renders from `WC()->cart` and is registered as a WC cart fragment; one nonce'd/rate-limited `op`-selector AJAX endpoint delegates every mutation to the WC cart API. Skin-light (`--shopos-ui-*` tokens, RTL, reduced-motion), all strings overridable via Labels. Default OFF (module toggle is the kill switch). → *reference: Side Cart*
 
 ### ⬜ Checkout *(planned)*
 WooCommerce checkout replacement: compact 3-step or classic layout, Israeli settlement/city autocomplete, real-time field validation, upsell screen, trust badges. → *reference: Checkout*

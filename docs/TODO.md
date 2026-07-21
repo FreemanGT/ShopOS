@@ -4,7 +4,7 @@ The actionable work queue. Grouped, roughly in priority order. Each item still r
 [CLAUDE.md](CLAUDE.md) contract (pre-flight → plan → owner approval → flag → tests → ledger).
 Strategy context is in [roadmap.md](roadmap.md); module specs in [Modules.md](Modules.md).
 
-**Last updated:** 2026-07-21
+**Last updated:** 2026-07-22
 
 ---
 
@@ -12,7 +12,7 @@ Strategy context is in [roadmap.md](roadmap.md); module specs in [Modules.md](Mo
 Lead path is the revenue path: **Side Cart → Checkout**. Full specs + rationale in
 [Modules.md](Modules.md#build-roadmap-to-20-modules).
 
-- [ ] **Side Cart** — slide-out drawer, free-ship meter, coupon, recommendations *(standalone)*
+- [x] **Side Cart** — slide-out drawer, free-ship meter, coupon, recommendations *(shipped 1.55.0, 2026-07-22; default OFF)*
 - [ ] **Checkout** — WC checkout replacement; IL city autocomplete, live validation, upsell *(large)*
 - [x] **Bundle Deals** — volume/tiered, curated, mix-&-match, BOGO *(shipped 1.46.0, 2026-07-19; default OFF)*
 - [ ] **Product Reviews** — rating summary, verified badge, photos, voting, store replies
