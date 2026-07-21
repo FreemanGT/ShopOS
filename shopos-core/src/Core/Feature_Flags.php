@@ -153,7 +153,7 @@ final class Feature_Flags {
 				'module'      => 'theme',
 				'feature'     => 'fonts_selfhost',
 				'label'       => __( 'Theme — self-hosted storefront fonts', 'shopos-core' ),
-				'description' => __( 'When on, the ShopOS theme serves Heebo / Assistant / Rubik from its own @font-face files (woff2) and suppresses the Elementor kit\'s Google Fonts, so storefront typography no longer depends on the kit loading. Off = today\'s kit-loaded fonts, byte-identical. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Needs the ShopOS theme active; without Core the theme reads this as hard false.', 'shopos-core' ),
+				'description' => __( 'When on, the ShopOS theme serves Heebo (one variable family, weights 300–700) from its own @font-face file (woff2) and suppresses the Elementor kit\'s Google Fonts, so storefront typography no longer depends on the kit loading. Off = today\'s kit-loaded fonts, byte-identical. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Needs the ShopOS theme active; without Core the theme reads this as hard false.', 'shopos-core' ),
 				'since'       => '1.42.2',
 				'shared'      => false,
 			),

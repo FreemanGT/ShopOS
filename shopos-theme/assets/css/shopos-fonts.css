@@ -1,16 +1,18 @@
 /*
- * Self-hosted storefront webfonts — the ShopOS Line typography prerequisite
+ * Self-hosted storefront webfont — the ShopOS Line typography prerequisite
  * (decisions §11.4 row 3a).
  *
- * Variable-weight woff2 for the Heebo / Assistant / Rubik Hebrew-first stack
- * (hebrew + latin subsets, normal style only — the suite uses weights
- * 400-700, all inside each family's variable wght axis, and nothing in the
- * theme or storefront core CSS uses italics). Files and unicode-ranges are
- * exactly Google Fonts' own subset splits, served from the theme instead.
+ * ONE variable-weight family: Heebo (hebrew + latin subsets, normal style
+ * only). v2 collapses the storefront to a single type family carrying the
+ * whole hierarchy through scale and weight (see docs/DESIGN.md §6), so the
+ * former Assistant (display) and Rubik (fallback) faces are dropped. The
+ * variable wght axis (100–900) covers the tokens' light-300 through bold-700
+ * as a real axis, not synthesis. Files and unicode-ranges are exactly Google
+ * Fonts' own subset splits, served from the theme instead.
  *
  * INERT until shopos-core's `shopos_core_theme_fonts_selfhost_enabled` flag
  * wires the enqueue (row 3b) — nothing references this file before then, so
- * shipping it changes no render. Licenses: assets/fonts/OFL-*.txt.
+ * shipping it changes no render. License: assets/fonts/OFL-heebo.txt.
  */
 
 /* Heebo — hebrew */
@@ -32,44 +34,3 @@
     src: url('../fonts/heebo-latin-var.woff2') format('woff2');
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
-/* Assistant — hebrew */
-@font-face {
-    font-family: 'Assistant';
-    font-style: normal;
-    font-weight: 200 800;
-    font-display: swap;
-    src: url('../fonts/assistant-hebrew-var.woff2') format('woff2');
-    unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
-}
-
-/* Assistant — latin */
-@font-face {
-    font-family: 'Assistant';
-    font-style: normal;
-    font-weight: 200 800;
-    font-display: swap;
-    src: url('../fonts/assistant-latin-var.woff2') format('woff2');
-    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-/* Rubik — hebrew */
-@font-face {
-    font-family: 'Rubik';
-    font-style: normal;
-    font-weight: 300 900;
-    font-display: swap;
-    src: url('../fonts/rubik-hebrew-var.woff2') format('woff2');
-    unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
-}
-
-/* Rubik — latin */
-@font-face {
-    font-family: 'Rubik';
-    font-style: normal;
-    font-weight: 300 900;
-    font-display: swap;
-    src: url('../fonts/rubik-latin-var.woff2') format('woff2');
-    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-

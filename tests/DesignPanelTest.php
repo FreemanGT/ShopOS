@@ -127,13 +127,13 @@ final class DesignPanelTest extends TestCase {
 
 	public function test_kit_slots_default_to_the_hardcoded_style_kit_slots(): void {
 		unset( $GLOBALS['fr_opts']['shopos_core_theme_kit_slots'] );
-		$this->assertSame( array( 'body' => 'sk_type_12', 'display' => 'sk_type_2' ), Design::kit_slots() );
+		$this->assertSame( array( 'body' => 'sk_type_12', 'display' => 'sk_type_12' ), Design::kit_slots() );
 		$this->assertSame( Design::KIT_SLOT_DEFAULTS, Design::kit_slots() );
 	}
 
 	public function test_kit_slots_option_overrides_and_merges_with_defaults(): void {
 		$GLOBALS['fr_opts']['shopos_core_theme_kit_slots'] = array( 'body' => 'sk_type_3' );
-		$this->assertSame( array( 'body' => 'sk_type_3', 'display' => 'sk_type_2' ), Design::kit_slots() );
+		$this->assertSame( array( 'body' => 'sk_type_3', 'display' => 'sk_type_12' ), Design::kit_slots() );
 		unset( $GLOBALS['fr_opts']['shopos_core_theme_kit_slots'] );
 	}
 
