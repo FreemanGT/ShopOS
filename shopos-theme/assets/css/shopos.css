@@ -109,9 +109,8 @@ body {
 }
 
 .shopos-theme :where(a, button, input, select, textarea, [tabindex]):focus-visible {
-    outline: 2px solid var(--shopos-ui-color-accent);
+    outline: var(--shopos-ui-focus-outline);
     outline-offset: 2px;
-    border-radius: var(--shopos-ui-radius-sm);
 }
 
 /* -------------------------------------------------------------------------
@@ -275,13 +274,8 @@ body {
     border: var(--shopos-ui-input-border-hover);
 }
 
-.shopos-theme .shopos-ui-input:focus,
-.shopos-theme .shopos-ui-select:focus,
-.shopos-theme .shopos-ui-textarea:focus {
-    outline: none;
-    border-color: var(--shopos-ui-color-accent);
-    box-shadow: var(--shopos-ui-input-focus-ring);
-}
+/* Inputs carry the global :focus-visible ink outline (§8.4); the border does
+   NOT change on focus (§9.3). No per-component focus box-shadow. */
 
 .shopos-theme .shopos-ui-input[aria-invalid="true"],
 .shopos-theme .shopos-ui-input.is-error {

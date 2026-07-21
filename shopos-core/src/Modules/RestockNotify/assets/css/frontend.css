@@ -75,10 +75,9 @@
     text-align: start;
 }
 .shopos-restock-input::placeholder { color: var(--shopos-ui-color-ink-muted, #aaa); text-align: start; }
-.shopos-restock-input:focus {
-    background: var(--shopos-ui-color-paper, #fff);
-    border-color: var(--shopos-ui-color-accent, #111);
-    box-shadow: var(--shopos-ui-input-focus-ring, 0 0 0 3px rgba(0,0,0,.06));
+.shopos-restock-input:focus-visible {
+    outline: var(--shopos-ui-focus-outline, 2px solid #1b1b1b);
+    outline-offset: 2px;
 }
 
 /* Email addresses read left-to-right even on an RTL page. */

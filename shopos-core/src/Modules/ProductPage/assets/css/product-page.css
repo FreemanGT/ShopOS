@@ -357,8 +357,8 @@
 }
 
 .shopos-ui-pdp__summary form.cart select:focus-visible {
-	outline: none;
-	box-shadow: var(--shopos-ui-input-focus-ring, 0 0 0 2px #1b1b1b);
+	outline: var(--shopos-ui-focus-outline, 2px solid #1b1b1b);
+	outline-offset: 2px;
 }
 
 .shopos-ui-pdp__summary .reset_variations {
@@ -404,8 +404,8 @@
 }
 
 .shopos-ui-pdp__summary form.cart .quantity .qty:focus-visible {
-	outline: none;
-	box-shadow: var(--shopos-ui-input-focus-ring, 0 0 0 2px #1b1b1b);
+	outline: var(--shopos-ui-focus-outline, 2px solid #1b1b1b);
+	outline-offset: 2px;
 }
 
 /* The single confident action — primary button per DESIGN.md. */

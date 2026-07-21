@@ -166,10 +166,6 @@
     --shopos-ui-input-border-hover:1px solid var(--shopos-ui-color-ink-soft);
     --shopos-ui-input-padding-x:   var(--shopos-ui-space-md);
     --shopos-ui-focus-outline:     2px solid var(--shopos-ui-color-ink);
-    /* DEPRECATED — focus is the global outline (§8.4). Retained (as a valid
-     * box-shadow value) until the per-component focus box-shadows are swept to
-     * :focus-visible (§20 PR5). */
-    --shopos-ui-input-focus-ring:  0 0 0 2px var(--shopos-ui-color-ink);
 
     /* --- Button primitives -------------------------------------------- */
     --shopos-ui-button-height:       48px;
