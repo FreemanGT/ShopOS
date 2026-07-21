@@ -76,6 +76,14 @@ body {
 .shopos-theme .shopos-ui-text-xs { font-size: var(--shopos-ui-text-xs); }
 .shopos-theme .shopos-ui-text-muted { color: var(--shopos-ui-color-ink-muted); }
 
+/* Prices, counts, quantities align on tabular figures (§6.4). WooCommerce
+   wraps amounts in .woocommerce-Price-amount.amount; .price covers the wrapper. */
+.shopos-theme .price,
+.shopos-theme .amount,
+.shopos-theme .woocommerce-Price-amount {
+    font-variant-numeric: tabular-nums;
+}
+
 .shopos-theme code,
 .shopos-theme pre,
 .shopos-theme kbd {

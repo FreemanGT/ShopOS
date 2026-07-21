@@ -266,10 +266,11 @@
 	line-height: var(--shopos-ui-leading-snug, 1.35);
 }
 
-/* Sale pair: the from-price <del> reports the sale state (DESIGN.md danger
-   role); the current price stays confident ink. */
+/* Sale pair: the compare-at <del> is ink-muted, NOT red — a sale is not an
+   error (DESIGN.md Semantic-Only corollary, §6.4); the current price stays
+   confident ink. */
 .shopos-ui-pdp__summary .price del {
-	color: var(--shopos-ui-color-danger, #b11226);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 	font-size: 0.72em;
 	font-weight: var(--shopos-ui-weight-regular, 400);
 	margin-inline-end: var(--shopos-ui-space-sm, 8px);
@@ -917,7 +918,7 @@
 }
 
 .shopos-ui-pdp__sticky-price del {
-	color: var(--shopos-ui-color-danger, #b11226);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 }
 
 .shopos-ui-pdp__sticky-price ins {

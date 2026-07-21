@@ -164,7 +164,7 @@
 }
 
 .shopos-ui-bundle__fbt-total del {
-	color: var(--shopos-ui-color-text-soft, #9a9a9a);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 	margin-inline-end: 0.4em;
 }
 
@@ -206,7 +206,7 @@
 }
 
 .shopos-ui-bundle-cart-price del {
-	color: var(--shopos-ui-color-text-soft, #9a9a9a);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 	margin-inline-end: 0.35em;
 }
 
