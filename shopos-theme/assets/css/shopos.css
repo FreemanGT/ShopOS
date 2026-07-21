@@ -229,6 +229,35 @@ body {
     margin: 0;
 }
 
+/* An .is-inverted section paints ink and re-references the remapped ink ramp
+   as its own colour/background (§7.3). The token remap alone isn't enough:
+   inheritance carries the *computed* colour from <body>, so the scope must
+   read the tokens here for components inside it to flip for free. */
+.shopos-theme .is-inverted {
+    background-color: var(--shopos-ui-color-paper);
+    color: var(--shopos-ui-color-ink);
+}
+
+/* Editorial band (§12.5): full-width breath between product sections — sand
+   OR .is-inverted ink (One-Ink-Moment). A Display / text-xxl statement + ≤1 CTA. */
+.shopos-theme .shopos-ui-editorial-band {
+    padding-block: var(--shopos-ui-section-gap);
+    padding-inline: var(--shopos-ui-container-pad);
+    background: var(--shopos-ui-palette-sand);
+    color: var(--shopos-ui-color-ink);
+}
+.shopos-theme .shopos-ui-editorial-band.is-inverted {
+    background: var(--shopos-ui-color-paper);   /* → ink via the remap */
+}
+.shopos-theme .shopos-ui-editorial-band__inner {
+    max-width: var(--shopos-ui-container-max);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--shopos-ui-space-lg);
+}
+
 .shopos-theme .shopos-ui-stack > * + * {
     margin-top: var(--shopos-ui-space-md);
 }
