@@ -125,7 +125,9 @@ final class Frontend {
 					'invalidEmail'   => (string) ( $shell['js_invalid_email']   ?? '' ),
 					'consentMissing' => (string) ( $shell['js_consent_missing'] ?? '' ),
 					'productMissing' => (string) ( $shell['js_product_missing'] ?? '' ),
-					'scriptMissing'  => (string) ( $shell['js_script_missing']  ?? '' ),
+					// No 'scriptMissing' key: frontend.js uses a hardcoded fallback
+					// for that guard (the JS predates the payload) — never read it
+					// (B-5 dead-code sweep).
 					'genericError'   => (string) ( $shell['js_generic_error']   ?? '' ),
 					'networkError'   => (string) ( $shell['js_network_error']   ?? '' ),
 				),

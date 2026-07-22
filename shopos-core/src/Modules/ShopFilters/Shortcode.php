@@ -74,7 +74,7 @@ final class Shortcode {
 		$context_id = $this->context_category_id();
 		$response   = ( new Query_Builder() )->query( $this->initial_request( $context_id ) );
 
-		$this->enqueue_assets( $context_id );
+		$this->enqueue_assets();
 
 		ob_start();
 
@@ -151,11 +151,9 @@ final class Shortcode {
 	}
 
 	/**
-	 * Enqueue (and localise) the front-end script + the panel stylesheet.
-	 *
-	 * @param int $context_id Category context.
+	 * Enqueue the front-end script + the panel stylesheet.
 	 */
-	private function enqueue_assets( $context_id ) {
+	private function enqueue_assets() {
 		$fs_base  = SHOPOS_CORE_PATH . 'src/Modules/ShopFilters/assets/';
 		$url_base = SHOPOS_CORE_URL . 'src/Modules/ShopFilters/assets/';
 		$src      = Module_Base::pick_min_url( $fs_base, $url_base, 'js/shop-filters.js' );
@@ -163,16 +161,10 @@ final class Shortcode {
 
 		wp_enqueue_style( self::STYLE_HANDLE, $style, array(), SHOPOS_CORE_VERSION );
 		wp_enqueue_script( self::SCRIPT_HANDLE, $src, array(), SHOPOS_CORE_VERSION, true );
-		wp_localize_script(
-			self::SCRIPT_HANDLE,
-			'ShopOSShopFilters',
-			array(
-				'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
-				'action'    => Ajax::ACTION,
-				'nonce'     => wp_create_nonce( Ajax::NONCE ),
-				'contextId' => (int) $context_id,
-			)
-		);
+		// No localize payload: shop-filters.js uses the reload transport (full-page
+		// navigation), not admin-AJAX, so the old ShopOSShopFilters payload
+		// (ajaxUrl/action/nonce/contextId) was never read — dropped with its
+		// per-render wp_create_nonce (B-5 dead-code sweep).
 	}
 
 	/**
