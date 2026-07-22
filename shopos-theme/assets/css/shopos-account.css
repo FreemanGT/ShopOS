@@ -10,7 +10,7 @@
  *
  * Skin-light + token-driven: every value routes through a --shopos-ui-* token
  * whose literal fallback equals that token's default resolved value (on-palette,
- * not drift). RTL-safe via logical properties, 768px canon breakpoint,
+ * not drift). RTL-safe via logical properties, 640px mobile canon,
  * reduced-motion aware.
  */
 
@@ -86,7 +86,7 @@
 	font-size: var(--shopos-ui-text-xs, 0.75rem);
 	font-weight: var(--shopos-ui-weight-semi, 600);
 	text-transform: uppercase;
-	letter-spacing: var(--shopos-ui-tracking-caps, 0.06em);
+	letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 	padding-block: var(--shopos-ui-space-sm, 0.75rem);
 	border-block-end: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
@@ -161,7 +161,7 @@
 /* WooCommerce notices keep their own (theme/WC) styling — not restyled here. */
 
 /* Responsive — nav collapses above the content. -------------------------- */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
 	.shopos-account { display: block; }
 	.shopos-account__nav { margin-block-end: var(--shopos-ui-space-lg, 1.5rem); }
 	.shopos-account input.input-text,

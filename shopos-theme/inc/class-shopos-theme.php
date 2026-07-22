@@ -272,7 +272,7 @@ final class ShopOS_Theme {
 	 */
 	public function enqueue_assets() {
 		// ShopOS Line typography (decisions §11.4 row 3): serve the
-		// self-hosted Heebo/Assistant/Rubik faces and drop the Elementor
+		// self-hosted Heebo face (one family, §20 block 2) and drop the Elementor
 		// kit's Google Fonts. Pinned read path per §11 Ruling 4, spelled as
 		// an FQCN — the theme is unnamespaced, so a bare Feature_Flags::class
 		// would resolve to \Feature_Flags and silently read false forever.

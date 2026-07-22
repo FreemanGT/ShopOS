@@ -16,7 +16,7 @@
 
 .shopos-ui-pdp {
 	color: var(--shopos-ui-color-ink, #1b1b1b);
-	font-family: var(--shopos-ui-font-body, 'Heebo', 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+	font-family: var(--shopos-ui-font-body, 'Heebo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
 	font-size: var(--shopos-ui-text-md, 1rem);
 	line-height: var(--shopos-ui-leading-base, 1.55);
 	background: var(--shopos-ui-color-paper, #ffffff);
@@ -236,7 +236,7 @@
 	margin: 0 0 var(--shopos-ui-space-sm, 8px);
 	/* No text-wrap:balance — it equalises line lengths, so multi-line titles
 	   refused to fill the column ("titles sometimes not full width", 9.3). */
-	font-family: var(--shopos-ui-font-display, 'Assistant', 'Heebo', 'Rubik', sans-serif);
+	font-family: var(--shopos-ui-font-display, 'Heebo', sans-serif);
 	font-size: var(--shopos-ui-text-xxl, 2.25rem);
 	font-weight: var(--shopos-ui-weight-semi, 600);
 	line-height: var(--shopos-ui-leading-tight, 1.18);
@@ -266,10 +266,11 @@
 	line-height: var(--shopos-ui-leading-snug, 1.35);
 }
 
-/* Sale pair: the from-price <del> reports the sale state (DESIGN.md danger
-   role); the current price stays confident ink. */
+/* Sale pair: the compare-at <del> is ink-muted, NOT red — a sale is not an
+   error (DESIGN.md Semantic-Only corollary, §6.4); the current price stays
+   confident ink. */
 .shopos-ui-pdp__summary .price del {
-	color: var(--shopos-ui-color-danger, #b11226);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 	font-size: 0.72em;
 	font-weight: var(--shopos-ui-weight-regular, 400);
 	margin-inline-end: var(--shopos-ui-space-sm, 8px);
@@ -357,8 +358,8 @@
 }
 
 .shopos-ui-pdp__summary form.cart select:focus-visible {
-	outline: none;
-	box-shadow: var(--shopos-ui-input-focus-ring, 0 0 0 2px #1b1b1b);
+	outline: var(--shopos-ui-focus-outline, 2px solid #1b1b1b);
+	outline-offset: 2px;
 }
 
 .shopos-ui-pdp__summary .reset_variations {
@@ -404,8 +405,8 @@
 }
 
 .shopos-ui-pdp__summary form.cart .quantity .qty:focus-visible {
-	outline: none;
-	box-shadow: var(--shopos-ui-input-focus-ring, 0 0 0 2px #1b1b1b);
+	outline: var(--shopos-ui-focus-outline, 2px solid #1b1b1b);
+	outline-offset: 2px;
 }
 
 /* The single confident action — primary button per DESIGN.md. */
@@ -704,7 +705,7 @@
 .shopos-ui-pdp .up-sells > h2,
 .shopos-ui-pdp .related > h2 {
 	margin: 0 0 var(--shopos-ui-space-lg, 24px);
-	font-family: var(--shopos-ui-font-display, 'Assistant', 'Heebo', 'Rubik', sans-serif);
+	font-family: var(--shopos-ui-font-display, 'Heebo', sans-serif);
 	font-size: var(--shopos-ui-text-xl, 1.5rem);
 	font-weight: var(--shopos-ui-weight-semi, 600);
 	line-height: var(--shopos-ui-leading-tight, 1.18);
@@ -728,7 +729,7 @@
 	list-style: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
 	.shopos-ui-pdp ul.products,
 	.shopos-ui-pdp ul.products[class*='columns-'] {
 		grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
@@ -801,7 +802,7 @@
 	padding: var(--shopos-ui-space-xs, 4px) var(--shopos-ui-space-md, 16px);
 	background: var(--shopos-ui-color-paper, #ffffff);
 	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
-	border-radius: var(--shopos-ui-radius-sm, 4px);
+	border-radius: var(--shopos-ui-radius-xs, 2px);
 	color: var(--shopos-ui-color-ink, #1b1b1b);
 	font-size: var(--shopos-ui-text-xs, 0.75rem);
 	font-weight: var(--shopos-ui-weight-semi, 600);
@@ -892,7 +893,7 @@
 	height: 44px;
 	object-fit: contain;
 	background: var(--shopos-ui-color-paper-dim, #f1efea);
-	border-radius: var(--shopos-ui-radius-sm, 4px);
+	border-radius: var(--shopos-ui-radius-xs, 2px);
 	flex: none;
 }
 
@@ -917,7 +918,7 @@
 }
 
 .shopos-ui-pdp__sticky-price del {
-	color: var(--shopos-ui-color-danger, #b11226);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 }
 
 .shopos-ui-pdp__sticky-price ins {

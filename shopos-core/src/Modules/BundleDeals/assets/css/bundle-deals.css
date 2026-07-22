@@ -57,7 +57,7 @@
 
 .shopos-ui-bundle__tier-save {
 	font-weight: var(--shopos-ui-weight-semibold, 600);
-	color: var(--shopos-ui-color-success, #2e7d46);
+	color: var(--shopos-ui-color-success-text, #0a5c4c);
 	white-space: nowrap;
 }
 
@@ -140,7 +140,7 @@
 	inline-size: 44px;
 	block-size: 44px;
 	object-fit: cover;
-	border-radius: var(--shopos-ui-radius-sm, 6px);
+	border-radius: var(--shopos-ui-radius-xs, 2px);
 	display: block;
 }
 
@@ -164,7 +164,7 @@
 }
 
 .shopos-ui-bundle__fbt-total del {
-	color: var(--shopos-ui-color-text-soft, #9a9a9a);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 	margin-inline-end: 0.4em;
 }
 
@@ -206,7 +206,7 @@
 }
 
 .shopos-ui-bundle-cart-price del {
-	color: var(--shopos-ui-color-text-soft, #9a9a9a);
+	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 	margin-inline-end: 0.35em;
 }
 

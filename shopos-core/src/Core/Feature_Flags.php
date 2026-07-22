@@ -153,7 +153,7 @@ final class Feature_Flags {
 				'module'      => 'theme',
 				'feature'     => 'fonts_selfhost',
 				'label'       => __( 'Theme — self-hosted storefront fonts', 'shopos-core' ),
-				'description' => __( 'When on, the ShopOS theme serves Heebo / Assistant / Rubik from its own @font-face files (woff2) and suppresses the Elementor kit\'s Google Fonts, so storefront typography no longer depends on the kit loading. Off = today\'s kit-loaded fonts, byte-identical. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Needs the ShopOS theme active; without Core the theme reads this as hard false.', 'shopos-core' ),
+				'description' => __( 'When on, the ShopOS theme serves Heebo (one variable family, weights 300–700) from its own @font-face file (woff2) and suppresses the Elementor kit\'s Google Fonts, so storefront typography no longer depends on the kit loading. Off = today\'s kit-loaded fonts, byte-identical. Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Needs the ShopOS theme active; without Core the theme reads this as hard false.', 'shopos-core' ),
 				'since'       => '1.42.2',
 				'shared'      => false,
 			),
@@ -211,6 +211,14 @@ final class Feature_Flags {
 				'label'       => __( 'Theme — checkout skin (ShopOS Line)', 'shopos-core' ),
 				'description' => __( 'When on, the ShopOS theme enqueues its own checkout stylesheet (assets/css/shopos-checkout.css) on the checkout page so the buy path is on-brand, the fifth §11-B deferred surface (decisions §11.4). Unlike the cart/account surfaces this forks NO templates — checkout is the most gateway/nonce-heavy surface, so the My Account CSS-skin doctrine is applied to the whole page: WooCommerce keeps ownership of every checkout field, nonce, and payment gateway, and the theme only restyles them (Ruling 9, resolved-as-moot 2026-07-20). Because it is skin-only it works on BOTH the shortcode ([woocommerce_checkout]) and the block checkout, so no per-store content-migration is ever required. Off = the current checkout render with no extra assets, byte-identical (Ruling 6). Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Needs the ShopOS theme active; without Core the theme reads this as hard false; turn on theme.fonts_selfhost first (Ruling 10) or fonts differ between Elementor and checkout pages.', 'shopos-core' ),
 				'since'       => '1.52.0',
+				'shared'      => false,
+			),
+			array(
+				'module'      => 'theme',
+				'feature'     => 'style_emails',
+				'label'       => __( 'Theme — transactional email skin (ShopOS Line)', 'shopos-core' ),
+				'description' => __( 'When on, ShopOS Core restyles the WooCommerce transactional emails (new order, processing, completed, invoice, password reset, …) to the ShopOS Line brand — the sixth and final §11-B deferred surface (decisions §11.4). Unlike every sibling surface this is Core-side, not theme-side: WooCommerce emails send from cron / webhook / REST contexts where the active theme may not be ShopOS Line, so a theme-level email override would vanish (decisions §11 line 304). Skin-only like the checkout surface — it hooks woocommerce_email_styles and appends email-safe CSS (literal hex/px values; no CSS custom properties, @media, or logical properties, which email clients drop) that WooCommerce inlines onto the markup via Emogrifier; it forks NO email templates, so there is no WooCommerce email @version to chase, and WooCommerce keeps ownership of every email template, header, and footer (Core only appends brand styles, never replacing WooCommerce\'s). Off = the WooCommerce default email styling with nothing appended, byte-identical (Ruling 6). Permanent kill-switch (decisions §11 Ruling 4) — exempt from graduation sweeps. Core-only: unlike the other §11-B surfaces it does NOT need the ShopOS theme active. This closes §11-B.', 'shopos-core' ),
+				'since'       => '1.53.0',
 				'shared'      => false,
 			),
 		);

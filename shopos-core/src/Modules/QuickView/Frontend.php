@@ -155,7 +155,7 @@ final class Frontend {
 	 */
 	public function trigger_html( $product_id ) {
 		$label = Labels::get( 'trigger' );
-		return '<button type="button" class="shopos-qv-trigger" data-shopos-qv="' . (int) $product_id . '"'
+		return '<button type="button" class="shopos-qv-trigger shopos-ui-iconbtn shopos-ui-iconbtn--sm" data-shopos-qv="' . (int) $product_id . '"'
 			. ' aria-label="' . esc_attr( $label ) . '" title="' . esc_attr( $label ) . '">'
 			. '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">'
 			. '<circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.3"/>'
@@ -194,7 +194,7 @@ final class Frontend {
 			. '<aside class="shopos-quick-view__panel" role="dialog" aria-modal="true" aria-label="' . esc_attr( $title ) . '" tabindex="-1">'
 			. '<header class="shopos-quick-view__head">'
 			. '<h2 class="shopos-quick-view__title">' . esc_html( $title ) . '</h2>'
-			. '<button type="button" class="shopos-quick-view__close" data-shopos-qv-close aria-label="' . esc_attr( $close ) . '">'
+			. '<button type="button" class="shopos-quick-view__close shopos-ui-iconbtn" data-shopos-qv-close aria-label="' . esc_attr( $close ) . '">'
 			. '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 2L12 12M12 2L2 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>'
 			. '</button>'
 			. '</header>'

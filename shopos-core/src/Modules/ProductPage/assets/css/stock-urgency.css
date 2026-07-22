@@ -16,7 +16,7 @@
 	/* Low-stock is a caution state — warning amber per DESIGN.md's
 	   Semantic-Only Color Rule (the original snippet's red reads as error). */
 	background: var(--shopos-ui-color-warning-soft, #fdecd0);
-	color: var(--shopos-ui-color-warning, #a8630a);
+	color: var(--shopos-ui-color-warning-text, #7c4708);
 	border-radius: var(--shopos-ui-radius-pill, 999px);
 	font-size: var(--shopos-ui-text-sm, 0.875rem);
 	font-weight: var(--shopos-ui-weight-semi, 600);

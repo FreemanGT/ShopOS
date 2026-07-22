@@ -1,7 +1,7 @@
 /**
  * ShopOS Shop Filters — panel styling.
  *
- * Desktop: the panel renders inline (sidebar). Mobile (<=768px): a full-width
+ * Desktop: the panel renders inline (sidebar). Mobile (<=1024px): a full-width
  * toggle reveals a bottom-sheet drawer with an overlay and Apply/Clear actions.
  * Direction-agnostic (works in RTL) — the drawer slides up from the bottom, so
  * no inline-axis transform flips are needed. Loaded via SHOPOS_CORE_VERSION.
@@ -421,7 +421,7 @@
 	}
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
 	.shopos-sf--refined.shopos-sf--open .shopos-sf__panel > * {
 		animation: none;
 	}
@@ -468,7 +468,7 @@
 	border: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
 	.shopos-sf__toggle {
 		display: flex !important; /* re-show on mobile, beating the desktop !important hide */
 		justify-content: center;

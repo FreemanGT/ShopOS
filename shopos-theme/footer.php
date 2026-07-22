@@ -23,7 +23,7 @@ if ( ! ShopOS_Theme::chrome_enabled() ) {
 ?>
 		</div><?php // /#content (opened in header.php) ?>
 
-<footer class="shopos-chrome shopos-chrome--footer" role="contentinfo">
+<footer class="shopos-chrome shopos-chrome--footer is-inverted" role="contentinfo">
 	<div class="shopos-chrome__inner">
 		<?php if ( has_nav_menu( 'menu-2' ) ) : ?>
 			<nav class="shopos-chrome__footer-nav" aria-label="<?php esc_attr_e( 'Footer', 'shopos-theme' ); ?>">

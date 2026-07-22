@@ -861,7 +861,7 @@ body:has(.shopos-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produc
 	display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
 	.shopos-sticky-bar {
 		display: block !important;
 		position: fixed !important;
@@ -1176,7 +1176,7 @@ body:has(.shopos-pdp-price[data-pdp-price]) .elementor-widget-woocommerce-produc
 	transform: rotate(45deg) translate(-1px, -1px);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
 	/* Sit the toast above the sticky bottom bar so they don't overlap. */
 	.shopos-toast {
 		bottom: calc(88px + env(safe-area-inset-bottom, 0px));

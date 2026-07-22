@@ -6,7 +6,7 @@
  * token-driven: every brand-visible value routes through a --shopos-ui-* token.
  * Each literal fallback equals that token's DEFAULT resolved value (from
  * shopos-tokens.css) so an absent-token / non-theme render is still on-palette
- * — not drift. RTL-safe via logical properties — no left/right. 768px canon
+ * — not drift. RTL-safe via logical properties — no left/right. 640px mobile canon
  * breakpoint, reduced-motion respected. WooCommerce's own classes/ids are left
  * intact for its cart JS; this only restyles them.
  */
@@ -46,7 +46,7 @@
 	font-size: var(--shopos-ui-text-xs, 0.75rem);
 	font-weight: var(--shopos-ui-weight-semi, 600);
 	text-transform: uppercase;
-	letter-spacing: var(--shopos-ui-tracking-caps, 0.06em);
+	letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 	color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 	padding-block: var(--shopos-ui-space-sm, 0.75rem);
 	border-block-end: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
@@ -61,7 +61,7 @@
 .shopos-cart__item .product-thumbnail img {
 	inline-size: 64px;
 	block-size: auto;
-	border-radius: var(--shopos-ui-radius-sm, 4px);
+	border-radius: var(--shopos-ui-radius-xs, 2px);
 	border: 1px solid var(--shopos-ui-color-hairline, #e6e6e2);
 }
 
@@ -86,7 +86,7 @@
 		background var(--shopos-ui-motion-fast, 0.15s) var(--shopos-ui-ease, ease);
 }
 .shopos-cart__item .product-remove .remove:hover {
-	color: var(--shopos-ui-color-danger, #b11226);
+	color: var(--shopos-ui-color-danger-text, #8f101f);
 	background: var(--shopos-ui-color-danger-soft, #fde3e6);
 }
 
@@ -217,7 +217,7 @@
 }
 
 /* Responsive — stack the responsive table into labelled rows. ------------ */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
 	.shopos-cart__table thead { position: absolute; clip: rect(0 0 0 0); clip-path: inset(50%); overflow: hidden; }
 
 	.shopos-cart__item {
@@ -240,7 +240,7 @@
 		font-size: var(--shopos-ui-text-xs, 0.75rem);
 		font-weight: var(--shopos-ui-weight-semi, 600);
 		text-transform: uppercase;
-		letter-spacing: var(--shopos-ui-tracking-caps, 0.06em);
+		letter-spacing: var(--shopos-ui-tracking-wide, 0.04em);
 		color: var(--shopos-ui-color-ink-muted, #6b6b6b);
 	}
 	.shopos-cart__item .product-remove,

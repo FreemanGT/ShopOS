@@ -246,8 +246,8 @@ function shopos_theme_design_tokens_css() {
 		&& method_exists( '\ShopOS\Core\Core\Design', 'kit_slots' ) ) {
 		$fr_slots  = \ShopOS\Core\Core\Design::kit_slots();
 		$fr_stacks = array(
-			'body'    => array( '--shopos-ui-font-body', "'Heebo', 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" ),
-			'display' => array( '--shopos-ui-font-display', "'Assistant', var(--shopos-ui-font-body)" ),
+			'body'    => array( '--shopos-ui-font-body', "'Heebo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" ),
+			'display' => array( '--shopos-ui-font-display', 'var(--shopos-ui-font-body)' ),
 		);
 		foreach ( \ShopOS\Core\Core\Design::KIT_SLOT_DEFAULTS as $fr_key => $fr_default ) {
 			if ( isset( $fr_slots[ $fr_key ] ) && $fr_slots[ $fr_key ] !== $fr_default ) {

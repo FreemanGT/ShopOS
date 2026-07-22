@@ -13,39 +13,13 @@
 
 ## 1. Current design rules we follow
 
-**Creative North Star — "The Quiet Boutique."** ShopOS dresses a WooCommerce storefront like a considered boutique dresses its floor: **ink on paper, type carrying the hierarchy, color held in reserve until it means something.** Near-monochrome by default (deep ink `#1b1b1b` on white + warm-neutral papers); emphasis is built from weight, scale, and spacing, not decoration. Bilingual and **RTL-first** — Hebrew is the primary reading direction and every rule must hold mirrored.
-
-**Three words:** restrained, precise, trustworthy. A place where a shopper makes a **confident decision** without being shouted at.
-
-### Design principles (the "why")
-- **Serve the decision, not the page.** Every surface (search, filters, card, quick view, swatches, buy box) exists to move the shopper toward a confident purchase. Reduce friction; remove anything that doesn't help the decision.
-- **Tokens are the single source of truth.** Modules consume `--shopos-ui-*` design tokens; visual change happens in the token layer so the whole suite stays coherent. Never hardcode what a token already expresses.
-- **RTL & bilingual are first-class.** Hebrew is primary; every layout, label, price, and animation must be correct mirrored, locale-aware on both He and En sides.
-- **Truthful state over optimistic state.** Stock, availability, price, and facet counts reflect **real per-variation truth** — a sold-out size drops out, a no-match search shows an honest empty result. Never show a product the shopper can't actually buy.
-- **Restraint is the brand.** Type, weight, and space before color or ornament. When in doubt, remove.
-
-### Named rules (the "what")
-- **The Ink-First Rule.** The primary accent is ink, not a hue. Reach for `--shopos-ui-color-ink` before any color. Gold/forest are per-site opt-in themes (`.is-accent-*`) — color on demand, never by default.
-- **The Semantic-Only Color Rule.** Green/red/amber/blue appear **only** to report state (in-stock, error, caution, info). Forbidden as decoration. If a color isn't telling the shopper something true, it doesn't belong on the page.
-- **The Hebrew Flat-Tracking Rule.** Letter-spacing is zeroed under `:lang(he)`. Latin gets the −0.01em display tightening and the 0.04em label spacing; Hebrew gets neither. Never ship a tracked Hebrew heading.
-- **The One Uppercase Voice Rule.** Uppercase is reserved for the **Label** role (buttons, badges, H6 eyebrow, filter chips). Headings and body are never uppercased. No tracked all-caps eyebrow above every section.
-- **The Flat-At-Rest Rule.** Surfaces rest tonally flat. Shadow appears as a reaction to hover/focus/float (panel/drawer/modal) — never as resting decoration on a static card.
-- **The Hairline-Does-The-Work Rule.** Before adding a shadow to separate two surfaces, try a 1px hairline (`#e6e6e2`) or a tonal paper step. Shadows are the last resort, not the first.
-
-### Type & color at a glance
-- **Type:** Assistant (display/headings), Heebo (body/labels) — Hebrew-native humanist sans, Rubik → system fallback. Roles: **Display** 600 / clamp 2.5→4rem · **Headline** 600 / 1.9→2.75rem · **Title** 500 / 1.1→1.25rem · **Body** 400 / ~16px / line-height 1.55 (measure ≤65–75ch) · **Label** 600 / ~12px / 0.04em / UPPERCASE.
-- **Color:** Ink `#1b1b1b` / Ink-soft `#3a3a3a` / Ink-muted `#6b6b6b` (text floor on paper) · Paper `#ffffff` → Paper-soft `#faf9f7` → Paper-dim `#f1efea` → Sand `#e9e4db` (depth ramp) · Hairline `#e6e6e2` · opt-in Gold `#b68a3a`. Semantic: Success `#0e7c66` · Danger `#b11226` · Warning `#a8630a` · Info `#225e8f`.
-- **Depth:** tonal first (three paper steps + hairlines), shadow second — `sm` at rest on cards, `md` on hover/panels, `lg` on drawers/modals, `xl` on full-screen overlays.
-- **Radius:** buttons 4px (`--shopos-ui-button-radius`), cards 6px (`--shopos-ui-card-radius`), pills 999px.
-
-### Accessibility & motion (always on)
-- Target **WCAG 2.1 AA**: body ≥4.5:1, large text ≥3:1; visible focus on every interactive control (filters, search combobox, quick-view drawer, swatches); keyboard-operable throughout; full RTL correctness.
-- `prefers-reduced-motion` collapses token durations to 0 (spinners freeze to a static ring; fades/slides disable). `prefers-contrast: more` strengthens borders and drops shadows. Both wired in the token layer, so modules inherit them for free.
-
-### The anti-references (what we never ship)
-- **Generic Elementor/Woo defaults** — badge-encrusted cards, templated icon-heading-text grids, busy loop widgets, anything that reads as assembled from off-the-shelf parts.
-- **Discount-bin clutter** — flashing sale callouts, urgency spam, competing CTAs, cramped grids.
-- **AI-slop trend-chasing** — glassmorphism, gradient text, cream-everything, a tracked uppercase eyebrow above every section. No dark mode (the brand is ink on paper).
+The design system — north star, principles, named rules, type/color/depth
+scale, accessibility, and anti-references — lives in **[`DESIGN.md`](DESIGN.md)**,
+the single source of truth for the ShopOS visual language (v2, "The Quiet
+Boutique"). This file does not restate those rules; it maps how each module
+*renders* them per screen. When a module look below and DESIGN.md disagree,
+DESIGN.md wins and the module note is the stale one (this catalogue is refreshed
+per module as the v2 migration lands — §20 of DESIGN.md).
 
 ---
 

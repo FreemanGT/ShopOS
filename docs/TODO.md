@@ -4,7 +4,7 @@ The actionable work queue. Grouped, roughly in priority order. Each item still r
 [CLAUDE.md](CLAUDE.md) contract (pre-flight → plan → owner approval → flag → tests → ledger).
 Strategy context is in [roadmap.md](roadmap.md); module specs in [Modules.md](Modules.md).
 
-**Last updated:** 2026-07-19
+**Last updated:** 2026-07-21
 
 ---
 
@@ -37,6 +37,21 @@ The theme-owned PDP/PLP/fonts are built but **default OFF**. Before flipping on 
       content drift** (documented; reseed is the owner's R7.4 call) — not flip regressions. Re-run authoritative on staging.
 - [ ] RTL pass + owner screenshots on the flag-on render — **still the human gate** (wp-env is `en_US`; real store `he_IL`)
 - [ ] Then: ≥30 days flag-on spanning ≥1 theme release, zero rollbacks (record flip dates in decisions state line)
+
+## B2. ShopOS v2 design migration — live-store follow-ons
+The v2 migration (branch `feat/design-v2-migration`, core 1.54.0 + theme 1.21.0) is code-complete +
+tests green; these blocks (DESIGN.md §20 / #9, #19) need the owner's live store to QA before finishing:
+
+- [ ] **iconbtn adoption** — the slider `.cs-arrow` (per-widget Elementor CSS-var size/radius controls),
+      card-slider/gallery arrows, ShopFilters close/chip (text-glyph + refined variant), and the chrome
+      hamburger/cart CSS-glyph icons still carry bespoke styles. Reclass to `.shopos-ui-iconbtn` where the
+      live render + operator controls allow (needs search-in-header + configured sliders/filters to verify).
+- [ ] **PLP/PDP restyle depth** — the default WC shop grid/buttons + WC `span.onsale` stay Elementor-kit/WC-
+      owned (§11.4 row-5 keeps WC `ul.products`); decide whether the ShopOS Line PLP should also restyle WC
+      buttons → `radius-xs` and the sale flash → the badge primitive (§12.3), or leave WC-owned.
+- [ ] **RTL (he_IL) pass** on the v2 render — Hebrew Label Voice, zeroed tracking, mirrored iconbtn/hero
+      (wp-env is en_US; real store is he_IL). Roll into the §11-B RTL gate.
+- [ ] **Publish decision** — Stable tag held at 1.52.0. Bump to 1.54.0 + `publish.sh`/manifest when ready.
 
 ## C. §11-B deferred surfaces (after the gate clears)
 Theme-owned classic PHP templates; flag names **not yet minted**. Do not start until §11-B unlocks

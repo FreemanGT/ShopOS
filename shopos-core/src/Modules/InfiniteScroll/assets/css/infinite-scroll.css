@@ -89,7 +89,7 @@
     border: 1px solid currentColor;
     color: inherit;
     padding: 4px 12px;
-    border-radius: var(--shopos-ui-radius-sm, 4px);
+    border-radius: var(--shopos-ui-radius-xs, 2px);
     cursor: pointer;
     font: inherit;
 }

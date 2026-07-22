@@ -32,7 +32,7 @@ final class QuickViewFrontendTest extends TestCase {
 	public function test_trigger_html_shape(): void {
 		$html = $this->frontend()->trigger_html( 42 );
 
-		$this->assertStringContainsString( 'class="shopos-qv-trigger"', $html );
+		$this->assertStringContainsString( 'class="shopos-qv-trigger shopos-ui-iconbtn shopos-ui-iconbtn--sm"', $html );
 		$this->assertStringContainsString( 'data-shopos-qv="42"', $html );
 		$this->assertStringContainsString( 'type="button"', $html );
 		$this->assertStringContainsString( 'aria-label="Quick view"', $html );

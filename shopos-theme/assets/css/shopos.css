@@ -76,6 +76,14 @@ body {
 .shopos-theme .shopos-ui-text-xs { font-size: var(--shopos-ui-text-xs); }
 .shopos-theme .shopos-ui-text-muted { color: var(--shopos-ui-color-ink-muted); }
 
+/* Prices, counts, quantities align on tabular figures (§6.4). WooCommerce
+   wraps amounts in .woocommerce-Price-amount.amount; .price covers the wrapper. */
+.shopos-theme .price,
+.shopos-theme .amount,
+.shopos-theme .woocommerce-Price-amount {
+    font-variant-numeric: tabular-nums;
+}
+
 .shopos-theme code,
 .shopos-theme pre,
 .shopos-theme kbd {
@@ -109,19 +117,145 @@ body {
 }
 
 .shopos-theme :where(a, button, input, select, textarea, [tabindex]):focus-visible {
-    outline: 2px solid var(--shopos-ui-color-accent);
+    outline: var(--shopos-ui-focus-outline);
     outline-offset: 2px;
-    border-radius: var(--shopos-ui-radius-sm);
 }
 
 /* -------------------------------------------------------------------------
  * 3. Layout helpers
  * ------------------------------------------------------------------------- */
 
-.shopos-theme .shopos-ui-container {
-    max-width: var(--shopos-ui-container-max);
+.shopos-theme .shopos-ui-container,
+.shopos-theme .shopos-ui-container--wide {
     margin-inline: auto;
     padding-inline: var(--shopos-ui-container-pad);
+}
+.shopos-theme .shopos-ui-container { max-width: var(--shopos-ui-container-max); }
+.shopos-theme .shopos-ui-container--wide { max-width: var(--shopos-ui-container-wide); }  /* hero, PLP grid, editorial bands */
+
+/* --- Composition patterns (§12) ------------------------------------------
+ * The statement display (≤1 per page), hero, and section header. Latin
+ * tracking on the display is zeroed under :lang(he) / .shopos-rtl. */
+
+.shopos-theme .shopos-ui-display,
+.shopos-theme h1.is-display {
+    font-size: var(--shopos-ui-text-display);
+    font-weight: var(--shopos-ui-weight-light);
+    line-height: var(--shopos-ui-leading-flat);
+    letter-spacing: var(--shopos-ui-tracking-tight);
+    margin: 0 0 var(--shopos-ui-space-md);
+}
+
+/* Split hero (default): text column + full-height image on the wide grid. */
+.shopos-theme .shopos-ui-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--shopos-ui-space-xl);
+    align-items: center;
+    padding-block: var(--shopos-ui-section-gap);
+}
+@media (max-width: 640px) {
+    .shopos-theme .shopos-ui-hero { grid-template-columns: 1fr; }
+}
+.shopos-theme .shopos-ui-hero__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--shopos-ui-space-md);
+}
+.shopos-theme .shopos-ui-hero__lead {
+    margin: 0;
+    font-size: var(--shopos-ui-text-lg);
+    font-weight: var(--shopos-ui-weight-light);
+    line-height: var(--shopos-ui-leading-snug);
+    color: var(--shopos-ui-color-ink-soft);
+    max-inline-size: var(--shopos-ui-measure);
+}
+.shopos-theme .shopos-ui-hero__media {
+    margin: 0;
+}
+.shopos-theme .shopos-ui-hero__media img {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    aspect-ratio: 4 / 5;
+    background: var(--shopos-ui-color-paper-dim);
+}
+
+/* Full-bleed hero: 16:9 image, ink scrim, Display in paper, one CTA. */
+.shopos-theme .shopos-ui-hero--full {
+    position: relative;
+    display: block;
+    padding: 0;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+}
+.shopos-theme .shopos-ui-hero--full .shopos-ui-hero__media,
+.shopos-theme .shopos-ui-hero--full .shopos-ui-hero__media img {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    aspect-ratio: auto;
+}
+.shopos-theme .shopos-ui-hero--full .shopos-ui-hero__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(transparent, var(--shopos-ui-overlay-scrim));
+}
+.shopos-theme .shopos-ui-hero--full .shopos-ui-hero__copy {
+    position: absolute;
+    z-index: 1;
+    inset-block-end: var(--shopos-ui-section-gap);
+    inset-inline-start: var(--shopos-ui-container-pad);
+    inset-inline-end: var(--shopos-ui-container-pad);
+    color: var(--shopos-ui-color-paper);
+}
+.shopos-theme .shopos-ui-hero--full .shopos-ui-display {
+    color: var(--shopos-ui-color-paper);
+}
+
+/* Section header: Headline + optional "View all" link on the same baseline. */
+.shopos-theme .shopos-ui-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--shopos-ui-space-md);
+    margin-block-end: var(--shopos-ui-space-lg);
+}
+.shopos-theme .shopos-ui-section-head > * {
+    margin: 0;
+}
+
+/* An .is-inverted section paints ink and re-references the remapped ink ramp
+   as its own colour/background (§7.3). The token remap alone isn't enough:
+   inheritance carries the *computed* colour from <body>, so the scope must
+   read the tokens here for components inside it to flip for free. */
+.shopos-theme .is-inverted {
+    background-color: var(--shopos-ui-color-paper);
+    color: var(--shopos-ui-color-ink);
+}
+
+/* Editorial band (§12.5): full-width breath between product sections — sand
+   OR .is-inverted ink (One-Ink-Moment). A Display / text-xxl statement + ≤1 CTA. */
+.shopos-theme .shopos-ui-editorial-band {
+    padding-block: var(--shopos-ui-section-gap);
+    padding-inline: var(--shopos-ui-container-pad);
+    background: var(--shopos-ui-palette-sand);
+    color: var(--shopos-ui-color-ink);
+}
+.shopos-theme .shopos-ui-editorial-band.is-inverted {
+    background: var(--shopos-ui-color-paper);   /* → ink via the remap */
+}
+.shopos-theme .shopos-ui-editorial-band__inner {
+    max-width: var(--shopos-ui-container-max);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--shopos-ui-space-lg);
 }
 
 .shopos-theme .shopos-ui-stack > * + * {
@@ -199,7 +333,12 @@ body {
 
 .shopos-theme .shopos-ui-btn:hover {
     transform: translateY(-1px);
-    opacity: 1;
+    background: var(--shopos-ui-color-accent-hover);
+}
+
+.shopos-theme .shopos-ui-btn:active {
+    transform: translateY(0);
+    background: var(--shopos-ui-color-accent-active);
 }
 
 .shopos-theme .shopos-ui-btn:disabled,
@@ -243,6 +382,63 @@ body {
 }
 
 /* -------------------------------------------------------------------------
+ * 5b. Icon button (.shopos-ui-iconbtn) — §9.2. The ONE icon-trigger
+ *     primitive: a circle at every state, transparent at rest, tonal-fill
+ *     hover (recipe 1), filled-glyph toggled state, background+color only.
+ * ------------------------------------------------------------------------- */
+
+.shopos-theme .shopos-ui-iconbtn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 40px;
+    block-size: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--shopos-ui-radius-round);
+    background: transparent;
+    color: var(--shopos-ui-color-ink);
+    cursor: pointer;
+    transition:
+        background-color var(--shopos-ui-motion-fast) var(--shopos-ui-ease),
+        color var(--shopos-ui-motion-fast) var(--shopos-ui-ease);
+}
+.shopos-theme .shopos-ui-iconbtn .shopos-ui-icon,
+.shopos-theme .shopos-ui-iconbtn svg {
+    inline-size: 20px;
+    block-size: 20px;
+    stroke-width: 1.5;
+}
+.shopos-theme .shopos-ui-iconbtn:hover { background-color: var(--shopos-ui-color-paper-dim); }
+.shopos-theme .shopos-ui-iconbtn:active { background-color: var(--shopos-ui-palette-sand); }
+/* Toggled (e.g. wishlisted): the filled glyph carries the state; fill stays transparent. */
+.shopos-theme .shopos-ui-iconbtn[aria-pressed="true"],
+.shopos-theme .shopos-ui-iconbtn.is-selected { background-color: transparent; }
+.shopos-theme .shopos-ui-iconbtn:disabled,
+.shopos-theme .shopos-ui-iconbtn[aria-disabled="true"] { opacity: 0.4; cursor: not-allowed; }
+
+.shopos-theme .shopos-ui-iconbtn--sm { inline-size: 32px; block-size: 32px; }
+.shopos-theme .shopos-ui-iconbtn--sm .shopos-ui-icon,
+.shopos-theme .shopos-ui-iconbtn--sm svg { inline-size: 18px; block-size: 18px; }
+.shopos-theme .shopos-ui-iconbtn--lg { inline-size: 48px; block-size: 48px; }
+
+.shopos-theme .shopos-ui-iconbtn__count {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    min-inline-size: 16px;
+    block-size: 16px;
+    padding-inline: 4px;
+    border-radius: var(--shopos-ui-radius-round);
+    background: var(--shopos-ui-color-ink);
+    color: var(--shopos-ui-color-paper);
+    font-size: var(--shopos-ui-text-xs);
+    line-height: 16px;
+    text-align: center;
+}
+
+/* -------------------------------------------------------------------------
  * 5. Input primitive (.shopos-ui-input, .shopos-ui-select, .shopos-ui-textarea)
  * ------------------------------------------------------------------------- */
 
@@ -275,13 +471,8 @@ body {
     border: var(--shopos-ui-input-border-hover);
 }
 
-.shopos-theme .shopos-ui-input:focus,
-.shopos-theme .shopos-ui-select:focus,
-.shopos-theme .shopos-ui-textarea:focus {
-    outline: none;
-    border-color: var(--shopos-ui-color-accent);
-    box-shadow: var(--shopos-ui-input-focus-ring);
-}
+/* Inputs carry the global :focus-visible ink outline (§8.4); the border does
+   NOT change on focus (§9.3). No per-component focus box-shadow. */
 
 .shopos-theme .shopos-ui-input[aria-invalid="true"],
 .shopos-theme .shopos-ui-input.is-error {
@@ -315,11 +506,110 @@ body {
     white-space: nowrap;
 }
 
-.shopos-theme .shopos-ui-badge--success { background: var(--shopos-ui-color-success-soft); color: var(--shopos-ui-color-success); }
-.shopos-theme .shopos-ui-badge--danger  { background: var(--shopos-ui-color-danger-soft);  color: var(--shopos-ui-color-danger); }
-.shopos-theme .shopos-ui-badge--warning { background: var(--shopos-ui-color-warning-soft); color: var(--shopos-ui-color-warning); }
-.shopos-theme .shopos-ui-badge--info    { background: var(--shopos-ui-color-info-soft);    color: var(--shopos-ui-color-info); }
+.shopos-theme .shopos-ui-badge--success { background: var(--shopos-ui-color-success-soft); color: var(--shopos-ui-color-success-text); }
+.shopos-theme .shopos-ui-badge--danger  { background: var(--shopos-ui-color-danger-soft);  color: var(--shopos-ui-color-danger-text); }
+.shopos-theme .shopos-ui-badge--warning { background: var(--shopos-ui-color-warning-soft); color: var(--shopos-ui-color-warning-text); }
+.shopos-theme .shopos-ui-badge--info    { background: var(--shopos-ui-color-info-soft);    color: var(--shopos-ui-color-info-text); }
 .shopos-theme .shopos-ui-badge--accent  { background: var(--shopos-ui-color-accent);       color: var(--shopos-ui-color-accent-text); }
+
+/* -------------------------------------------------------------------------
+ * 6b. Filter chip (.shopos-ui-chip) — §9.5. Hover recipe 2 (border→ink);
+ *     selection inverts locally so a selected filter reads at a glance.
+ * ------------------------------------------------------------------------- */
+
+.shopos-theme .shopos-ui-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--shopos-ui-space-xs);
+    min-height: 32px;
+    padding: 0 12px;
+    border-radius: var(--shopos-ui-radius-pill);
+    background: var(--shopos-ui-color-paper);
+    color: var(--shopos-ui-color-ink);
+    border: 1px solid var(--shopos-ui-color-hairline);
+    font-size: var(--shopos-ui-text-xs);
+    font-weight: var(--shopos-ui-weight-semi);
+    letter-spacing: var(--shopos-ui-tracking-wide);
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        background var(--shopos-ui-motion-fast) var(--shopos-ui-ease),
+        color var(--shopos-ui-motion-fast) var(--shopos-ui-ease),
+        border-color var(--shopos-ui-motion-fast) var(--shopos-ui-ease);
+}
+
+.shopos-theme .shopos-ui-chip:hover {
+    border-color: var(--shopos-ui-color-ink);
+}
+
+.shopos-theme .shopos-ui-chip[aria-pressed="true"],
+.shopos-theme .shopos-ui-chip.is-selected {
+    background: var(--shopos-ui-color-ink);
+    color: var(--shopos-ui-color-paper);
+    border-color: var(--shopos-ui-color-ink);
+}
+
+.shopos-theme .shopos-ui-chip:disabled,
+.shopos-theme .shopos-ui-chip[aria-disabled="true"] {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* -------------------------------------------------------------------------
+ * 6c. Inline note (.shopos-ui-note) — §9.8. Full -soft fill + matching -text
+ *     color; never a colored side-stripe.
+ * ------------------------------------------------------------------------- */
+
+.shopos-theme .shopos-ui-note {
+    display: block;
+    padding: var(--shopos-ui-space-sm) var(--shopos-ui-space-md);
+    border-radius: var(--shopos-ui-radius-md);
+    background: var(--shopos-ui-color-paper-dim);
+    color: var(--shopos-ui-color-ink);
+    font-size: var(--shopos-ui-text-sm);
+    line-height: var(--shopos-ui-leading-base);
+}
+
+.shopos-theme .shopos-ui-note__lead {
+    font-weight: var(--shopos-ui-weight-semi);
+    letter-spacing: var(--shopos-ui-tracking-wide);
+    text-transform: uppercase;
+    margin-inline-end: var(--shopos-ui-space-xs);
+}
+
+.shopos-theme .shopos-ui-note--success { background: var(--shopos-ui-color-success-soft); color: var(--shopos-ui-color-success-text); }
+.shopos-theme .shopos-ui-note--danger  { background: var(--shopos-ui-color-danger-soft);  color: var(--shopos-ui-color-danger-text); }
+.shopos-theme .shopos-ui-note--warning { background: var(--shopos-ui-color-warning-soft); color: var(--shopos-ui-color-warning-text); }
+.shopos-theme .shopos-ui-note--info    { background: var(--shopos-ui-color-info-soft);    color: var(--shopos-ui-color-info-text); }
+
+/* -------------------------------------------------------------------------
+ * 6d. Toast (.shopos-ui-toast) — §9.8. Bottom inline-center, slide-up entrance
+ *     (instant under reduced motion via the motion token); one at a time.
+ * ------------------------------------------------------------------------- */
+
+.shopos-theme .shopos-ui-toast {
+    position: fixed;
+    inset-block-end: var(--shopos-ui-space-lg);
+    inset-inline: 0;
+    margin-inline: auto;
+    width: max-content;
+    max-width: min(92vw, 420px);
+    z-index: var(--shopos-ui-z-toast);
+    padding: var(--shopos-ui-space-sm) var(--shopos-ui-space-md);
+    background: var(--shopos-ui-color-paper);
+    color: var(--shopos-ui-color-ink);
+    border: 1px solid var(--shopos-ui-color-hairline);
+    border-radius: var(--shopos-ui-radius-md);
+    box-shadow: var(--shopos-ui-shadow-lg);
+    font-size: var(--shopos-ui-text-sm);
+    animation: shopos-ui-toast-in var(--shopos-ui-motion-base) var(--shopos-ui-ease-out);
+}
+
+@keyframes shopos-ui-toast-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 
 /* -------------------------------------------------------------------------
  * 7. Card primitive (.shopos-ui-card)
@@ -421,7 +711,7 @@ body {
     );
     background-size: 200% 100%;
     animation: shopos-ui-shimmer 1.4s linear infinite;
-    border-radius: var(--shopos-ui-radius-sm);
+    border-radius: var(--shopos-ui-radius-md);
 }
 
 @keyframes shopos-ui-shimmer {

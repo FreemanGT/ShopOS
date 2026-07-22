@@ -56,7 +56,7 @@ final class Design {
 		return array(
 			'default'    => array(),
 			'terracotta' => array( '--shopos-ui-palette-gold' => '#b5532a' ),
-			'forest'     => array( '--shopos-ui-palette-gold' => '#3f7a4b' ),
+			'forest'     => array( '--shopos-ui-palette-gold' => '#3f6b4f' ),
 			'indigo'     => array( '--shopos-ui-palette-gold' => '#4a54b5' ),
 			'plum'       => array( '--shopos-ui-palette-gold' => '#7a3f6b' ),
 		);
@@ -112,13 +112,13 @@ final class Design {
 	 */
 	const KIT_SLOT_DEFAULTS = array(
 		'body'    => 'sk_type_12',
-		'display' => 'sk_type_2',
+		'display' => 'sk_type_12',   // v2: ONE family — display maps to the body slot (§20 block 2)
 	);
 
 	/**
 	 * Resolved Style Kits typography slot ids (decisions §11 Ruling 8).
 	 *
-	 * De-hardcodes the sk_type_12/sk_type_2 mapping behind a Core option
+	 * De-hardcodes the Style-Kit slot mapping (both roles default to sk_type_12) behind a Core option
 	 * (`shopos_core_theme_kit_slots`, no UI) with a filterable value — the
 	 * default ships current behaviour, so a store that never touches either
 	 * lever changes nothing. Consumed by the theme's design-tokens bridge

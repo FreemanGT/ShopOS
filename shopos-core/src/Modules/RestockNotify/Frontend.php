@@ -476,15 +476,15 @@ final class Frontend {
 				.shopos-restock-form-fields{display:flex;flex-direction:column;gap:12px}
 				.shopos-restock-field-row{display:flex;gap:10px}
 				.shopos-restock-field{flex:1}
-				.shopos-restock-input{display:block;width:100%;padding:11px 14px;font-size:14px;color:var(--shopos-ui-color-ink,#111);background:var(--shopos-ui-color-paper-soft,#fafafa);border:1px solid var(--shopos-ui-color-hairline,#e0e0e0);border-radius:var(--shopos-ui-radius-sm,8px);outline:none;box-sizing:border-box;text-align:start;font-family:inherit}
-				.shopos-restock-input:focus{background:var(--shopos-ui-color-paper,#fff);border-color:var(--shopos-ui-color-accent,#111);box-shadow:var(--shopos-ui-input-focus-ring,0 0 0 3px rgba(0,0,0,.06))}
-				.shopos-restock-submit-btn{display:flex;align-items:center;justify-content:center;width:100%;padding:12px 20px;font-size:14px;font-weight:600;color:var(--shopos-ui-color-accent-text,#fff);background:var(--shopos-ui-color-accent,#111);border:none;border-radius:var(--shopos-ui-radius-sm,8px);cursor:pointer;font-family:inherit}
+				.shopos-restock-input{display:block;width:100%;padding:11px 14px;font-size:14px;color:var(--shopos-ui-color-ink,#111);background:var(--shopos-ui-color-paper-soft,#fafafa);border:1px solid var(--shopos-ui-color-hairline,#e0e0e0);border-radius:var(--shopos-ui-radius-xs,2px);outline:none;box-sizing:border-box;text-align:start;font-family:inherit}
+				.shopos-restock-input:focus-visible{outline:var(--shopos-ui-focus-outline,2px solid #1b1b1b);outline-offset:2px}
+				.shopos-restock-submit-btn{display:flex;align-items:center;justify-content:center;width:100%;padding:12px 20px;font-size:14px;font-weight:600;color:var(--shopos-ui-color-accent-text,#fff);background:var(--shopos-ui-color-accent,#111);border:none;border-radius:var(--shopos-ui-radius-xs,2px);cursor:pointer;font-family:inherit}
 				.shopos-restock-submit-btn:hover{background:var(--shopos-ui-color-accent-hover,#333)}
 				.shopos-restock-hidden{display:none!important}
 				.shopos-restock-form-icon{display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:var(--shopos-ui-color-accent,#000);border-radius:var(--shopos-ui-radius-round,50%);margin-bottom:16px;color:var(--shopos-ui-color-accent-text,#fff)}
 				.shopos-restock-form-success{text-align:center;padding:8px 0}
 				.shopos-restock-success-icon{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;background:var(--shopos-ui-color-paper-dim,#f0f0f0);border-radius:var(--shopos-ui-radius-round,50%);margin-bottom:12px;color:var(--shopos-ui-color-ink,#111)}
-				.shopos-restock-error-text{margin:0;padding:10px 14px;font-size:13px;color:var(--shopos-ui-color-danger,#c00);background:var(--shopos-ui-color-danger-soft,#fff5f5);border:1px solid var(--shopos-ui-color-danger-soft,#fdd);border-radius:var(--shopos-ui-radius-sm,8px)}
+				.shopos-restock-error-text{margin:0;padding:10px 14px;font-size:13px;color:var(--shopos-ui-color-danger-text,#8f101f);background:var(--shopos-ui-color-danger-soft,#fff5f5);border:1px solid var(--shopos-ui-color-danger-soft,#fdd);border-radius:var(--shopos-ui-radius-md,6px)}
 				.shopos-restock-gdpr-label{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--shopos-ui-color-ink-muted,#666);cursor:pointer}
 				.shopos-restock-btn-spinner{display:none}
 				.shopos-restock-loading .shopos-restock-btn-text{display:none}
