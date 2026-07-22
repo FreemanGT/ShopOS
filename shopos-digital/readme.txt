@@ -4,7 +4,7 @@ Tags: woocommerce, optimization, performance, database, security, speed, indexes
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.7.8
+Stable tag: 1.7.9
 License: GPLv3 or later
 
 All-in-one WordPress & WooCommerce optimization — database indexes, query tuning, autoload optimizer, security hardening, speed tuning, transient management, and bloat removal.

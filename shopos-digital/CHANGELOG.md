@@ -2,6 +2,10 @@
 
 Seeded from git history at 1.7.4. Per-release detail for 1.7.3 and earlier lives in `readme.txt`.
 
+## [1.7.9] — 2026-07-22
+
+- **FIX (uninstall):** the transient-cleanup `DELETE`s targeted the pre-rebrand `_transient_fd_*` prefix, but live code writes every transient family under `shopos_digital_` (`months_*`, `user_counts_*`, `author_count_*`, `cat_dropdown_*`, `can_ddl`, `has_products`, `pc_*`) — so no live transient was ever matched on uninstall (B-5 audit prefix-drift finding). Repointed to a single `_transient_shopos_digital_%` + `_transient_timeout_shopos_digital_%` pair (and the multisite `_site_transient_*` equivalents) that sweeps all seven families; dropped the dead `fd_*` patterns. Impact was bounded — all these transients self-expire ≤24h — but uninstall now actually clears them. Uninstall-only; live-QA (delete plugin, confirm no `_transient_shopos_digital_*` rows remain).
+
 ## [1.7.8] — 2026-07-17
 
 - FIX: escape the profiler table's three raw echoes in the admin renderer (`$type_badge` / `$color` / `$r->recommendation`) — the PR-18 remediation bullet recorded as shipped in 1.7.5 but silently dropped. Values are internally generated (audit risk: Low); escaping closes the ledger gap.
