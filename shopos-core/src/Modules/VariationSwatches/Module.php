@@ -217,6 +217,20 @@ final class Module extends Module_Base {
 	}
 
 	/**
+	 * Uninstall — the option sweep in the parent only reaches this module's
+	 * `shopos_core_variation_swatches_%` options; the color sampler writes a
+	 * `_shopos_core_vs_sampled_color` post-meta on every variation, which sits
+	 * outside that prefix. Delete those meta rows too so a full uninstall leaves
+	 * no orphans behind.
+	 */
+	public function on_uninstall() {
+		parent::on_uninstall();
+		if ( function_exists( 'delete_post_meta_by_key' ) ) {
+			delete_post_meta_by_key( Color_Sampler::META_KEY );
+		}
+	}
+
+	/**
 	 * Boot — define constants the bundled classes expect, require them, and
 	 * boot the legacy singleton.
 	 *
