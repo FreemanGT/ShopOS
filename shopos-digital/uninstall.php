@@ -31,14 +31,15 @@ delete_option('shopos_digital_legacy_months_cleaned');
 delete_option('shopos_digital_activity_log');
 delete_option('shopos_digital_ddl_capability');
 
-// 2. Delete all cached month transients and any legacy option rows
+// 2. Delete all cached transients and any legacy option rows.
+// Live code writes every transient family under the `shopos_digital_` prefix
+// (months_*, user_counts_*, author_count_*, cat_dropdown_*, can_ddl,
+// has_products, pc_*), so one `_transient_shopos_digital_%` pair sweeps them all.
+// The old `_transient_fd_*` patterns were prefix drift from the pre-rebrand
+// name and matched nothing live (all self-expire ≤24h, so nothing stranded).
 $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'shopos_digital_months_%'");
-$wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_fd_%'");
-$wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_fd_%'");
-$wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_fd_cat_dropdown_%'");
-$wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_fd_user_counts_%'");
-$wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_fd_author_count_%'");
-$wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_fd_has_products'");
+$wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_shopos_digital_%'");
+$wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_shopos_digital_%'");
 
 // 3. Drop the profiler table
 $profiler_table = $wpdb->prefix . 'shopos_digital_slow_queries';
@@ -49,8 +50,8 @@ wp_clear_scheduled_hook('shopos_digital_daily_maintenance');
 
 // 5. Clear any remaining site transients on multisite
 if (is_multisite()) {
-    $wpdb->query("DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE '_site_transient_fd_%'");
-    $wpdb->query("DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE '_site_transient_timeout_fd_%'");
+    $wpdb->query("DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE '_site_transient_shopos_digital_%'");
+    $wpdb->query("DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE '_site_transient_timeout_shopos_digital_%'");
 }
 
 // NOTE: We intentionally do NOT drop the shopos_digital_* database indexes or revert the Tier 1 deep reindex.
