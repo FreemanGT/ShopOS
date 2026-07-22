@@ -132,22 +132,4 @@ final class RestockNotifyStockMonitorTest extends TestCase {
 		$marked = array_filter( \ShopOS_Restock_Database::$calls, static fn( $c ) => 'mark_notified' === $c['method'] );
 		$this->assertCount( 2, $marked );
 	}
-
-	public function test_notification_log_appends_and_caps_at_100(): void {
-		// Pre-seed with 100 entries — next notify() call should still result
-		// in array of exactly 100 (oldest dropped).
-		$preset = array_fill( 0, 100, array( 'product_id' => 1, 'count' => 1, 'date' => '2024-01-01 00:00:00' ) );
-		update_option( 'shopos_restock_notification_log', $preset );
-
-		\ShopOS_Restock_Database::$get_waiting_for_product_return = array(
-			(object) array( 'id' => 99, 'product_id' => 42, 'variation_id' => 0, 'customer_name' => 'E', 'customer_email' => 'e@x.test', 'unsubscribe_token' => 'tok99' ),
-		);
-		$product = new TestStockMonitorProduct();
-
-		( new Stock_Monitor() )->on_status_change( 42, 'instock', $product );
-
-		$log = get_option( 'shopos_restock_notification_log', array() );
-		$this->assertCount( 100, $log, 'Log capped at 100 entries' );
-		$this->assertSame( 42, $log[99]['product_id'], 'Newest entry appended at the end' );
-	}
 }

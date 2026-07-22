@@ -10,9 +10,7 @@
  * Behavior parity with the legacy class is the goal: WC stock-status /
  * quantity hooks fire `notify()`, which iterates waiting subscribers via the
  * `Subscribers` repository (Wave 2.3a) and dispatches via the modern `Email`
- * class. The `shopos_restock_notification_log` option write — capped at 100 entries — is
- * preserved verbatim so the admin dashboard's "recent notifications" widget
- * keeps working.
+ * class.
  *
  * @package ShopOSCore
  */
@@ -65,9 +63,6 @@ final class Stock_Monitor {
 	 * notifications via `\ShopOS_Restock_Email::send_notification` (which after Wave
 	 * 2.3b's `class_alias` resolves to the modern `Email::send_notification`).
 	 *
-	 * Logs the count to `shopos_restock_notification_log` (capped at 100 entries) so the
-	 * admin dashboard's recent-notifications widget keeps working.
-	 *
 	 * @param int        $product_id Product / variation id.
 	 * @param \WC_Product $product   Product object.
 	 */
@@ -81,25 +76,10 @@ final class Stock_Monitor {
 			return;
 		}
 
-		$c = 0;
 		foreach ( $subs as $s ) {
 			if ( Email::send_notification( $s ) ) {
 				Subscribers::mark_notified( $s->id );
-				++$c;
 			}
-		}
-
-		if ( $c ) {
-			$log   = get_option( 'shopos_restock_notification_log', array() );
-			$log[] = array(
-				'product_id' => $product_id,
-				'count'      => $c,
-				'date'       => current_time( 'mysql' ),
-			);
-			if ( count( $log ) > 100 ) {
-				$log = array_slice( $log, -100 );
-			}
-			update_option( 'shopos_restock_notification_log', $log );
 		}
 	}
 

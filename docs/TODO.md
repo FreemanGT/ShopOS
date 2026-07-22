@@ -83,7 +83,7 @@ Theme-owned classic PHP templates; flag names **not yet minted**. Do not start u
   - [x] **HIGH** RestockNotify `shopos_restock_subscribers` PII table dropped on uninstall — **1.56.0** (owner-approved PII deletion 2026-07-22; + off-prefix `notification_log` option)
   - [x] Core uninstall completeness — **1.56.0**: `_shopos_core_vs_sampled_color` postmeta (new VariationSwatches `on_uninstall`), core-owned options (`shopos_core_log`/`settings_backups`/`design_*`/`productfeed_last_generated`). Feed/stock-fix crons were **already** cleared in `on_deactivate` (runs before Delete→uninstall) — no code needed.
   - [x] shopos-digital uninstall transient **prefix drift** (`fd_*` → `shopos_digital_%`) — **1.7.9** (one `_transient_shopos_digital_%` pair sweeps all 7 live families)
-  - [x] Dead **localize** cleanup — **1.57.0**: ShopFilters `ShopOSShopFilters` (whole payload + per-render nonce + unused param), BundleDeals `labels`, Search `searching`, RestockNotify `scriptMissing`. **Deferred:** the `notification_log` dead-accumulator writer (legacy twin — needs sign-off) + orphan `.shopos-toast` CSS block.
+  - [x] Dead **localize + dead-code** cleanup — **1.57.0**: ShopFilters `ShopOSShopFilters` (whole payload + per-render nonce + unused param), BundleDeals `labels`, Search `searching`, RestockNotify `scriptMissing`; **plus** the `notification_log` dead-accumulator writer (modern `Stock_Monitor`; legacy twin not loaded, left) + orphan `.shopos-toast` CSS block (owner sign-off 2026-07-22). **B-5 dead-code sweep complete.**
 
 ## E. Ops & hygiene
 - [ ] **Re-upload core** to the stranded stores on 1.44.3–1.45.0 (one-time; see [BUGS.md](BUGS.md))
