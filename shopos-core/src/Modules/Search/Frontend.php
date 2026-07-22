@@ -146,7 +146,7 @@ final class Frontend {
 			'labels'   => array(
 				'noResults' => Labels::get( 'no_results' ),
 				'seeAll'    => Labels::get( 'see_all' ),
-				'searching' => Labels::get( 'searching' ),
+				// No 'searching' key: search.js never read it (B-5 dead-code sweep).
 				// Accessible labels for the JS-built icon trigger + close button.
 				'toggle'    => Labels::get( 'toggle' ),
 				'close'     => Labels::get( 'close' ),

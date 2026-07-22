@@ -53,7 +53,7 @@ shopos-core/src/Modules/QuickView/Frontend.php:142:		if ( ! apply_filters( 'shop
 shopos-core/src/Modules/QuickView/templates/drawer-content.php:55:		do_action( 'woocommerce_single_product_summary' );
 shopos-core/src/Modules/RestockNotify/Email.php:231:		$a = (array) apply_filters( 'shopos_core/restock_notify/email_args', $a, $subscriber, $kind );
 shopos-core/src/Modules/RestockNotify/Email.php:314:		do_action( 'shopos_core/restock_notify/before_send', $to, $subject, $html, $subscriber );
-shopos-core/src/Modules/RestockNotify/Frontend.php:360:		if ( ! apply_filters( 'shopos_core/restock_notify/should_inject', true, $product, $context ) ) {
+shopos-core/src/Modules/RestockNotify/Frontend.php:362:		if ( ! apply_filters( 'shopos_core/restock_notify/should_inject', true, $product, $context ) ) {
 shopos-core/src/Modules/RestockNotify/Frontend.php:92:		$should = (bool) apply_filters( 'shopos_restock_should_enqueue', $should );
 shopos-core/src/Modules/RestockNotify/legacy/includes/class-shopos-restock-frontend.php:75:        $should = (bool) apply_filters( 'shopos_restock_should_enqueue', $should );
 shopos-core/src/Modules/Search/Search_Repository.php:70:		$cap = (int) apply_filters( 'shopos_core/search/max_results', self::MAX_RESULTS );

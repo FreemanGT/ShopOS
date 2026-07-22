@@ -71,10 +71,10 @@ final class Frontend {
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 			'action'  => Ajax::ACTION,
 			'nonce'   => wp_create_nonce( Ajax::NONCE ),
-			'labels'  => array(
-				'remaining' => Labels::get( 'mixmatch_remaining' ),
-				'unlocked'  => Labels::get( 'mixmatch_unlocked' ),
-			),
+			// No 'labels' key: bundle-deals.js reads only ajaxUrl/action/nonce.
+			// The mix-&-match progress wording is rendered server-side
+			// (Frontend::mixmatch status), so the JS payload never read it
+			// (B-5 dead-code sweep).
 		);
 	}
 
